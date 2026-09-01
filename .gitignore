@@ -1,0 +1,16 @@
+# Eigenstaendige Repos (via setup.sh geklont)
+theme/
+connector/
+datalayer/
+creditcheck/
+emailservice/
+payment-service/
+connector-worktrees/
+
+# Lokaler Zustand
+.workspace.local.yaml
+.claude/settings.local.json
+.claude/agent-memory/
+
+# OS
+.DS_Store

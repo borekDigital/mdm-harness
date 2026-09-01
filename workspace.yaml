@@ -1,0 +1,69 @@
+# workspace.yaml — Manifest aller verfuegbaren Repos
+# Einzige Quelle der Wahrheit. Versioniert im mdm-harness Repo.
+#
+# Guard-Semantik: Repos die hier stehen, existieren. Wenn sie lokal
+# nicht geklont sind (.workspace.local.yaml), wurden sie bewusst
+# uebersprungen — NIEMALS aus Konfiguration entfernen.
+
+version: 1
+
+repos:
+  theme:
+    name: "Shopify Theme"
+    path: "theme/"
+    remote: "git@github.com-borek:borekDigital/shopifyFrontend_MDM.git"
+    platform: "github"
+    tech: "Liquid/CSS/JS (Hyper 1.3.3)"
+    group: "shopify"
+    default: true
+    branch: "main"
+
+  connector:
+    name: "Shopify Connector"
+    path: "connector/"
+    remote: "git@github.com-borek:borekDigital/shopifyConnector.git"
+    platform: "github"
+    tech: "Rails 8.1 / React 18 / Polaris"
+    group: "shopify"
+    default: true
+    branch: "main"
+
+  datalayer:
+    name: "GTM Datalayer"
+    path: "datalayer/"
+    remote: "git@github.com-borek:borekDigital/shopifyDatalayer.git"
+    platform: "github"
+    tech: "JavaScript"
+    group: "shopify"
+    default: false
+    branch: "main"
+
+  creditcheck:
+    name: "Creditcheck + CustomerInfo"
+    path: "creditcheck/"
+    remote: "git@gitlab.mdm.de:middleware/creditcheck.git"
+    platform: "gitlab"
+    tech: "PHP 7.4 / Symfony"
+    group: "middleware"
+    default: false
+    branch: "main"
+
+  emailservice:
+    name: "Emailservice"
+    path: "emailservice/"
+    remote: "git@gitlab.mdm.de:middleware/emailservice.git"
+    platform: "gitlab"
+    tech: "PHP 8.3 / Symfony 7.1"
+    group: "middleware"
+    default: false
+    branch: "main"
+
+  payment-service:
+    name: "Payment-Service"
+    path: "payment-service/"
+    remote: "git@gitlab.mdm.de:middleware/payment-service.git"
+    platform: "gitlab"
+    tech: "PHP 8.3 / Symfony 7.1 / Nuxt"
+    group: "middleware"
+    default: false
+    branch: "main"

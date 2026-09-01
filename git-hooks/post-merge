@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Git post-merge Hook fuer das mdm-harness Repo.
+# Wird nach jedem `git pull` / `git merge` ausgefuehrt.
+# Regeneriert CLAUDE.md aus Templates + workspace.yaml.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SYNC_SCRIPT="${REPO_ROOT}/sync.sh"
+
+if [[ -x "$SYNC_SCRIPT" ]]; then
+  echo "post-merge: sync.sh ausfuehren..."
+  "$SYNC_SCRIPT" --quiet
+  echo "post-merge: CLAUDE.md aktualisiert."
+fi

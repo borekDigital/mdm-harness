@@ -1,0 +1,89 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd theme && shopify theme check*)",
+      "Bash(cd theme && shopify theme info*)",
+      "Bash(cd theme && shopify theme list*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(cd connector && bundle exec rubocop*)",
+      "Bash(cd connector && bundle exec brakeman*)",
+      "Bash(cd connector && bundle exec rspec*)",
+      "Bash(cd connector && git worktree*)",
+      "Bash(cd connector-worktrees/* && bundle exec rspec*)",
+      "Bash(cd connector-worktrees/* && bundle exec rubocop*)",
+      "Bash(cd connector-worktrees/* && bundle exec brakeman*)",
+      "mcp__shopify-dev-mcp__learn_shopify_api",
+      "mcp__shopify-dev-mcp__search_docs_chunks",
+      "mcp__shopify-dev-mcp__validate_theme",
+      "mcp__shopify-dev-mcp__validate_theme_codeblocks"
+    ],
+    "deny": [
+      "Edit(theme/config/settings_data.json)",
+      "Write(theme/config/settings_data.json)"
+    ]
+  },
+  "enabledMcpjsonServers": ["shopify-dev-mcp"],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/git-safety.sh\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-merchant-files.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/post-edit-theme-check.sh\"",
+            "timeout": 90,
+            "statusMessage": "Theme Check laeuft..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/post-edit-rubocop.sh\"",
+            "timeout": 60,
+            "statusMessage": "RuboCop laeuft..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/stop-notify.sh\"",
+            "timeout": 5,
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/post-implement-harness-sync.sh\"",
+            "timeout": 10,
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
