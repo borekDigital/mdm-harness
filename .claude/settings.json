@@ -63,6 +63,12 @@
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/post-edit-rubocop.sh\"",
             "timeout": 60,
             "statusMessage": "RuboCop laeuft..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/post-edit-phpstan.sh\"",
+            "timeout": 90,
+            "statusMessage": "PHPStan/PHPCS laeuft..."
           }
         ]
       }

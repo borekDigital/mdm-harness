@@ -200,7 +200,7 @@ flowchart TD
 
 | Agent | Modell | Rolle | Schreibrechte |
 |---|---|---|---|
-| security-reviewer | sonnet | Security: XSS, DSGVO, Secrets, Auth (Theme + Connector) | **read-only** |
+| security-reviewer | sonnet | Security: XSS, DSGVO, Secrets, Auth (alle Repos) | **read-only** |
 | docs-writer | haiku | Deutsche Doku + Completion-Artefakte | docs/, Tickets/ |
 
 Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
@@ -210,8 +210,10 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 - **mdm-template** — Page-Level-Orchestrator: Figma-Seite → Block Map → delegiert an /mdm-block
 - **mdm-block** — Per-Block-Workflow: ein Block = ein Branch = ein PR (Theme-First)
 - **connector-feature** — End-to-End-Workflow: Worktree + TDD + Plan → Gate → Implement → Review
+- **middleware-feature** — End-to-End-Workflow fuer creditcheck/emailservice/payment-service (TDD + Plan → Gate → Implement → Review)
 - **figma-to-liquid** — Extraktions-Konventionen (Tool-Reihenfolge, Token-Mapping)
 - **mdm-notes** — Apple-Notes-Pflege (fester Notiz-Satz, Safe-Append-Protokoll)
+- **setup** — Interaktives Setup: Repos klonen, lokale Umgebung einrichten
 
 ## Rules (`.claude/rules/`)
 
@@ -231,6 +233,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | protect-merchant-files.sh | PreToolUse (Edit/Write) | settings_data.json hart geblockt; FoxEcom-Kern + Namenskonvention → Rueckfrage |
 | post-edit-theme-check.sh | PostToolUse (Edit/Write) | Theme Check gefiltert auf editierte Datei (nur theme/*.liquid/json) |
 | post-edit-rubocop.sh | PostToolUse (Edit/Write) | RuboCop gefiltert auf editierte Datei (nur connector/*.rb) |
+| post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |
 | post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in der README dokumentiert sind |
 
