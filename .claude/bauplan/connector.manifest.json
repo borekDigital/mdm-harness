@@ -1,0 +1,179 @@
+{
+  "repo": "connector",
+  "design_system": "bauplan-v1",
+  "generated": "2026-09-03",
+  "etappen": [
+    {
+      "nr": 1,
+      "title": "Zwei Rollen, eine Codebase",
+      "url": "https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948",
+      "favicon": "📇",
+      "blaetter": 4,
+      "findings": 3,
+      "sources": [
+        "README.md",
+        "package.json",
+        "Gemfile",
+        "Gemfile.lock",
+        "docs/overview.md",
+        "extensions/*/package.json"
+      ],
+      "open_questions": [],
+      "closes": []
+    },
+    {
+      "nr": 2,
+      "title": "Drei Prozesse, eine App",
+      "url": "https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50",
+      "favicon": "⚙️",
+      "blaetter": 6,
+      "findings": 3,
+      "sources": [
+        "Procfile",
+        "Procfile.dev",
+        "config.ru",
+        "bin/dev",
+        "config/puma.rb",
+        "config/boot.rb",
+        "config/application.rb",
+        "config/environment.rb",
+        "config/database.yml",
+        "config/sidekiq.yml",
+        "config/vite.json",
+        "vite.config.ts",
+        ".env.template",
+        "shopify.web.toml",
+        "shopify.app.toml.template",
+        "mise.toml"
+      ],
+      "open_questions": [
+        "database.yml nutzt max_connections statt pool — Wirkung nur zur Laufzeit pruefbar",
+        "Vite-Port 5173 gegen 3036 — welcher gewinnt"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 3,
+      "title": "Acht Tabellen, drei Ströme",
+      "url": "https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e",
+      "favicon": "🗃️",
+      "blaetter": 5,
+      "findings": 5,
+      "sources": [
+        "db/schema.rb",
+        "db/migrate/**",
+        "app/models/**"
+      ],
+      "open_questions": [
+        "Kein Zustand wird bearbeitet — Schutz gegen Doppelverarbeitung offen"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 4,
+      "title": "Acht Türen, vier Wächter",
+      "url": "https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21",
+      "favicon": "🚪",
+      "blaetter": 5,
+      "findings": 6,
+      "sources": [
+        "config/routes.rb",
+        "app/controllers/**",
+        "config/initializers/cors.rb",
+        "config/initializers/shopify_app.rb",
+        "config/initializers/sidekiq.rb",
+        "app/services/auth/jwt.rb"
+      ],
+      "open_questions": [
+        "Sidekiq-Oberflaeche in Staging geschuetzt? haengt am RAILS_ENV des Containers"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 5,
+      "title": "Action, API, Transformer",
+      "url": "https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7",
+      "favicon": "⚗️",
+      "blaetter": 5,
+      "findings": 6,
+      "sources": [
+        "app/services/**"
+      ],
+      "open_questions": [],
+      "closes": [
+        "Etappe 3: Doppelverarbeitung wird durch order.reload.with_lock verhindert"
+      ]
+    },
+    {
+      "nr": 6,
+      "title": "Achtzehn Jobs, drei Warteschlangen",
+      "url": "https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf",
+      "favicon": "🕰️",
+      "blaetter": 5,
+      "findings": 5,
+      "sources": [
+        "app/jobs/**",
+        "config/sidekiq.yml"
+      ],
+      "open_questions": [],
+      "closes": []
+    },
+    {
+      "nr": 7,
+      "title": "Zwei Schemas, zwei Welten",
+      "url": "https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0",
+      "favicon": "🔀",
+      "blaetter": 5,
+      "findings": 6,
+      "sources": [
+        "app/graphql/**"
+      ],
+      "open_questions": [],
+      "closes": []
+    },
+    {
+      "nr": 8,
+      "title": "Eine SPA im iframe",
+      "url": "https://claude.ai/code/artifact/fecb7450-82c9-4e17-b636-16c702063b17",
+      "favicon": "⚛️",
+      "blaetter": 5,
+      "findings": 6,
+      "sources": [
+        "app/frontend/**",
+        "app/views/**",
+        "package.json"
+      ],
+      "open_questions": [
+        "Verschachtelte HTML-Dokumente: rendert das Layout tatsaechlich? nur zur Laufzeit sicher"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 9,
+      "title": "Sechs Extensions, zwei Images",
+      "url": "https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3",
+      "favicon": "🚢",
+      "blaetter": 5,
+      "findings": 6,
+      "sources": [
+        "extensions/**",
+        "deploy.sh",
+        "Dockerfile.web",
+        "Dockerfile.worker",
+        "bin/docker-entrypoint",
+        "bin/ci",
+        "config/ci.rb",
+        "docs/deployment.md",
+        ".github/workflows/ci.yml",
+        ".dockerignore",
+        "shopify.app.staging.toml",
+        "shopify.app.production.toml",
+        "spec/**"
+      ],
+      "open_questions": [],
+      "closes": [
+        "Etappe 4: beide Dockerfiles setzen RAILS_ENV=production, die Basic-Auth greift auch in Staging"
+      ]
+    }
+  ]
+}

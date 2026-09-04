@@ -14,3 +14,7 @@ connector-worktrees/
 
 # OS
 .DS_Store
+
+# Bauplan-Laufzeitdaten (die *.manifest.json bleiben versioniert)
+.claude/bauplan/*.staleness.jsonl
+.claude/bauplan/*.STALE.md

@@ -1,0 +1,347 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --paper:      #F4F6F8;
+    --surface:    #FFFFFF;
+    --surface-2:  #E9ECF1;
+    --rule:       #C4CAD4;
+    --rule-soft:  #DCE0E8;
+    --text:       #191E27;
+    --dim:        #59606F;
+    --web:        #94620A;
+    --worker:     #13615C;
+    --vite:       #6B4275;
+    --alert:      #98282F;
+    --grid:       rgba(25, 30, 39, 0.055);
+
+    --disp: "Saira Condensed", "Arial Narrow", sans-serif;
+    --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #0F1218;
+      --surface:   #161A21;
+      --surface-2: #1D222B;
+      --rule:      #333A46;
+      --rule-soft: #252B35;
+      --text:      #E3E7ED;
+      --dim:       #949CAB;
+      --web:       #E2AB49;
+      --worker:    #5EC0B7;
+      --vite:      #C79ACF;
+      --alert:     #ED8B92;
+      --grid:      rgba(255, 255, 255, 0.045);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:     #0F1218;
+    --surface:   #161A21;
+    --surface-2: #1D222B;
+    --rule:      #333A46;
+    --rule-soft: #252B35;
+    --text:      #E3E7ED;
+    --dim:       #949CAB;
+    --web:       #E2AB49;
+    --worker:    #5EC0B7;
+    --vite:      #C79ACF;
+    --alert:     #ED8B92;
+    --grid:      rgba(255, 255, 255, 0.045);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    background-image:
+      repeating-linear-gradient(to right,  var(--grid) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 28px);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 40px 22px 88px;
+  }
+
+  /* ---------- Titelblock, wie im Zeichnungssatz ---------- */
+  .titleblock {
+    background: var(--surface);
+    border: 1.5px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .tb-main { padding: 26px 26px 22px; }
+  .tb-eyebrow {
+    font-family: var(--disp);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 0 0 10px;
+  }
+  .tb-main h1 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 54px);
+    line-height: 0.98;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .tb-main p {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--dim);
+    font-size: 15px;
+  }
+  .tb-meta {
+    border-top: 1.5px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .tb-cell {
+    padding: 12px 18px;
+    border-right: 1px solid var(--rule-soft);
+  }
+  .tb-cell:last-child { border-right: none; }
+  .tb-cell dt {
+    font-family: var(--disp);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 0 0 3px;
+  }
+  .tb-cell dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Legende ---------- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin: 22px 0 0;
+    padding: 14px 18px;
+    border: 1px dashed var(--rule);
+    background: var(--surface);
+  }
+  .legend-item {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .swatch {
+    width: 11px;
+    height: 11px;
+    flex: none;
+    border-radius: 2px;
+    transform: translateY(1px);
+  }
+  .sw-web    { background: var(--web); }
+  .sw-worker { background: var(--worker); }
+  .sw-vite   { background: var(--vite); }
+  .sw-alert  { background: var(--alert); }
+  .legend-item span { color: var(--dim); }
+
+  /* ---------- Blätter ---------- */
+  .plate { margin-top: 54px; }
+  .plate-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    border-bottom: 1.5px solid var(--rule);
+    padding-bottom: 9px;
+    margin-bottom: 18px;
+  }
+  .plate-no {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--dim);
+    flex: none;
+    padding-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .plate-head h2 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(22px, 3.4vw, 31px);
+    line-height: 1.06;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .lead {
+    margin: 0 0 22px;
+    max-width: 68ch;
+  }
+  .lead strong { font-weight: 600; }
+
+  /* ---------- Figuren ---------- */
+  figure {
+    margin: 0 0 6px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 18px 18px 4px;
+    overflow-x: auto;
+  }
+  figure svg {
+    display: block;
+    width: 100%;
+    min-width: 660px;
+    height: auto;
+    color: var(--text);
+  }
+  figcaption {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--dim);
+    border-top: 1px solid var(--rule-soft);
+    margin-top: 14px;
+    padding: 11px 2px 13px;
+  }
+  figcaption b { color: var(--text); font-weight: 600; }
+
+  /* SVG-Textrollen */
+  .s-name { font-family: var(--mono); font-size: 12.5px; font-weight: 700; fill: currentColor; }
+  .s-mono { font-family: var(--mono); font-size: 11px; fill: currentColor; }
+  .s-tiny { font-family: var(--mono); font-size: 9.6px; fill: currentColor; }
+  .s-lbl  { font-family: var(--disp); font-size: 11.5px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; fill: currentColor; }
+  .s-note { font-family: var(--body); font-size: 11.5px; fill: currentColor; }
+  .f-dim    { fill: var(--dim); }
+  .f-web    { fill: var(--web); }
+  .f-worker { fill: var(--worker); }
+  .f-vite   { fill: var(--vite); }
+  .f-alert  { fill: var(--alert); }
+
+  /* ---------- Code ---------- */
+  pre {
+    margin: 0 0 22px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--rule);
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.72;
+  }
+  pre .fp { color: var(--dim); }
+  code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: var(--surface-2);
+    padding: 0.1em 0.34em;
+    border-radius: 2px;
+  }
+  pre code { background: none; padding: 0; font-size: 1em; }
+
+  /* ---------- Tabellen ---------- */
+  .tw { overflow-x: auto; margin-bottom: 22px; }
+  table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    background: var(--surface);
+  }
+  caption {
+    text-align: left;
+    font-family: var(--disp);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding: 0 0 8px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  thead th {
+    font-family: var(--disp);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--dim);
+    border-bottom: 1.5px solid var(--rule);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.m, th.m { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------- Prüfpunkte ---------- */
+  .checks {
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .check {
+    background: var(--surface);
+    padding: 17px 20px;
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 0 14px;
+  }
+  .check-no {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--alert);
+    padding-top: 3px;
+  }
+  .check h3 {
+    font-family: var(--body);
+    font-size: 14.5px;
+    font-weight: 600;
+    margin: 0 0 5px;
+  }
+  .check p { margin: 0; font-size: 13px; color: var(--dim); }
+  .check p + p { margin-top: 6px; }
+
+  footer {
+    margin-top: 58px;
+    border-top: 1.5px solid var(--rule);
+    padding-top: 16px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 26px;
+  }
+
+  a { color: inherit; }
+  a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--web);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
