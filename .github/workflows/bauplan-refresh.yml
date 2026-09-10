@@ -66,6 +66,12 @@ jobs:
     steps:
       - name: Harness auschecken
         uses: actions/checkout@v4
+        with:
+          # Vollstaendige Historie: der Workspace-Blattsatz (root ".") vergleicht
+          # seinen last_seen_sha gegen diesen Checkout. Mit dem Standard
+          # fetch-depth 1 liegt der Commit nicht im Klon und die Etappe wird
+          # uebersprungen (belegt in Run 34487611953).
+          fetch-depth: 0
 
       - name: Zugaenge einrichten
         env:

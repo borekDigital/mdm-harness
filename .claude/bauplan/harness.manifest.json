@@ -5,7 +5,7 @@
   "root": ".",
   "design_system": "bauplan-v1",
   "generated": "2026-09-10",
-  "last_seen_sha": "3dec0a7b62e69352ab986bcd1f30ec2ccf2eb235",
+  "last_seen_sha": "bcf5873",
   "etappen": [
     {
       "nr": 1,
@@ -22,7 +22,8 @@
         "templates/**",
         "git-hooks/**",
         "README.md",
-        ".mcp.json"
+        ".mcp.json",
+        "bin/bauplan-guard.py"
       ],
       "open_questions": [],
       "closes": []

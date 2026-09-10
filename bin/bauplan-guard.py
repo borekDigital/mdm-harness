@@ -96,9 +96,20 @@ def check_write(project, target, new_content):
 
 
 def verify(project):
-    """Arbeitsbaum gegen den letzten Commit. Findet Loeschungen und
-    geschrumpfte Manifeste unabhaengig davon, wodurch sie entstanden sind."""
-    violations = []
+    """Arbeitsbaum gegen den letzten Commit.
+
+    Rueckgabe: (verluste, luecken). Der Unterschied ist wesentlich.
+
+    **Verlust** heisst: etwas war da und ist weg — geloeschte Blaetter, aus einem
+    Manifest entfernte Etappen. Das ist der Schadensfall, gegen den der Guard
+    gebaut wurde, und muss den Lauf rot machen.
+
+    **Luecke** heisst: eine Etappe steht im Manifest, ihre Quelle wurde aber noch
+    nie angelegt — etwa weil ein aelterer Blattsatz erst teilweise zurueckgeholt
+    ist. Das ist ein offener Posten, kein Schaden. Wuerde er den Lauf rot machen,
+    waere jeder Lauf rot und die Warnung damit wertlos.
+    """
+    verluste, luecken = [], []
 
     out = git(project, "diff", "--name-status", "HEAD", "--",
               "docs/bauplan", ".claude/bauplan", "workspace.yaml")
@@ -106,7 +117,7 @@ def verify(project):
         for line in out.stdout.splitlines():
             parts = line.split("\t")
             if parts and parts[0].startswith("D"):
-                violations.append(
+                verluste.append(
                     "%s ist geloescht. Wiederherstellen: git checkout HEAD -- %s"
                     % (parts[-1], parts[-1])
                 )
@@ -118,7 +129,7 @@ def verify(project):
             old, new = etappen_nrs(old_raw), {e.get("nr") for e in manifest.get("etappen", [])}
             lost = sorted(n for n in (old or set()) - new if n is not None)
             if lost:
-                violations.append(
+                verluste.append(
                     "%s: Etappen %s fehlen gegenueber HEAD."
                     % (rel, ", ".join(str(n) for n in lost))
                 )
@@ -126,18 +137,20 @@ def verify(project):
         for etappe in manifest.get("etappen", []):
             sheet = lib.sheet_path(repo, etappe.get("nr"), project)
             if not os.path.isfile(sheet):
-                violations.append(
+                luecken.append(
                     "%s Etappe %s (%s): Quelle %s fehlt."
                     % (repo, etappe.get("nr"), etappe.get("title"),
                        os.path.relpath(sheet, project))
                 )
-    return violations
+    return verluste, luecken
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--check-write", nargs=2, metavar=("ZIEL", "INHALTSDATEI"))
     ap.add_argument("--verify", action="store_true")
+    ap.add_argument("--strict", action="store_true",
+                    help="auch offene Luecken als Verstoss werten")
     ap.add_argument("--project", default=None)
     args = ap.parse_args()
     project = lib.project_root(args.project)
@@ -148,7 +161,14 @@ def main():
             violations = check_write(project, target, fh.read())
     elif args.verify:
         lib.assert_project(project)
-        violations = verify(project)
+        verluste, luecken = verify(project)
+        for l in luecken:
+            print("BAUPLAN-LUECKE: %s" % l, file=sys.stderr)
+        if luecken:
+            print("BAUPLAN-LUECKE: %d Etappe(n) ohne Quelle — offener Posten, "
+                  "kein Verlust. Zurueckholen mit bin/bauplan-import.py."
+                  % len(luecken), file=sys.stderr)
+        violations = verluste + (luecken if args.strict else [])
     else:
         ap.error("--check-write oder --verify angeben")
         return 2
