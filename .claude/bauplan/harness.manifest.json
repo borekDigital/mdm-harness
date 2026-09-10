@@ -51,9 +51,13 @@
       "sources": [
         ".claude/hooks/**",
         ".claude/settings.json",
-        "bin/bauplan_lib.py"
+        "bin/bauplan_lib.py",
+        ".claude/README.md",
+        "README.md"
       ],
-      "open_questions": [],
+      "open_questions": [
+        "Der Ausgabeweg des Drift-Melders ist unveraendert stdout+async — kuenftige Rueckstaende bleiben unsichtbar"
+      ],
       "closes": []
     },
     {

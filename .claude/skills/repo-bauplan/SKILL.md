@@ -28,7 +28,10 @@ Referenz-Ergebnis: der Connector-Blattsatz vom 3. September 2026, neun Etappen.
 ## Grundgesetz — nicht verhandelbar
 
 1. **Nie zeichnen, was nicht gelesen wurde.** Vor jeder Figur die Dateien vollstaendig
-   lesen, die sie behauptet. Keine Annahmen ueber Dateiinhalte.
+   lesen, die sie behauptet. Keine Annahmen ueber Dateiinhalte. Zahlen und Zeilennummern
+   abfragen, nicht schaetzen. Behauptet die Figur ein **Verhalten** — laeuft nicht, greift
+   nicht, toter Code — dann ausfuehren, nicht nur lesen. Begruendung und Werkzeuge:
+   `figure-grammar.md`, Abschnitt „Belegen heisst nachsehen".
 2. **Jede Aussage traegt ihren Beleg.** `Datei:Zeile` im Text der Figur oder in der
    Bildunterschrift. Bei Zeilenbereichen `Datei:12–18`.
 3. **Drei Evidenzstufen, sichtbar getrennt.**

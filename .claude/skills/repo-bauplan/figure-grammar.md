@@ -95,6 +95,53 @@ Anhangspunkt — sie zeigt, dass der Satz als Ganzes gelesen wurde.
 Was **nicht** in den Anhang gehoert: Geschmacksfragen ohne Konsequenz, Stilkritik,
 alles ohne Beleg.
 
+## Belegen heisst nachsehen, nicht erinnern
+
+Zwei Fehlerarten haben sich beim Connector- und Harness-Satz als die haeufigsten erwiesen.
+Beide entstehen aus Bequemlichkeit und beide sind in Sekunden vermeidbar.
+
+### Zahlen und Zeilennummern nie schaetzen
+
+Jede `Datei:Zeile` und jede Zahl in einer Figur wird vor dem Schreiben abgefragt, nicht
+nach dem Schreiben geprueft. Bei der ersten Fassung von Harness-Etappe 1 waren sieben von
+sieben Zeilenangaben falsch und `sync.sh` mit 262 statt 309 Zeilen angegeben — geschaetzt
+aus dem Leseeindruck.
+
+```bash
+grep -n "muster" datei                 # Zeilennummer holen
+wc -l < datei                          # Zeilenzahl holen
+awk 'NR>=31 && /^}/ {print NR; exit}'  # Ende eines Blocks finden
+```
+
+Am Ende jeder Seite gegenpruefen: jede Zahl, die auf dem Blatt steht, einmal gegen den
+Bestand rechnen. Das ist ein Zehnzeiler und findet zuverlaessig, was beim Schreiben
+verrutscht ist.
+
+### Ausfuehrbare Behauptungen ausfuehren
+
+Das Grundgesetz sagt „nie zeichnen, was nicht gelesen wurde". Lesen genuegt nicht, wenn
+die Aussage ein **Verhalten** betrifft. Ein Skript liest sich anders, als es laeuft.
+
+Beispiel aus Harness-Etappe 1: Aus der Aufrufreihenfolge in `sync.sh` liess sich
+schluessig ableiten, dass der 7-Tage-Check nie ausloest — der Zeitstempel wird vier Zeilen
+vor der Pruefung neu gesetzt. Ein einziger Aufruf von `./sync.sh` zeigte das Gegenteil: die
+Warnung feuert bei **jedem** Lauf fuer alle sechs Repos, weil eine greedy
+`sed`-Ersetzung den Zeitstempel vorher zerstoert. Die Ableitung war korrekt und die
+Schlussfolgerung falsch, weil ein zweiter Fehler den ersten maskiert.
+
+Also: bevor eine Figur behauptet, etwas laufe nicht, greife nicht oder sei toter Code —
+
+- **Skript?** Aufrufen. `./sync.sh`, `bash hook.sh < nutzlast.json`, `--dry-run`.
+- **Funktion ohne Aufrufer?** `grep -rn` nach dem Namen, und den Treffer ansehen: ein
+  auskommentierter Aufrufer ist etwas anderes als kein Aufrufer.
+- **Konfiguration?** Den Wert ausrechnen lassen, nicht ableiten — `python3 -c`,
+  `date -j -f`, `git check-ignore -v`.
+- **Zwei Fehler koennen sich aufheben.** Ein Symptom, das der Ableitung widerspricht,
+  ist ein Hinweis auf eine zweite Ursache, nicht auf einen Denkfehler.
+
+Was sich nicht ausfuehren laesst — Laufzeitverhalten im Betrieb, Fremdsystem-Antworten —
+bleibt `⚠️ Vermutung` mit dem Satz, was zum Beweis fehlt.
+
 ## Zeichenbreiten
 
 Vor dem Schreiben rechnen, nicht danach korrigieren.

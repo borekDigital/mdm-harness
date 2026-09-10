@@ -710,17 +710,21 @@
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Die README beschreibt einen kleineren Bestand als vorhanden</h3>
-          <p><b>Beleg:</b> <code>README.md</code> nennt sieben Skills und sieben Hooks. Im
-             Repo liegen acht Skill-Verzeichnisse und elf Hook-Skripte. Von den acht Skills
-             tragen nur vier <code>user_invocable: true</code> — die README führt dagegen
-             sieben mit <code>/</code>-Aufruf.</p>
-          <p><b>Konsequenz:</b> Vier der dokumentierten Slash-Befehle
-             (<code>/figma-to-liquid</code>, <code>/mdm-block</code>, <code>/mdm-template</code>,
-             <code>/mdm-notes</code>) existieren so nicht. Wer sie tippt, bekommt keinen Skill.</p>
-          <p><b>Fix:</b> Entweder <code>user_invocable: true</code> ergänzen oder die README
-             korrigieren. Die Entscheidung ist inhaltlich — nicht jeder Skill soll von Hand
-             aufrufbar sein.</p>
+          <h3>Vier Slash-Befehle sind dokumentiert, aber nicht aufrufbar</h3>
+          <p><b>Beleg:</b> <code>README.md</code> und <code>.claude/README.md</code> führen
+             <code>/figma-to-liquid</code>, <code>/mdm-block</code>,
+             <code>/mdm-template</code> und <code>/mdm-notes</code> als Slash-Befehle. Keine
+             der vier <code>SKILL.md</code> trägt <code>user_invocable: true</code>; nur vier
+             der acht Skills tun das.</p>
+          <p><b>Konsequenz:</b> Wer sie tippt, bekommt keinen Skill und keine Meldung, die
+             das erklärt.</p>
+          <p><b>Fix:</b> Entweder <code>user_invocable: true</code> ergänzen oder die vier
+             aus den Slash-Tabellen nehmen. Die Entscheidung ist inhaltlich — laut README
+             delegiert <code>mdm-template</code> an <code>mdm-block</code>, und
+             <code>figma-to-liquid</code> ist eine Konventionssammlung, also möglicherweise
+             zu Recht kein Einstiegspunkt. Die übrige Doku-Drift (ein Skill, vier Hooks,
+             zwölf Einträge zur entfernten <code>data.json</code>) wurde am
+             10. September 2026 nachgetragen.</p>
         </div>
       </div>
       <div class="check">

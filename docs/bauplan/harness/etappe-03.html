@@ -531,17 +531,22 @@
     <p class="lead"><code>post-implement-harness-sync.sh</code> prüft nach jeder Sitzung, ob
       alle Agenten, Skills, Hooks und Rules in <code>README.md</code> und
       <code>harness-app/data.json</code> vorkommen. Der Hook <strong>funktioniert</strong>:
-      von Hand aufgerufen meldet er siebzehn Abweichungen. Er schreibt sie nach
-      <code>stdout</code>, und er läuft <code>async</code>.</p>
+      am 10. September 2026 meldete er siebzehn Abweichungen. Er schreibt sie nach
+      <code>stdout</code>, und er läuft <code>async</code> — deshalb sah sie niemand.
+      Nach dem Nachtragen der Dokumentation meldet er null. Der Ausgabeweg ist damit
+      unverändert der Schwachpunkt: der nächste Rückstand bleibt genauso unsichtbar.</p>
 
-    <pre><code><span class="fp">Manueller Aufruf, 10. September 2026</span>
+    <pre><code><span class="fp">Manueller Aufruf, 10. September 2026 — vor dem Nachtragen</span>
 ⚠️  Harness-Doku nicht synchron:
    - Skill 'repo-bauplan' fehlt in README.md
    - Hook 'bauplan-guard' fehlt in README.md
    - Hook 'bauplan-report' fehlt in README.md
    - Hook 'bauplan-staleness' fehlt in README.md
    - Hook 'bauplan-verify' fehlt in README.md
-   ... 12 weitere, davon 12 zu data.json</code></pre>
+   ... 12 weitere, davon 12 zu data.json
+
+<span class="fp">Derselbe Aufruf nach dem Nachtragen</span>
+(keine Ausgabe)</code></pre>
 
     <figure>
       <svg viewBox="0 0 960 262" role="img" aria-label="Vergleich der vier Stop-Hooks. Drei erzeugen eine wahrnehmbare Wirkung: eine macOS-Benachrichtigung oder eine Datei auf der Platte. Der Drift-Melder schreibt nur auf stdout und läuft asynchron, weshalb seine Ausgabe verworfen wird.">
@@ -576,8 +581,9 @@
       <figcaption><b>Der Unterschied ist der Ausgabeweg, nicht die Logik.</b> Die beiden
         Bauplan-Hooks laufen genauso <code>async</code>, ihre Befunde landen aber in einer
         Datei und überleben damit die Sitzung. Der Drift-Melder erzeugt sein Ergebnis
-        korrekt und wirft es weg. Deshalb existiert die Drift aus Etappe 1 seit Wochen,
-        obwohl ein Prüfer dafür bei jedem Sitzungsende läuft.</figcaption>
+        korrekt und wirft es weg. Deshalb blieb die Drift aus Etappe 1 unbemerkt, obwohl ein
+        Prüfer dafür bei jedem Sitzungsende lief. Die siebzehn Rückstände sind inzwischen
+        nachgetragen — der Ausgabeweg nicht.</figcaption>
     </figure>
   </section>
 
@@ -650,8 +656,9 @@
              In <code>.claude/settings.json</code> ist der Hook mit <code>"async": true</code>
              eingetragen — wie die drei anderen Stop-Hooks, die ihre Ergebnisse aber in
              Dateien schreiben.</p>
-          <p><b>Konsequenz:</b> Siebzehn erkannte Abweichungen bleiben unsichtbar. Der
-             Prüfer arbeitet korrekt und wirkungslos.</p>
+          <p><b>Konsequenz:</b> Die siebzehn erkannten Abweichungen blieben unsichtbar,
+             bis der Hook von Hand aufgerufen wurde. Sie sind nachgetragen, der Melder
+             steht auf null — aber jeder künftige Rückstand ist genauso unsichtbar.</p>
           <p><b>Fix:</b> Befund nach <code>.claude/HARNESS-DRIFT.md</code> schreiben, wie
              <code>bauplan-report.sh</code> es tut. Dann ist er beim nächsten Sitzungsstart
              im Verzeichnis sichtbar.</p>

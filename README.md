@@ -90,6 +90,7 @@ Review und Security laufen immer parallel nach jeder Implementierung.
 | `/mdm-notes` | Apple-Notes-Integration |
 | `/connector-feature` | Rails-Feature im Connector planen + umsetzen |
 | `/middleware-feature` | Symfony-Feature in Middleware-Repos planen + umsetzen |
+| `/repo-bauplan` | Architektur-Blattsatz fuer ein Repo erzeugen oder auffrischen |
 
 ## Hooks
 
@@ -102,6 +103,10 @@ Review und Security laufen immer parallel nach jeder Implementierung.
 | post-edit-phpstan | PostToolUse | PHPStan nach PHP-Aenderungen |
 | post-implement-harness-sync | Stop | Harness-Konsistenz nach Session pruefen |
 | stop-notify | Stop | macOS-Benachrichtigung bei Session-Ende |
+| bauplan-guard | PreToolUse | Schuetzt Blattsatz-Bestand: kein Loeschen, kein Schrumpfen der Manifeste |
+| bauplan-staleness | PostToolUse | Ordnet geaenderte Dateien den Blattsatz-Etappen zu |
+| bauplan-report | Stop | Verdichtet das Staleness-Ledger zu einer Arbeitsliste |
+| bauplan-verify | Stop | Prueft den Blattsatz-Bestand gegen den letzten Commit |
 
 ## Setup-Befehle
 

@@ -428,7 +428,7 @@
       dort ganz.</p>
 
     <figure>
-      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von acht Skills. Vier sind aufrufbar: connector-feature, middleware-feature, repo-bauplan und setup. Vier weitere stehen in der README mit Slash-Aufruf, tragen aber kein user_invocable und sind daher nicht aufrufbar. repo-bauplan ist aufrufbar, fehlt aber in der README.">
+      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von acht Skills. Vier sind aufrufbar: connector-feature, middleware-feature, repo-bauplan und setup. Vier weitere stehen in der README mit Slash-Aufruf, tragen aber kein user_invocable und sind daher nicht aufrufbar.">
         <text x="16" y="28" class="s-lbl f-dim">Skill</text>
         <text x="440" y="28" text-anchor="middle" class="s-lbl f-dim">Frontmatter</text>
         <text x="640" y="28" text-anchor="middle" class="s-lbl f-dim">README</text>
@@ -459,8 +459,8 @@
         <text x="30" y="190" class="s-mono f-alert">repo-bauplan</text>
         <text x="230" y="190" class="s-tiny f-dim">312 Zeilen — der größte</text>
         <text x="440" y="190" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
-        <text x="640" y="190" text-anchor="middle" class="s-tiny f-alert">fehlt</text>
-        <text x="830" y="190" class="s-tiny f-alert">aufrufbar, undokumentiert</text>
+        <text x="640" y="190" text-anchor="middle" class="s-tiny f-worker">nachgetragen</text>
+        <text x="830" y="190" class="s-tiny f-worker">aufrufbar, dokumentiert</text>
 
         <rect x="16" y="210" width="928" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
         <text x="30" y="230" class="s-mono f-alert">mdm-template · mdm-block · figma-to-liquid · mdm-notes</text>
@@ -471,9 +471,10 @@
 
         <text x="16" y="282" class="s-tiny f-dim">Das ist nicht zwangsläufig ein Fehler: mdm-block wird laut README von mdm-template delegiert, figma-to-liquid ist eine Konventionssammlung. Nur die README behauptet etwas anderes.</text>
       </svg>
-      <figcaption><b>Zwei Fixe, zwei Entscheidungen.</b> Für
-        <code>repo-bauplan</code> ist die Sache klar: in die README aufnehmen. Bei den vier
-        anderen ist zu entscheiden, ob sie von Hand aufrufbar sein <em>sollen</em> — dann
+      <figcaption><b>Eine Entscheidung bleibt offen.</b>
+        <code>repo-bauplan</code> ist am 10. September 2026 in beide READMEs nachgetragen
+        worden. Bei den vier übrigen ist zu entscheiden, ob sie von Hand aufrufbar sein
+        <em>sollen</em> — dann
         <code>user_invocable: true</code> ergänzen — oder ob sie interne Bausteine bleiben,
         dann gehören sie in der README nicht in die Slash-Tabelle.</figcaption>
     </figure>
@@ -608,10 +609,12 @@
         <span class="check-no">01</span>
         <div>
           <h3>Vier dokumentierte Slash-Befehle existieren nicht</h3>
-          <p><b>Beleg:</b> <code>README.md</code> listet <code>/mdm-template</code>,
-             <code>/mdm-block</code>, <code>/figma-to-liquid</code> und
-             <code>/mdm-notes</code>. Keine der vier <code>SKILL.md</code> trägt
-             <code>user_invocable: true</code>.</p>
+          <p><b>Beleg:</b> <code>README.md</code> und <code>.claude/README.md</code>
+             listen <code>/mdm-template</code>, <code>/mdm-block</code>,
+             <code>/figma-to-liquid</code> und <code>/mdm-notes</code>. Keine der vier
+             <code>SKILL.md</code> trägt <code>user_invocable: true</code>. Dies ist der
+             einzige verbliebene Punkt der Doku-Drift — die übrigen sechzehn wurden am
+             10. September 2026 nachgetragen.</p>
           <p><b>Konsequenz:</b> Wer sie tippt, bekommt keinen Skill und keine Fehlermeldung,
              die das erklärt.</p>
         </div>
