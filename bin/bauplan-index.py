@@ -124,6 +124,7 @@ def main():
     ap.add_argument("--stand", default=None, help="Datum fuer die Meta-Zeile")
     args = ap.parse_args()
     project = lib.project_root(args.project)
+    lib.assert_project(project)
 
     with open(os.path.join(project, HEAD_ASSET), encoding="utf-8") as fh:
         head = fh.read()
@@ -224,4 +225,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except lib.ProjectError as exc:
+        print("FEHLER: %s" % exc, file=sys.stderr)
+        sys.exit(2)

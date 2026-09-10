@@ -25,6 +25,29 @@ def manifest_dir(project=None):
     return os.path.join(project_root(project), ".claude", "bauplan")
 
 
+class ProjectError(RuntimeError):
+    """Der Workspace wurde falsch aufgeloest."""
+
+
+def assert_project(project=None):
+    """Prueft, dass der Workspace Manifeste enthaelt.
+
+    Ohne diese Pruefung liest sich ein falsch aufgeloester Pfad als
+    "keine Etappen, nichts zu tun" — in CI ein gruener Lauf ohne Wirkung.
+    Genau so ist der erste Lauf am 10. September 2026 durchgelaufen, weil
+    CLAUDE_PROJECT_DIR dort nicht gesetzt war und der Standard ~/MDM auf dem
+    Runner nicht existiert.
+    """
+    base = manifest_dir(project)
+    if not os.path.isdir(base):
+        raise ProjectError(
+            "Kein Manifest-Verzeichnis unter %s.\n"
+            "CLAUDE_PROJECT_DIR loest auf %s auf. In CI auf den Checkout-Pfad setzen."
+            % (base, project_root(project)))
+    if not any(f.endswith(MANIFEST_SUFFIX) for f in os.listdir(base)):
+        raise ProjectError("Keine Manifeste in %s." % base)
+
+
 def docs_dir(project=None):
     return os.path.join(project_root(project), "docs", "bauplan")
 

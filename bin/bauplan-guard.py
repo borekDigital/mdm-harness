@@ -147,6 +147,7 @@ def main():
         with open(content_file, encoding="utf-8") as fh:
             violations = check_write(project, target, fh.read())
     elif args.verify:
+        lib.assert_project(project)
         violations = verify(project)
     else:
         ap.error("--check-write oder --verify angeben")
@@ -160,4 +161,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except lib.ProjectError as exc:
+        print("FEHLER: %s" % exc, file=sys.stderr)
+        sys.exit(2)

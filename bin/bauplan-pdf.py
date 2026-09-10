@@ -144,6 +144,7 @@ def main():
     args = ap.parse_args()
 
     project = lib.project_root(args.project)
+    lib.assert_project(project)
     manifest = lib.load_manifest(args.repo, project)
     if manifest is None:
         print("Kein Manifest fuer %s" % args.repo, file=sys.stderr)
@@ -200,4 +201,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except lib.ProjectError as exc:
+        print("FEHLER: %s" % exc, file=sys.stderr)
+        sys.exit(2)
