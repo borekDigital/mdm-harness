@@ -30,12 +30,12 @@ try:
 except ImportError:
     sys.exit(0)
 
-if lib.is_ignored(changed):
-    sys.exit(0)
-
 stamp = datetime.datetime.now().isoformat(timespec="seconds")
 for repo, _path, manifest in lib.iter_manifests(project):
-    rel = lib.split_repo_path(changed, repo)
+    root = lib.manifest_root(manifest, repo)
+    if lib.is_ignored(changed, root):
+        continue
+    rel = lib.relative_for(project, manifest, repo, changed)
     if rel is None:
         continue
     hits = lib.affected_etappen(manifest, [rel])

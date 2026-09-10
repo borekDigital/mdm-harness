@@ -41,7 +41,8 @@ def stale_for(project, repo):
     manifest = lib.load_manifest(repo, project)
     if manifest is None:
         return None, "kein Manifest"
-    repo_path = os.path.join(project, repo)
+    root = lib.manifest_root(manifest, repo)
+    repo_path = project if root == "." else os.path.join(project, root)
     if not os.path.isdir(os.path.join(repo_path, ".git")):
         # Nicht geklont heisst uebersprungen, nicht abgeschafft.
         return None, "nicht geklont"
@@ -54,8 +55,9 @@ def stale_for(project, repo):
     out = sh("git", "-C", repo_path, "diff", "--name-only", "%s..HEAD" % since)
     if out.returncode != 0:
         return None, "Commit %s nicht im Klon (fetch-depth zu klein?)" % since[:8]
+    root = lib.manifest_root(manifest, repo)
     changed = [line for line in out.stdout.splitlines()
-               if line.strip() and not lib.is_ignored("/" + line)]
+               if line.strip() and not lib.is_ignored("/" + line, root)]
     return lib.affected_etappen(manifest, changed), None
 
 
@@ -159,7 +161,8 @@ def main():
             # Etappen erneut als veraltet und die Auffrischung laeuft im Kreis.
             # Das ist eine Tatsache, keine Ermessensfrage: nicht dem Modell
             # ueberlassen, sondern hier setzen.
-            head = repo_head(os.path.join(project, repo))
+            head = repo_head(project if lib.manifest_root(
+                lib.load_manifest(repo, project), repo) == "." else os.path.join(project, repo))
             if head:
                 manifest = lib.load_manifest(repo, project)
                 manifest["last_seen_sha"] = head

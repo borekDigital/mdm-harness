@@ -143,8 +143,11 @@ def main():
         for key, meta in repos.items()
     )
     # Blattsaetze ohne Repo-Eintrag (z. B. die Harness selbst) hinten anhaengen.
+    # Name und Tech kommen dann aus dem Manifest, nicht aus workspace.yaml.
     sections += "".join(
-        repo_section(project, key, {"name": key, "tech": ""}, m, stale_etappen(project, key))
+        repo_section(project, key,
+                     {"name": m.get("name", key), "tech": m.get("tech", "")},
+                     m, stale_etappen(project, key))
         for key, m in manifests.items() if key not in repos
     )
 

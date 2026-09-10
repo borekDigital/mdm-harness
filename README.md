@@ -47,7 +47,8 @@ MDM/
 │   ├── settings.json         Shared Settings (versioniert)
 │   ├── settings.local.json   Persoenliche Settings (gitignored)
 │   └── agent-memory/         Lokales Agent-Gedaechtnis (gitignored)
-├── harness-app/              Dashboard (HTML/JS/CSS)
+├── bin/                      Werkzeuge fuer die Blattsaetze
+├── docs/bauplan/             Architektur-Blattsaetze (HTML-Quellen)
 ├── templates/                Bausteine fuer CLAUDE.md-Generierung
 ├── Tickets/                  Ticket-Artefakte
 ├── workspace.yaml            Repo-Manifest (Single Source of Truth)
@@ -118,14 +119,27 @@ Review und Security laufen immer parallel nach jeder Implementierung.
 ./sync.sh
 ```
 
-## Dashboard
+## Architektur-Blattsaetze
 
-Das Dashboard zeigt Agenten, Workflows, Skills, Architektur und Rules auf einen Blick:
+Die Architektur-Dokumentation liegt als versionierte HTML-Quellen unter
+`docs/bauplan/`. Einstiegspunkt ist die generierte Uebersicht mit
+Inhaltsverzeichnis:
 
 ```bash
-cd harness-app && python3 -m http.server 8042
-# → http://localhost:8042
+open docs/bauplan/index.html
 ```
+
+Erzeugt und gepflegt wird sie ueber den Skill `/repo-bauplan <repo>`; die
+Uebersicht selbst kommt aus `bin/bauplan-index.py` und wird von `sync.sh`
+mitgezogen. Fuer die Weitergabe an Externe ohne Claude-Zugang:
+
+```bash
+bin/bauplan-pdf.py <repo>
+```
+
+Ein geplanter GitHub-Workflow (`.github/workflows/bauplan-refresh.yml`)
+vergleicht `last_seen_sha` aus jedem Manifest mit `HEAD` des Arbeits-Repos und
+frischt betroffene Etappen auf — auch wenn ohne Claude committet wurde.
 
 ## Guard-Mechanismus
 

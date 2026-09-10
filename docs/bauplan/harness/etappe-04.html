@@ -1,4 +1,4 @@
-<title>MDM Architektur-Blattsätze</title>
+<title>Skills: 8 Ordner, 4 aufrufbar, 5 Rules</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -389,152 +389,282 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
-
 <div class="sheet">
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Workspace · Übersicht</p>
-      <h1>Architektur-<br>Blattsätze</h1>
-      <p>Einstiegspunkt in die Architektur-Dokumentation des Workspace. Jeder Blattsatz
-         deckt ein Repo ab, jede Etappe eine Frage, jede Aussage ist mit
-         <code>Datei:Zeile</code> belegt. Die HTML-Quellen liegen unter
-         <code>docs/bauplan/</code> und sind versioniert — Stände lassen sich also
-         vergleichen und als PDF weitergeben.</p>
+      <p class="tb-eyebrow">MDM Harness · Etappe 4 · Skills, Rules und Rechte</p>
+      <h1>Skills: 8 Ordner,<br>4 aufrufbar, 5 Rules</h1>
+      <p>Skills sind Arbeitsanweisungen, Rules sind Konventionen, Permissions sind Rechte —
+         drei verschiedene Mechanismen, die oft verwechselt werden. Ein Skill wird
+         <strong>aufgerufen</strong>, eine Rule greift <strong>nach Pfad</strong>, ein Recht
+         entscheidet über einen <strong>einzelnen Werkzeugaufruf</strong>.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Repos</dt><dd>2 von 6 dokumentiert</dd></div>
-      <div class="tb-cell"><dt>Etappen</dt><dd>16</dd></div>
-      <div class="tb-cell"><dt>HTML-Quellen</dt><dd>8 von 16</dd></div>
-      <div class="tb-cell"><dt>Design</dt><dd>bauplan-v1</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>8 SKILL.md · 5 Rules · settings.json</dd></div>
+      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 036 gesamt</dd></div>
+      <div class="tb-cell"><dt>Rechte</dt><dd>17 erlaubt · 2 verboten</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Aufrufbar <span>— user_invocable: true</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Nur intern <span>— von einem Skill geladen</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Pfad-gebunden <span>— Rule greift automatisch</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Lücke <span>— dokumentiert, aber nicht vorhanden</span></span>
   </div>
 
+  <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">theme</span>
-      <h2>Shopify Theme</h2>
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Die Drift geht in beide Richtungen</h2>
     </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan theme</code>.
-      Liquid/CSS/JS (Hyper 1.3.3)</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">connector</span>
-      <h2>Shopify Connector</h2>
-    </div>
-    <p class="lead">Rails 8.1 / React 18 / Polaris — 9 Etappen, Stand 2026-09-03.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis connector</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Zwei Rollen, eine Codebase</td><td class="m">4</td><td class="m">3</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Drei Prozesse, eine App</td><td class="m">6</td><td class="m">3</td><td class="m">2</td><td class="m"><a href="https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Acht Tabellen, drei Ströme</td><td class="m">5</td><td class="m">5</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Acht Türen, vier Wächter</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Action, API, Transformer</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Achtzehn Jobs, drei Warteschlangen</td><td class="m">5</td><td class="m">5</td><td class="m">—</td><td class="m"><a href="connector/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>Zwei Schemas, zwei Welten</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0">Artefakt</a></td></tr>
-          <tr><td class="m">08</td><td>Eine SPA im iframe</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/fecb7450-82c9-4e17-b636-16c702063b17">Artefakt</a></td></tr>
-          <tr><td class="m">09</td><td>Sechs Extensions, zwei Images</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">datalayer</span>
-      <h2>GTM Datalayer</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan datalayer</code>.
-      JavaScript</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">creditcheck</span>
-      <h2>Creditcheck + CustomerInfo</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan creditcheck</code>.
-      PHP 7.4 / Symfony</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">emailservice</span>
-      <h2>Emailservice</h2>
-    </div>
-    <p class="lead">PHP 8.3 / Symfony 7.1 — 3 Etappen, Stand 2026-09-10.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis emailservice</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Emailservice: 11 000 Zeilen, kein Datenmodell</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Container: 6 Dienste, 2 Compose-Welten</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Messenger: 3 Busse, 6 Stamps, 1 toter Pfad</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">payment-service</span>
-      <h2>Payment-Service</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan payment-service</code>.
-      PHP 8.3 / Symfony 7.1 / Nuxt</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">harness</span>
-      <h2>MDM Harness</h2>
-    </div>
-    <p class="lead">Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules — 4 Etappen, Stand 2026-09-10.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis harness</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Harness: 1 Repo, 6 Arbeitskopien, 0 Anwendungscode</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Agenten: 12 Dateien, 4 Rollen, 3 Bereiche</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Skills: 8 Ordner, 4 aufrufbar, 5 Rules</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
+    <p class="lead">Ob ein Skill mit <code>/</code> aufgerufen werden kann, entscheidet
+      allein <code>user_invocable: true</code> im Frontmatter. Die README listet sieben
+      Slash-Befehle — vier davon gibt es nicht, und der einzige mit über 300 Zeilen fehlt
+      dort ganz.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von acht Skills. Vier sind aufrufbar: connector-feature, middleware-feature, repo-bauplan und setup. Vier weitere stehen in der README mit Slash-Aufruf, tragen aber kein user_invocable und sind daher nicht aufrufbar. repo-bauplan ist aufrufbar, fehlt aber in der README.">
+        <text x="16" y="28" class="s-lbl f-dim">Skill</text>
+        <text x="440" y="28" text-anchor="middle" class="s-lbl f-dim">Frontmatter</text>
+        <text x="640" y="28" text-anchor="middle" class="s-lbl f-dim">README</text>
+        <text x="830" y="28" class="s-lbl f-dim">Wirkung</text>
+
+        <rect x="16" y="42" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="30" y="64" class="s-mono">connector-feature</text>
+        <text x="230" y="64" class="s-tiny f-dim">145 Zeilen</text>
+        <text x="440" y="64" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
+        <text x="640" y="64" text-anchor="middle" class="s-tiny">gelistet</text>
+        <text x="830" y="64" class="s-tiny f-web">aufrufbar, dokumentiert</text>
+
+        <rect x="16" y="84" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="30" y="106" class="s-mono">middleware-feature</text>
+        <text x="230" y="106" class="s-tiny f-dim">148 Zeilen</text>
+        <text x="440" y="106" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
+        <text x="640" y="106" text-anchor="middle" class="s-tiny">gelistet</text>
+        <text x="830" y="106" class="s-tiny f-web">aufrufbar, dokumentiert</text>
+
+        <rect x="16" y="126" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="30" y="148" class="s-mono">setup</text>
+        <text x="230" y="148" class="s-tiny f-dim">38 Zeilen</text>
+        <text x="440" y="148" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
+        <text x="640" y="148" text-anchor="middle" class="s-tiny">gelistet</text>
+        <text x="830" y="148" class="s-tiny f-web">aufrufbar, dokumentiert</text>
+
+        <rect x="16" y="168" width="928" height="34" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="30" y="190" class="s-mono f-alert">repo-bauplan</text>
+        <text x="230" y="190" class="s-tiny f-dim">312 Zeilen — der größte</text>
+        <text x="440" y="190" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
+        <text x="640" y="190" text-anchor="middle" class="s-tiny f-alert">fehlt</text>
+        <text x="830" y="190" class="s-tiny f-alert">aufrufbar, undokumentiert</text>
+
+        <rect x="16" y="210" width="928" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+        <text x="30" y="230" class="s-mono f-alert">mdm-template · mdm-block · figma-to-liquid · mdm-notes</text>
+        <text x="230" y="250" class="s-tiny f-dim">120 · 90 · 105 · 78 Zeilen</text>
+        <text x="440" y="240" text-anchor="middle" class="s-tiny f-alert">kein user_invocable</text>
+        <text x="640" y="240" text-anchor="middle" class="s-tiny">als /befehl gelistet</text>
+        <text x="830" y="240" class="s-tiny f-alert">nicht aufrufbar</text>
+
+        <text x="16" y="282" class="s-tiny f-dim">Das ist nicht zwangsläufig ein Fehler: mdm-block wird laut README von mdm-template delegiert, figma-to-liquid ist eine Konventionssammlung. Nur die README behauptet etwas anderes.</text>
+      </svg>
+      <figcaption><b>Zwei Fixe, zwei Entscheidungen.</b> Für
+        <code>repo-bauplan</code> ist die Sache klar: in die README aufnehmen. Bei den vier
+        anderen ist zu entscheiden, ob sie von Hand aufrufbar sein <em>sollen</em> — dann
+        <code>user_invocable: true</code> ergänzen — oder ob sie interne Bausteine bleiben,
+        dann gehören sie in der README nicht in die Slash-Tabelle.</figcaption>
+    </figure>
   </section>
 
+  <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Werkzeuge</span>
-      <h2>Erzeugen, prüfen, weitergeben</h2>
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>Wo Rules greifen, und wo nicht</h2>
     </div>
+    <p class="lead">Rules werden nicht aufgerufen, sondern nach Pfad zugeschaltet. Fünf
+      Dateien deklarieren zusammen vierzehn Pfadmuster. Interessant sind die Bereiche, die
+      keines davon trifft.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 322" role="img" aria-label="Pfad-Abdeckung der fünf Rules. Theme ist durch drei Rules abgedeckt, Connector app config db lib durch eine, die drei Middleware-Repos durch eine gemeinsame. Nicht abgedeckt sind connector-worktrees, connector spec, datalayer und die Harness selbst.">
+        <text x="16" y="28" class="s-lbl f-vite">abgedeckt — 14 Pfadmuster</text>
+        <text x="540" y="28" class="s-lbl f-alert">nicht abgedeckt</text>
+
+        <rect x="16" y="42" width="500" height="264" rx="3" fill="var(--vite)" fill-opacity="0.06" stroke="var(--vite)" stroke-width="1.5"></rect>
+
+        <text x="30" y="66" class="s-mono">liquid-conventions</text>
+        <text x="44" y="84" class="s-tiny f-dim">theme/sections · snippets · blocks · layout</text>
+        <text x="490" y="66" text-anchor="end" class="s-tiny f-dim">50 Zeilen</text>
+
+        <text x="30" y="112" class="s-mono">templates-json</text>
+        <text x="44" y="130" class="s-tiny f-dim">theme/templates</text>
+        <text x="490" y="112" text-anchor="end" class="s-tiny f-dim">16 Zeilen</text>
+
+        <text x="30" y="158" class="s-mono">merchant-config</text>
+        <text x="44" y="176" class="s-tiny f-dim">theme/config · theme/locales</text>
+        <text x="490" y="158" text-anchor="end" class="s-tiny f-dim">20 Zeilen</text>
+
+        <text x="30" y="204" class="s-mono">connector-conventions</text>
+        <text x="44" y="222" class="s-tiny f-dim">connector/app · config · db · lib</text>
+        <text x="490" y="204" text-anchor="end" class="s-tiny f-dim">27 Zeilen</text>
+
+        <text x="30" y="250" class="s-mono">middleware-conventions</text>
+        <text x="44" y="268" class="s-tiny f-dim">creditcheck · emailservice · payment-service</text>
+        <text x="490" y="250" text-anchor="end" class="s-tiny f-dim">43 Zeilen</text>
+
+        <text x="30" y="294" class="s-tiny f-dim">Theme trägt 3 Rules und 7 Muster — dort sitzen die meisten Fallstricke.</text>
+
+        <rect x="540" y="42" width="404" height="264" rx="3" fill="var(--alert)" fill-opacity="0.06" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+
+        <rect x="556" y="58" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="570" y="78" class="s-mono f-alert">connector-worktrees/**</text>
+        <text x="570" y="96" class="s-tiny f-dim">wo laut Konvention jede Feature-Arbeit stattfindet</text>
+
+        <rect x="556" y="122" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="570" y="142" class="s-mono f-alert">connector/spec/**</text>
+        <text x="570" y="160" class="s-tiny f-dim">Tests — obwohl TDD Pflicht ist</text>
+
+        <rect x="556" y="186" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="570" y="206" class="s-mono f-alert">datalayer/**</text>
+        <text x="570" y="224" class="s-tiny f-dim">im Entscheidungsbaum genannt, ohne Rule und ohne Agent</text>
+
+        <rect x="556" y="250" width="372" height="42" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="570" y="270" class="s-mono">.claude/** · bin/** · docs/**</text>
+        <text x="570" y="286" class="s-tiny f-dim">die Harness selbst — bewusst ohne Rule</text>
+      </svg>
+      <figcaption><b>Die Worktree-Lücke ist die folgenreichste.</b>
+        <code>CLAUDE.md</code> schreibt für Connector-Features einen eigenen Worktree unter
+        <code>connector-worktrees/&lt;branch&gt;/</code> vor. Die
+        <code>connector-conventions</code> greifen aber nur unter <code>connector/</code> —
+        also genau im Haupt-Worktree, in dem laut derselben Konvention nicht gearbeitet
+        wird. Der Fix ist ein zusätzliches Muster
+        <code>connector-worktrees/*/app/**</code> je Bereich.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>17 Rechte erlaubt, 2 verboten</h2>
+    </div>
+    <p class="lead">Die <code>permissions</code>-Liste in <code>settings.json</code> ersetzt
+      Rückfragen. Sie ist bewusst eng: dreizehn Bash-Muster, vier MCP-Werkzeuge, und alle
+      dreizehn Bash-Einträge sind auf ein Repo-Verzeichnis festgelegt.</p>
+
     <div class="tw">
       <table>
-        <caption>Befehle im Workspace-Root</caption>
-        <thead><tr><th class="m">Befehl</th><th>Wirkung</th></tr></thead>
+        <caption>settings.json — permissions</caption>
+        <thead><tr><th class="m">Art</th><th class="m">Anzahl</th><th>Inhalt</th></tr></thead>
         <tbody>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
-          <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
-          <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>
-          <tr><td class="m">bin/bauplan-guard.py --verify</td><td>Bestand gegen den letzten Commit prüfen</td></tr>
+          <tr><td class="m">allow · Bash</td><td class="m">13</td><td>Lesende Shopify-CLI (<code>theme check/info/list</code>), <code>git status/diff/log</code>, Connector-Linter (<code>rubocop</code>, <code>brakeman</code>, <code>rspec</code>), <code>git worktree</code> — jeweils mit <code>cd &lt;repo&gt; &amp;&amp;</code> davor</td></tr>
+          <tr><td class="m">allow · MCP</td><td class="m">4</td><td><code>learn_shopify_api</code>, <code>search_docs_chunks</code>, <code>validate_theme</code>, <code>validate_theme_codeblocks</code></td></tr>
+          <tr><td class="m">deny</td><td class="m">2</td><td><code>Edit</code> und <code>Write</code> auf <code>theme/config/settings_data.json</code></td></tr>
+          <tr><td class="m">MCP-Server</td><td class="m">1</td><td><code>shopify-dev-mcp</code> in <code>enabledMcpjsonServers</code></td></tr>
         </tbody>
       </table>
+    </div>
+    <p class="lead">Bemerkenswert ist die Doppelung bei <code>settings_data.json</code>: die
+      Datei steht auf der <code>deny</code>-Liste <em>und</em> wird von
+      <code>protect-merchant-files.sh:19</code> hart blockiert. Das ist keine Redundanz aus
+      Versehen — die <code>deny</code>-Regel greift nur bei exakt diesem Pfad, der Hook
+      erkennt zusätzlich <code>*/theme/config/settings_data.json</code> in Worktrees und
+      anderen Klonen.</p>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>Spec-Driven: 13 Dateien, 7 Bereiche</h2>
+    </div>
+    <p class="lead"><code>CLAUDE.md</code> schreibt vor, dass jede Änderung mit einer Spec
+      beginnt. Der Bestand zeigt, wo das praktiziert wird und wo bisher nur das Verzeichnis
+      angelegt ist.</p>
+
+    <div class="tw">
+      <table>
+        <caption>.claude/specs/ — Bestand</caption>
+        <thead><tr><th class="m">Bereich</th><th class="m">Specs</th><th>Inhalt</th></tr></thead>
+        <tbody>
+          <tr><td class="m">theme/</td><td class="m">6</td><td><code>_conventions.md</code>, <code>breadcrumbs.md</code>, <code>hilfe-hub.md</code>, <code>hilfe-template.md</code>, <code>page-title.md</code>, <code>global-brand-overrides.md</code></td></tr>
+          <tr><td class="m">harness/</td><td class="m">1</td><td><code>mdm-harness-repo.md</code> — die Spec dieses Repos</td></tr>
+          <tr><td class="m">connector/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
+          <tr><td class="m">creditcheck/ · emailservice/ · payment-service/ · datalayer/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead">Die Theme-Arbeit läuft also spec-getrieben, alles andere bisher nicht —
+      obwohl <code>CLAUDE.md</code> es für <strong>jede</strong> Änderung fordert. Das ist
+      kein Widerspruch, den man wegdokumentieren sollte: entweder gilt die Regel für alle
+      Bereiche, oder sie gilt für das Theme.</p>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Vier dokumentierte Slash-Befehle existieren nicht</h3>
+          <p><b>Beleg:</b> <code>README.md</code> listet <code>/mdm-template</code>,
+             <code>/mdm-block</code>, <code>/figma-to-liquid</code> und
+             <code>/mdm-notes</code>. Keine der vier <code>SKILL.md</code> trägt
+             <code>user_invocable: true</code>.</p>
+          <p><b>Konsequenz:</b> Wer sie tippt, bekommt keinen Skill und keine Fehlermeldung,
+             die das erklärt.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3>Die Worktrees haben keine Konventionen</h3>
+          <p><b>Beleg:</b> <code>connector-conventions.md</code> deklariert
+             <code>connector/app/**</code>, <code>config/**</code>, <code>db/**</code>,
+             <code>lib/**</code>. <code>CLAUDE.md</code> verlangt für Feature-Arbeit einen
+             Worktree unter <code>connector-worktrees/&lt;branch&gt;/</code>.</p>
+          <p><b>Konsequenz:</b> Genau in dem Verzeichnis, in dem laut Konvention gearbeitet
+             wird, greift die Konventionsdatei nicht. Im Haupt-Worktree, wo sie greift, soll
+             nicht gearbeitet werden.</p>
+          <p><b>Fix:</b> Pfadmuster <code>connector-worktrees/*/app/**</code> und Geschwister
+             ergänzen. Dasselbe gilt für <code>connector/spec/**</code>, das trotz
+             TDD-Pflicht in keinem Scope steht.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Spec-Driven ist für einen von sieben Bereichen gelebt</h3>
+          <p><b>Beleg:</b> <code>.claude/specs/</code> enthält dreizehn Dateien; sechs davon
+             liegen unter <code>theme/</code>, eine unter <code>harness/</code>, der Rest sind
+             <code>.gitkeep</code>-Platzhalter.</p>
+          <p><b>Konsequenz:</b> Für Connector- und Middleware-Features gibt es die geforderte
+             Spec nicht. Entweder wird die Regel dort nicht angewandt, oder sie wird
+             angewandt, ohne dass ein Artefakt entsteht — beides sollte man wissen, bevor man
+             sich auf „Spec-Driven Development" beruft.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Gute Nachricht: die Rechte sind eng und repo-gebunden</h3>
+          <p><b>Beleg:</b> Alle dreizehn <code>allow</code>-Einträge für Bash beginnen mit
+             <code>cd &lt;repo&gt; &amp;&amp;</code> oder betreffen lesende
+             <code>git</code>-Befehle. Kein Eintrag erlaubt <code>Bash(*)</code> oder ein
+             schreibendes Kommando.</p>
+          <p><b>Konsequenz:</b> Eine Rückfrage entfällt genau dort, wo sie nur Zeit kostet —
+             Linter und Statusabfragen. Alles Schreibende bleibt bestätigungspflichtig
+             beziehungsweise wird von den Hooks aus Etappe 3 abgefangen.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Workspace · docs/bauplan/index.html</span>
-    <span>Erzeugt von bin/bauplan-index.py</span>
-    <span>Bestandsquelle: workspace.yaml</span>
+    <span>MDM Harness · Etappe 4 von 4</span>
+    <span>Ende des Blattsatzes — Übersicht: docs/bauplan/index.html</span>
+    <span>Design bauplan-v1</span>
   </footer>
 
 </div>

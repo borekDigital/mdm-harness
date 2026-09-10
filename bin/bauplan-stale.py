@@ -74,7 +74,8 @@ def main():
         changed = changed_from_git(repo_path, since)
         new_sha = head_sha(repo_path)
 
-    relevant = [c for c in changed if not lib.is_ignored("/" + c)]
+    root = lib.manifest_root(manifest, args.repo)
+    relevant = [c for c in changed if not lib.is_ignored("/" + c, root)]
     hits = lib.affected_etappen(manifest, relevant)
 
     result = {

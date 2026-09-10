@@ -1,4 +1,4 @@
-<title>MDM Architektur-Blattsätze</title>
+<title>Agenten: 12 Dateien, 4 Rollen, 3 Bereiche</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -389,152 +389,304 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
-
 <div class="sheet">
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Workspace · Übersicht</p>
-      <h1>Architektur-<br>Blattsätze</h1>
-      <p>Einstiegspunkt in die Architektur-Dokumentation des Workspace. Jeder Blattsatz
-         deckt ein Repo ab, jede Etappe eine Frage, jede Aussage ist mit
-         <code>Datei:Zeile</code> belegt. Die HTML-Quellen liegen unter
-         <code>docs/bauplan/</code> und sind versioniert — Stände lassen sich also
-         vergleichen und als PDF weitergeben.</p>
+      <p class="tb-eyebrow">MDM Harness · Etappe 2 · Agenten und Pipeline</p>
+      <h1>Agenten: 12 Dateien,<br>4 Rollen, 3 Bereiche</h1>
+      <p>Die zwölf Agenten sind keine zwölf Erfindungen, sondern <strong>ein Muster in drei
+         Ausführungen</strong>. Jeder Bereich — Theme, Connector, Middleware — hat einen
+         Planer, einen Umsetzer und einen Prüfer; zwei Agenten arbeiten bereichsübergreifend.
+         Modell, Denkaufwand und Zugrenze folgen dabei der Rolle, nicht dem Bereich.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Repos</dt><dd>2 von 6 dokumentiert</dd></div>
-      <div class="tb-cell"><dt>Etappen</dt><dd>16</dd></div>
-      <div class="tb-cell"><dt>HTML-Quellen</dt><dd>8 von 16</dd></div>
-      <div class="tb-cell"><dt>Design</dt><dd>bauplan-v1</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>12 Agenten-Frontmatter</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>992 gesamt</dd></div>
+      <div class="tb-cell"><dt>Schreibgesperrt</dt><dd>4 von 12</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Planen <span>— opus, Freigabe danach</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Umsetzen <span>— erbt das Sitzungsmodell</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Prüfen <span>— sonnet, schreibgesperrt</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Prüfpunkt <span>— Konvention ohne Durchsetzung</span></span>
   </div>
 
+  <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">theme</span>
-      <h2>Shopify Theme</h2>
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Die Kette hat ein Tor in der Mitte</h2>
     </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan theme</code>.
-      Liquid/CSS/JS (Hyper 1.3.3)</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">connector</span>
-      <h2>Shopify Connector</h2>
-    </div>
-    <p class="lead">Rails 8.1 / React 18 / Polaris — 9 Etappen, Stand 2026-09-03.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis connector</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Zwei Rollen, eine Codebase</td><td class="m">4</td><td class="m">3</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Drei Prozesse, eine App</td><td class="m">6</td><td class="m">3</td><td class="m">2</td><td class="m"><a href="https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Acht Tabellen, drei Ströme</td><td class="m">5</td><td class="m">5</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Acht Türen, vier Wächter</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Action, API, Transformer</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Achtzehn Jobs, drei Warteschlangen</td><td class="m">5</td><td class="m">5</td><td class="m">—</td><td class="m"><a href="connector/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>Zwei Schemas, zwei Welten</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0">Artefakt</a></td></tr>
-          <tr><td class="m">08</td><td>Eine SPA im iframe</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/fecb7450-82c9-4e17-b636-16c702063b17">Artefakt</a></td></tr>
-          <tr><td class="m">09</td><td>Sechs Extensions, zwei Images</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">datalayer</span>
-      <h2>GTM Datalayer</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan datalayer</code>.
-      JavaScript</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">creditcheck</span>
-      <h2>Creditcheck + CustomerInfo</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan creditcheck</code>.
-      PHP 7.4 / Symfony</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">emailservice</span>
-      <h2>Emailservice</h2>
-    </div>
-    <p class="lead">PHP 8.3 / Symfony 7.1 — 3 Etappen, Stand 2026-09-10.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis emailservice</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Emailservice: 11 000 Zeilen, kein Datenmodell</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Container: 6 Dienste, 2 Compose-Welten</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Messenger: 3 Busse, 6 Stamps, 1 toter Pfad</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">payment-service</span>
-      <h2>Payment-Service</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan payment-service</code>.
-      PHP 8.3 / Symfony 7.1 / Nuxt</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">harness</span>
-      <h2>MDM Harness</h2>
-    </div>
-    <p class="lead">Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules — 4 Etappen, Stand 2026-09-10.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis harness</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Harness: 1 Repo, 6 Arbeitskopien, 0 Anwendungscode</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Agenten: 12 Dateien, 4 Rollen, 3 Bereiche</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Skills: 8 Ordner, 4 aufrufbar, 5 Rules</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
+    <p class="lead">Zwischen Planung und Umsetzung liegt eine <strong>Freigabe durch
+      Konrad</strong> — die einzige Stelle, an der die Pipeline auf einen Menschen wartet.
+      Danach laufen Review und Security-Review parallel, weil sie unterschiedliche Fragen
+      stellen und sich nicht behindern.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 298" role="img" aria-label="Ablauf: Extraktion nur beim Theme, dann Planer, dann eine Freigabe durch Konrad als Tor, dann Umsetzer, danach parallel Bereichs-Reviewer und Security-Reviewer, zuletzt der Docs-Writer. Nur der Umsetzer schreibt in die Arbeits-Repos.">
+        <defs>
+          <marker id="h2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <rect x="16" y="86" width="122" height="60" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.5" stroke-dasharray="4 3"></rect>
+        <text x="30" y="108" class="s-tiny">figma-extractor</text>
+        <text x="30" y="124" class="s-tiny f-dim">nur Theme</text>
+        <text x="30" y="140" class="s-tiny f-dim">sonnet · 30</text>
+        <line x1="138" y1="116" x2="176" y2="116" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
+
+        <rect x="176" y="86" width="130" height="60" rx="2" fill="var(--web)" fill-opacity="0.12" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="190" y="108" class="s-tiny">Planer</text>
+        <text x="190" y="124" class="s-tiny f-dim">theme · rails · symfony</text>
+        <text x="190" y="140" class="s-tiny f-web">opus · high · 40</text>
+
+        <line x1="306" y1="116" x2="344" y2="116" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
+
+        <rect x="344" y="76" width="96" height="80" rx="2" fill="var(--alert)" fill-opacity="0.1" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="392" y="102" text-anchor="middle" class="s-lbl f-alert">Tor</text>
+        <text x="392" y="122" text-anchor="middle" class="s-tiny">Freigabe</text>
+        <text x="392" y="138" text-anchor="middle" class="s-tiny f-dim">durch Konrad</text>
+
+        <line x1="440" y1="116" x2="478" y2="116" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
+
+        <rect x="478" y="86" width="140" height="60" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="492" y="108" class="s-tiny">Umsetzer</text>
+        <text x="492" y="124" class="s-tiny f-dim">liquid · rails · symfony</text>
+        <text x="492" y="140" class="s-tiny f-worker">inherit · high · 50</text>
+
+        <line x1="618" y1="104" x2="656" y2="62" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
+        <line x1="618" y1="128" x2="656" y2="170" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
+
+        <rect x="656" y="32" width="150" height="56" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="670" y="54" class="s-tiny">Bereichs-Prüfer</text>
+        <text x="670" y="70" class="s-tiny f-dim">sonnet · medium · 30</text>
+        <text x="670" y="84" class="s-tiny f-vite">kann nicht schreiben</text>
+
+        <rect x="656" y="144" width="150" height="56" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="670" y="166" class="s-tiny">security-reviewer</text>
+        <text x="670" y="182" class="s-tiny f-dim">sonnet · high · 30</text>
+        <text x="670" y="196" class="s-tiny f-vite">kann nicht schreiben</text>
+
+        <line x1="806" y1="60" x2="844" y2="102" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
+        <line x1="806" y1="172" x2="844" y2="130" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
+
+        <rect x="844" y="86" width="100" height="60" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="858" y="108" class="s-tiny">docs-writer</text>
+        <text x="858" y="124" class="s-tiny f-dim">haiku · low</text>
+        <text x="858" y="140" class="s-tiny f-dim">20 Züge</text>
+
+        <rect x="16" y="222" width="928" height="60" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="242" class="s-tiny">Nur der Umsetzer schreibt in ein Arbeits-Repo. Planer schreiben Plan-Dateien, Prüfer nichts, der Docs-Writer nach docs/ und Tickets/.</text>
+        <text x="32" y="260" class="s-tiny f-dim">Der security-reviewer ist der einzige Prüfer mit effort: high — er sucht, was die Bereichs-Prüfer nicht suchen: XSS, Secrets, Auth, DSGVO.</text>
+        <text x="32" y="276" class="s-tiny f-dim">Der Docs-Writer ist der einzige Agent auf haiku und mit effort: low. Deutsche Doku ist Formulierungsarbeit, keine Analyse.</text>
+      </svg>
+      <figcaption><b>Relevant beim Erweitern:</b> ein neuer Bereich braucht drei Agenten, kein
+        neues Muster. Wer einen vierten Bereich aufnimmt — etwa <code>datalayer</code>, für den
+        es bisher keine Agenten gibt — kopiert Planer, Umsetzer und Prüfer und tauscht die
+        Werkzeuge. Das Tor in der Mitte bleibt, und es bleibt die einzige menschliche
+        Station.</figcaption>
+    </figure>
   </section>
 
+  <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Werkzeuge</span>
-      <h2>Erzeugen, prüfen, weitergeben</h2>
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>Vier Rollen, dreimal ausgeführt</h2>
     </div>
+    <p class="lead">Dieselbe Matrix erklärt alle zwölf Dateien. Die gestrichelten Zellen sind
+      die Stellen, an denen das Muster bewusst nicht ausgeführt wurde.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 264" role="img" aria-label="Matrix aus vier Rollen und drei Bereichen. Theme hat Extraktion, Planer, Umsetzer und Prüfer. Connector und Middleware haben Planer, Umsetzer und Prüfer, aber keine Extraktion. Zusätzlich zwei bereichsübergreifende Agenten.">
+        <text x="150" y="30" text-anchor="middle" class="s-lbl f-dim">Extraktion</text>
+        <text x="330" y="30" text-anchor="middle" class="s-lbl f-web">Planen</text>
+        <text x="510" y="30" text-anchor="middle" class="s-lbl f-worker">Umsetzen</text>
+        <text x="690" y="30" text-anchor="middle" class="s-lbl f-vite">Prüfen</text>
+        <text x="860" y="30" text-anchor="middle" class="s-lbl f-dim">Zeilen</text>
+
+        <text x="16" y="70" class="s-mono">theme</text>
+        <rect x="70" y="46" width="160" height="34" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="150" y="68" text-anchor="middle" class="s-tiny">figma-extractor</text>
+        <rect x="250" y="46" width="160" height="34" rx="2" fill="var(--web)" fill-opacity="0.12" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="330" y="68" text-anchor="middle" class="s-tiny">theme-planner</text>
+        <rect x="430" y="46" width="160" height="34" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="510" y="68" text-anchor="middle" class="s-tiny">liquid-implementer</text>
+        <rect x="610" y="46" width="160" height="34" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="690" y="68" text-anchor="middle" class="s-tiny">theme-reviewer</text>
+        <text x="860" y="68" text-anchor="middle" class="s-tiny f-dim">74 · 112 · 74 · 44</text>
+
+        <text x="16" y="118" class="s-mono">connector</text>
+        <rect x="70" y="94" width="160" height="34" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="4 3"></rect>
+        <text x="150" y="116" text-anchor="middle" class="s-tiny f-dim">keine Extraktion</text>
+        <rect x="250" y="94" width="160" height="34" rx="2" fill="var(--web)" fill-opacity="0.12" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="330" y="116" text-anchor="middle" class="s-tiny">rails-planner</text>
+        <rect x="430" y="94" width="160" height="34" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="510" y="116" text-anchor="middle" class="s-tiny">rails-implementer</text>
+        <rect x="610" y="94" width="160" height="34" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="690" y="116" text-anchor="middle" class="s-tiny">rails-reviewer</text>
+        <text x="860" y="116" text-anchor="middle" class="s-tiny f-dim">— · 128 · 103 · 56</text>
+
+        <text x="16" y="166" class="s-mono">middleware</text>
+        <rect x="70" y="142" width="160" height="34" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="4 3"></rect>
+        <text x="150" y="164" text-anchor="middle" class="s-tiny f-dim">keine Extraktion</text>
+        <rect x="250" y="142" width="160" height="34" rx="2" fill="var(--web)" fill-opacity="0.12" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="330" y="164" text-anchor="middle" class="s-tiny">symfony-planner</text>
+        <rect x="430" y="142" width="160" height="34" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="510" y="164" text-anchor="middle" class="s-tiny">symfony-implementer</text>
+        <rect x="610" y="142" width="160" height="34" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="690" y="164" text-anchor="middle" class="s-tiny">symfony-reviewer</text>
+        <text x="860" y="164" text-anchor="middle" class="s-tiny f-dim">— · 127 · 98 · 55</text>
+
+        <text x="16" y="214" class="s-mono">datalayer</text>
+        <rect x="70" y="190" width="700" height="34" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
+        <text x="420" y="212" text-anchor="middle" class="s-tiny f-alert">kein Agent, obwohl der Entscheidungsbaum in README.md einen Datalayer-Workflow nennt</text>
+        <text x="860" y="212" text-anchor="middle" class="s-tiny f-dim">0</text>
+
+        <line x1="16" y1="234" x2="944" y2="234" stroke="currentColor" stroke-opacity="0.2"></line>
+        <text x="16" y="254" class="s-tiny f-dim">Übergreifend: security-reviewer (50 Zeilen) prüft alle Repos, docs-writer (71 Zeilen) schreibt die Abschlussdoku. Zusammen 992 Zeilen.</text>
+      </svg>
+      <figcaption><b>Die Zeilenzahlen verraten, wo die Arbeit steckt:</b> Planer sind mit 112
+        bis 128 Zeilen die längsten Dateien, Prüfer mit 44 bis 56 die kürzesten. Planen
+        braucht Anweisungen, Prüfen braucht eine Checkliste. Wer einen Agenten anpassen will,
+        findet die Substanz bei den Planern.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>Modell und Denkaufwand folgen der Rolle</h2>
+    </div>
+    <p class="lead">Kein Agent wählt sein Modell nach Bereich. Alle drei Planer bekommen
+      <code>opus</code>, alle drei Umsetzer erben das Sitzungsmodell, alle Prüfer bekommen
+      <code>sonnet</code>. Das ist konsequent durchgehalten — mit einer bewussten Ausnahme.</p>
+
     <div class="tw">
       <table>
-        <caption>Befehle im Workspace-Root</caption>
-        <thead><tr><th class="m">Befehl</th><th>Wirkung</th></tr></thead>
+        <caption>Frontmatter aller zwölf Agenten</caption>
+        <thead><tr><th class="m">Rolle</th><th class="m">Modell</th><th class="m">Effort</th><th class="m">maxTurns</th><th class="m">Memory</th><th>Werkzeuge</th></tr></thead>
         <tbody>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
-          <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
-          <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>
-          <tr><td class="m">bin/bauplan-guard.py --verify</td><td>Bestand gegen den letzten Commit prüfen</td></tr>
+          <tr><td class="m">3 × Planer</td><td class="m">opus</td><td class="m">high</td><td class="m">40</td><td class="m">project</td><td>unbeschränkt</td></tr>
+          <tr><td class="m">3 × Umsetzer</td><td class="m">inherit</td><td class="m">high</td><td class="m">50</td><td class="m">project</td><td>unbeschränkt</td></tr>
+          <tr><td class="m">3 × Bereichs-Prüfer</td><td class="m">sonnet</td><td class="m">medium</td><td class="m">30</td><td class="m">project</td><td><code>disallowedTools: Edit, Write, NotebookEdit</code></td></tr>
+          <tr><td class="m">security-reviewer</td><td class="m">sonnet</td><td class="m">high</td><td class="m">30</td><td class="m">project</td><td><code>disallowedTools: Edit, Write, NotebookEdit</code></td></tr>
+          <tr><td class="m">figma-extractor</td><td class="m">sonnet</td><td class="m">medium</td><td class="m">30</td><td class="m">project</td><td>unbeschränkt</td></tr>
+          <tr><td class="m">docs-writer</td><td class="m">haiku</td><td class="m">low</td><td class="m">20</td><td class="m">project</td><td>unbeschränkt</td></tr>
         </tbody>
       </table>
+    </div>
+    <p class="lead">Die Ausnahme ist der <code>security-reviewer</code>: dasselbe Modell wie
+      die Bereichs-Prüfer, aber <code>effort: high</code> statt <code>medium</code>. Er hat
+      dieselbe Zugrenze von 30 und soll damit tiefer suchen — Sicherheitslücken zeigen sich
+      seltener beim Überfliegen. Die Zugrenzen selbst steigen mit dem Schreibumfang: 20 für
+      Doku, 30 fürs Lesen und Prüfen, 40 fürs Planen, 50 fürs Umsetzen.</p>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>Schreibrechte: vier gesperrt, acht auf Zuruf</h2>
+    </div>
+    <p class="lead">Die README führt für jeden Agenten eine Spalte „Schreibrechte" —
+      <code>theme/</code>, <code>Tickets/</code>, <code>connector/ + worktrees</code>. Nur
+      ein Teil davon ist technisch durchgesetzt.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 236" role="img" aria-label="Vergleich: vier Prüf-Agenten haben disallowedTools und können nicht schreiben, das ist durchgesetzt. Bei den anderen acht Agenten ist der Schreibbereich nur in der README beschrieben, technisch aber unbeschränkt.">
+        <text x="16" y="28" class="s-lbl f-vite">durchgesetzt — 4 Agenten</text>
+        <text x="500" y="28" class="s-lbl f-alert">nur beschrieben — 8 Agenten</text>
+
+        <rect x="16" y="42" width="452" height="140" rx="3" fill="var(--vite)" fill-opacity="0.08" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="32" y="66" class="s-mono">theme-reviewer · rails-reviewer</text>
+        <text x="32" y="86" class="s-mono">symfony-reviewer · security-reviewer</text>
+        <rect x="32" y="100" width="420" height="30" rx="2" fill="var(--surface)" stroke="var(--vite)" stroke-opacity="0.45"></rect>
+        <text x="44" y="120" class="s-tiny">disallowedTools: Edit, Write, NotebookEdit</text>
+        <text x="32" y="152" class="s-tiny f-dim">Der Agent bekommt die Werkzeuge nicht. Ein Schreibversuch</text>
+        <text x="32" y="168" class="s-tiny f-dim">ist nicht möglich, nicht nur unerwünscht.</text>
+
+        <rect x="500" y="42" width="444" height="140" rx="3" fill="var(--alert)" fill-opacity="0.06" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+        <text x="516" y="66" class="s-mono">3 Planer · 3 Umsetzer</text>
+        <text x="516" y="86" class="s-mono">figma-extractor · docs-writer</text>
+        <rect x="516" y="100" width="412" height="30" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.4" stroke-dasharray="3 3"></rect>
+        <text x="528" y="120" class="s-tiny f-alert">kein tools- oder disallowedTools-Eintrag</text>
+        <text x="516" y="152" class="s-tiny f-dim">Der Schreibbereich steht in der README und im Systemprompt</text>
+        <text x="516" y="168" class="s-tiny f-dim">des Agenten. Technisch kann jeder überall schreiben.</text>
+
+        <rect x="16" y="196" width="928" height="32" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="216" class="s-tiny">Abgefedert wird das durch die Hooks: protect-merchant-files und bauplan-guard greifen unabhängig davon, welcher Agent schreibt. Etappe 3.</text>
+      </svg>
+      <figcaption><b>Warum das trotzdem tragfähig ist:</b> die Absicherung sitzt eine Schicht
+        tiefer. Ein Umsetzer, der versehentlich <code>theme/config/settings_data.json</code>
+        anfasst, wird nicht von seinem Frontmatter gestoppt, sondern vom PreToolUse-Hook —
+        und zwar unabhängig davon, welcher Agent gerade läuft. Wer die Grenzen härter zieht,
+        sollte das dort tun und nicht in zwölf Frontmattern.</figcaption>
+    </figure>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Gute Nachricht: die „read-only"-Angabe der README ist gedeckt</h3>
+          <p><b>Beleg:</b> alle vier Agenten, die <code>.claude/README.md</code> als
+             <b>read-only</b> führt, tragen <code>disallowedTools: Edit, Write, NotebookEdit</code>
+             im Frontmatter. Kein anderer Agent hat den Schlüssel.</p>
+          <p><b>Konsequenz:</b> Ein Prüfer kann seinen Befund nicht selbst umsetzen — genau
+             die Trennung, die ein Review wertvoll macht.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3>Für <code>datalayer</code> gibt es keinen Agenten</h3>
+          <p><b>Beleg:</b> Der Entscheidungsbaum in <code>.claude/README.md:40</code> leitet
+             „Datalayer (GTM)" auf einen „Datalayer-Workflow". In <code>.claude/agents/</code>
+             liegt kein Agent für diesen Bereich, in <code>.claude/rules/</code> keine Rule mit
+             <code>datalayer/**</code> im Pfad-Scope.</p>
+          <p><b>Konsequenz:</b> Datalayer-Arbeit läuft ohne Planer, ohne Prüfer und ohne
+             Konventionsdatei. Das kann bewusst sein — das Repo enthält bisher wenig — sollte
+             aber nicht als Workflow dokumentiert sein, den es nicht gibt.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Alle zwölf Agenten teilen sich ein Gedächtnis</h3>
+          <p><b>Beleg:</b> <code>memory: project</code> in allen zwölf Frontmattern, kein
+             Agent weicht ab.</p>
+          <p><b>Konsequenz:</b> Was der <code>rails-planner</code> über ein Muster lernt,
+             steht auch dem <code>symfony-planner</code> zur Verfügung. Erwünscht, solange
+             die Bereiche ähnliche Muster haben — mit dem Risiko, dass eine
+             Rails-Eigenheit als allgemeine Regel weitergetragen wird.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Die Freigabe ist die einzige menschliche Station</h3>
+          <p><b>Beleg:</b> Die Workflow-Beschreibungen in <code>.claude/README.md</code>
+             nennen für Theme, Connector und Middleware jeweils genau ein Gate — nach dem
+             Plan, vor der Umsetzung.</p>
+          <p><b>Konsequenz:</b> Nach der Freigabe laufen Umsetzung, zwei Reviews und die
+             Doku ohne weitere Rückfrage durch. Der Plan ist damit das Dokument, das
+             wirklich gelesen werden muss — nicht das Diff danach.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Workspace · docs/bauplan/index.html</span>
-    <span>Erzeugt von bin/bauplan-index.py</span>
-    <span>Bestandsquelle: workspace.yaml</span>
+    <span>MDM Harness · Etappe 2 von 4</span>
+    <span>Als nächstes: elf Hooks und was sie blockieren</span>
+    <span>Design bauplan-v1</span>
   </footer>
 
 </div>

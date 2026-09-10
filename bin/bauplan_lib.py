@@ -106,6 +106,17 @@ def affected_etappen(manifest, rel_paths):
     return hits
 
 
+def manifest_root(manifest, repo):
+    """Wurzel, auf die sich die `sources` eines Blattsatzes beziehen.
+
+    Normalfall: das gleichnamige Unterverzeichnis des Workspace. Der Wert `"."`
+    heisst: der Workspace selbst ist der Gegenstand — so dokumentiert sich die
+    Harness. Ohne diese Unterscheidung waere ihr Blattsatz nicht pflegbar, weil
+    ihre Dateien in keinem Repo-Unterverzeichnis liegen.
+    """
+    return (manifest or {}).get("root", repo)
+
+
 def split_repo_path(changed_abs, repo):
     """Absoluten Pfad in repo-relativ umrechnen, sofern er in diesem Repo liegt.
 
@@ -118,11 +129,31 @@ def split_repo_path(changed_abs, repo):
     return changed_abs.split(marker, 1)[1]
 
 
-IGNORED_SEGMENTS = ("/.claude/", "/Tickets/", "/.git/", "/node_modules/", "/vendor/")
+def relative_for(project, manifest, repo, changed_abs):
+    """Geaenderte Datei in die Bezugsgroesse des Blattsatzes umrechnen."""
+    root = manifest_root(manifest, repo)
+    if root != ".":
+        return split_repo_path(changed_abs, root)
+    proj = os.path.abspath(project)
+    path = os.path.abspath(changed_abs)
+    if path == proj or not path.startswith(proj + os.sep):
+        return None
+    return os.path.relpath(path, proj)
 
 
-def is_ignored(path):
-    """Harness, Tickets, Fremdcode und Scratch belegen keine Aussage."""
+IGNORED_SEGMENTS = ("/.claude/", "/Tickets/", "/.git/", "/node_modules/",
+                    "/vendor/", "/docs/bauplan/", "/.claude/bauplan/")
+
+
+def is_ignored(path, root=None):
+    """Tickets, Fremdcode, Scratch und die Doku selbst belegen keine Aussage.
+
+    Fuer den Workspace-Blattsatz (`root == "."`) ist `.claude` der Gegenstand
+    und darf nicht ausgeschlossen werden.
+    """
     if path.startswith("/tmp/") or path.startswith("/private/tmp/"):
         return True
-    return any(seg in path for seg in IGNORED_SEGMENTS)
+    segmente = IGNORED_SEGMENTS
+    if root == ".":
+        segmente = tuple(s for s in segmente if s != "/.claude/")
+    return any(seg in path for seg in segmente)
