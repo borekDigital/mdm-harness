@@ -1,0 +1,128 @@
+"""Gemeinsame Zuordnungslogik fuer Bauplaene.
+
+Eine Regel, drei Aufrufer: der PostToolUse-Hook (lokale Claude-Session), die CI
+(Push ohne Claude) und der Guard. Wuerde jeder seine eigene Zuordnung mitbringen,
+koennte lokal etwas als aktuell gelten, was in CI als veraltet erscheint.
+
+Quelle der Zuordnung: .claude/bauplan/<repo>.manifest.json, Feld "sources".
+Dort stehen repo-relative Pfade oder Globs; jede Etappe belegt ihre Aussagen mit
+diesen Dateien. Aendert sich eine davon, ist die Etappe fraglich.
+"""
+
+import fnmatch
+import json
+import os
+
+MANIFEST_SUFFIX = ".manifest.json"
+
+
+def project_root(explicit=None):
+    """Workspace-Wurzel. CLAUDE_PROJECT_DIR gewinnt, sonst ~/MDM."""
+    return explicit or os.environ.get("CLAUDE_PROJECT_DIR") or os.path.expanduser("~/MDM")
+
+
+def manifest_dir(project=None):
+    return os.path.join(project_root(project), ".claude", "bauplan")
+
+
+def docs_dir(project=None):
+    return os.path.join(project_root(project), "docs", "bauplan")
+
+
+def sheet_path(repo, nr, project=None):
+    """Pfad der HTML-Quelle einer Etappe. Die Quelle liegt im Repo, nicht im
+    Scratchpad — daher Historie, PDF-Export und CI-Zugriff."""
+    return os.path.join(docs_dir(project), repo, "etappe-%02d.html" % int(nr))
+
+
+def iter_manifests(project=None):
+    """(repo, pfad, manifest) je Manifest. Defekte Manifeste werden uebersprungen,
+    nicht verschluckt — der Aufrufer sieht sie im Rueckgabewert nicht, der Guard
+    prueft sie separat."""
+    base = manifest_dir(project)
+    if not os.path.isdir(base):
+        return
+    for entry in sorted(os.listdir(base)):
+        if not entry.endswith(MANIFEST_SUFFIX):
+            continue
+        repo = entry[: -len(MANIFEST_SUFFIX)]
+        path = os.path.join(base, entry)
+        try:
+            with open(path, encoding="utf-8") as fh:
+                yield repo, path, json.load(fh)
+        except (OSError, ValueError):
+            continue
+
+
+def load_manifest(repo, project=None):
+    path = os.path.join(manifest_dir(project), repo + MANIFEST_SUFFIX)
+    if not os.path.isfile(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def save_manifest(repo, manifest, project=None):
+    path = os.path.join(manifest_dir(project), repo + MANIFEST_SUFFIX)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump(manifest, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+    os.replace(tmp, path)
+
+
+def path_matches(pattern, rel):
+    """Traegt `pattern` die Datei `rel`? Beide repo-relativ, Trenner '/'.
+
+    Drei Formen, absteigend spezifisch:
+      exakt          config/messenger.yaml
+      Verzeichnis    src/Queueing/**      deckt alles darunter ab
+      Glob           extensions/*/package.json
+    """
+    if rel == pattern:
+        return True
+    if pattern.endswith("/**"):
+        prefix = pattern[:-3] + "/"
+        if rel.startswith(prefix):
+            return True
+    return fnmatch.fnmatch(rel, pattern)
+
+
+def affected_etappen(manifest, rel_paths):
+    """Etappen, die von mindestens einer der Dateien belegt werden.
+
+    Rueckgabe in Manifest-Reihenfolge, je Etappe die ausloesenden Dateien.
+    Reihenfolge ist stabil, damit Ledger und CI-Ausgabe vergleichbar bleiben.
+    """
+    hits = []
+    for etappe in manifest.get("etappen", []):
+        patterns = etappe.get("sources", [])
+        triggers = sorted(
+            {rel for rel in rel_paths for p in patterns if path_matches(p, rel)}
+        )
+        if triggers:
+            hits.append((etappe, triggers))
+    return hits
+
+
+def split_repo_path(changed_abs, repo):
+    """Absoluten Pfad in repo-relativ umrechnen, sofern er in diesem Repo liegt.
+
+    Der Workspace haelt die Repos als Unterverzeichnisse (~/MDM/emailservice/...),
+    daher genuegt das Verzeichnis-Segment als Marker.
+    """
+    marker = "/%s/" % repo
+    if marker not in changed_abs:
+        return None
+    return changed_abs.split(marker, 1)[1]
+
+
+IGNORED_SEGMENTS = ("/.claude/", "/Tickets/", "/.git/", "/node_modules/", "/vendor/")
+
+
+def is_ignored(path):
+    """Harness, Tickets, Fremdcode und Scratch belegen keine Aussage."""
+    if path.startswith("/tmp/") or path.startswith("/private/tmp/"):
+        return True
+    return any(seg in path for seg in IGNORED_SEGMENTS)

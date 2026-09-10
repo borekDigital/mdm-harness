@@ -1,0 +1,100 @@
+{
+  "repo": "emailservice",
+  "design_system": "bauplan-v1",
+  "generated": "2026-09-10",
+  "last_seen_sha": "d58530dd91f42d6412dd449b6339f55ab15c5790",
+  "etappen": [
+    {
+      "nr": 1,
+      "title": "Emailservice: 11 000 Zeilen, kein Datenmodell",
+      "url": "https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd",
+      "favicon": "📧",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "README.MD",
+        "www/composer.json",
+        "www/composer.lock",
+        "www/config/bundles.php",
+        "www/config/services.yaml",
+        "www/src/Services/Sap/Domain/Enum/EventType.php",
+        "www/src/Handler/Requests/RequestHandlerService.php",
+        "www/src/Services/Mailing/Sap/SystemMailService.php",
+        "www/src/Controller/**"
+      ],
+      "open_questions": [],
+      "closes": []
+    },
+    {
+      "nr": 2,
+      "title": "Container: 6 Dienste, 2 Compose-Welten",
+      "url": "https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed",
+      "favicon": "📧",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "docker-compose.yml",
+        "docker-compose.override.yml",
+        "docker-compose.production.yml",
+        "docker-compose.testing.yml",
+        "docker-compose.jenkins.yml",
+        "docker/**",
+        "conf/**",
+        ".env",
+        ".gitlab-ci.yml",
+        "www/config/packages/security.yaml",
+        "www/src/Queueing/Middleware/Base/MaintenanceMiddleware.php"
+      ],
+      "open_questions": [
+        "Erreicht ein anderer Dienst im Overlay-Netz nginx ohne Traefik-Auth? nur im Swarm pruefbar"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 3,
+      "title": "Messenger: 3 Busse, 6 Stamps, 1 toter Pfad",
+      "url": "https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee",
+      "favicon": "📧",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "www/config/packages/messenger.yaml",
+        "www/config/services.yaml",
+        "www/src/Queueing/**",
+        "www/src/Services/Sap/EnrichmentService.php",
+        "www/src/Services/Sap/Validation/**",
+        "www/src/Services/Sap/SapService.php",
+        "www/src/Preparer/**",
+        "www/src/Handler/**",
+        "www/src/Services/Emarsys/EmarsysService.php",
+        "www/src/Services/Emarsys/Events/**"
+      ],
+      "open_questions": [
+        "Fuehrt Emarsys je Mandant eine Unterdrueckungsliste, die die SAP-Werbesperre abbildet? nur mit Emarsys-Zugang pruefbar"
+      ],
+      "closes": []
+    }
+  ],
+  "plan": [
+    {
+      "nr": 4,
+      "title": "Eingang: 3 Controller, 1 Nutzdaten-Route",
+      "frage": "Wer kommt herein, wie wird die SAP-Nutzlast repariert, was messen die Zaehler"
+    },
+    {
+      "nr": 5,
+      "title": "Registrierung: 2 Mailtypen, 6 Listen",
+      "frage": "Das Registry-Muster in services.yaml und was ein neuer Mailtyp kostet"
+    },
+    {
+      "nr": 6,
+      "title": "Emarsys: 6 Mandanten, 1 wirksames Mapping",
+      "frage": "companies.yaml, der MailMappings-Einrueckungsfehler, Templating und Platzhalter"
+    },
+    {
+      "nr": 7,
+      "title": "Deploy: GitLab CI, Docker Swarm",
+      "frage": "Pipeline, Kaniko-Builds, Swarm-Rollout, was in CI nicht laeuft"
+    }
+  ]
+}

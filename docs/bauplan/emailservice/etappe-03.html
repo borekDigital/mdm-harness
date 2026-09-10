@@ -1,0 +1,736 @@
+<title>Messenger: 3 Busse, 6 Stamps, 1 toter Pfad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --paper:      #F4F6F8;
+    --surface:    #FFFFFF;
+    --surface-2:  #E9ECF1;
+    --rule:       #C4CAD4;
+    --rule-soft:  #DCE0E8;
+    --text:       #191E27;
+    --dim:        #59606F;
+    --web:        #94620A;
+    --worker:     #13615C;
+    --vite:       #6B4275;
+    --alert:      #98282F;
+    --grid:       rgba(25, 30, 39, 0.055);
+
+    --disp: "Saira Condensed", "Arial Narrow", sans-serif;
+    --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #0F1218;
+      --surface:   #161A21;
+      --surface-2: #1D222B;
+      --rule:      #333A46;
+      --rule-soft: #252B35;
+      --text:      #E3E7ED;
+      --dim:       #949CAB;
+      --web:       #E2AB49;
+      --worker:    #5EC0B7;
+      --vite:      #C79ACF;
+      --alert:     #ED8B92;
+      --grid:      rgba(255, 255, 255, 0.045);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:     #0F1218;
+    --surface:   #161A21;
+    --surface-2: #1D222B;
+    --rule:      #333A46;
+    --rule-soft: #252B35;
+    --text:      #E3E7ED;
+    --dim:       #949CAB;
+    --web:       #E2AB49;
+    --worker:    #5EC0B7;
+    --vite:      #C79ACF;
+    --alert:     #ED8B92;
+    --grid:      rgba(255, 255, 255, 0.045);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    background-image:
+      repeating-linear-gradient(to right,  var(--grid) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 28px);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 40px 22px 88px;
+  }
+
+  /* ---------- Titelblock, wie im Zeichnungssatz ---------- */
+  .titleblock {
+    background: var(--surface);
+    border: 1.5px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .tb-main { padding: 26px 26px 22px; }
+  .tb-eyebrow {
+    font-family: var(--disp);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 0 0 10px;
+  }
+  .tb-main h1 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 54px);
+    line-height: 0.98;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .tb-main p {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--dim);
+    font-size: 15px;
+  }
+  .tb-meta {
+    border-top: 1.5px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .tb-cell {
+    padding: 12px 18px;
+    border-right: 1px solid var(--rule-soft);
+  }
+  .tb-cell:last-child { border-right: none; }
+  .tb-cell dt {
+    font-family: var(--disp);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 0 0 3px;
+  }
+  .tb-cell dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Legende ---------- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin: 22px 0 0;
+    padding: 14px 18px;
+    border: 1px dashed var(--rule);
+    background: var(--surface);
+  }
+  .legend-item {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .swatch {
+    width: 11px;
+    height: 11px;
+    flex: none;
+    border-radius: 2px;
+    transform: translateY(1px);
+  }
+  .sw-web    { background: var(--web); }
+  .sw-worker { background: var(--worker); }
+  .sw-vite   { background: var(--vite); }
+  .sw-alert  { background: var(--alert); }
+  .legend-item span { color: var(--dim); }
+
+  /* ---------- Blätter ---------- */
+  .plate { margin-top: 54px; }
+  .plate-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    border-bottom: 1.5px solid var(--rule);
+    padding-bottom: 9px;
+    margin-bottom: 18px;
+  }
+  .plate-no {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--dim);
+    flex: none;
+    padding-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .plate-head h2 {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(22px, 3.4vw, 31px);
+    line-height: 1.06;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .lead {
+    margin: 0 0 22px;
+    max-width: 68ch;
+  }
+  .lead strong { font-weight: 600; }
+
+  /* ---------- Figuren ---------- */
+  figure {
+    margin: 0 0 6px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 18px 18px 4px;
+    overflow-x: auto;
+  }
+  figure svg {
+    display: block;
+    width: 100%;
+    min-width: 660px;
+    height: auto;
+    color: var(--text);
+  }
+  figcaption {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--dim);
+    border-top: 1px solid var(--rule-soft);
+    margin-top: 14px;
+    padding: 11px 2px 13px;
+  }
+  figcaption b { color: var(--text); font-weight: 600; }
+
+  /* SVG-Textrollen */
+  .s-name { font-family: var(--mono); font-size: 12.5px; font-weight: 700; fill: currentColor; }
+  .s-mono { font-family: var(--mono); font-size: 11px; fill: currentColor; }
+  .s-tiny { font-family: var(--mono); font-size: 9.6px; fill: currentColor; }
+  .s-lbl  { font-family: var(--disp); font-size: 11.5px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; fill: currentColor; }
+  .s-note { font-family: var(--body); font-size: 11.5px; fill: currentColor; }
+  .f-dim    { fill: var(--dim); }
+  .f-web    { fill: var(--web); }
+  .f-worker { fill: var(--worker); }
+  .f-vite   { fill: var(--vite); }
+  .f-alert  { fill: var(--alert); }
+
+  /* ---------- Code ---------- */
+  pre {
+    margin: 0 0 22px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--rule);
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.72;
+  }
+  pre .fp { color: var(--dim); }
+  code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: var(--surface-2);
+    padding: 0.1em 0.34em;
+    border-radius: 2px;
+  }
+  pre code { background: none; padding: 0; font-size: 1em; }
+
+  /* ---------- Tabellen ---------- */
+  .tw { overflow-x: auto; margin-bottom: 22px; }
+  table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    background: var(--surface);
+  }
+  caption {
+    text-align: left;
+    font-family: var(--disp);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding: 0 0 8px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  thead th {
+    font-family: var(--disp);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--dim);
+    border-bottom: 1.5px solid var(--rule);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.m, th.m { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------- Prüfpunkte ---------- */
+  .checks {
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .check {
+    background: var(--surface);
+    padding: 17px 20px;
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 0 14px;
+  }
+  .check-no {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--alert);
+    padding-top: 3px;
+  }
+  .check h3 {
+    font-family: var(--body);
+    font-size: 14.5px;
+    font-weight: 600;
+    margin: 0 0 5px;
+  }
+  .check p { margin: 0; font-size: 13px; color: var(--dim); }
+  .check p + p { margin-top: 6px; }
+
+  footer {
+    margin-top: 58px;
+    border-top: 1.5px solid var(--rule);
+    padding-top: 16px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 26px;
+  }
+
+  a { color: inherit; }
+  a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--web);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-main">
+      <p class="tb-eyebrow">MDM Emailservice · Etappe 3 · Messenger und Nachrichtenfluss</p>
+      <h1>Messenger: 3 Busse,<br>6 Stamps, 1 toter Pfad</h1>
+      <p>Der Nachrichtenfluss ist die Architektur dieses Dienstes. Drei Busse, drei Transporte,
+         drei Handler — geroutet wird über <strong>Basisklassen</strong>, nicht über konkrete
+         Nachrichtentypen. Und eine auskommentierte Zeile trennt die SAP-Anreicherung samt
+         Opt-out-Filter vom Rest des Systems ab.</p>
+    </div>
+    <dl class="tb-meta">
+      <div class="tb-cell"><dt>Gelesen</dt><dd>messenger.yaml · 26 Klassen</dd></div>
+      <div class="tb-cell"><dt>Busse</dt><dd>3</dd></div>
+      <div class="tb-cell"><dt>Stamps</dt><dd>6</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+    </dl>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><i class="swatch sw-web"></i>Synchron <span>— im HTTP-Request</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Asynchron <span>— Worker je Transport</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Fremdsystem <span>— SAP und Emarsys</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Unerreichbar <span>— Code ohne Aufrufer</span></span>
+  </div>
+
+  <!-- ============ BLATT 01 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Routing über Basisklassen</h2>
+    </div>
+    <p class="lead">In <code>messenger.yaml</code> stehen drei Routing-Regeln, und jede nennt
+      eine <em>abstrakte Basisklasse</em>. Symfony ordnet eine Nachricht dem Transport zu, wenn
+      ihre Klasse von der genannten erbt. Das ist der Grund, warum ein neuer Mailtyp keine
+      Änderung an dieser Datei braucht.</p>
+
+    <pre><code><span class="fp">www/config/packages/messenger.yaml:9–12</span>
+routing:
+  'App\Queueing\Messages\Requests\Sap\Mailing\Base\IncomingMailRequest': incoming_mail_requests
+  'App\Queueing\Messages\Requests\Sap\Enrichment\Base\EnrichmentRequest': enrichment_requests
+  'App\Queueing\Messages\Requests\Emarsys\Base\EmarsysEventRequest':      emarsys_event_requests</code></pre>
+
+    <figure>
+      <svg viewBox="0 0 960 306" role="img" aria-label="Drei Busse mit je drei Middlewares. Jeder Bus hat einen eigenen Transport und einen eigenen Handler. Die Middlewares sind TransactionIdMiddleware aus dem MDM-Logger-Bundle, eine bus-eigene Middleware, die von MaintenanceMiddleware erbt, und die Symfony-Validierung.">
+        <text x="16" y="24" class="s-lbl f-dim">Bus</text>
+        <text x="250" y="24" class="s-lbl f-dim">Middleware-Kette, in dieser Reihenfolge</text>
+        <text x="784" y="24" class="s-lbl f-dim">Handler</text>
+
+        <!-- Bus 1 -->
+        <rect x="16" y="38" width="224" height="72" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="30" y="60" class="s-mono">incoming_mail_requests</text>
+        <text x="30" y="78" class="s-tiny f-web">default_bus</text>
+        <text x="30" y="96" class="s-tiny f-dim">dispatch aus dem Controller</text>
+
+        <rect x="250" y="38" width="150" height="72" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="262" y="60" class="s-tiny">TransactionId</text>
+        <text x="262" y="76" class="s-tiny f-dim">aus MDMLoggerBundle</text>
+        <text x="262" y="98" class="s-tiny f-dim">setzt Korrelations-ID</text>
+
+        <rect x="408" y="38" width="180" height="72" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="420" y="60" class="s-tiny">IncomingMailRequest-</text>
+        <text x="420" y="76" class="s-tiny">Middleware</text>
+        <text x="420" y="98" class="s-tiny f-dim">setzt ValidationStamp</text>
+
+        <rect x="596" y="38" width="126" height="72" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="608" y="60" class="s-tiny">validation</text>
+        <text x="608" y="78" class="s-tiny f-dim">Symfony-Standard</text>
+
+        <rect x="736" y="38" width="208" height="72" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="748" y="60" class="s-tiny">IncomingMailRequestHandler</text>
+        <text x="748" y="82" class="s-tiny f-dim">stellt EnrichmentRequest ein</text>
+
+        <!-- Bus 2 -->
+        <rect x="16" y="122" width="224" height="72" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="30" y="144" class="s-mono">enrichment_requests</text>
+        <text x="30" y="164" class="s-tiny f-dim">dispatch aus Handler 1</text>
+
+        <rect x="250" y="122" width="150" height="72" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="262" y="144" class="s-tiny">TransactionId</text>
+
+        <rect x="408" y="122" width="180" height="72" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="420" y="144" class="s-tiny">EnrichmentMiddleware</text>
+
+        <rect x="596" y="122" width="126" height="72" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="608" y="144" class="s-tiny">validation</text>
+
+        <rect x="736" y="122" width="208" height="72" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="748" y="144" class="s-tiny">EnrichmentHandler</text>
+        <text x="748" y="166" class="s-tiny f-alert">reichert nicht an — Blatt 03</text>
+
+        <!-- Bus 3 -->
+        <rect x="16" y="206" width="224" height="72" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="30" y="228" class="s-mono">emarsys_event_requests</text>
+        <text x="30" y="248" class="s-tiny f-dim">dispatch aus Handler 2</text>
+
+        <rect x="250" y="206" width="150" height="72" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="262" y="228" class="s-tiny">TransactionId</text>
+
+        <rect x="408" y="206" width="180" height="72" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="420" y="228" class="s-tiny">EmarsysEventRequest-</text>
+        <text x="420" y="244" class="s-tiny">Middleware</text>
+
+        <rect x="596" y="206" width="126" height="72" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="608" y="228" class="s-tiny">validation</text>
+
+        <rect x="736" y="206" width="208" height="72" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="748" y="228" class="s-tiny">EmarsysEventHandler</text>
+        <text x="748" y="250" class="s-tiny f-dim">ruft die Emarsys-API</text>
+
+        <text x="16" y="298" class="s-tiny f-dim">Alle drei bus-eigenen Middlewares erben von MaintenanceMiddleware und prüfen daher vor jeder Nachricht die maintenance.flag-Datei.</text>
+      </svg>
+      <figcaption><b>Relevant beim Erweitern:</b> ein neuer Mailtyp erbt von den drei
+        Basisklassen und wird ohne Konfigurationsänderung geroutet. Der Preis ist
+        Unsichtbarkeit — welche konkreten Nachrichten es gibt, steht nirgends zentral. Die
+        Antwort liefert nur <code>ls www/src/Queueing/Messages/Requests/</code>: derzeit
+        zwei Mailtypen, je drei Nachrichtenklassen.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 02 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>Der Weg einer Mail — vier Stationen</h2>
+    </div>
+    <p class="lead">Zwischen dem SAP-Aufruf und der Mail bei Emarsys liegen vier Stationen und
+      drei Warteschlangen. Nur die erste läuft im Request; die Antwort an SAP geht raus, sobald
+      Station 1 eingestellt ist.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 470" role="img" aria-label="Vertikale Kette der vier Stationen. Station null ist der Controller im Request, der die Nachricht einstellt und sofort antwortet. Station eins bis drei laufen in je einem Worker und übergeben per Warteschlange. Station drei ruft zweimal die Emarsys-API auf: erst Kontaktdaten holen, dann das Event auslösen.">
+        <defs>
+          <marker id="e3m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="16" y="24" class="s-lbl f-dim">Ort</text>
+        <text x="200" y="24" class="s-lbl f-dim">Station und was sie tut</text>
+        <text x="820" y="24" class="s-lbl f-dim">Übergabe</text>
+
+        <!-- Station 0 -->
+        <text x="16" y="62" class="s-tiny f-web">Request</text>
+        <text x="16" y="78" class="s-tiny f-dim">php-fpm</text>
+        <rect x="200" y="38" width="580" height="72" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="216" y="60" class="s-mono">SapController::sap</text>
+        <text x="216" y="78" class="s-tiny">RequestHandlerService wählt anhand von EVENT den passenden Handler</text>
+        <text x="216" y="96" class="s-tiny f-dim">baut IncomingMailRequest, dispatch, Antwort direkt aus dem Request-Objekt</text>
+        <text x="820" y="70" class="s-tiny f-worker">Queue 1</text>
+        <line x1="490" y1="110" x2="490" y2="130" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e3m1)"></line>
+
+        <!-- Station 1 -->
+        <text x="16" y="154" class="s-tiny f-worker">Worker</text>
+        <text x="16" y="170" class="s-tiny f-dim">incoming</text>
+        <rect x="200" y="130" width="580" height="72" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="216" y="152" class="s-mono">IncomingMailRequestHandler</text>
+        <text x="216" y="170" class="s-tiny">EnrichmentRequestPreparerService baut daraus einen EnrichmentRequest</text>
+        <text x="216" y="188" class="s-tiny f-dim">reine Umformung, kein Fremdsystem-Aufruf</text>
+        <text x="820" y="162" class="s-tiny f-worker">Queue 2</text>
+        <line x1="490" y1="202" x2="490" y2="222" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e3m1)"></line>
+
+        <!-- Station 2 -->
+        <text x="16" y="246" class="s-tiny f-worker">Worker</text>
+        <text x="16" y="262" class="s-tiny f-dim">enrichment</text>
+        <rect x="200" y="222" width="580" height="86" rx="2" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="216" y="244" class="s-mono">EnrichmentHandler</text>
+        <text x="216" y="262" class="s-tiny">EmarsysEventRequestPreparerService baut den EmarsysEventRequest</text>
+        <text x="216" y="282" class="s-tiny f-alert">Der SAP-Abruf steht hier — auskommentiert. Die Station heißt Anreicherung,</text>
+        <text x="216" y="298" class="s-tiny f-alert">reichert aber nichts an. Blatt 03.</text>
+        <text x="820" y="254" class="s-tiny f-worker">Queue 3</text>
+        <line x1="490" y1="308" x2="490" y2="328" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e3m1)"></line>
+
+        <!-- Station 3 -->
+        <text x="16" y="352" class="s-tiny f-worker">Worker</text>
+        <text x="16" y="368" class="s-tiny f-dim">emarsys</text>
+        <rect x="200" y="328" width="580" height="104" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="216" y="350" class="s-mono">EmarsysEventHandler</text>
+        <text x="216" y="370" class="s-tiny">1. getEmarsysContactData — holt die Kontaktdaten bei Emarsys</text>
+        <text x="216" y="388" class="s-tiny">2. EmarsysEventService baut den Trigger, CompanyService liefert die MailId</text>
+        <text x="216" y="406" class="s-tiny">3. processExternalEvent — löst das Kampagnen-Event aus</text>
+        <text x="216" y="424" class="s-tiny f-dim">replyCode 0 zählt als Erfolg, alles andere als Fehler in Prometheus</text>
+
+        <rect x="200" y="446" width="580" height="18" rx="2" fill="none" stroke="none"></rect>
+        <text x="820" y="360" class="s-tiny f-vite">Emarsys</text>
+        <text x="820" y="376" class="s-tiny f-dim">2 Aufrufe</text>
+
+        <text x="16" y="458" class="s-tiny f-dim">Die Kette ist im Code verdrahtet: jeder Handler bekommt den nächsten Bus injiziert. Es gibt keine Konfiguration, die die Reihenfolge beschreibt.</text>
+      </svg>
+      <figcaption><b>Warum die Antwort an SAP wenig aussagt:</b> die Mail wird drei Stationen
+        später ausgelöst. Scheitert Station 3 — falsche MailId, Emarsys nicht erreichbar —
+        hat SAP längst <code>200</code> gesehen. Der einzige Ort, an dem dieser Fehler
+        auftaucht, sind die Prometheus-Zähler
+        <code>ERROR_EMARSYS_MAIL_QUEUE</code> und das Log.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>Eine auskommentierte Zeile trennt 1 500 Zeilen ab</h2>
+    </div>
+    <p class="lead">Der README nennt zwei Kernaufgaben: die Anfrage <em>mit Kundendaten aus SAP
+      anreichern</em> und <em>E-Mails an Kunden mit Werbesperre herausfiltern</em>. Beide
+      hängen an <code>EnrichmentService::performEnrichment</code>. Diese Methode hat genau
+      einen Aufrufer im Code — und der ist auskommentiert.</p>
+
+    <pre><code><span class="fp">www/src/Queueing/Handler/Sap/EnrichmentHandler.php:63–67</span>
+//            if($enrichmentRequest-&gt;getEvent() === EventType::PAYMENT_RECEIVED) {
+//                /** @var EmailData $enrichedData */
+//                $enrichedData = $this-&gt;enrichmentService-&gt;performEnrichment($enrichmentRequest, false);
+//                $emarsysEventRequest-&gt;setEnrichedData($enrichedData);
+//            }</code></pre>
+
+    <figure>
+      <svg viewBox="0 0 960 340" role="img" aria-label="Der EnrichmentHandler hält eine Referenz auf den EnrichmentService, ruft ihn aber nicht auf. Dahinter liegen unerreichbar: der SAP-Client, der ValidationService, ein Validator und fünf Prüf-Tasks, darunter der MailBarrierTask für die Werbesperre.">
+        <defs>
+          <marker id="e3m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <!-- Handler -->
+        <rect x="16" y="70" width="188" height="110" rx="3" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="30" y="50" class="s-lbl f-dim">erreichbar</text>
+        <text x="30" y="94" class="s-mono">EnrichmentHandler</text>
+        <text x="30" y="114" class="s-tiny f-dim">bekommt EnrichmentService</text>
+        <text x="30" y="130" class="s-tiny f-dim">per Konstruktor injiziert</text>
+        <text x="30" y="152" class="s-tiny f-dim">und benutzt ihn nie</text>
+        <text x="30" y="170" class="s-tiny f-worker">läuft, formt um, gibt weiter</text>
+
+        <!-- Bruchstelle -->
+        <line x1="204" y1="125" x2="286" y2="125" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#e3m2)"></line>
+        <text x="245" y="112" text-anchor="middle" class="s-tiny f-alert">Zeile 65</text>
+        <text x="245" y="146" text-anchor="middle" class="s-tiny f-alert">auskommentiert</text>
+
+        <!-- unerreichbarer Block -->
+        <rect x="286" y="34" width="658" height="286" rx="3" fill="var(--alert)" fill-opacity="0.05" stroke="var(--alert)" stroke-opacity="0.5" stroke-dasharray="5 4"></rect>
+        <text x="302" y="54" class="s-lbl f-alert">ohne Aufrufer — etwa 1 500 Zeilen</text>
+
+        <rect x="302" y="66" width="290" height="60" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="314" y="88" class="s-mono f-alert">EnrichmentService</text>
+        <text x="314" y="106" class="s-tiny f-dim">performEnrichment — einziger Einstieg</text>
+        <text x="314" y="120" class="s-tiny f-dim">ruft SAP, dann die Validierung</text>
+
+        <line x1="447" y1="126" x2="447" y2="146" stroke="var(--alert)" stroke-opacity="0.6" marker-end="url(#e3m2)"></line>
+
+        <rect x="302" y="146" width="290" height="58" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="314" y="168" class="s-mono f-alert">SapService</text>
+        <text x="314" y="186" class="s-tiny f-dim">Q12 und P12 über ECS, EmailData</text>
+        <text x="314" y="200" class="s-tiny f-dim">Kundendaten aus SAP</text>
+
+        <rect x="616" y="66" width="312" height="58" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="628" y="88" class="s-mono f-alert">ValidationService</text>
+        <text x="628" y="106" class="s-tiny f-dim">einziger Aufruf: EnrichmentService:68</text>
+
+        <line x1="772" y1="124" x2="772" y2="144" stroke="var(--alert)" stroke-opacity="0.6" marker-end="url(#e3m2)"></line>
+
+        <rect x="616" y="144" width="312" height="46" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="628" y="166" class="s-mono f-alert">PaymentReceivedValidator</text>
+        <text x="628" y="182" class="s-tiny f-dim">der einzige registrierte Validator</text>
+
+        <line x1="772" y1="190" x2="772" y2="210" stroke="var(--alert)" stroke-opacity="0.6" marker-end="url(#e3m2)"></line>
+
+        <rect x="616" y="210" width="312" height="96" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="628" y="230" class="s-lbl f-alert">5 Tasks</text>
+        <text x="628" y="250" class="s-tiny">EmailExistsTask</text>
+        <text x="628" y="266" class="s-tiny f-alert">MailBarrierTask — die Werbesperre</text>
+        <text x="628" y="282" class="s-tiny">AddressStateTask · CustomerGroupTask</text>
+        <text x="628" y="298" class="s-tiny">ReminderCheckTask</text>
+
+        <text x="302" y="230" class="s-note f-alert">Der Opt-out-Filter, den der README als</text>
+        <text x="302" y="248" class="s-note f-alert">Zweck des Dienstes nennt, sitzt in diesem</text>
+        <text x="302" y="266" class="s-note f-alert">Block. Er wird zur Laufzeit nicht erreicht.</text>
+        <text x="302" y="292" class="s-tiny f-dim">Belegt durch: grep performEnrichment www/src</text>
+        <text x="302" y="306" class="s-tiny f-dim">→ 1 Treffer, in Kommentarzeile 65.</text>
+      </svg>
+      <figcaption><b>Das ist der wichtigste Befund des Blattsatzes.</b> Die Kette bricht an
+        einer einzigen Stelle, und dahinter liegt beides: der SAP-Abruf und die Werbesperre.
+        Der <code>enrichment_requests</code>-Worker läuft weiter, verarbeitet Nachrichten
+        erfolgreich und meldet Erfolg an Prometheus — er formt die Nachricht nur um. Von
+        außen sieht ein funktionierender Dienst genauso aus wie dieser.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>Kundendaten kommen jetzt von Emarsys</h2>
+    </div>
+    <p class="lead">Ohne den SAP-Pfad ist der Dienst nicht datenlos — er bezieht die
+      Kontaktdaten aus der Gegenrichtung. <code>EmarsysEventHandler</code> fragt sie bei
+      Emarsys ab, bevor er das Event auslöst.</p>
+
+    <pre><code><span class="fp">www/src/Queueing/Handler/Emarsys/EmarsysEventHandler.php:72–78</span>
+$emarsysContactDataResponse = $this-&gt;emarsysService-&gt;getEmarsysContactData($emarsysEventRequest);
+$emarsysContactData = $emarsysContactDataResponse-&gt;getData()-&gt;getResult();
+if (is_array($emarsysContactData) &amp;&amp; array_key_exists(0, $emarsysContactData)) {
+    $emarsysEventRequest-&gt;setEmarsysContactData($emarsysContactData[0]);
+}</code></pre>
+
+    <p class="lead">Die dokumentierte und die tatsächliche Datenquelle unterscheiden sich also
+      — mit Folgen für die Frage, wer die Werbesperre auswertet. Im Code tut es niemand;
+      ob Emarsys eine eigene Unterdrückungsliste führt, ist von hier aus nicht feststellbar.</p>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Der Opt-out-Filter läuft nicht</h3>
+          <p><b>Beleg:</b> <code>MailBarrierTask::check</code> prüft
+             <code>$data-&gt;isMailAllowed() &amp;&amp; !$data-&gt;isMailBlocked()</code>. Der Task hängt
+             am <code>PaymentReceivedValidator</code>, dieser am <code>ValidationService</code>,
+             dieser wird allein aus <code>EnrichmentService.php:68</code> aufgerufen — und
+             <code>performEnrichment</code> hat nur den auskommentierten Aufrufer in
+             <code>EnrichmentHandler.php:65</code>.</p>
+          <p><b>Konsequenz:</b> Kunden mit Werbesperre werden im Code nicht ausgefiltert.
+             Ob im Betrieb trotzdem keine Mail rausgeht, entscheidet allein Emarsys.</p>
+          <p><b>⚠️ Offene Frage:</b> Führt Emarsys je Mandant eine Unterdrückungsliste, die
+             die SAP-Sperre abbildet? Nur mit Emarsys-Zugang prüfbar. Vor einer
+             Reaktivierung des Pfades zu klären.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3><code>ValidationService</code> erkennt einen fehlenden Validator nicht</h3>
+          <p><b>Beleg:</b> <code>www/src/Services/Sap/Validation/ValidationService.php:52–64</code>
+             setzt <code>$validator = null</code>, benutzt dieselbe Variable dann als
+             <code>foreach</code>-Laufvariable und prüft danach <code>if ($validator === null)</code>.
+             Nach einer Schleife über ein nicht leeres Array hält die Variable das letzte
+             Element — nie <code>null</code>.</p>
+          <p><b>Konsequenz:</b> <code>ValidationException::MISSING_VALIDATOR</code> greift nur,
+             wenn überhaupt kein Validator registriert ist. Registriert ist genau einer
+             (<code>PaymentReceivedValidator</code>), also würde jedes andere Ereignis die
+             Validierung stillschweigend überspringen, statt zu scheitern — auch nach
+             Reaktivierung des Pfades aus Blatt 03.</p>
+          <p><b>Fix:</b> eine eigene Trefferschleifenvariable, oder <code>return</code> im
+             Trefferfall und <code>throw</code> dahinter.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Es gibt keinen <code>failure_transport</code> — endgültig gescheiterte Nachrichten sind weg</h3>
+          <p><b>Beleg:</b> <code>www/config/packages/messenger.yaml</code> definiert drei
+             Transporte und drei Busse, aber weder <code>failure_transport</code> noch
+             <code>retry_strategy</code>. Es gilt die Symfony-Voreinstellung: drei Versuche,
+             danach verwerfen.</p>
+          <p><b>Konsequenz:</b> Eine Mail, deren Emarsys-Aufruf dreimal scheitert, ist
+             verloren und nicht nachstellbar — es gibt keine Datenbank und keine
+             Fehlerwarteschlange, aus der man sie erneut anstoßen könnte. Bei gesetzter
+             <code>maintenance.flag</code> trifft das jede Nachricht im Retry-Fenster.</p>
+          <p><b>Fix:</b> einen vierten Transport <code>failed</code> anlegen und als
+             <code>failure_transport</code> eintragen. Danach steht
+             <code>messenger:failed:retry</code> zur Verfügung.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Sechs Stamps, davon zwei ohne erkennbaren Setzer</h3>
+          <p><b>Beleg:</b> <code>www/src/Queueing/Stamps/</code> enthält
+             <code>DoNotSendStamp</code>, <code>EnrichedMailDataStamp</code>,
+             <code>ErrorStamp</code>, <code>MessageReceivedStamp</code>,
+             <code>ValidationPassedStamp</code> und die Basisklasse
+             <code>AbstractStamp</code>. Gesetzt wird in den Middlewares der
+             Symfony-eigene <code>ValidationStamp</code>, nicht diese.</p>
+          <p><b>Konsequenz:</b> <code>DoNotSendStamp</code> und
+             <code>EnrichedMailDataStamp</code> gehören zum abgetrennten Pfad aus Blatt 03 —
+             sie sind die Marker, mit denen ein gefilterter oder angereicherter Datensatz
+             durch die Kette getragen würde. Wer den Pfad reaktiviert, braucht sie; wer den
+             Code aufräumt, darf sie nicht mit dem Rest wegwerfen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>MDM Emailservice · Etappe 3 von 7</span>
+    <span>Als nächstes: Registrierungsmuster in services.yaml</span>
+    <span>Design bauplan-v1</span>
+  </footer>
+
+</div>

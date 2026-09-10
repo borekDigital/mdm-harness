@@ -175,5 +175,6 @@
         "Etappe 4: beide Dockerfiles setzen RAILS_ENV=production, die Basic-Auth greift auch in Staging"
       ]
     }
-  ]
+  ],
+  "last_seen_sha": "3e540486418652b644dd66c4fc09112b499f0363"
 }
