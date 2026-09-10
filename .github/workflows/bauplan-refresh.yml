@@ -58,6 +58,11 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    env:
+      # Auf Job-Ebene, nicht je Schritt. Ohne diese Variable fallen die
+      # bin/-Werkzeuge auf ~/MDM zurueck — auf dem Runner nicht vorhanden —
+      # und der Lauf endet gruen, ohne etwas geprueft zu haben.
+      CLAUDE_PROJECT_DIR: ${{ github.workspace }}
     steps:
       - name: Harness auschecken
         uses: actions/checkout@v4
@@ -167,7 +172,14 @@ jobs:
           [ -n "${{ inputs.repo }}" ] && ARGS="$ARGS --repo ${{ inputs.repo }}"
           python3 bin/bauplan-ci.py $ARGS | tee bericht.txt
           # Nach einer Pipe ist $? der Status von tee. Gebraucht wird der des Scripts.
-          echo "rc=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          RC=${PIPESTATUS[0]}
+          echo "rc=$RC" >> "$GITHUB_OUTPUT"
+          # 0 = aktuell, 3 = etwas veraltet. Alles andere ist ein Defekt und
+          # darf nicht als gruener Lauf ohne Befund durchgehen.
+          if [ "$RC" != "0" ] && [ "$RC" != "3" ]; then
+            echo "::error::bauplan-ci.py endete mit $RC — kein gueltiger Befund"
+            exit 1
+          fi
 
       - name: Claude Code installieren
         if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
@@ -177,7 +189,6 @@ jobs:
         if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          CLAUDE_PROJECT_DIR: ${{ github.workspace }}
         run: |
           ARGS="--regenerate"
           [ -n "${{ inputs.repo }}" ] && ARGS="$ARGS --repo ${{ inputs.repo }}"
@@ -212,6 +223,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bauplan-bericht
+          # .claude/ ist ein Punkt-Verzeichnis; upload-artifact v4 laesst
+          # versteckte Dateien sonst still weg.
+          include-hidden-files: true
           path: |
             bericht.txt
             .claude/bauplan/CI-BERICHT.json

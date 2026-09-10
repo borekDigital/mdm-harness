@@ -112,6 +112,7 @@ def main():
     ap.add_argument("--project", default=None)
     args = ap.parse_args()
     project = lib.project_root(args.project)
+    lib.assert_project(project)
 
     repos = ([args.repo] if args.repo
              else [r for r, _p, _m in lib.iter_manifests(project)])
@@ -194,4 +195,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except lib.ProjectError as exc:
+        print("FEHLER: %s" % exc, file=sys.stderr)
+        sys.exit(2)

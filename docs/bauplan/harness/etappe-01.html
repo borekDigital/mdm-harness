@@ -403,7 +403,7 @@
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>sync.sh · setup.sh · workspace.yaml</dd></div>
       <div class="tb-cell"><dt>Steuerdateien</dt><dd>12 Agenten · 8 Skills · 11 Hooks · 5 Rules</dd></div>
-      <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>464 setup · 309 sync</dd></div>
+      <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>464 setup · 283 sync</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
     </dl>
@@ -442,7 +442,7 @@
 
         <text x="32" y="196" class="s-name">Skripte</text>
         <text x="46" y="216" class="s-tiny f-dim">setup.sh 464 Zeilen — klont Repos</text>
-        <text x="46" y="232" class="s-tiny f-dim">sync.sh 309 Zeilen — erzeugt CLAUDE.md</text>
+        <text x="46" y="232" class="s-tiny f-dim">sync.sh 283 Zeilen — erzeugt CLAUDE.md</text>
         <text x="46" y="248" class="s-tiny f-dim">bin/ 9 Werkzeuge für die Blattsätze</text>
 
         <text x="32" y="278" class="s-name">Vorlagen und Doku</text>
@@ -534,7 +534,7 @@
 
         <rect x="392" y="106" width="228" height="86" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
         <text x="406" y="130" class="s-name f-worker">sync.sh</text>
-        <text x="406" y="150" class="s-tiny f-dim">idempotent, 309 Zeilen</text>
+        <text x="406" y="150" class="s-tiny f-dim">idempotent, 283 Zeilen</text>
         <text x="406" y="168" class="s-tiny f-dim">yaml_get liest per sed,</text>
         <text x="406" y="184" class="s-tiny f-dim">ohne YAML-Parser</text>
 
@@ -627,13 +627,13 @@
 
         <rect x="16" y="160" width="440" height="46" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
         <text x="30" y="180" class="s-mono">update_local_timestamps</text>
-        <text x="30" y="198" class="s-tiny">setzt last_sync = jetzt — Zeile 295</text>
+        <text x="30" y="198" class="s-tiny">setzt last_sync = jetzt — Zeile 269</text>
 
         <line x1="236" y1="206" x2="236" y2="222" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1c)"></line>
 
         <rect x="16" y="222" width="440" height="46" rx="2" fill="var(--alert)" fill-opacity="0.1" stroke="var(--alert)" stroke-width="1.5"></rect>
         <text x="30" y="242" class="s-mono f-alert">check_consistency</text>
-        <text x="30" y="260" class="s-tiny">prüft days_ago &gt; 7 — Zeile 301, Test in Zeile 239</text>
+        <text x="30" y="260" class="s-tiny">prüft days_ago &gt; 7 — Zeile 275, Test in Zeile 213</text>
 
         <rect x="488" y="160" width="456" height="108" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
         <text x="504" y="182" class="s-tiny">Wird nur Fehler 1 behoben, kippt das Verhalten ins andere Extrem:</text>
@@ -693,9 +693,9 @@
              Doppelpunkt und liefert aus <code>last_sync: "2026-09-10T11:58:36Z"</code> die
              Zeichenkette <code>00Z</code>. <code>date -j -f</code> scheitert daran, der
              Fallback <code>|| echo 0</code> setzt die Epoche auf 0, und daraus errechnet
-             Zeile 239 eine Differenz von 20706 Tagen. Zweitens ruft <code>main()</code>
-             <code>update_local_timestamps</code> (Zeile 295) vor
-             <code>check_consistency</code> (Zeile 301) auf.</p>
+             Zeile 213 eine Differenz von 20706 Tagen. Zweitens ruft <code>main()</code>
+             <code>update_local_timestamps</code> (Zeile 269) vor
+             <code>check_consistency</code> (Zeile 275) auf.</p>
           <p><b>Konsequenz:</b> Beobachtet wird eine Warnung für alle sechs Repos bei jedem
              Lauf. Behebt man nur den ersten Fehler, kippt es ins Gegenteil: der Zeitstempel
              ist dann vier Zeilen vorher auf jetzt gesetzt worden, <code>days_ago</code> ist
