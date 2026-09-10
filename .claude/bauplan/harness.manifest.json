@@ -1,0 +1,80 @@
+{
+  "repo": "harness",
+  "name": "MDM Harness",
+  "tech": "Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules",
+  "root": ".",
+  "design_system": "bauplan-v1",
+  "generated": "2026-09-10",
+  "last_seen_sha": "b2b5f1799d8daf7c5de357387a48f128fbef214e",
+  "etappen": [
+    {
+      "nr": 1,
+      "title": "Harness: 1 Repo, 6 Arbeitskopien, 0 Anwendungscode",
+      "url": "https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66",
+      "favicon": "🧰",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "workspace.yaml",
+        ".gitignore",
+        "sync.sh",
+        "setup.sh",
+        "templates/**",
+        "git-hooks/**",
+        "README.md",
+        ".mcp.json"
+      ],
+      "open_questions": [],
+      "closes": []
+    },
+    {
+      "nr": 2,
+      "title": "Agenten: 12 Dateien, 4 Rollen, 3 Bereiche",
+      "url": "https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac",
+      "favicon": "🧰",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        ".claude/agents/**",
+        ".claude/README.md"
+      ],
+      "open_questions": [],
+      "closes": []
+    },
+    {
+      "nr": 3,
+      "title": "Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade",
+      "url": "https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908",
+      "favicon": "🧰",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        ".claude/hooks/**",
+        ".claude/settings.json",
+        "bin/bauplan_lib.py",
+        ".claude/README.md",
+        "README.md"
+      ],
+      "open_questions": [
+        "Der Ausgabeweg des Drift-Melders ist unveraendert stdout+async — kuenftige Rueckstaende bleiben unsichtbar"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 4,
+      "title": "Skills: 8 Ordner, 4 aufrufbar, 5 Rules",
+      "url": "https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17",
+      "favicon": "🧰",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        ".claude/skills/**",
+        ".claude/rules/**",
+        ".claude/specs/**",
+        ".claude/settings.json"
+      ],
+      "open_questions": [],
+      "closes": []
+    }
+  ]
+}

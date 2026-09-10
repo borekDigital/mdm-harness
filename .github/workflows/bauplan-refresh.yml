@@ -1,0 +1,228 @@
+# Haelt die Architektur-Blattsaetze aktuell, auch wenn niemand Claude benutzt.
+#
+# Der lokale Hook (.claude/hooks/bauplan-staleness.sh) greift nur in einer
+# Claude-Sitzung. Wer normal committet und pusht, loest ihn nicht aus. Dieser
+# Lauf schliesst die Luecke: er vergleicht last_seen_sha aus jedem Manifest mit
+# HEAD des Arbeits-Repos und wendet dieselbe Zuordnungsregel an
+# (bin/bauplan_lib.py) — lokal und hier gilt also dasselbe als veraltet.
+#
+# Voraussetzungen als Repository-Secrets (Settings > Secrets and variables > Actions):
+#   GH_REPO_TOKEN      Fine-grained PAT, Contents:Read auf shopifyFrontend_MDM,
+#                      shopifyConnector, shopifyDatalayer. Ein Deploy Key genuegt
+#                      nicht — der gilt bei GitHub nur fuer ein Repository.
+#   GITLAB_TOKEN       Gruppen-Deploy-Token der Gruppe `middleware` auf
+#                      gitlab.mdm.de, Scope read_repository.
+#   GITLAB_TOKEN_USER  Benutzername des Deploy-Tokens (GitLab zeigt ihn beim Anlegen).
+#   CLAUDE_CODE_OAUTH_TOKEN  aus `claude setup-token`. Ohne dieses Secret laeuft
+#                      nur der Bericht, es wird nichts geschrieben.
+#
+# Geklont wird ueber HTTPS mit Token, nicht ueber SSH. Belegt am 10. September 2026:
+# https://gitlab.mdm.de/middleware/emailservice.git/info/refs?service=git-upload-pack
+# antwortet aus einem Cloud-Netz mit HTTP 401 — der Git-Endpunkt ist oeffentlich
+# erreichbar und verlangt nur Zugangsdaten. Ein selbst gehosteter Runner im
+# MDM-Netz ist damit nicht erforderlich.
+#
+# Die Remotes in workspace.yaml bleiben unveraendert (git@...). Der Lauf schreibt
+# sie per `git config url.<https>.insteadOf` um, sodass Manifest und lokale
+# Arbeitsweise dieselbe Quelle behalten.
+
+name: Bauplan auffrischen
+
+on:
+  schedule:
+    - cron: "17 4 * * 1-5"   # werktags 04:17 UTC, vor Arbeitsbeginn
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "Nur dieses Repo pruefen (leer = alle mit Manifest)"
+        required: false
+        type: string
+      regenerate:
+        description: "Auffrischen erzwingen (im Zeitplan ohnehin an)"
+        required: false
+        default: false
+        type: boolean
+        # Zeitgesteuerte Laeufe frischen immer auf. Diese Eingabe ist nur
+        # fuer den manuellen Start gedacht: ohne Haken laeuft dort der
+        # reine Bericht, mit Haken wird gebaut und ein PR geoeffnet.
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: bauplan-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Harness auschecken
+        uses: actions/checkout@v4
+
+      - name: Zugaenge einrichten
+        env:
+          GH_REPO_TOKEN: ${{ secrets.GH_REPO_TOKEN }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GITLAB_TOKEN_USER: ${{ secrets.GITLAB_TOKEN_USER }}
+        run: |
+          # Die SSH-Aliase aus workspace.yaml auf HTTPS mit Token umbiegen.
+          # Fehlt ein Token, bleibt der Alias unaufloesbar und die betroffenen
+          # Repos werden im naechsten Schritt uebersprungen — nicht abgeschafft.
+          if [ -n "$GH_REPO_TOKEN" ]; then
+            git config --global \
+              url."https://x-access-token:${GH_REPO_TOKEN}@github.com/".insteadOf \
+              "git@github.com-borek:"
+          else
+            echo "::warning::GH_REPO_TOKEN fehlt — theme, connector, datalayer werden uebersprungen"
+          fi
+          if [ -n "$GITLAB_TOKEN" ]; then
+            git config --global \
+              url."https://${GITLAB_TOKEN_USER}:${GITLAB_TOKEN}@gitlab.mdm.de/".insteadOf \
+              "git@gitlab.mdm.de:"
+          else
+            echo "::warning::GITLAB_TOKEN fehlt — Middleware-Repos werden uebersprungen"
+          fi
+
+      - name: Arbeits-Repos klonen
+        shell: bash
+        run: |
+          # Volle Historie, weil last_seen_sha aus dem Manifest erreichbar sein muss.
+          # Ein nicht klonbares Repo ist uebersprungen, kein Fehler — der Bestand
+          # richtet sich nach workspace.yaml, nie nach lokaler Anwesenheit.
+          # Klonbar aber KEINES: das ist ein Fehler, sonst liest sich ein falsches
+          # Token als "alles aktuell".
+          python3 - <<'PY'
+          import os, re, subprocess
+
+          repos, cur, inside = {}, None, False
+          for line in open("workspace.yaml", encoding="utf-8"):
+              if re.match(r"^repos:\s*$", line):
+                  inside = True; continue
+              if not inside: continue
+              if re.match(r"^\S", line): break
+              m = re.match(r"^  ([A-Za-z0-9_-]+):\s*$", line)
+              if m:
+                  cur = m.group(1); repos[cur] = {}; continue
+              m = re.match(r'^    (remote|branch):\s*"?([^"\n]*)"?\s*$', line)
+              if m and cur: repos[cur][m.group(1)] = m.group(2).strip()
+
+          have = [d[:-len(".manifest.json")]
+                  for d in sorted(os.listdir(".claude/bauplan"))
+                  if d.endswith(".manifest.json")]
+
+          zeilen, geklont = [], 0
+          for name in have:
+              cfg = repos.get(name)
+              if not cfg or not cfg.get("remote"):
+                  zeilen.append("| `%s` | - | kein Remote in workspace.yaml |" % name)
+                  continue
+              branch = cfg.get("branch") or ""
+              args = ["git", "clone", "--quiet"]
+              if branch:
+                  args += ["--branch", branch]
+              rc = subprocess.run(args + [cfg["remote"], name]).returncode
+              if rc != 0 and branch:
+                  # Deklarierter Branch existiert nicht: Default des Remotes nehmen.
+                  rc = subprocess.run(["git", "clone", "--quiet", cfg["remote"], name]).returncode
+                  if rc == 0:
+                      ist = subprocess.run(["git", "-C", name, "rev-parse", "--abbrev-ref", "HEAD"],
+                                           capture_output=True, text=True).stdout.strip()
+                      print("::warning::%s: workspace.yaml nennt %s, tatsaechlich ist %s"
+                            % (name, branch, ist))
+                      zeilen.append("| `%s` | %s | geklont, Branch weicht ab |" % (name, ist))
+                      geklont += 1
+                      continue
+              if rc == 0:
+                  sha = subprocess.run(["git", "-C", name, "rev-parse", "HEAD"],
+                                       capture_output=True, text=True).stdout.strip()
+                  zeilen.append("| `%s` | %s | geklont, HEAD %s |" % (name, branch or "default", sha[:10]))
+                  geklont += 1
+              else:
+                  print("::warning::%s nicht klonbar — uebersprungen, nicht abgeschafft" % name)
+                  zeilen.append("| `%s` | %s | **nicht klonbar** |" % (name, branch or "default"))
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary:
+              with open(summary, "a", encoding="utf-8") as fh:
+                  fh.write("### Arbeits-Repos\n\n")
+                  fh.write("| Repo | Branch | Ergebnis |\n|---|---|---|\n")
+                  fh.write("\n".join(zeilen) + "\n\n")
+
+          if geklont == 0:
+              raise SystemExit(
+                  "Kein einziges Repo mit Manifest konnte geklont werden. "
+                  "Pruefe GH_REPO_TOKEN, GITLAB_TOKEN und GITLAB_TOKEN_USER.")
+          print("geklont: %d von %d" % (geklont, len(have)))
+          PY
+
+      - name: Veraltete Etappen ermitteln
+        id: stale
+        shell: bash
+        run: |
+          set +e
+          ARGS="--report"
+          [ -n "${{ inputs.repo }}" ] && ARGS="$ARGS --repo ${{ inputs.repo }}"
+          python3 bin/bauplan-ci.py $ARGS | tee bericht.txt
+          # Nach einer Pipe ist $? der Status von tee. Gebraucht wird der des Scripts.
+          echo "rc=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Claude Code installieren
+        if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Betroffene Etappen neu bauen
+        if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          CLAUDE_PROJECT_DIR: ${{ github.workspace }}
+        run: |
+          ARGS="--regenerate"
+          [ -n "${{ inputs.repo }}" ] && ARGS="$ARGS --repo ${{ inputs.repo }}"
+          python3 bin/bauplan-ci.py $ARGS
+
+      - name: Bestand pruefen
+        if: ${{ always() }}
+        run: |
+          # Faellt durch, wenn Blaetter geloescht wurden, ein Manifest Etappen
+          # verloren hat oder eine Etappe ohne HTML-Quelle dasteht.
+          python3 bin/bauplan-guard.py --verify
+
+      - name: Uebersicht neu erzeugen
+        if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
+        run: python3 bin/bauplan-index.py --stand "$(date '+%-d. %B %Y')"
+
+      - name: Pull Request oeffnen
+        if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bauplan/auffrischung
+          title: "docs: refresh stale bauplan sheets"
+          body-path: bericht.txt
+          add-paths: |
+            docs/bauplan/**
+            .claude/bauplan/*.manifest.json
+          commit-message: "docs: refresh stale bauplan sheets"
+          delete-branch: true
+
+      - name: Bericht als Artefakt
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bauplan-bericht
+          path: |
+            bericht.txt
+            .claude/bauplan/CI-BERICHT.json
+          if-no-files-found: ignore
+
+      - name: Ergebnis melden
+        if: ${{ always() && github.event_name != 'schedule' && !inputs.regenerate }}
+        run: |
+          echo "### Befund" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat bericht.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "Auffrischen: Workflow manuell mit \`regenerate = true\` starten," >> "$GITHUB_STEP_SUMMARY"
+          echo "oder lokal \`/repo-bauplan <repo> --refresh\`." >> "$GITHUB_STEP_SUMMARY"

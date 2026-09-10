@@ -1,3 +1,4 @@
+<title>Harness: 1 Repo, 6 Arbeitskopien, 0 Anwendungscode</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -388,3 +389,384 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-main">
+      <p class="tb-eyebrow">MDM Harness · Etappe 1 · Aufbau und Erzeugung</p>
+      <h1>Harness: 1 Repo,<br>6 Arbeitskopien, 0 Anwendungscode</h1>
+      <p>Das Repository <code>mdm-harness</code> enthält keine Zeile Anwendungscode. Es
+         enthält die Steuerungsschicht — Agenten, Skills, Hooks, Rules — und zwei Skripte,
+         die daraus eine <code>CLAUDE.md</code> erzeugen. Die sechs Arbeits-Repos werden
+         hineingeklont und sind per <code>.gitignore</code> <strong>ausgeschlossen</strong>.</p>
+    </div>
+    <dl class="tb-meta">
+      <div class="tb-cell"><dt>Gelesen</dt><dd>sync.sh · setup.sh · workspace.yaml</dd></div>
+      <div class="tb-cell"><dt>Steuerdateien</dt><dd>12 Agenten · 8 Skills · 11 Hooks · 5 Rules</dd></div>
+      <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>464 setup · 309 sync</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+    </dl>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><i class="swatch sw-web"></i>Versioniert <span>— gehört zur Harness</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Generiert <span>— nicht handpflegen</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Lokal <span>— gitignored, je Rechner anders</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Prüfpunkt <span>— Kopplung oder Drift</span></span>
+  </div>
+
+  <!-- ============ BLATT 01 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Die Grenze verläuft durch die .gitignore</h2>
+    </div>
+    <p class="lead">Dasselbe Verzeichnis ist zwei Dinge: das Harness-Repo und der
+      Arbeitsplatz mit sechs fremden Repos darin. Getrennt werden sie ausschließlich durch
+      <code>.gitignore</code>. Wer diese Grenze nicht kennt, wundert sich, warum
+      <code>git status</code> im Workspace-Root nichts von seinen Theme-Änderungen weiß.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 372" role="img" aria-label="Das Verzeichnis MDM enthält links die versionierte Harness mit Steuerdateien, Skripten und Dokumentation, rechts die sechs geklonten Arbeits-Repos, die per gitignore ausgeschlossen sind. Jedes Arbeits-Repo hat seine eigene Git-Historie.">
+        <rect x="16" y="40" width="452" height="316" rx="3" fill="var(--web)" fill-opacity="0.07" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="32" y="30" class="s-lbl f-web">im Harness-Repo versioniert</text>
+
+        <text x="32" y="66" class="s-name">.claude/</text>
+        <text x="46" y="86" class="s-tiny f-dim">agents/ 12 Dateien, 992 Zeilen</text>
+        <text x="46" y="102" class="s-tiny f-dim">skills/ 8 Verzeichnisse</text>
+        <text x="46" y="118" class="s-tiny f-dim">hooks/ 11 Skripte, 639 Zeilen</text>
+        <text x="46" y="134" class="s-tiny f-dim">rules/ 5 Dateien, 156 Zeilen</text>
+        <text x="46" y="150" class="s-tiny f-dim">specs/ 13 Dateien · bauplan/ Manifeste</text>
+        <text x="46" y="166" class="s-tiny f-dim">settings.json — Rechte und Hook-Verdrahtung</text>
+
+        <text x="32" y="196" class="s-name">Skripte</text>
+        <text x="46" y="216" class="s-tiny f-dim">setup.sh 464 Zeilen — klont Repos</text>
+        <text x="46" y="232" class="s-tiny f-dim">sync.sh 309 Zeilen — erzeugt CLAUDE.md</text>
+        <text x="46" y="248" class="s-tiny f-dim">bin/ 9 Werkzeuge für die Blattsätze</text>
+
+        <text x="32" y="278" class="s-name">Vorlagen und Doku</text>
+        <text x="46" y="298" class="s-tiny f-dim">templates/ 9 Bausteine für CLAUDE.md</text>
+        <text x="46" y="314" class="s-tiny f-dim">docs/bauplan/ HTML-Quellen der Blattsätze</text>
+        <text x="46" y="330" class="s-tiny f-dim">workspace.yaml — Repo-Manifest</text>
+        <text x="46" y="346" class="s-tiny f-dim">README.md · .mcp.json · git-hooks/</text>
+
+        <line x1="480" y1="40" x2="480" y2="356" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="6 4"></line>
+        <text x="480" y="30" text-anchor="middle" class="s-lbl f-alert">.gitignore</text>
+
+        <rect x="492" y="40" width="452" height="316" rx="3" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+        <text x="592" y="30" class="s-lbl f-vite">hineingeklont, ausgeschlossen</text>
+
+        <text x="508" y="72" class="s-mono">theme/</text>
+        <text x="936" y="72" text-anchor="end" class="s-tiny f-dim">GitHub · main</text>
+        <text x="508" y="102" class="s-mono">connector/</text>
+        <text x="936" y="102" text-anchor="end" class="s-tiny f-dim">GitHub · main</text>
+        <text x="508" y="132" class="s-mono">datalayer/</text>
+        <text x="936" y="132" text-anchor="end" class="s-tiny f-dim">GitHub · main</text>
+        <text x="508" y="162" class="s-mono">creditcheck/</text>
+        <text x="936" y="162" text-anchor="end" class="s-tiny f-dim">GitLab · master</text>
+        <text x="508" y="192" class="s-mono">emailservice/</text>
+        <text x="936" y="192" text-anchor="end" class="s-tiny f-dim">GitLab · master</text>
+        <text x="508" y="222" class="s-mono">payment-service/</text>
+        <text x="936" y="222" text-anchor="end" class="s-tiny f-dim">GitLab · master</text>
+        <text x="508" y="252" class="s-mono">connector-worktrees/</text>
+        <text x="936" y="252" text-anchor="end" class="s-tiny f-dim">parallele Feature-Branches</text>
+
+        <rect x="508" y="278" width="420" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="522" y="298" class="s-tiny">Jedes Repo behält seine eigene Git-Historie.</text>
+        <text x="522" y="314" class="s-tiny f-dim">Keine Submodules, keine Subtrees — die Harness kennt nur</text>
+        <text x="522" y="330" class="s-tiny f-dim">die Remote-Adressen in workspace.yaml.</text>
+      </svg>
+      <figcaption><b>Relevant bei jedem Commit:</b> ein <code>git add</code> im
+        Workspace-Root erfasst nie Anwendungscode. Umgekehrt sieht ein
+        <code>git status</code> in <code>theme/</code> nichts von Harness-Änderungen. Die
+        Muster in <code>.gitignore</code> mussten dafür an die Wurzel gebunden werden:
+        unverankert hätte <code>connector/</code> auch
+        <code>docs/bauplan/connector/</code> ausgeschlossen und die Blattsatz-Quellen
+        stillschweigend aus der Versionierung gehalten.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 02 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>CLAUDE.md wird erzeugt, nicht geschrieben</h2>
+    </div>
+    <p class="lead">Die Datei, die jede Sitzung als Anweisung liest, ist ein Erzeugnis aus
+      drei Quellen. <code>sync.sh</code> setzt sie zusammen; der Kopf trägt zwei Platzhalter,
+      die aus <code>workspace.yaml</code> gefüllt werden.</p>
+
+    <pre><code><span class="fp">templates/header.md</span>
+{{WORKSPACE_TREE}}   ← generate_tree()      aus workspace.yaml + .workspace.local.yaml
+{{REPO_TABLE}}       ← generate_repo_table() gruppiert nach group: shopify | middleware</code></pre>
+
+    <figure>
+      <svg viewBox="0 0 960 356" role="img" aria-label="Drei Eingaben speisen sync.sh: das versionierte Repo-Manifest workspace.yaml, der lokale Klon-Status und neun Vorlagen-Bausteine. sync.sh erzeugt daraus CLAUDE.md, aktualisiert zusätzlich die Daten der Dashboard-App und schreibt die Zeitstempel im lokalen Status um.">
+        <defs>
+          <marker id="h1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="16" y="28" class="s-lbl f-dim">Eingaben</text>
+        <text x="392" y="28" class="s-lbl f-dim">Erzeuger</text>
+        <text x="676" y="28" class="s-lbl f-dim">Ausgaben</text>
+
+        <rect x="16" y="42" width="266" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="30" y="64" class="s-mono">workspace.yaml</text>
+        <text x="30" y="82" class="s-tiny f-dim">6 Repos, versioniert</text>
+        <text x="30" y="98" class="s-tiny f-dim">Quelle der Wahrheit</text>
+
+        <rect x="16" y="118" width="266" height="62" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="30" y="140" class="s-mono">.workspace.local.yaml</text>
+        <text x="30" y="158" class="s-tiny f-dim">welche Repos geklont sind</text>
+        <text x="30" y="174" class="s-tiny f-dim">gitignored, je Rechner anders</text>
+
+        <rect x="16" y="194" width="266" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="30" y="216" class="s-mono">templates/*.md</text>
+        <text x="30" y="234" class="s-tiny f-dim">9 Bausteine: header, footer,</text>
+        <text x="30" y="250" class="s-tiny f-dim">workflows, je Repo einer</text>
+
+        <line x1="282" y1="73" x2="386" y2="140" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
+        <line x1="282" y1="149" x2="386" y2="149" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
+        <line x1="282" y1="225" x2="386" y2="158" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
+
+        <rect x="392" y="106" width="228" height="86" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="406" y="130" class="s-name f-worker">sync.sh</text>
+        <text x="406" y="150" class="s-tiny f-dim">idempotent, 309 Zeilen</text>
+        <text x="406" y="168" class="s-tiny f-dim">yaml_get liest per sed,</text>
+        <text x="406" y="184" class="s-tiny f-dim">ohne YAML-Parser</text>
+
+        <line x1="620" y1="120" x2="670" y2="74" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
+        <line x1="620" y1="149" x2="670" y2="149" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
+        <line x1="620" y1="178" x2="670" y2="224" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
+
+        <rect x="676" y="42" width="268" height="62" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="690" y="64" class="s-mono">CLAUDE.md</text>
+        <text x="690" y="82" class="s-tiny f-dim">liest jede Sitzung als Anweisung</text>
+        <text x="690" y="98" class="s-tiny f-alert">nicht handpflegen</text>
+
+        <rect x="676" y="118" width="268" height="62" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="690" y="140" class="s-mono">docs/bauplan/index.html</text>
+        <text x="690" y="158" class="s-tiny f-dim">ruft bin/bauplan-index.py auf</text>
+        <text x="690" y="174" class="s-tiny f-dim">erzeugt aus den Manifesten</text>
+
+        <rect x="676" y="194" width="268" height="62" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="690" y="216" class="s-mono">.workspace.local.yaml</text>
+        <text x="690" y="234" class="s-tiny f-dim">last_sync wird überschrieben</text>
+        <text x="690" y="250" class="s-tiny f-alert">Eingabe und Ausgabe zugleich</text>
+
+        <rect x="16" y="276" width="928" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="298" class="s-tiny">Ausgelöst wird das an drei Stellen: von Hand, durch <tspan class="s-mono">git-hooks/post-merge</tspan> nach jedem Pull, und durch den Stop-Hook post-implement-harness-sync.</text>
+        <text x="32" y="318" class="s-tiny f-dim">Der post-merge-Hook muss auf jedem Rechner einzeln eingerichtet werden — Git verteilt Hooks nicht über den Klon.</text>
+        <text x="32" y="336" class="s-tiny f-dim">Ein Rechner ohne diesen Hook arbeitet nach einem Pull mit einer veralteten CLAUDE.md weiter, ohne Hinweis.</text>
+      </svg>
+      <figcaption><b>Warum das eine Design-Entscheidung mit Folgen ist:</b> die
+        <code>CLAUDE.md</code> lässt sich nicht direkt verbessern — eine Änderung dort
+        verschwindet beim nächsten <code>sync.sh</code>. Wer den Text ändern will, ändert
+        <code>templates/</code>. Dass <code>sync.sh</code> ohne YAML-Parser arbeitet
+        (<code>yaml_get</code> nutzt <code>sed</code>-Bereiche, <code>sync.sh:31–37</code>),
+        macht es abhängig von der genauen Einrückung: zwei Leerzeichen für Repo-Schlüssel,
+        vier für Felder.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>Zwei Fehler im 7-Tage-Check, die sich maskieren</h2>
+    </div>
+    <p class="lead"><code>sync.sh</code> soll warnen, wenn ein Repo länger als sieben Tage
+      nicht synchronisiert wurde. Beobachtet wird das Gegenteil von Stille: die Warnung
+      erscheint bei <strong>jedem</strong> Lauf für <strong>alle sechs</strong> Repos, mit
+      einer absurden Zahl.</p>
+
+    <pre><code><span class="fp">./sync.sh — 10. September 2026</span>
+  WARNUNG: theme: letzter Sync vor 20706 Tagen (&gt; 7 Tage)
+  WARNUNG: connector: letzter Sync vor 20706 Tagen (&gt; 7 Tage)
+  ... für alle sechs Repos</code></pre>
+
+    <figure>
+      <svg viewBox="0 0 960 336" role="img" aria-label="Der Zeitstempel wird korrekt geschrieben, aber beim Auslesen zerstört eine greedy sed-Ersetzung den Wert: aus dem vollständigen Zeitstempel wird die Zeichenkette 00Z. Der date-Aufruf scheitert, der Fallback setzt Epoche 0, daraus errechnet sich eine Differenz von 20706 Tagen. Ein zweiter Fehler in der Aufrufreihenfolge bleibt dadurch verdeckt.">
+        <defs>
+          <marker id="h1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="16" y="26" class="s-lbl f-dim">Fehler 1 — sichtbar</text>
+
+        <rect x="16" y="40" width="216" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="30" y="62" class="s-tiny f-dim">in .workspace.local.yaml</text>
+        <text x="30" y="82" class="s-mono">last_sync: "2026-09-</text>
+        <text x="30" y="96" class="s-mono">10T11:58:36Z"</text>
+
+        <line x1="232" y1="71" x2="268" y2="71" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#h1c)"></line>
+
+        <rect x="268" y="40" width="244" height="62" rx="2" fill="var(--alert)" fill-opacity="0.1" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="282" y="62" class="s-tiny f-alert">sync.sh:208</text>
+        <text x="282" y="82" class="s-mono">sed 's/.*: *//'</text>
+        <text x="282" y="96" class="s-tiny f-dim">greedy bis zum letzten Doppelpunkt</text>
+
+        <line x1="512" y1="71" x2="548" y2="71" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#h1c)"></line>
+
+        <rect x="548" y="40" width="150" height="62" rx="2" fill="var(--alert)" fill-opacity="0.14" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="562" y="62" class="s-tiny f-dim">Ergebnis</text>
+        <text x="562" y="84" class="s-name f-alert">00Z</text>
+
+        <line x1="698" y1="71" x2="734" y2="71" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#h1c)"></line>
+
+        <rect x="734" y="40" width="210" height="62" rx="2" fill="var(--alert)" fill-opacity="0.1" stroke="var(--alert)" stroke-opacity="0.55"></rect>
+        <text x="748" y="62" class="s-tiny">date scheitert → || echo 0</text>
+        <text x="748" y="82" class="s-tiny f-alert">20706 Tage</text>
+        <text x="748" y="96" class="s-tiny f-dim">Warnung feuert immer</text>
+
+        <text x="16" y="146" class="s-lbl f-dim">Fehler 2 — verdeckt, wirkt gegenläufig</text>
+
+        <rect x="16" y="160" width="440" height="46" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="30" y="180" class="s-mono">update_local_timestamps</text>
+        <text x="30" y="198" class="s-tiny">setzt last_sync = jetzt — Zeile 295</text>
+
+        <line x1="236" y1="206" x2="236" y2="222" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1c)"></line>
+
+        <rect x="16" y="222" width="440" height="46" rx="2" fill="var(--alert)" fill-opacity="0.1" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="30" y="242" class="s-mono f-alert">check_consistency</text>
+        <text x="30" y="260" class="s-tiny">prüft days_ago &gt; 7 — Zeile 301, Test in Zeile 239</text>
+
+        <rect x="488" y="160" width="456" height="108" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="504" y="182" class="s-tiny">Wird nur Fehler 1 behoben, kippt das Verhalten ins andere Extrem:</text>
+        <text x="504" y="200" class="s-tiny f-dim">der Zeitstempel liest sich dann korrekt — und ist vier Zeilen zuvor</text>
+        <text x="504" y="216" class="s-tiny f-dim">auf jetzt gesetzt worden. days_ago ist 0, die Warnung feuert nie.</text>
+        <text x="504" y="240" class="s-tiny">Beide Fehler zusammen ergeben eine Prüfung, die in keiner</text>
+        <text x="504" y="256" class="s-tiny f-dim">Konstellation etwas Zutreffendes sagt.</text>
+
+        <rect x="16" y="288" width="928" height="40" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="308" class="s-tiny">Der zweite Teil von check_consistency funktioniert: er meldet Repos, die in .workspace.local.yaml stehen, deren Verzeichnis aber fehlt.</text>
+        <text x="32" y="324" class="s-tiny f-dim">Diese Hälfte hat mit Zeitstempeln nichts zu tun und ist deshalb von beiden Fehlern unberührt.</text>
+      </svg>
+      <figcaption><b>Warum das lange unbemerkt blieb:</b> eine Warnung, die immer erscheint,
+        wird zur Tapete. Sechs Zeilen bei jedem Lauf lesen sich wie Teil der normalen
+        Ausgabe, nicht wie ein Befund. Der Fix braucht beide Stellen: in
+        <code>sync.sh:208</code> <code>sed 's/^[^:]*: *//'</code> statt der greedy Variante,
+        und den Aufruf von <code>update_local_timestamps</code> nach
+        <code>check_consistency</code> verschieben.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>Bestand kommt aus dem Manifest, nicht vom Dateisystem</h2>
+    </div>
+    <p class="lead">Die wichtigste Regel des Workspace steht als Kommentar in
+      <code>workspace.yaml:4–6</code>: ein Repo, das dort steht, existiert. Ist es lokal
+      nicht geklont, wurde es <strong>bewusst übersprungen</strong> — und darf nie aus der
+      Konfiguration entfernt werden.</p>
+
+    <div class="tw">
+      <table>
+        <caption>Drei Schichten, die Bestand sichern</caption>
+        <thead><tr><th class="m">Schicht</th><th class="m">Datei</th><th>Wirkung</th></tr></thead>
+        <tbody>
+          <tr><td class="m">Manifest</td><td class="m">workspace.yaml</td><td>Versioniert, listet alle sechs Repos mit Remote, Gruppe und Branch. Referenz für <code>sync.sh</code>, <code>setup.sh</code> und den CI-Lauf.</td></tr>
+          <tr><td class="m">Lokaler Zustand</td><td class="m">.workspace.local.yaml</td><td>Gitignored. Hält fest, was auf <em>diesem</em> Rechner geklont ist. „Fehlt hier" heißt übersprungen, nicht abgeschafft.</td></tr>
+          <tr><td class="m">Git-Hook</td><td class="m">git-hooks/post-merge</td><td>Führt <code>sync.sh --quiet</code> nach jedem Pull aus, damit die <code>CLAUDE.md</code> zum Manifest passt. Muss je Rechner eingerichtet werden.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead">Dieselbe Semantik gilt seit dem 10. September 2026 für die Blattsätze:
+      <code>bin/bauplan-guard.py</code> blockiert das Entfernen von Etappen und prüft nach
+      jeder Sitzung gegen den letzten Commit. Der Auslöser dafür war genau dieses Szenario —
+      eine Sitzung, die aus einem halb geklonten Workspace schließt, die übrigen Repos gäbe
+      es nicht.</p>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Der 7-Tage-Check hat zwei Fehler und ist in beiden Richtungen falsch</h3>
+          <p><b>Beleg:</b> <code>sync.sh:208</code> liest den Zeitstempel mit
+             <code>sed 's/.*: *//'</code>. Die greedy Ersetzung schneidet bis zum letzten
+             Doppelpunkt und liefert aus <code>last_sync: "2026-09-10T11:58:36Z"</code> die
+             Zeichenkette <code>00Z</code>. <code>date -j -f</code> scheitert daran, der
+             Fallback <code>|| echo 0</code> setzt die Epoche auf 0, und daraus errechnet
+             Zeile 239 eine Differenz von 20706 Tagen. Zweitens ruft <code>main()</code>
+             <code>update_local_timestamps</code> (Zeile 295) vor
+             <code>check_consistency</code> (Zeile 301) auf.</p>
+          <p><b>Konsequenz:</b> Beobachtet wird eine Warnung für alle sechs Repos bei jedem
+             Lauf. Behebt man nur den ersten Fehler, kippt es ins Gegenteil: der Zeitstempel
+             ist dann vier Zeilen vorher auf jetzt gesetzt worden, <code>days_ago</code> ist
+             0 und die Warnung feuert nie.</p>
+          <p><b>Fix:</b> <code>sed 's/^[^:]*: *//'</code> und den Aufruf von
+             <code>update_local_timestamps</code> hinter <code>check_consistency</code>
+             verschieben. Danach ist zu klären, was <code>last_sync</code> messen soll —
+             gesetzt wird es bei jeder <code>CLAUDE.md</code>-Erzeugung, gemeint ist
+             offensichtlich der letzte <code>git pull</code>.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3>Vier Slash-Befehle sind dokumentiert, aber nicht aufrufbar</h3>
+          <p><b>Beleg:</b> <code>README.md</code> und <code>.claude/README.md</code> führen
+             <code>/figma-to-liquid</code>, <code>/mdm-block</code>,
+             <code>/mdm-template</code> und <code>/mdm-notes</code> als Slash-Befehle. Keine
+             der vier <code>SKILL.md</code> trägt <code>user_invocable: true</code>; nur vier
+             der acht Skills tun das.</p>
+          <p><b>Konsequenz:</b> Wer sie tippt, bekommt keinen Skill und keine Meldung, die
+             das erklärt.</p>
+          <p><b>Fix:</b> Entweder <code>user_invocable: true</code> ergänzen oder die vier
+             aus den Slash-Tabellen nehmen. Die Entscheidung ist inhaltlich — laut README
+             delegiert <code>mdm-template</code> an <code>mdm-block</code>, und
+             <code>figma-to-liquid</code> ist eine Konventionssammlung, also möglicherweise
+             zu Recht kein Einstiegspunkt. Die übrige Doku-Drift (ein Skill, vier Hooks,
+             zwölf Einträge zur entfernten <code>data.json</code>) wurde am
+             10. September 2026 nachgetragen.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Erledigt: <code>sync.sh</code> hängt nicht mehr an einer handgepflegten Datei</h3>
+          <p><b>Vorher:</b> <code>sync.sh</code> patchte <code>harness-app/data.json</code>
+             per <code>awk</code> und <code>sed</code> — eine Datenbank, die jede neue
+             Komponente von Hand nachgetragen bekommen musste. Der Drift-Melder aus Etappe 3
+             meldete dafür zwölf Rückstände.</p>
+          <p><b>Jetzt:</b> <code>update_index</code> (<code>sync.sh:180</code>) ruft
+             <code>bin/bauplan-index.py</code> auf. Die Übersicht entsteht aus
+             <code>workspace.yaml</code> und den Manifesten in
+             <code>.claude/bauplan/</code> und kann deshalb nicht mehr vom Bestand
+             abweichen. <code>harness-app/</code> ist entfernt.</p>
+          <p><b>Offen:</b> Der Drift-Melder prüft weiterhin gegen
+             <code>harness-app/data.json</code> und steigt bei fehlender Datei still aus
+             (Etappe 3, Prüfpunkt 02).</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Gute Nachricht: die Erzeugung ist idempotent und ohne YAML-Abhängigkeit</h3>
+          <p><b>Beleg:</b> <code>sync.sh</code> liest ausschließlich mit <code>sed</code> und
+             <code>grep</code> (<code>yaml_get</code>, <code>get_repo_ids</code>), setzt
+             <code>set -euo pipefail</code> und schreibt <code>CLAUDE.md</code> vollständig
+             neu.</p>
+          <p><b>Konsequenz:</b> Kein Python, kein <code>yq</code>, keine Installation nötig —
+             das Skript läuft auf jedem Mac ohne Vorbereitung. Der Preis ist die
+             Einrückungsabhängigkeit: <code>yaml_get</code> erwartet Repo-Schlüssel mit zwei
+             und Felder mit vier Leerzeichen. Eine umformatierte
+             <code>workspace.yaml</code> würde still leere Werte liefern.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>MDM Harness · Etappe 1 von 4</span>
+    <span>Als nächstes: die zwölf Agenten und ihre Pipelines</span>
+    <span>Design bauplan-v1</span>
+  </footer>
+
+</div>

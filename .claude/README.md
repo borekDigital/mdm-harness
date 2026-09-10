@@ -214,6 +214,8 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 - **figma-to-liquid** — Extraktions-Konventionen (Tool-Reihenfolge, Token-Mapping)
 - **mdm-notes** — Apple-Notes-Pflege (fester Notiz-Satz, Safe-Append-Protokoll)
 - **setup** — Interaktives Setup: Repos klonen, lokale Umgebung einrichten
+- **repo-bauplan** — Architektur-Blattsatz fuer ein Repo: nummerierte Etappen als
+  Artifact-Seiten, HTML-Quelle unter `docs/bauplan/`, jede Aussage mit `Datei:Zeile` belegt
 
 ## Rules (`.claude/rules/`)
 
@@ -236,6 +238,10 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |
 | post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in der README dokumentiert sind |
+| bauplan-guard.sh | PreToolUse (Bash/Edit/Write) | Blockt Loeschen von `docs/bauplan/**`, Schrumpfen der Manifeste, Entfernen von Repos aus `workspace.yaml` |
+| bauplan-staleness.sh | PostToolUse (Edit/Write) | Ordnet die geaenderte Datei den Blattsatz-Etappen zu (Zuordnung in `bin/bauplan_lib.py`), schreibt ins Ledger |
+| bauplan-report.sh | Stop | Verdichtet das Ledger zu `.claude/bauplan/<repo>.STALE.md` — Arbeitsliste fuer `--refresh` |
+| bauplan-verify.sh | Stop | Prueft den Bauplan-Bestand gegen `git HEAD`, schreibt `BESTAND-WARNUNG.md` bei Abweichung |
 
 ## MCP-Server
 

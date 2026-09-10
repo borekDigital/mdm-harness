@@ -24,7 +24,9 @@
       "Write(theme/config/settings_data.json)"
     ]
   },
-  "enabledMcpjsonServers": ["shopify-dev-mcp"],
+  "enabledMcpjsonServers": [
+    "shopify-dev-mcp"
+  ],
   "hooks": {
     "PreToolUse": [
       {
@@ -43,6 +45,16 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-merchant-files.sh\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bauplan-guard.sh\"",
             "timeout": 10
           }
         ]
@@ -69,6 +81,12 @@
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/post-edit-phpstan.sh\"",
             "timeout": 90,
             "statusMessage": "PHPStan/PHPCS laeuft..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bauplan-staleness.sh\"",
+            "timeout": 15,
+            "statusMessage": "Bauplan-Zuordnung..."
           }
         ]
       }
@@ -86,6 +104,18 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/post-implement-harness-sync.sh\"",
             "timeout": 10,
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bauplan-report.sh\"",
+            "timeout": 15,
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bauplan-verify.sh\"",
+            "timeout": 20,
             "async": true
           }
         ]

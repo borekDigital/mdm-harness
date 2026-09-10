@@ -12,7 +12,7 @@ WORKSPACE_YAML="${SCRIPT_DIR}/workspace.yaml"
 LOCAL_YAML="${SCRIPT_DIR}/.workspace.local.yaml"
 TEMPLATES_DIR="${SCRIPT_DIR}/templates"
 OUTPUT="${SCRIPT_DIR}/CLAUDE.md"
-DATA_JSON="${SCRIPT_DIR}/harness-app/data.json"
+INDEX_SCRIPT="${SCRIPT_DIR}/bin/bauplan-index.py"
 QUIET="${1:-}"
 
 # --- Hilfsfunktionen ---
@@ -172,42 +172,16 @@ generate_claude_md() {
   echo "$content"
 }
 
-# --- data.json Repo-Status aktualisieren ---
+# --- Bauplan-Uebersicht neu erzeugen ---
 
-update_data_json() {
-  [[ -f "$DATA_JSON" ]] || return 0
-
-  while IFS= read -r repo_id; do
-    local status="nicht installiert"
-    if is_installed "$repo_id" && dir_exists "$repo_id"; then
-      status="aktiv"
-    elif is_installed "$repo_id" && ! dir_exists "$repo_id"; then
-      status="fehlt"
-    fi
-    # Einfache sed-Ersetzung fuer den Status im data.json
-    # (nur wenn das Repo dort vorkommt)
-    if grep -q "\"id\": \"${repo_id}\"" "$DATA_JSON" 2>/dev/null; then
-      # Finde den Status-Eintrag nach der ID und ersetze ihn
-      local tmp
-      tmp=$(mktemp)
-      awk -v id="$repo_id" -v status="$status" '
-        /"id":/ && $0 ~ "\"" id "\"" { found=1 }
-        found && /"status":/ {
-          sub(/"status": "[^"]*"/, "\"status\": \"" status "\"")
-          found=0
-        }
-        { print }
-      ' "$DATA_JSON" > "$tmp"
-      mv "$tmp" "$DATA_JSON"
-    fi
-  done < <(get_repo_ids)
-
-  # Timestamp aktualisieren
+# Ersetzt das fruehere Patchen von harness-app/data.json. Die Uebersicht wird
+# aus den Manifesten in .claude/bauplan/ erzeugt, nicht aus einer handgepflegten
+# Datei — damit kann sie nicht mehr vom Bestand abweichen.
+update_index() {
+  [[ -x "$INDEX_SCRIPT" ]] || return 0
   local today
   today=$(date "+%-d. %B %Y" | sed 's/January/Januar/;s/February/Februar/;s/March/Maerz/;s/May/Mai/;s/June/Juni/;s/July/Juli/;s/October/Oktober/;s/December/Dezember/')
-  if grep -q '"updated"' "$DATA_JSON" 2>/dev/null; then
-    sed -i '' "s/\"updated\": \"[^\"]*\"/\"updated\": \"${today}\"/" "$DATA_JSON"
-  fi
+  "$INDEX_SCRIPT" --stand "$today" >/dev/null 2>&1 || warn "bauplan-index.py fehlgeschlagen"
 }
 
 # --- Konsistenz pruefen ---
@@ -283,11 +257,11 @@ main() {
   generate_claude_md > "$OUTPUT"
   log "  → ${OUTPUT} geschrieben"
 
-  # data.json aktualisieren
-  if [[ -f "$DATA_JSON" ]]; then
-    log "  data.json aktualisieren..."
-    update_data_json
-    log "  → ${DATA_JSON} aktualisiert"
+  # Bauplan-Uebersicht aktualisieren
+  if [[ -x "$INDEX_SCRIPT" ]]; then
+    log "  Bauplan-Uebersicht aktualisieren..."
+    update_index
+    log "  → docs/bauplan/index.html aktualisiert"
   fi
 
   # Timestamps aktualisieren

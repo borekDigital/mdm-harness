@@ -1,3 +1,4 @@
+<title>MDM Architektur-Blattsätze</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -388,3 +389,152 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
+
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-main">
+      <p class="tb-eyebrow">MDM Workspace · Übersicht</p>
+      <h1>Architektur-<br>Blattsätze</h1>
+      <p>Einstiegspunkt in die Architektur-Dokumentation des Workspace. Jeder Blattsatz
+         deckt ein Repo ab, jede Etappe eine Frage, jede Aussage ist mit
+         <code>Datei:Zeile</code> belegt. Die HTML-Quellen liegen unter
+         <code>docs/bauplan/</code> und sind versioniert — Stände lassen sich also
+         vergleichen und als PDF weitergeben.</p>
+    </div>
+    <dl class="tb-meta">
+      <div class="tb-cell"><dt>Repos</dt><dd>2 von 6 dokumentiert</dd></div>
+      <div class="tb-cell"><dt>Etappen</dt><dd>16</dd></div>
+      <div class="tb-cell"><dt>HTML-Quellen</dt><dd>8 von 16</dd></div>
+      <div class="tb-cell"><dt>Design</dt><dd>bauplan-v1</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+    </dl>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
+  </div>
+
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">theme</span>
+      <h2>Shopify Theme</h2>
+    </div>
+    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan theme</code>.
+      Liquid/CSS/JS (Hyper 1.3.3)</p>
+  </section>
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">connector</span>
+      <h2>Shopify Connector</h2>
+    </div>
+    <p class="lead">Rails 8.1 / React 18 / Polaris — 9 Etappen, Stand 2026-09-03.</p>
+    <div class="tw">
+      <table>
+        <caption>Inhaltsverzeichnis connector</caption>
+        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
+          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
+        <tbody><tr><td class="m">01</td><td>Zwei Rollen, eine Codebase</td><td class="m">4</td><td class="m">3</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948">Artefakt</a></td></tr>
+          <tr><td class="m">02</td><td>Drei Prozesse, eine App</td><td class="m">6</td><td class="m">3</td><td class="m">2</td><td class="m"><a href="https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50">Artefakt</a></td></tr>
+          <tr><td class="m">03</td><td>Acht Tabellen, drei Ströme</td><td class="m">5</td><td class="m">5</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e">Artefakt</a></td></tr>
+          <tr><td class="m">04</td><td>Acht Türen, vier Wächter</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21">Artefakt</a></td></tr>
+          <tr><td class="m">05</td><td>Action, API, Transformer</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7">Artefakt</a></td></tr>
+          <tr><td class="m">06</td><td>Achtzehn Jobs, drei Warteschlangen</td><td class="m">5</td><td class="m">5</td><td class="m">—</td><td class="m"><a href="connector/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></td></tr>
+          <tr><td class="m">07</td><td>Zwei Schemas, zwei Welten</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0">Artefakt</a></td></tr>
+          <tr><td class="m">08</td><td>Eine SPA im iframe</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/fecb7450-82c9-4e17-b636-16c702063b17">Artefakt</a></td></tr>
+          <tr><td class="m">09</td><td>Sechs Extensions, zwei Images</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3">Artefakt</a></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">datalayer</span>
+      <h2>GTM Datalayer</h2>
+    </div>
+    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan datalayer</code>.
+      JavaScript</p>
+  </section>
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">creditcheck</span>
+      <h2>Creditcheck + CustomerInfo</h2>
+    </div>
+    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan creditcheck</code>.
+      PHP 7.4 / Symfony</p>
+  </section>
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">emailservice</span>
+      <h2>Emailservice</h2>
+    </div>
+    <p class="lead">PHP 8.3 / Symfony 7.1 — 3 Etappen, Stand 2026-09-10.</p>
+    <div class="tw">
+      <table>
+        <caption>Inhaltsverzeichnis emailservice</caption>
+        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
+          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
+        <tbody><tr><td class="m">01</td><td>Emailservice: 11 000 Zeilen, kein Datenmodell</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd">Artefakt</a></td></tr>
+          <tr><td class="m">02</td><td>Container: 6 Dienste, 2 Compose-Welten</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed">Artefakt</a></td></tr>
+          <tr><td class="m">03</td><td>Messenger: 3 Busse, 6 Stamps, 1 toter Pfad</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee">Artefakt</a></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">payment-service</span>
+      <h2>Payment-Service</h2>
+    </div>
+    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan payment-service</code>.
+      PHP 8.3 / Symfony 7.1 / Nuxt</p>
+  </section>
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">harness</span>
+      <h2>MDM Harness</h2>
+    </div>
+    <p class="lead">Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules — 4 Etappen, Stand 2026-09-10.</p>
+    <div class="tw">
+      <table>
+        <caption>Inhaltsverzeichnis harness</caption>
+        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
+          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
+        <tbody><tr><td class="m">01</td><td>Harness: 1 Repo, 6 Arbeitskopien, 0 Anwendungscode</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66">Artefakt</a></td></tr>
+          <tr><td class="m">02</td><td>Agenten: 12 Dateien, 4 Rollen, 3 Bereiche</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac">Artefakt</a></td></tr>
+          <tr><td class="m">03</td><td>Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="harness/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908">Artefakt</a></td></tr>
+          <tr><td class="m">04</td><td>Skills: 8 Ordner, 4 aufrufbar, 5 Rules</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17">Artefakt</a></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Werkzeuge</span>
+      <h2>Erzeugen, prüfen, weitergeben</h2>
+    </div>
+    <div class="tw">
+      <table>
+        <caption>Befehle im Workspace-Root</caption>
+        <thead><tr><th class="m">Befehl</th><th>Wirkung</th></tr></thead>
+        <tbody>
+          <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
+          <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
+          <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
+          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
+          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
+          <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>
+          <tr><td class="m">bin/bauplan-guard.py --verify</td><td>Bestand gegen den letzten Commit prüfen</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>MDM Workspace · docs/bauplan/index.html</span>
+    <span>Erzeugt von bin/bauplan-index.py</span>
+    <span>Bestandsquelle: workspace.yaml</span>
+  </footer>
+
+</div>

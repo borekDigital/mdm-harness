@@ -1,3 +1,4 @@
+<title>Container: 6 Dienste, 2 Compose-Welten</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -388,3 +389,320 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-main">
+      <p class="tb-eyebrow">MDM Emailservice · Etappe 2 · Container und Prozesse</p>
+      <h1>Container: 6 Dienste,<br>2 Compose-Welten</h1>
+      <p>Der Dienst läuft als sechs Container: nginx, php-fpm, drei Warteschlangen-Worker und
+         Redis. Beschrieben wird das <strong>zweimal getrennt</strong> — einmal im Wurzel-Compose
+         für die Entwicklung, einmal unter <code>docker/</code> für den Swarm-Deploy. Die beiden
+         Dateien teilen keine Zeile.</p>
+    </div>
+    <dl class="tb-meta">
+      <div class="tb-cell"><dt>Gelesen</dt><dd>4 Compose-Dateien</dd></div>
+      <div class="tb-cell"><dt>Container</dt><dd>6 je Umgebung</dd></div>
+      <div class="tb-cell"><dt>Worker</dt><dd>3 × 1 Prozess</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+    </dl>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><i class="swatch sw-web"></i>Request-Pfad <span>— Traefik, nginx, php-fpm</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Worker <span>— consume.sh unter Supervisor</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Nur Entwicklung <span>— oder nur Betrieb</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Prüfpunkt <span>— Zugangsdaten, Logstufe</span></span>
+  </div>
+
+  <!-- ============ BLATT 01 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Zwei Compose-Welten, dieselben sechs Dienste</h2>
+    </div>
+    <p class="lead">Wer den Dienst lokal startet, benutzt
+      <code>docker-compose.yml</code> plus <code>docker-compose.override.yml</code> — so steht es
+      in <code>.env:2</code> als <code>COMPOSE_FILE</code>. Wer ihn deployt, benutzt
+      <code>docker/docker-compose.prod.yml</code>, ausgewählt von der Pipeline
+      (<code>.gitlab-ci.yml:112</code>). Der Unterschied ist das Interessante.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 386" role="img" aria-label="Vergleich der beiden Compose-Welten. Links die Entwicklung mit Wurzel-Compose plus Override, lokal gebauten Images, RabbitMQ als Container und nginx auf Port 8888. Rechts der Swarm-Deploy mit Images aus der Registry, Traefik-Labels, Loki-Logging und Ressourcengrenzen.">
+        <defs>
+          <marker id="e2m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="16" y="24" class="s-lbl f-vite">Entwicklung</text>
+        <text x="200" y="24" text-anchor="end" class="s-tiny f-dim">docker-compose.yml + override</text>
+        <text x="500" y="24" class="s-lbl f-web">Betrieb — Docker Swarm</text>
+        <text x="944" y="24" text-anchor="end" class="s-tiny f-dim">docker/docker-compose.prod.yml</text>
+
+        <line x1="470" y1="34" x2="470" y2="372" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="3 4"></line>
+
+        <!-- links -->
+        <rect x="16" y="40" width="440" height="60" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="32" y="62" class="s-mono">nginx</text>
+        <text x="32" y="80" class="s-tiny f-dim">lokal gebaut, target: development</text>
+        <text x="440" y="62" text-anchor="end" class="s-tiny f-vite">Port 8888:80</text>
+        <text x="440" y="80" text-anchor="end" class="s-tiny f-dim">direkt erreichbar</text>
+
+        <rect x="16" y="108" width="440" height="60" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="32" y="130" class="s-mono">php-fpm</text>
+        <text x="32" y="148" class="s-tiny f-dim">./www gemountet, xdebug.ini dabei</text>
+        <text x="440" y="130" text-anchor="end" class="s-tiny f-dim">Code live</text>
+
+        <rect x="16" y="176" width="440" height="78" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="32" y="198" class="s-mono">3 × queue</text>
+        <text x="32" y="216" class="s-tiny f-dim">ein Image, target: development_queue</text>
+        <text x="32" y="234" class="s-tiny f-dim">unterschieden nur durch QUEUE_NAME</text>
+        <text x="440" y="198" text-anchor="end" class="s-tiny f-dim">je 1 Prozess</text>
+
+        <rect x="16" y="262" width="440" height="52" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="32" y="284" class="s-mono">rabbitmq</text>
+        <text x="32" y="302" class="s-tiny f-dim">3.8.16-alpine, nur im Override</text>
+
+        <rect x="16" y="322" width="440" height="50" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="32" y="344" class="s-mono">redis</text>
+        <text x="32" y="362" class="s-tiny f-alert">Port 6379 nach außen, ohne Passwort</text>
+
+        <!-- rechts -->
+        <rect x="500" y="40" width="444" height="60" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="516" y="62" class="s-mono">nginx</text>
+        <text x="516" y="80" class="s-tiny f-dim">Image aus registry.mdm.de, Tag = Commit-SHA</text>
+        <text x="928" y="62" text-anchor="end" class="s-tiny f-web">hinter Traefik</text>
+        <text x="928" y="80" text-anchor="end" class="s-tiny f-dim">Basic Auth dort</text>
+
+        <rect x="500" y="108" width="444" height="60" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="516" y="130" class="s-mono">php-fpm</text>
+        <text x="516" y="148" class="s-tiny f-dim">command php-fpm -F, APP_ENV=prod</text>
+        <text x="928" y="130" text-anchor="end" class="s-tiny f-dim">512 MB Grenze</text>
+
+        <rect x="500" y="176" width="444" height="78" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="516" y="198" class="s-mono">3 × queues</text>
+        <text x="516" y="216" class="s-tiny f-dim">gleiche Rollenaufteilung wie links</text>
+        <text x="516" y="234" class="s-tiny f-dim">restart_policy: any, delay 5s</text>
+        <text x="928" y="198" text-anchor="end" class="s-tiny f-dim">je 512 MB</text>
+
+        <rect x="500" y="262" width="444" height="52" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="516" y="284" class="s-mono">rabbitmq</text>
+        <text x="516" y="302" class="s-tiny f-dim">ubuntu/rabbitmq 3.12, an Knoten dn04 gebunden</text>
+
+        <rect x="500" y="322" width="444" height="50" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="516" y="344" class="s-mono">redis</text>
+        <text x="516" y="362" class="s-tiny f-alert">ALLOW_EMPTY_PASSWORD=yes, im Overlay-Netz</text>
+      </svg>
+      <figcaption><b>Relevant beim Debuggen eines Umgebungsfehlers:</b> die beiden Welten
+        beschreiben dieselben Dienste, aber nichts hält sie synchron. Ein Dienst, der lokal
+        vorhanden ist und im Swarm fehlt, fällt niemandem auf, weil keine der Dateien die
+        andere einbindet. Die Versionen laufen bereits auseinander — RabbitMQ 3.8.16 lokal
+        gegen 3.12 im Betrieb (<code>docker-compose.override.yml:47</code> gegen
+        <code>docker/docker-compose.prod.yml:17</code>).</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 02 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>Ein Image, drei Rollen</h2>
+    </div>
+    <p class="lead">Die drei Worker-Container sind identisch. Sie unterscheiden sich in genau
+      einer Umgebungsvariablen, und <code>consume.sh</code> macht daraus das Kommando.</p>
+
+    <pre><code><span class="fp">conf/queues/consume.sh:24</span>
+exec /usr/local/bin/php "bin/console" "messenger:consume" "${QUEUE_NAME}" ${WORKER_ARGS}</code></pre>
+
+    <figure>
+      <svg viewBox="0 0 960 240" role="img" aria-label="Das Queue-Image wird dreimal gestartet. QUEUE_NAME entscheidet, welchen Transport der Worker abarbeitet: incoming_mail_requests, enrichment_requests oder emarsys_event_requests. QUEUE_TIME_LIMIT ist überall 3600 Sekunden, QUEUE_LIMIT ist nirgends gesetzt.">
+        <rect x="16" y="52" width="200" height="128" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="116" y="32" text-anchor="middle" class="s-lbl f-dim">ein Image</text>
+        <text x="116" y="78" text-anchor="middle" class="s-mono">emailservice/queues</text>
+        <text x="116" y="100" text-anchor="middle" class="s-tiny f-dim">supervisor, numprocs=1</text>
+        <text x="116" y="118" text-anchor="middle" class="s-tiny f-dim">autorestart=true</text>
+        <text x="116" y="136" text-anchor="middle" class="s-tiny f-dim">user=www-data</text>
+        <text x="116" y="160" text-anchor="middle" class="s-tiny f-dim">consume.sh als Kommando</text>
+
+        <text x="330" y="32" class="s-lbl f-dim">QUEUE_NAME entscheidet</text>
+
+        <rect x="330" y="46" width="330" height="40" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="344" y="71" class="s-mono">incoming_mail_requests</text>
+        <line x1="216" y1="96" x2="326" y2="66" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#e2m1)"></line>
+        <text x="700" y="64" class="s-tiny f-dim">Station 1 — nimmt die SAP-Anforderung</text>
+        <text x="700" y="79" class="s-tiny f-dim">und stellt eine Enrichment-Nachricht ein</text>
+
+        <rect x="330" y="96" width="330" height="40" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="344" y="121" class="s-mono">enrichment_requests</text>
+        <line x1="216" y1="116" x2="326" y2="116" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#e2m1)"></line>
+        <text x="700" y="114" class="s-tiny f-dim">Station 2 — baut die Emarsys-Nachricht</text>
+        <text x="700" y="129" class="s-tiny f-alert">reichert nicht an, siehe Etappe 3</text>
+
+        <rect x="330" y="146" width="330" height="40" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="344" y="171" class="s-mono">emarsys_event_requests</text>
+        <line x1="216" y1="136" x2="326" y2="166" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#e2m1)"></line>
+        <text x="700" y="164" class="s-tiny f-dim">Station 3 — ruft die Emarsys-API</text>
+        <text x="700" y="179" class="s-tiny f-dim">und löst das Kampagnen-Event aus</text>
+
+        <rect x="16" y="200" width="928" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="220" class="s-tiny">Überall gesetzt: QUEUE_TIME_LIMIT=3600. Nirgends gesetzt: QUEUE_LIMIT — die Worker begrenzen ihre Nachrichtenzahl also nicht.</text>
+      </svg>
+      <figcaption><b>Warum das eine gute Aufteilung ist:</b> ein Rückstau in einer Station
+        blockiert die anderen nicht, und jede Station lässt sich einzeln skalieren, indem man
+        <code>replicas</code> erhöht. Der Preis: die Reihenfolge der Stationen steht nicht in
+        der Konfiguration, sondern im Code jedes Handlers — wer sie ändern will, ändert
+        <code>MessageBusInterface</code>-Injektionen, nicht YAML.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>Jeder Worker endet nach einer Stunde</h2>
+    </div>
+    <p class="lead"><code>--time-limit=3600</code> lässt den Prozess planmäßig aussteigen,
+      Supervisor startet ihn neu. Das ist die üblichste Absicherung gegen Speicherlecks in
+      langlaufenden PHP-Prozessen — hier allerdings die einzige, denn
+      <code>--memory-limit</code> ist nicht gesetzt.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 208" role="img" aria-label="Zeitachse eines Workers über drei Stunden. Der Prozess läuft 3600 Sekunden, beendet sich selbst, Supervisor startet ihn nach kurzer Pause neu. Ohne Memory-Limit wächst der Speicher innerhalb eines Intervalls unbeobachtet.">
+        <text x="16" y="26" class="s-lbl f-dim">Worker-Lebenszyklus</text>
+
+        <line x1="16" y1="76" x2="944" y2="76" stroke="currentColor" stroke-opacity="0.3"></line>
+
+        <rect x="16" y="56" width="286" height="40" rx="2" fill="var(--worker)" fill-opacity="0.14" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="30" y="81" class="s-tiny">messenger:consume — 3600 s</text>
+        <rect x="302" y="56" width="14" height="40" fill="var(--alert)" fill-opacity="0.3" stroke="var(--alert)" stroke-opacity="0.6"></rect>
+
+        <rect x="316" y="56" width="286" height="40" rx="2" fill="var(--worker)" fill-opacity="0.14" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="330" y="81" class="s-tiny">messenger:consume — 3600 s</text>
+        <rect x="602" y="56" width="14" height="40" fill="var(--alert)" fill-opacity="0.3" stroke="var(--alert)" stroke-opacity="0.6"></rect>
+
+        <rect x="616" y="56" width="286" height="40" rx="2" fill="var(--worker)" fill-opacity="0.14" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="630" y="81" class="s-tiny">messenger:consume — 3600 s</text>
+        <rect x="902" y="56" width="14" height="40" fill="var(--alert)" fill-opacity="0.3" stroke="var(--alert)" stroke-opacity="0.6"></rect>
+
+        <text x="309" y="118" text-anchor="middle" class="s-tiny f-alert">Exit</text>
+        <text x="309" y="132" text-anchor="middle" class="s-tiny f-dim">Supervisor</text>
+        <text x="309" y="146" text-anchor="middle" class="s-tiny f-dim">startet neu</text>
+
+        <text x="16" y="112" class="s-tiny f-dim">0 h</text>
+        <text x="309" y="46" text-anchor="middle" class="s-tiny f-dim">1 h</text>
+        <text x="609" y="46" text-anchor="middle" class="s-tiny f-dim">2 h</text>
+        <text x="909" y="46" text-anchor="middle" class="s-tiny f-dim">3 h</text>
+
+        <rect x="16" y="164" width="928" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="180" class="s-tiny">Beim Neustart geht keine Nachricht verloren: AMQP bestätigt erst nach erfolgreicher Verarbeitung.</text>
+        <text x="32" y="194" class="s-tiny f-dim">Eine Nachricht, die beim Exit gerade in Arbeit war, wird erneut ausgeliefert — Handler müssen also mehrfache Ausführung verkraften.</text>
+      </svg>
+      <figcaption><b>Zwei Stellen, an denen man sich beim Betrieb verletzt:</b> ohne
+        <code>--memory-limit</code> kann ein Worker innerhalb seiner Stunde bis an die
+        Swarm-Grenze von 512 MB wachsen und wird dann hart beendet — was wie ein Absturz
+        aussieht, aber Ressourcendruck ist. Und weil eine unterbrochene Nachricht erneut
+        ausgeliefert wird, ist Idempotenz Pflicht: derselbe Emarsys-Event darf nicht zweimal
+        eine Mail auslösen.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>Wo die Zugangskontrolle sitzt</h2>
+    </div>
+    <p class="lead">Die Frage „wer darf <code>POST /sap</code> aufrufen" hat drei mögliche
+      Antwortorte. Zwei davon sind leer.</p>
+
+    <div class="tw">
+      <table>
+        <caption>Prüfstellen auf dem Weg zum Controller</caption>
+        <thead><tr><th class="m">Schicht</th><th class="m">Fundstelle</th><th>Prüfung</th></tr></thead>
+        <tbody>
+          <tr><td class="m">Traefik</td><td class="m">docker/docker-compose.prod.yml:236</td><td>Basic Auth <code>SAP</code> für alle Routen, zweite Auth <code>prom</code> allein für <code>/metrics</code>. Hier und nur hier wird geprüft.</td></tr>
+          <tr><td class="m">nginx</td><td class="m">conf/nginx/.../default.conf.template</td><td>kein <code>auth_basic</code>. Blockiert nur direkte <code>.php</code>-Aufrufe und beschränkt <code>/server-status</code> auf 127.0.0.1.</td></tr>
+          <tr><td class="m">Symfony</td><td class="m">config/packages/security.yaml:29</td><td><code>access_control</code> vollständig auskommentiert, Provider <code>users_in_memory: { memory: null }</code>, kein Authenticator. Keine Prüfung.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead">Das ist eine tragfähige Anordnung, solange der Dienst ausschließlich über
+      Traefik erreichbar ist. Sie hat aber eine Folge, die man wissen muss: <strong>wer im
+      Overlay-Netz steht, spricht ungeprüft mit nginx.</strong> Im Swarm hängt nginx an
+      <code>traefik_prod</code> und <code>emailservice</code>, php-fpm nur an
+      <code>emailservice</code> — ein anderer Dienst im selben Overlay umgeht die Basic Auth
+      also vollständig.</p>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Produktions-Zugangsdaten stehen im Klartext im Repo</h3>
+          <p><b>Beleg:</b> <code>docker/docker-compose.prod.yml</code> und
+             <code>docker/docker-compose.dev.yml</code> setzen als Literale: das
+             AMQP-Passwort in allen drei Transport-DSNs (12 Vorkommen), drei
+             Emarsys-Secrets, die <code>ECS_AUTHORIZATION</code> als Base64 eines
+             <code>Benutzer:Passwort</code>-Paares, <code>APP_SECRET</code> sowie zwei
+             Traefik-Auth-Hashes. Werte sind hier absichtlich nicht wiedergegeben.</p>
+          <p><b>Konsequenz:</b> Jeder mit Leserecht auf das Repo hat Produktionszugang zu
+             Broker, Emarsys und der SAP-Schnittstelle. Die Werte stehen zusätzlich in der
+             Git-Historie — sie aus der Datei zu entfernen genügt nicht.</p>
+          <p><b>Fix:</b> rotieren, dann als GitLab-CI-Variablen hinterlegen und über
+             <code>environment</code> ohne Literal einsetzen. Die anderen Middleware-Repos
+             halten Secrets bereits in <code>.env</code> ausserhalb der Versionierung.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3>Entwicklung und Betrieb teilen dieselben Zugangsdaten</h3>
+          <p><b>Beleg:</b> AMQP-Passwort, Emarsys-Secrets und <code>ECS_AUTHORIZATION</code>
+             sind in <code>docker-compose.dev.yml</code> und <code>docker-compose.prod.yml</code>
+             identisch; der Unterschied beschränkt sich auf Hostnamen, Knotenbindung und
+             Speichergrenzen (<code>diff</code> beider Dateien: 14 abweichende Zeilen).</p>
+          <p><b>Konsequenz:</b> Ein Fehlgriff auf der Entwicklungsumgebung erreicht dieselben
+             Emarsys-Mandanten wie der Betrieb. Die <code>DebugEmail</code>-Einträge in
+             <code>companies.yaml</code> fangen das nur ab, wo der Code sie auswertet.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Die Worker loggen im Betrieb auf Debug-Stufe</h3>
+          <p><b>Beleg:</b> <code>conf/queues/consume.sh:2</code> setzt
+             <code>WORKER_ARGS="-vvv"</code> unbedingt; die Produktions-Compose überschreibt
+             das nicht. Die Handler rufen zusätzlich
+             <code>logger-&gt;debug(..., compact($request))</code> auf, etwa
+             <code>www/src/Queueing/Handler/Sap/EnrichmentHandler.php:52</code>.</p>
+          <p><b>Konsequenz:</b> Vollständige Nachrichteninhalte samt Kundendaten gehen an
+             Loki. Das ist Logvolumen und Datenschutz in einem.</p>
+          <p><b>Fix:</b> <code>-vvv</code> aus <code>consume.sh</code> nehmen und über eine
+             Umgebungsvariable steuern, die nur in der Entwicklung gesetzt ist.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Es gibt einen globalen Wartungsschalter, und er wirkt pro Nachricht</h3>
+          <p><b>Beleg:</b> <code>www/src/Queueing/Middleware/Base/MaintenanceMiddleware.php:57–62</code>
+             prüft bei jeder Nachricht über Flysystem, ob <code>maintenance.flag</code>
+             existiert, und wirft dann eine Exception. Alle drei Bus-Middlewares erben von
+             dieser Klasse.</p>
+          <p><b>Konsequenz:</b> Eine Datei anzulegen hält den kompletten Versand an, ohne
+             Deploy — brauchbar bei einer Emarsys-Störung. Die Nachrichten laufen dabei aber
+             in den Retry und, weil kein <code>failure_transport</code> konfiguriert ist,
+             danach ins Nichts (siehe Etappe 3).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>MDM Emailservice · Etappe 2 von 7</span>
+    <span>Als nächstes: Messenger — Busse, Stamps und ein toter Pfad</span>
+    <span>Design bauplan-v1</span>
+  </footer>
+
+</div>

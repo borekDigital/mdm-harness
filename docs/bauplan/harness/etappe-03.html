@@ -1,3 +1,4 @@
+<title>Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -388,3 +389,329 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-main">
+      <p class="tb-eyebrow">MDM Harness · Etappe 3 · Hooks und Durchsetzung</p>
+      <h1>Hooks: 11 Skripte,<br>3 Ereignisse, 17 Abbruchpfade</h1>
+      <p>Die Hooks sind die einzige Schicht, die etwas <strong>verhindern</strong> kann. Drei
+         laufen vor einem Werkzeugaufruf und dürfen ihn abbrechen, vier danach, vier am
+         Sitzungsende. Wer wissen will, was in diesem Workspace technisch unmöglich ist,
+         liest diese elf Dateien — nicht die README.</p>
+    </div>
+    <dl class="tb-meta">
+      <div class="tb-cell"><dt>Gelesen</dt><dd>11 Skripte · settings.json</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>639 gesamt</dd></div>
+      <div class="tb-cell"><dt>Blockierend</dt><dd>6 Skripte</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+    </dl>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><i class="swatch sw-alert"></i>Blockiert <span>— exit 2, Aufruf findet nicht statt</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Fragt nach <span>— permissionDecision: ask</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Berichtet <span>— exit 0, nur Ausgabe</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Schreibt Datei <span>— Ausgabe überlebt die Sitzung</span></span>
+  </div>
+
+  <!-- ============ BLATT 01 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Drei Ereignisse, drei Wirkungsarten</h2>
+    </div>
+    <p class="lead">Der Zeitpunkt entscheidet über die Macht des Hooks. Vor dem Aufruf kann er
+      ihn verhindern; danach nur noch kommentieren; am Sitzungsende schreibt er allenfalls
+      eine Datei. Alle Verdrahtung steht in <code>.claude/settings.json</code>.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 350" role="img" aria-label="Zeitachse eines Werkzeugaufrufs. Vor dem Aufruf laufen drei PreToolUse-Hooks, die mit exit 2 abbrechen können. Danach laufen vier PostToolUse-Hooks, von denen drei Linter ebenfalls exit 2 verwenden. Am Sitzungsende laufen vier Stop-Hooks, alle asynchron.">
+        <defs>
+          <marker id="h3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <line x1="16" y1="50" x2="930" y2="50" stroke="currentColor" stroke-opacity="0.35" marker-end="url(#h3a)"></line>
+        <text x="16" y="32" class="s-lbl f-dim">Zeit</text>
+
+        <rect x="16" y="66" width="288" height="120" rx="3" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="30" y="88" class="s-lbl f-alert">PreToolUse · blockierend</text>
+        <text x="30" y="110" class="s-mono">git-safety</text>
+        <text x="290" y="110" text-anchor="end" class="s-tiny f-alert">9 Abbrüche</text>
+        <text x="30" y="130" class="s-mono">protect-merchant-files</text>
+        <text x="290" y="130" text-anchor="end" class="s-tiny f-alert">2 + Rückfragen</text>
+        <text x="30" y="150" class="s-mono">bauplan-guard</text>
+        <text x="290" y="150" text-anchor="end" class="s-tiny f-alert">3 Abbrüche</text>
+        <text x="30" y="174" class="s-tiny f-dim">exit 2 heißt: der Aufruf findet nicht statt.</text>
+
+        <rect x="320" y="46" width="120" height="40" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="380" y="70" text-anchor="middle" class="s-name">Werkzeug</text>
+
+        <rect x="456" y="66" width="288" height="120" rx="3" fill="var(--web)" fill-opacity="0.07" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="470" y="88" class="s-lbl f-web">PostToolUse · nach dem Schreiben</text>
+        <text x="470" y="110" class="s-mono">post-edit-theme-check</text>
+        <text x="730" y="110" text-anchor="end" class="s-tiny f-alert">exit 2</text>
+        <text x="470" y="130" class="s-mono">post-edit-rubocop</text>
+        <text x="730" y="130" text-anchor="end" class="s-tiny f-alert">exit 2</text>
+        <text x="470" y="150" class="s-mono">post-edit-phpstan</text>
+        <text x="730" y="150" text-anchor="end" class="s-tiny f-alert">exit 2</text>
+        <text x="470" y="170" class="s-mono">bauplan-staleness</text>
+        <text x="730" y="170" text-anchor="end" class="s-tiny f-worker">exit 0</text>
+
+        <rect x="760" y="66" width="184" height="120" rx="3" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="774" y="88" class="s-lbl f-worker">Stop · alle async</text>
+        <text x="774" y="110" class="s-mono">stop-notify</text>
+        <text x="774" y="130" class="s-mono">harness-sync</text>
+        <text x="774" y="150" class="s-mono">bauplan-report</text>
+        <text x="774" y="170" class="s-mono">bauplan-verify</text>
+
+        <rect x="16" y="204" width="728" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="224" class="s-tiny">Die drei Linter sind nicht bloß informativ: sie brechen mit exit 2 ab, wenn der Linter meckert.</text>
+        <text x="32" y="242" class="s-tiny f-dim">Die Datei ist dann schon geschrieben — der Abbruch zwingt die Sitzung, den Befund zu bearbeiten, statt weiterzulaufen.</text>
+
+        <rect x="16" y="272" width="928" height="66" rx="2" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="32" y="292" class="s-tiny">Timeouts aus settings.json: 10 s für die Blockierer, 60 bis 90 s für die Linter, 15 s für die Zuordnung, 5 bis 20 s am Ende.</text>
+        <text x="32" y="310" class="s-tiny f-dim">Ein Linter, der länger braucht als sein Timeout, wird abgeschnitten — bei 90 s für Theme Check auf einem großen Theme durchaus erreichbar.</text>
+        <text x="32" y="328" class="s-tiny f-dim">Alle drei Linter filtern deshalb auf die eine editierte Datei statt das ganze Repo zu prüfen.</text>
+      </svg>
+      <figcaption><b>Relevant beim Hinzufügen eines Hooks:</b> die Wirkungsart ist nicht
+        wählbar, sondern folgt aus dem Ereignis. Wer etwas verhindern will, braucht
+        <code>PreToolUse</code>. Wer am Sitzungsende etwas mitteilen will, braucht eine
+        Datei — siehe Blatt 03.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 02 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>Was technisch unmöglich ist</h2>
+    </div>
+    <p class="lead">Neun der siebzehn Abbruchpfade stecken in
+      <code>git-safety.sh</code>. Sie sind die Liste der Dinge, die in diesem Workspace nicht
+      passieren können — unabhängig davon, welcher Agent es versucht.</p>
+
+    <div class="tw">
+      <table>
+        <caption>Abbruchpfade nach Datei und Zeile</caption>
+        <thead><tr><th class="m">Fundstelle</th><th>Blockiert</th><th>Grund</th></tr></thead>
+        <tbody>
+          <tr><td class="m">git-safety.sh:18</td><td><code>git push --force</code></td><td>überschreibt fremde Historie</td></tr>
+          <tr><td class="m">git-safety.sh:21</td><td><code>git push origin main</code></td><td>Änderungen gehen über PR</td></tr>
+          <tr><td class="m">git-safety.sh:24</td><td><code>git reset --hard</code></td><td>Hinweis auf <code>git stash</code></td></tr>
+          <tr><td class="m">git-safety.sh:27</td><td><code>git clean -f</code></td><td>löscht ungetrackte Arbeit</td></tr>
+          <tr><td class="m">git-safety.sh:30</td><td>Push auf Remote <code>latori</code></td><td>nur historische Referenz</td></tr>
+          <tr><td class="m">git-safety.sh:37</td><td><code>shopify theme publish</code></td><td>Veröffentlichen macht Konrad selbst</td></tr>
+          <tr><td class="m">git-safety.sh:40</td><td><code>shopify theme delete</code></td><td>dito</td></tr>
+          <tr><td class="m">git-safety.sh:43</td><td><code>theme push --live</code></td><td>nur <code>--unpublished</code></td></tr>
+          <tr><td class="m">git-safety.sh:46</td><td><code>--theme-editor-sync</code></td><td>CLI-Bug löscht extern geänderte JSON</td></tr>
+          <tr><td class="m">protect-merchant-files.sh:19</td><td><code>settings_data.json</code></td><td>gehört dem Theme-Editor</td></tr>
+          <tr><td class="m">protect-merchant-files.sh:29</td><td><code>blocks/ai_gen_block_*</code></td><td>vom Editor generiert</td></tr>
+          <tr><td class="m">bauplan-guard.sh</td><td><code>rm</code> auf <code>docs/bauplan</code>, Manifest-Schrumpfen, Repo-Entfernung</td><td>Bestand wird aktualisiert, nicht entfernt</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead"><code>protect-merchant-files.sh</code> hat eine dritte Wirkungsart, die
+      sonst keiner nutzt: statt zu blockieren gibt es über
+      <code>permissionDecision: ask</code> eine Rückfrage zurück
+      (<code>protect-merchant-files.sh:32</code>). Das greift bei den FoxEcom-Kerndateien —
+      eine Section ohne <code>mdm-</code>-Präfix zu ändern ist nicht verboten, aber
+      begründungspflichtig.</p>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>Der Drift-Melder läuft, und niemand sieht ihn</h2>
+    </div>
+    <p class="lead"><code>post-implement-harness-sync.sh</code> prüft nach jeder Sitzung, ob
+      alle Agenten, Skills, Hooks und Rules in <code>README.md</code> und
+      <code>harness-app/data.json</code> vorkommen. Der Hook <strong>funktioniert</strong>:
+      am 10. September 2026 meldete er siebzehn Abweichungen. Er schreibt sie nach
+      <code>stdout</code>, und er läuft <code>async</code> — deshalb sah sie niemand.
+      Nach dem Nachtragen der Dokumentation meldet er null. Der Ausgabeweg ist damit
+      unverändert der Schwachpunkt: der nächste Rückstand bleibt genauso unsichtbar.</p>
+
+    <pre><code><span class="fp">Manueller Aufruf, 10. September 2026 — vor dem Nachtragen</span>
+⚠️  Harness-Doku nicht synchron:
+   - Skill 'repo-bauplan' fehlt in README.md
+   - Hook 'bauplan-guard' fehlt in README.md
+   - Hook 'bauplan-report' fehlt in README.md
+   - Hook 'bauplan-staleness' fehlt in README.md
+   - Hook 'bauplan-verify' fehlt in README.md
+   ... 12 weitere, davon 12 zu data.json
+
+<span class="fp">Derselbe Aufruf nach dem Nachtragen</span>
+(keine Ausgabe)</code></pre>
+
+    <figure>
+      <svg viewBox="0 0 960 262" role="img" aria-label="Vergleich der vier Stop-Hooks. Drei erzeugen eine wahrnehmbare Wirkung: eine macOS-Benachrichtigung oder eine Datei auf der Platte. Der Drift-Melder schreibt nur auf stdout und läuft asynchron, weshalb seine Ausgabe verworfen wird.">
+        <text x="16" y="28" class="s-lbl f-dim">Stop-Hook</text>
+        <text x="320" y="28" class="s-lbl f-dim">Ausgabeweg</text>
+        <text x="700" y="28" class="s-lbl f-dim">kommt an?</text>
+
+        <rect x="16" y="42" width="928" height="46" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="30" y="70" class="s-mono">stop-notify</text>
+        <text x="320" y="64" class="s-tiny">macOS-Benachrichtigung</text>
+        <text x="320" y="80" class="s-tiny f-dim">Nebenwirkung, keine Textausgabe</text>
+        <text x="700" y="70" class="s-tiny f-worker">ja</text>
+
+        <rect x="16" y="96" width="928" height="46" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="30" y="124" class="s-mono">bauplan-report</text>
+        <text x="320" y="118" class="s-tiny">schreibt .claude/bauplan/&lt;repo&gt;.STALE.md</text>
+        <text x="320" y="134" class="s-tiny f-dim">bauplan-report.sh:43</text>
+        <text x="700" y="124" class="s-tiny f-vite">ja, als Datei</text>
+
+        <rect x="16" y="150" width="928" height="46" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="30" y="178" class="s-mono">bauplan-verify</text>
+        <text x="320" y="172" class="s-tiny">schreibt .claude/bauplan/BESTAND-WARNUNG.md</text>
+        <text x="320" y="188" class="s-tiny f-dim">bauplan-verify.sh:13</text>
+        <text x="700" y="178" class="s-tiny f-vite">ja, als Datei</text>
+
+        <rect x="16" y="204" width="928" height="46" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="30" y="232" class="s-mono f-alert">post-implement-harness-sync</text>
+        <text x="320" y="226" class="s-tiny">echo auf stdout, exit 0</text>
+        <text x="320" y="242" class="s-tiny f-dim">post-implement-harness-sync.sh:58 und :65</text>
+        <text x="700" y="232" class="s-tiny f-alert">nein — async, Ausgabe verworfen</text>
+      </svg>
+      <figcaption><b>Der Unterschied ist der Ausgabeweg, nicht die Logik.</b> Die beiden
+        Bauplan-Hooks laufen genauso <code>async</code>, ihre Befunde landen aber in einer
+        Datei und überleben damit die Sitzung. Der Drift-Melder erzeugt sein Ergebnis
+        korrekt und wirft es weg. Deshalb blieb die Drift aus Etappe 1 unbemerkt, obwohl ein
+        Prüfer dafür bei jedem Sitzungsende lief. Die siebzehn Rückstände sind inzwischen
+        nachgetragen — der Ausgabeweg nicht.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>Was ein Hook nicht kann</h2>
+    </div>
+    <p class="lead">Ein Hook ist ein Shell-Skript mit einem Timeout. Er kann prüfen,
+      blockieren und schreiben — aber keine Seite bauen und kein Modell fragen. Genau
+      deshalb ist die Selbstaktualisierung der Blattsätze zweistufig gebaut.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 210" role="img" aria-label="Zweistufiger Weg: Der PostToolUse-Hook ordnet eine geänderte Datei den betroffenen Etappen zu und schreibt eine Zeile in ein Ledger. Der Stop-Hook verdichtet das Ledger zu einer Arbeitsliste. Das eigentliche Neubauen übernimmt später der Skill oder die CI.">
+        <defs>
+          <marker id="h3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <rect x="16" y="60" width="210" height="76" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="30" y="46" class="s-lbl f-dim">im Hook möglich</text>
+        <text x="30" y="84" class="s-mono">bauplan-staleness</text>
+        <text x="30" y="102" class="s-tiny f-dim">PostToolUse, 15 s</text>
+        <text x="30" y="120" class="s-tiny">Datei → betroffene Etappen</text>
+
+        <line x1="226" y1="98" x2="266" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#h3b)"></line>
+
+        <rect x="266" y="60" width="180" height="76" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="280" y="84" class="s-mono">.staleness.jsonl</text>
+        <text x="280" y="102" class="s-tiny f-dim">eine Zeile je Treffer</text>
+        <text x="280" y="120" class="s-tiny f-dim">überlebt die Sitzung</text>
+
+        <line x1="446" y1="98" x2="486" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#h3b)"></line>
+
+        <rect x="486" y="60" width="180" height="76" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="500" y="84" class="s-mono">&lt;repo&gt;.STALE.md</text>
+        <text x="500" y="102" class="s-tiny f-dim">Stop-Hook verdichtet</text>
+        <text x="500" y="120" class="s-tiny f-dim">und leert das Ledger</text>
+
+        <line x1="666" y1="98" x2="706" y2="98" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="5 4" marker-end="url(#h3b)"></line>
+        <text x="686" y="86" text-anchor="middle" class="s-tiny f-alert">Bruch</text>
+
+        <rect x="706" y="48" width="238" height="100" rx="2" fill="var(--alert)" fill-opacity="0.06" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+        <text x="720" y="46" class="s-lbl f-alert">nur mit Modell</text>
+        <text x="720" y="72" class="s-tiny">/repo-bauplan --refresh</text>
+        <text x="720" y="90" class="s-tiny f-dim">oder der CI-Lauf</text>
+        <text x="720" y="112" class="s-tiny f-dim">Seiten bauen, Figuren zeichnen,</text>
+        <text x="720" y="128" class="s-tiny f-dim">Befunde formulieren</text>
+        <text x="720" y="144" class="s-tiny f-alert">läuft nie in einem Hook</text>
+
+        <rect x="16" y="164" width="928" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="185" class="s-tiny">Derselbe Bruch erklärt, warum es die CI braucht: wer ohne Claude committet, löst den PostToolUse-Hook nie aus. Die Zuordnungsregel ist deshalb in bin/bauplan_lib.py, nicht im Hook.</text>
+      </svg>
+      <figcaption><b>Die Trennung ist die eigentliche Konstruktion:</b> die deterministische
+        Hälfte — welche Etappe betrifft diese Datei — liegt in einer Python-Datei, die Hook
+        und CI gemeinsam aufrufen. Nur die Hälfte, die Urteilsvermögen braucht, hängt am
+        Modell. Das ist der Grund, warum lokal und in der CI nie etwas Unterschiedliches als
+        veraltet gilt.</figcaption>
+    </figure>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Der Drift-Melder wirft seinen Befund weg</h3>
+          <p><b>Beleg:</b> <code>post-implement-harness-sync.sh:58</code> schreibt mit
+             <code>echo</code> auf stdout und beendet sich mit <code>exit 0</code> (Zeile 65).
+             In <code>.claude/settings.json</code> ist der Hook mit <code>"async": true</code>
+             eingetragen — wie die drei anderen Stop-Hooks, die ihre Ergebnisse aber in
+             Dateien schreiben.</p>
+          <p><b>Konsequenz:</b> Die siebzehn erkannten Abweichungen blieben unsichtbar,
+             bis der Hook von Hand aufgerufen wurde. Sie sind nachgetragen, der Melder
+             steht auf null — aber jeder künftige Rückstand ist genauso unsichtbar.</p>
+          <p><b>Fix:</b> Befund nach <code>.claude/HARNESS-DRIFT.md</code> schreiben, wie
+             <code>bauplan-report.sh</code> es tut. Dann ist er beim nächsten Sitzungsstart
+             im Verzeichnis sichtbar.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3>Der Melder prüft gegen eine Datei, die verschwinden soll</h3>
+          <p><b>Beleg:</b> <code>post-implement-harness-sync.sh:11</code> setzt
+             <code>DATA_JSON="${CLAUDE_PROJECT_DIR}/harness-app/data.json"</code>. Zwölf der
+             siebzehn Meldungen betreffen diese Datei.</p>
+          <p><b>Konsequenz:</b> Wird <code>harness-app/</code> entfernt, steigt
+             <code>check_in_file</code> bei fehlender Datei still aus — der Melder prüft dann
+             nur noch die README. Das ist die richtige Richtung, aber die zwölf Meldungen
+             verschwinden, ohne bearbeitet worden zu sein.</p>
+          <p><b>Fix:</b> gegen <code>.claude/bauplan/*.manifest.json</code> und die generierte
+             Übersicht prüfen statt gegen eine handgepflegte Datenbank.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Der Hook läuft ohne <code>CLAUDE_PROJECT_DIR</code> nicht</h3>
+          <p><b>Beleg:</b> <code>post-implement-harness-sync.sh:7–11</code> setzt
+             <code>set -euo pipefail</code> und verwendet <code>${CLAUDE_PROJECT_DIR}</code>
+             ohne Standardwert. Die anderen Hooks schreiben durchgängig
+             <code>${CLAUDE_PROJECT_DIR:-$HOME/MDM}</code>.</p>
+          <p><b>Konsequenz:</b> In der Sitzung ist die Variable gesetzt, der Hook läuft. Von
+             Hand oder aus einem Cron-Kontext bricht er mit einer unklaren Meldung ab. Ein
+             Standardwert kostet nichts.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Gute Nachricht: die Linter prüfen nur die geänderte Datei</h3>
+          <p><b>Beleg:</b> Alle drei <code>post-edit-*</code>-Hooks filtern auf den Pfad aus
+             der Hook-Nutzlast und laufen nur bei passender Endung — Theme Check bei
+             <code>theme/*.liquid</code> und <code>*.json</code>, RuboCop bei
+             <code>connector/*.rb</code>, PHPStan bei Middleware-<code>*.php</code>.</p>
+          <p><b>Konsequenz:</b> Eine Änderung im Connector löst keinen Theme Check aus. Bei
+             Timeouts von 60 bis 90 Sekunden ist das der Unterschied zwischen einem
+             brauchbaren und einem unerträglichen Arbeitsablauf.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>MDM Harness · Etappe 3 von 4</span>
+    <span>Als nächstes: Skills, Rules und Rechte</span>
+    <span>Design bauplan-v1</span>
+  </footer>
+
+</div>

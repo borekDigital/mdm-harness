@@ -1,11 +1,11 @@
 # Eigenstaendige Repos (via setup.sh geklont)
-theme/
-connector/
-datalayer/
-creditcheck/
-emailservice/
-payment-service/
-connector-worktrees/
+/theme/
+/connector/
+/datalayer/
+/creditcheck/
+/emailservice/
+/payment-service/
+/connector-worktrees/
 
 # Lokaler Zustand
 .workspace.local.yaml
@@ -18,3 +18,9 @@ connector-worktrees/
 # Bauplan-Laufzeitdaten (die *.manifest.json bleiben versioniert)
 .claude/bauplan/*.staleness.jsonl
 .claude/bauplan/*.STALE.md
+
+# Bauplan: generierte Artefakte (HTML-Quellen bleiben versioniert)
+docs/bauplan/pdf/
+.claude/bauplan/CI-BERICHT.json
+.claude/bauplan/BESTAND-WARNUNG.md
+bin/__pycache__/

@@ -28,7 +28,10 @@ Referenz-Ergebnis: der Connector-Blattsatz vom 3. September 2026, neun Etappen.
 ## Grundgesetz — nicht verhandelbar
 
 1. **Nie zeichnen, was nicht gelesen wurde.** Vor jeder Figur die Dateien vollstaendig
-   lesen, die sie behauptet. Keine Annahmen ueber Dateiinhalte.
+   lesen, die sie behauptet. Keine Annahmen ueber Dateiinhalte. Zahlen und Zeilennummern
+   abfragen, nicht schaetzen. Behauptet die Figur ein **Verhalten** — laeuft nicht, greift
+   nicht, toter Code — dann ausfuehren, nicht nur lesen. Begruendung und Werkzeuge:
+   `figure-grammar.md`, Abschnitt „Belegen heisst nachsehen".
 2. **Jede Aussage traegt ihren Beleg.** `Datei:Zeile` im Text der Figur oder in der
    Bildunterschrift. Bei Zeilenbereichen `Datei:12–18`.
 3. **Drei Evidenzstufen, sichtbar getrennt.**
@@ -90,11 +93,12 @@ Fuer jede Etappe, eine nach der anderen:
 dann raten. Ergaenzend `grep` einsetzen, um Verwendung zu pruefen — „ist diese Funktion
 ueberhaupt aufgerufen" ist eine der ertragreichsten Fragen.
 
-**2b. Die These finden.** Eine Etappe hat **einen** Satz, der haengen bleiben soll. Er
-wird zum Seitentitel. Beispiele aus dem Connector-Satz: „Es sind drei Prozesse, nicht
-einer." „Der Connector ist im Kern ein Uhrwerk." „Der Warenkorb ist der Nachrichtenkanal."
+**2b. Den Befund benennen.** Eine Etappe hat **einen** Satz, der die Struktur
+beschreibt, die sie zeigt. Er wird zum Seitentitel und nennt Komponente plus Zahl —
+sachlich, nicht zugespitzt. `Messenger: 3 Queues, 11 Handler`, nicht „Der Versand ist ein
+Fliessband". Titelmuster und Wording-Regeln: `design-system.md`.
 
-Findest du keine These, hast du noch nicht genug gelesen.
+Findest du keinen Befund, hast du noch nicht genug gelesen.
 
 **2c. Figuren planen.** 4–6 Figuren je Etappe. Grammatik und Antimuster:
 `figure-grammar.md` in diesem Skill-Ordner. Kurzfassung:
@@ -128,16 +132,38 @@ Titel als Aussagesatz, Beleg mit `Datei:Zeile`, Konsequenz, und wo sinnvoll den
 naheliegenden Fix in einem Satz. Design-Entscheidungen (keine Fehler) gehoeren dazu und
 werden als solche benannt.
 
-**2e. Bauen und veroeffentlichen.**
+**2e. Bauen, ablegen, veroeffentlichen.** Die HTML-Quelle liegt **im Repo**, nicht im
+Scratchpad. Das ist die Grundlage von Historie, PDF-Export und CI — ein Blattsatz, dessen
+Quelle nur als veroeffentlichte Seite existiert, ist nicht pflegbar.
 
 1. `assets/bauplan-head.html` aus diesem Skill-Ordner als Kopf verwenden — nicht neu
    schreiben. Design-Vertrag: `design-system.md`.
-2. Body als eigene Datei im Scratchpad schreiben.
-3. Zusammensetzen: `{ echo '<title>These</title>'; cat bauplan-head.html; cat body.html; }`
-4. Pruefen: `<text` und `</text>` muessen gleich oft vorkommen. Unbalancierte SVG-Tags
+2. Body im Scratchpad schreiben, dann zusammensetzen und **als Quelle ablegen**:
+
+   ```bash
+   { echo '<title>Befund</title>'; cat .claude/skills/repo-bauplan/assets/bauplan-head.html; \
+     cat "$SCRATCH/body.html"; } > docs/bauplan/<repo>/etappe-NN.html
+   ```
+
+   Die Datei ist ein **Fragment**, kein vollstaendiges Dokument: kein `<!doctype>`, kein
+   `<html>`, `<head>` oder `<body>`. Genau so nimmt das Artifact-Tool sie an; PDF-Export
+   und Browser-Vorschau ergaenzen den Rahmen selbst.
+3. Pruefen: `<text` und `</text>` muessen gleich oft vorkommen. Unbalancierte SVG-Tags
    sind der haeufigste Fehler.
-5. `Artifact` mit `description` und einem Emoji-`favicon`. Beim erneuten
-   Veroeffentlichen derselben Etappe: `url` aus dem Manifest mitgeben, `favicon` weglassen.
+
+   ```bash
+   f=docs/bauplan/<repo>/etappe-NN.html
+   echo "$(grep -o '<text[ >]' "$f" | wc -l) offen / $(grep -c '</text>' "$f") zu"
+   ```
+4. `Artifact` mit `file_path` auf **diese** Datei, plus `description` und Emoji-`favicon`.
+   Beim erneuten Veroeffentlichen derselben Etappe: `url` aus dem Manifest mitgeben und
+   **dasselbe** `favicon` erneut setzen. Das Feld ist auch beim Aktualisieren Pflicht
+   (belegt am 10. September 2026: `favicon required to publish`) — weglassen geht nicht,
+   aendern verwirrt, weil Betrachter die Seite am Icon wiederfinden. Deshalb steht das
+   Icon im Manifest.
+
+Eine bereits veroeffentlichte Seite, deren Quelle im Repo fehlt, holt
+`bin/bauplan-import.py --repo <repo> --nr <n> --from-file <webfetch-datei>` zurueck.
 
 ### Phase 3 — Manifest schreiben
 
@@ -149,6 +175,7 @@ Teil, der den Blattsatz von einem Einmal-Artefakt zu einem pflegbaren macht:**
   "repo": "connector",
   "design_system": "bauplan-v1",
   "generated": "2026-09-03",
+  "last_seen_sha": "a1b2c3d",
   "etappen": [
     {
       "nr": 1,
@@ -171,6 +198,13 @@ Teil, der den Blattsatz von einem Einmal-Artefakt zu einem pflegbaren macht:**
 - `url` — damit `--refresh` an dieselbe Adresse veroeffentlicht statt eine zweite Seite
   anzulegen.
 - `open_questions` / `closes` — die `⚠️`-Kette zwischen den Etappen.
+- `last_seen_sha` — Commit des Arbeits-Repos, gegen den der Satz gebaut wurde. Die CI
+  vergleicht ihn mit `HEAD` und leitet daraus ab, was veraltet ist. Nach jedem
+  vollstaendigen Lauf fortschreiben:
+  `git -C <repo> rev-parse HEAD`.
+
+Schreiben ueber `bin/bauplan_lib.py` (`save_manifest`) oder direkt — in jedem Fall
+**vollstaendig**: eine Etappe wird aktualisiert, niemals entfernt (siehe Bestand).
 
 ### Phase 4 — Uebergabe
 
@@ -185,6 +219,65 @@ Im Chat: Tabelle aller Etappen mit Links, dann **drei Abschnitte**:
 
 Zum Abschluss: Memory-Eintrag mit den URLs anlegen (`type: reference`), Zeiger in
 `MEMORY.md`.
+
+## Auffrischen — nur das Veraltete
+
+`--refresh` ist ein chirurgischer Eingriff. Die Versuchung, „bei der Gelegenheit" auch
+andere Blaetter zu verbessern, ist der Weg zu einem Diff, den niemand mehr reviewen kann.
+
+1. **Arbeitsliste holen.** `.claude/bauplan/<repo>.STALE.md` oder
+   `bin/bauplan-stale.py --repo <repo>`. Nur die dort genannten Etappen sind im Auftrag.
+2. **Zulaessige Dateien notieren.** Genau eine HTML-Quelle je veralteter Etappe, plus das
+   Manifest. Mehr nicht.
+3. **Je Etappe:** die geaenderten Quelldateien lesen, dann die betroffenen Blaetter
+   anpassen. Blaetter derselben Etappe, deren Quellen sich nicht geaendert haben, bleiben
+   Zeichen fuer Zeichen gleich.
+4. **Diff pruefen**, bevor veroeffentlicht wird:
+
+   ```bash
+   git -C . diff --name-only -- docs/bauplan .claude/bauplan
+   ```
+
+   Steht dort eine Datei, die nicht auf der Liste aus Schritt 2 war, ist das ein Fehler —
+   zurueckrollen, nicht nachtraeglich rechtfertigen.
+5. **Nur die betroffenen Seiten neu veroeffentlichen**, mit `url` aus dem Manifest.
+
+Faellt beim Lesen etwas auf, das nicht zur veralteten Etappe gehoert: als offene Frage in
+`open_questions` der betroffenen Etappe notieren und im Chat nennen. Nicht mitfixen.
+
+## Bestand — was nie verloren geht
+
+Der Schadensfall: nur ein Repo ist geklont, eine Sitzung schliesst daraus, die anderen
+existierten nicht, und raeumt deren Doku weg.
+
+**Bestand wird nie aus lokaler Anwesenheit abgeleitet.** Referenz ist `workspace.yaml`
+plus die Manifeste, nicht das Dateisystem. Ein Repo ohne Klon ist **uebersprungen**, nicht
+abgeschafft — in der Uebersicht erscheint es als offener Posten.
+
+Daraus folgt:
+
+- Etappen werden aktualisiert, nie aus einem Manifest entfernt.
+- Kein `rm` auf `docs/bauplan/`, kein Entfernen von Repos aus `workspace.yaml`.
+- Ein Blattsatz zu einem nicht geklonten Repo bleibt liegen, auch wenn er nicht
+  aufgefrischt werden kann. Fehlender Klon ist keine Aussage ueber den Bestand.
+
+Abgesichert ist das dreifach: `hooks/bauplan-guard.sh` blockiert vorab,
+`bin/bauplan-guard.py --verify` prueft nach jeder Sitzung gegen `git HEAD`, und die
+Historie im `mdm-harness`-Repo ist der Rueckweg (`git checkout HEAD -- docs/bauplan`).
+
+## Werkzeuge
+
+| Befehl | Wirkung |
+|---|---|
+| `bin/bauplan-index.py` | `docs/bauplan/index.html` neu erzeugen (Uebersicht mit Inhaltsverzeichnis) |
+| `bin/bauplan-pdf.py <repo>` | Ganzen Satz als ein PDF — fuer Externe ohne Claude-Zugang |
+| `bin/bauplan-pdf.py <repo> --einzeln` | Ein PDF je Etappe |
+| `bin/bauplan-stale.py --repo <repo>` | Veraltete Etappen ermitteln (Exit 3, wenn welche) |
+| `bin/bauplan-guard.py --verify` | Bestand gegen den letzten Commit pruefen |
+| `bin/bauplan-import.py` | Veroeffentlichte Seite als Quelle zurueckholen |
+
+Nach jedem Lauf `bin/bauplan-index.py` aufrufen — die Uebersicht ist generiert, nicht
+handgepflegt.
 
 ## Repo-spezifische Zuschnitte
 

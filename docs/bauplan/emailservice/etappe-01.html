@@ -1,3 +1,4 @@
+<title>Emailservice: 11 000 Zeilen, kein Datenmodell</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -388,3 +389,328 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="tb-main">
+      <p class="tb-eyebrow">MDM Emailservice · Etappe 1 · Umfang und Abhängigkeiten</p>
+      <h1>Emailservice: 11 000 Zeilen,<br>kein Datenmodell</h1>
+      <p>Der Dienst nimmt E-Mail-Anforderungen vom SAP-System an und löst daraus
+         Kampagnen-Events bei Emarsys aus. Er hält dabei <strong>keinen eigenen
+         Zustand</strong>: keine Datenbank, keine Entities, keine Migrationen. Jede Anfrage
+         läuft durch drei Warteschlangen und ist danach vergessen.</p>
+    </div>
+    <dl class="tb-meta">
+      <div class="tb-cell"><dt>Gelesen</dt><dd>composer.json · bundles.php</dd></div>
+      <div class="tb-cell"><dt>Klassen</dt><dd>146 in www/src</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>11 012 Code · 8 336 Tests</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+    </dl>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><i class="swatch sw-web"></i>Synchron <span>— im HTTP-Request</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Asynchron <span>— Warteschlange und Worker</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Fremdsystem <span>— SAP und Emarsys</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Prüfpunkt <span>— unbenutzt oder unbelegt</span></span>
+  </div>
+
+  <!-- ============ BLATT 01 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Ein Endpunkt, zwei Fremdsysteme</h2>
+    </div>
+    <p class="lead">Die Außengrenze ist schmal. Genau eine Route nimmt Nutzdaten an
+      (<code>POST /sap</code>), zwei weitere dienen dem Betrieb. Nach außen sprechen zwei
+      Systeme mit dem Dienst, und beide gehören MDM: SAP als Auftraggeber, Emarsys als
+      Versender.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 330" role="img" aria-label="Das SAP-System sendet POST /sap an nginx und php-fpm. Der Request stellt eine Nachricht in die erste Warteschlange und antwortet sofort. Drei Warteschlangen-Container arbeiten die Nachricht ab und rufen am Ende die Emarsys-API auf. Healthcheck und Metrics sind separate Betriebsrouten.">
+        <defs>
+          <marker id="e1m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <!-- SAP -->
+        <rect x="16" y="96" width="132" height="76" rx="3" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="82" y="126" text-anchor="middle" class="s-name f-vite">SAP</text>
+        <text x="82" y="144" text-anchor="middle" class="s-tiny f-dim">Q12 Test · P12 Prod</text>
+        <text x="82" y="160" text-anchor="middle" class="s-tiny f-dim">Auftraggeber</text>
+
+        <line x1="148" y1="134" x2="224" y2="134" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#e1m1)"></line>
+        <text x="186" y="126" text-anchor="middle" class="s-tiny">POST /sap</text>
+
+        <!-- Synchroner Teil -->
+        <rect x="224" y="64" width="196" height="140" rx="3" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="240" y="88" class="s-lbl f-web">Request</text>
+        <text x="240" y="112" class="s-mono">nginx</text>
+        <text x="240" y="130" class="s-mono">php-fpm</text>
+        <text x="240" y="152" class="s-tiny f-dim">SapController::sap</text>
+        <text x="240" y="168" class="s-tiny f-dim">stellt ein, antwortet sofort</text>
+        <text x="240" y="190" class="s-tiny f-web">Antwort an SAP: JSON</text>
+
+        <line x1="420" y1="134" x2="500" y2="134" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#e1m1)"></line>
+        <text x="460" y="126" text-anchor="middle" class="s-tiny">dispatch</text>
+
+        <!-- Asynchroner Teil -->
+        <rect x="500" y="52" width="252" height="164" rx="3" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="516" y="76" class="s-lbl f-worker">3 Warteschlangen</text>
+        <text x="516" y="100" class="s-mono">incoming_mail_requests</text>
+        <text x="516" y="122" class="s-mono">enrichment_requests</text>
+        <text x="516" y="144" class="s-mono">emarsys_event_requests</text>
+        <text x="516" y="168" class="s-tiny f-dim">AMQP · je ein Container</text>
+        <text x="516" y="184" class="s-tiny f-dim">messenger:consume je Queue</text>
+        <text x="516" y="204" class="s-tiny f-dim">Reihenfolge ist fest verdrahtet</text>
+
+        <line x1="752" y1="134" x2="828" y2="134" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#e1m1)"></line>
+        <text x="790" y="126" text-anchor="middle" class="s-tiny">HTTPS</text>
+
+        <!-- Emarsys -->
+        <rect x="828" y="96" width="116" height="76" rx="3" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="886" y="126" text-anchor="middle" class="s-name f-vite">Emarsys</text>
+        <text x="886" y="144" text-anchor="middle" class="s-tiny f-dim">6 Mandanten</text>
+        <text x="886" y="160" text-anchor="middle" class="s-tiny f-dim">Versender</text>
+
+        <!-- Betriebsrouten -->
+        <rect x="224" y="238" width="196" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"></rect>
+        <text x="240" y="260" class="s-tiny f-dim">Betrieb, ohne Nutzdaten</text>
+        <text x="240" y="278" class="s-mono">GET /healthcheck</text>
+        <text x="240" y="296" class="s-mono">GET /metrics</text>
+
+        <text x="440" y="262" class="s-tiny f-dim">GET / antwortet 405 — bewusst,</text>
+        <text x="440" y="278" class="s-tiny f-dim">damit ein Aufruf der Wurzel nicht wie</text>
+        <text x="440" y="294" class="s-tiny f-dim">ein defekter Dienst aussieht.</text>
+      </svg>
+      <figcaption><b>Der Request antwortet, bevor gearbeitet wurde.</b>
+        <code>SystemMailService::handleMailRequest</code> stellt die Nachricht ein und baut die
+        Antwort aus dem <em>Request</em>-Objekt, nicht aus einem Ergebnis
+        (<code>www/src/Services/Mailing/Sap/SystemMailService.php:60–68</code>). SAP erfährt
+        also, dass die Anforderung angenommen wurde — nicht, ob die Mail rausging. Wer einem
+        Fehler nachgeht, findet ihn nur im Log und in den Metriken, nie in der
+        SAP-Antwort.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 02 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>Wo die 11 012 Zeilen liegen</h2>
+    </div>
+    <p class="lead">Zwei Drittel des Codes stecken in der Emarsys-Anbindung, nicht in der
+      Warteschlangen-Mechanik. Das ist die brauchbarste Orientierung für den Einstieg: wer
+      etwas am Mailversand ändert, arbeitet fast immer unter
+      <code>Services/Emarsys/</code>.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 296" role="img" aria-label="Balkendiagramm der Codezeilen je Bereich: Services Emarsys etwa 4400 Zeilen, Queueing etwa 1900, Services Sap etwa 1500, Handler und Preparer etwa 1400, Services übrige etwa 1100, Controller Validator Enums etwa 700.">
+        <text x="16" y="26" class="s-lbl f-dim">Bereich</text>
+        <text x="300" y="26" class="s-lbl f-dim">Zeilen in www/src</text>
+
+        <rect x="300" y="42" width="530" height="26" rx="2" fill="var(--web)" fill-opacity="0.16" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="16" y="60" class="s-mono">Services/Emarsys</text>
+        <text x="840" y="60" class="s-mono f-web">4 400</text>
+        <text x="312" y="60" class="s-tiny f-dim">Templating, Domain-Daten, API, Konfiguration</text>
+
+        <rect x="300" y="78" width="229" height="26" rx="2" fill="var(--worker)" fill-opacity="0.16" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="16" y="96" class="s-mono">Queueing</text>
+        <text x="840" y="96" class="s-mono f-worker">1 900</text>
+        <text x="312" y="96" class="s-tiny f-dim">Messages, Handler, Middleware, Stamps</text>
+
+        <rect x="300" y="114" width="181" height="26" rx="2" fill="var(--vite)" fill-opacity="0.16" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="16" y="132" class="s-mono">Services/Sap</text>
+        <text x="840" y="132" class="s-mono f-vite">1 500</text>
+        <text x="312" y="132" class="s-tiny f-dim">API-Client, Validierung, Anreicherung</text>
+
+        <rect x="300" y="150" width="169" height="26" rx="2" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="16" y="168" class="s-mono">Handler + Preparer</text>
+        <text x="840" y="168" class="s-mono">1 400</text>
+        <text x="312" y="168" class="s-tiny f-dim">je Mailtyp eine Klasse, viermal</text>
+
+        <rect x="300" y="186" width="133" height="26" rx="2" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="16" y="204" class="s-mono">Services/übrige</text>
+        <text x="840" y="204" class="s-mono">1 100</text>
+        <text x="312" y="204" class="s-tiny f-dim">Metrics, Mailing, Serialization, Mock, Error</text>
+
+        <rect x="300" y="222" width="85" height="26" rx="2" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="16" y="240" class="s-mono">Rest</text>
+        <text x="840" y="240" class="s-mono">700</text>
+        <text x="312" y="240" class="s-tiny f-dim">Controller, Validator, Enums, EventListener, Exception</text>
+
+        <line x1="300" y1="260" x2="830" y2="260" stroke="currentColor" stroke-opacity="0.25"></line>
+        <text x="16" y="280" class="s-tiny f-dim">Die größte Einzeldatei ist Placeholder.php mit 537 Zeilen — eine Basisklasse für Twig-Platzhalter, kein Fachcode.</text>
+      </svg>
+      <figcaption><b>Die Verteilung sagt, wo Änderungen wehtun.</b> Die drei größten Dateien
+        sind <code>Services/Emarsys/Templating/Placeholder/Base/Placeholder.php:537</code>,
+        <code>Services/Emarsys/Domain/Data/GetEmailCampaignData.php:435</code> und
+        <code>Services/Emarsys/Domain/Data/TriggerPayloadData.php:388</code> — alle drei
+        beschreiben Emarsys-Datenformate. Die Warteschlangen-Mechanik selbst ist mit
+        146 Zeilen im größten Handler vergleichsweise schlank.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>Doctrine ist da, aber nicht angeschlossen</h2>
+    </div>
+    <p class="lead"><code>composer.json</code> verlangt <code>doctrine/orm ^3.2</code>. In
+      <code>bundles.php</code> steht kein <code>DoctrineBundle</code>, unter
+      <code>config/packages/</code> liegt keine <code>doctrine.yaml</code>, und die
+      Verzeichnisse <code>src/Entity</code> und <code>src/Migrations</code> existieren nicht.
+      Der Dienst hat keine Datenbank.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 268" role="img" aria-label="Vergleich: composer.json fordert doctrine/orm und doctrine/collections. bundles.php lädt nur sechs Bundles, kein DoctrineBundle. Aus dem Doctrine-Paket wird im Code allein ArrayCollection benutzt, an zwei Stellen.">
+        <text x="16" y="26" class="s-lbl f-dim">Gefordert</text>
+        <text x="352" y="26" class="s-lbl f-dim">Geladen</text>
+        <text x="664" y="26" class="s-lbl f-dim">Tatsächlich benutzt</text>
+
+        <!-- composer -->
+        <rect x="16" y="40" width="300" height="196" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="32" y="62" class="s-tiny f-dim">composer.json</text>
+        <rect x="32" y="74" width="268" height="28" rx="2" fill="var(--alert)" fill-opacity="0.1" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="44" y="93" class="s-mono f-alert">doctrine/orm: ^3.2</text>
+        <rect x="32" y="110" width="268" height="28" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="44" y="129" class="s-mono">doctrine/collections: 2.2</text>
+        <text x="32" y="162" class="s-tiny f-dim">ext-amqp, jms/serializer-bundle,</text>
+        <text x="32" y="178" class="s-tiny f-dim">flysystem-bundle, prometheus_client,</text>
+        <text x="32" y="194" class="s-tiny f-dim">gelf-php, guzzle, 24× symfony/*</text>
+        <text x="32" y="218" class="s-tiny f-dim">33 Pakete gesamt</text>
+
+        <!-- bundles -->
+        <rect x="352" y="40" width="276" height="196" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="368" y="62" class="s-tiny f-dim">config/bundles.php — 6 für alle Umgebungen</text>
+        <text x="368" y="86" class="s-tiny">FrameworkBundle</text>
+        <text x="368" y="104" class="s-tiny">FlysystemBundle</text>
+        <text x="368" y="122" class="s-tiny">MonologBundle</text>
+        <text x="368" y="140" class="s-tiny">JMSSerializerBundle</text>
+        <text x="368" y="158" class="s-tiny">MDMLoggerBundle</text>
+        <text x="368" y="176" class="s-tiny">SecurityBundle · TwigBundle</text>
+        <rect x="368" y="188" width="244" height="30" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="4 3"></rect>
+        <text x="380" y="207" class="s-mono f-alert">kein DoctrineBundle</text>
+
+        <!-- Nutzung -->
+        <rect x="664" y="40" width="280" height="196" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="680" y="62" class="s-tiny f-dim">grep Doctrine in www/src — 2 Treffer</text>
+        <rect x="680" y="76" width="248" height="52" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="692" y="96" class="s-tiny">Company.php</text>
+        <text x="692" y="114" class="s-tiny">CompanyService.php</text>
+        <text x="680" y="150" class="s-tiny f-dim">Importiert wird allein:</text>
+        <text x="680" y="170" class="s-mono">ArrayCollection</text>
+        <text x="680" y="192" class="s-tiny f-dim">aus doctrine/collections —</text>
+        <text x="680" y="208" class="s-tiny f-dim">nicht aus doctrine/orm.</text>
+        <text x="680" y="228" class="s-tiny f-alert">Das ORM ist unbenutzt.</text>
+      </svg>
+      <figcaption><b>Relevant beim Aufräumen von Abhängigkeiten:</b>
+        <code>doctrine/orm</code> lässt sich entfernen, ohne Code zu ändern —
+        <code>ArrayCollection</code> kommt aus dem separat geforderten
+        <code>doctrine/collections</code>. Wichtiger als die eingesparte Paketgröße ist die
+        Erwartung, die der Eintrag weckt: wer „Doctrine ORM" im Abhängigkeitsbaum sieht, sucht
+        eine Datenbank, die es nicht gibt. Die Workspace-Dokumentation
+        (<code>~/MDM/CLAUDE.md</code>) führt „Doctrine ORM" ebenfalls als Teil des
+        Tech-Stacks — auch dort gehört der Eintrag gestrichen.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>17 Ereignistypen, 2 gebaute Pfade</h2>
+    </div>
+    <p class="lead"><code>EventType</code> zählt 17 SAP-Ereignisse auf. Verarbeiten kann der
+      Dienst zwei davon, denn nur für zwei existieren Handler, Preparer, Mapper und
+      Platzhalter. Trifft ein anderes Ereignis ein, endet die Anfrage in
+      <code>HandlerException::HANDLER_NOT_FOUND</code>.</p>
+
+    <div class="tw">
+      <table>
+        <caption>EventType-Konstanten gegen vorhandene Verarbeitung</caption>
+        <thead><tr><th class="m">SAP-Ereignis</th><th class="m">Konstante</th><th>Verarbeitung</th></tr></thead>
+        <tbody>
+          <tr><td class="m">Zahlungseingang</td><td class="m">PAYMENT_RECEIVED</td><td>vollständig — Handler, Preparer, Mapper, Platzhalter, Validator</td></tr>
+          <tr><td class="m">VERSAND_FOLGE1…9</td><td class="m">SUBSCRIPTION_FOLLOW_MAIL1…9</td><td>vollständig über <code>SubscriptionEmail*</code> — ohne Validator</td></tr>
+          <tr><td class="m">VERSAND_FOLGE_N</td><td class="m">SUBSCRIPTION_FOLLOW_MAIL</td><td>vollständig über <code>SubscriptionEmail*</code> — ohne Validator</td></tr>
+          <tr><td class="m">VERTROESTER1</td><td class="m">SHIPPING_PUT_OFF1</td><td>kein Handler — <code>HANDLER_NOT_FOUND</code></td></tr>
+          <tr><td class="m">VERSAND_ERSTLIEF</td><td class="m">SHIPPING_FIRST_DELIVERY</td><td>kein Handler</td></tr>
+          <tr><td class="m">VERSAND</td><td class="m">SHIPPING_CONF</td><td>kein Handler</td></tr>
+          <tr><td class="m">VERSAND_OFF_FOLGE</td><td class="m">VERSAND_OFFLINE_FOLGE</td><td>kein Handler</td></tr>
+          <tr><td class="m">OFFLINEBESTELLUNG</td><td class="m">OFFLINE_ORDER</td><td>kein Handler</td></tr>
+          <tr><td class="m">VERSANDSTATUS_HERMES</td><td class="m">HERMES_TRACK_AND_TRACE</td><td>kein Handler</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead">Welche Ereignisse ein <code>SubscriptionEmailRequestHandler</code> genau
+      annimmt, entscheidet dessen <code>getSupportedEvents()</code> — die Zuordnung steht im
+      Handler, nicht in einer Konfiguration
+      (<code>www/src/Handler/Requests/RequestHandlerService.php:38–42</code>).</p>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Der Dienst hält keinen Zustand — das ist eine Entscheidung, kein Versehen</h3>
+          <p><b>Beleg:</b> kein <code>DoctrineBundle</code> in <code>config/bundles.php</code>,
+             kein <code>src/Entity</code>, keine Migrationen. Zustand liegt in AMQP
+             (unverarbeitete Nachrichten) und bei Emarsys (Kontaktdaten).</p>
+          <p><b>Konsequenz:</b> Der Dienst ist beliebig oft startbar und braucht kein
+             Backup. Umgekehrt gibt es keine Historie: welche Mail wann für welchen Kunden
+             ausgelöst wurde, steht nur im Log und in Prometheus-Zählern.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3><code>doctrine/orm</code> ist eine unbenutzte Abhängigkeit</h3>
+          <p><b>Beleg:</b> <code>www/composer.json</code> fordert <code>doctrine/orm: ^3.2</code>;
+             <code>grep -rl Doctrine www/src</code> liefert zwei Dateien, beide importieren
+             ausschließlich <code>Doctrine\Common\Collections\ArrayCollection</code> aus
+             <code>doctrine/collections</code>.</p>
+          <p><b>Fix:</b> <code>composer remove doctrine/orm</code> und den Eintrag „Doctrine ORM"
+             aus der Workspace-Dokumentation streichen.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Die Testsuite ist fast so groß wie der Code</h3>
+          <p><b>Beleg:</b> 103 Dateien und 8 336 Zeilen unter <code>www/tests</code> gegen
+             146 Dateien und 11 012 Zeilen unter <code>www/src</code>.</p>
+          <p><b>Konsequenz:</b> Eine gute Nachricht — Änderungen an der Emarsys-Anbindung sind
+             abgedeckt. In der GitLab-Pipeline läuft PHPUnit allerdings nicht; dort stehen nur
+             PHPStan, PHPMD, Codestyle und der Copy-Paste-Detector, alle mit
+             <code>allow_failure: true</code> (<code>.gitlab-ci.yml:34–52</code>).</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3><code>EventType</code> hat drei Felder für einen Wert, zwei davon unerreichbar</h3>
+          <p><b>Beleg:</b> <code>www/src/Services/Sap/Domain/Enum/EventType.php:38–52</code>
+             deklariert <code>$ucEvent</code> mit <code>SerializedName('EVENT')</code>,
+             <code>$lcEvent</code> und <code>$event</code> beide mit
+             <code>SerializedName('event')</code> — derselbe Name zweimal.</p>
+          <p><b>Konsequenz:</b> <code>RequestHandlerService</code> ruft vorher
+             <code>array_change_key_case($data, CASE_LOWER)</code> auf, wodurch
+             <code>EVENT</code> nie ankommt und <code>$ucEvent</code> toter Code ist. Bei den
+             beiden gleichnamigen Feldern entscheidet die Deserialisierungsreihenfolge, welches
+             gewinnt. Alle drei zeigen über <code>Accessor</code> auf denselben Getter, deshalb
+             fällt es nicht auf — aufräumen lässt sich das auf ein Feld.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>MDM Emailservice · Etappe 1 von 7</span>
+    <span>Als nächstes: Container und Worker-Lebenszyklus</span>
+    <span>Design bauplan-v1</span>
+  </footer>
+
+</div>

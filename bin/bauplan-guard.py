@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""Invarianten des Bauplan-Bestands.
+
+Der Schadensfall, gegen den das schuetzt: Es ist nur ein Repo geklont, eine
+Sitzung schliesst daraus, die anderen existierten nicht, und raeumt deren Doku
+weg. Deshalb gilt: **Bestand wird nie aus lokaler Anwesenheit abgeleitet.**
+Referenz ist workspace.yaml und der letzte Commit, nicht das Dateisystem.
+
+Zwei Betriebsarten:
+
+  --check-write <ziel> <neuer-inhalt>   PreToolUse: verhindert Schrumpfen
+  --verify                              Nachlauf: Arbeitsbaum gegen git HEAD
+
+Exit 0 = unauffaellig, 2 = Verstoss (blockiert im Hook, faellt in CI durch).
+"""
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bauplan_lib as lib  # noqa: E402
+
+
+def git(project, *args):
+    return subprocess.run(
+        ["git", "-C", project, *args], capture_output=True, text=True,
+    )
+
+
+def head_version(project, rel):
+    """Datei aus dem letzten Commit. None, wenn dort noch unbekannt."""
+    out = git(project, "show", "HEAD:%s" % rel)
+    return out.stdout if out.returncode == 0 else None
+
+
+def etappen_nrs(raw):
+    try:
+        return {e.get("nr") for e in json.loads(raw).get("etappen", [])}
+    except (ValueError, AttributeError):
+        return None
+
+
+def repo_keys(raw):
+    """Repo-Schluessel aus workspace.yaml, ohne YAML-Abhaengigkeit.
+    Die Datei ist flach genug, dass die Einrueckung als Grammatik reicht."""
+    keys, in_repos = set(), False
+    for line in raw.splitlines():
+        if re.match(r"^repos:\s*$", line):
+            in_repos = True
+            continue
+        if in_repos:
+            if re.match(r"^\S", line):
+                break
+            m = re.match(r"^  ([A-Za-z0-9_-]+):\s*$", line)
+            if m:
+                keys.add(m.group(1))
+    return keys
+
+
+def check_write(project, target, new_content):
+    """Verhindert, dass ein Schreibvorgang Bestand verliert."""
+    rel = os.path.relpath(os.path.abspath(target), project)
+    violations = []
+
+    if rel.endswith(lib.MANIFEST_SUFFIX):
+        if os.path.isfile(target):
+            with open(target, encoding="utf-8") as fh:
+                old = etappen_nrs(fh.read())
+            new = etappen_nrs(new_content)
+            if new is None:
+                violations.append("Der neue Inhalt ist kein gueltiges JSON.")
+            elif old:
+                lost = sorted(n for n in old - new if n is not None)
+                if lost:
+                    violations.append(
+                        "Etappen %s wuerden aus %s verschwinden. Etappen werden "
+                        "aktualisiert, nicht entfernt." % (
+                            ", ".join(str(n) for n in lost), rel)
+                    )
+
+    if os.path.basename(rel) == "workspace.yaml":
+        if os.path.isfile(target):
+            with open(target, encoding="utf-8") as fh:
+                old = repo_keys(fh.read())
+            lost = sorted(old - repo_keys(new_content))
+            if lost:
+                violations.append(
+                    "Repos %s wuerden aus workspace.yaml verschwinden. Ein nicht "
+                    "geklontes Repo ist uebersprungen, nicht abgeschafft." % ", ".join(lost)
+                )
+    return violations
+
+
+def verify(project):
+    """Arbeitsbaum gegen den letzten Commit. Findet Loeschungen und
+    geschrumpfte Manifeste unabhaengig davon, wodurch sie entstanden sind."""
+    violations = []
+
+    out = git(project, "diff", "--name-status", "HEAD", "--",
+              "docs/bauplan", ".claude/bauplan", "workspace.yaml")
+    if out.returncode == 0:
+        for line in out.stdout.splitlines():
+            parts = line.split("\t")
+            if parts and parts[0].startswith("D"):
+                violations.append(
+                    "%s ist geloescht. Wiederherstellen: git checkout HEAD -- %s"
+                    % (parts[-1], parts[-1])
+                )
+
+    for repo, path, manifest in lib.iter_manifests(project):
+        rel = os.path.relpath(path, project)
+        old_raw = head_version(project, rel)
+        if old_raw:
+            old, new = etappen_nrs(old_raw), {e.get("nr") for e in manifest.get("etappen", [])}
+            lost = sorted(n for n in (old or set()) - new if n is not None)
+            if lost:
+                violations.append(
+                    "%s: Etappen %s fehlen gegenueber HEAD."
+                    % (rel, ", ".join(str(n) for n in lost))
+                )
+        # Jede Etappe im Manifest braucht ihre HTML-Quelle.
+        for etappe in manifest.get("etappen", []):
+            sheet = lib.sheet_path(repo, etappe.get("nr"), project)
+            if not os.path.isfile(sheet):
+                violations.append(
+                    "%s Etappe %s (%s): Quelle %s fehlt."
+                    % (repo, etappe.get("nr"), etappe.get("title"),
+                       os.path.relpath(sheet, project))
+                )
+    return violations
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--check-write", nargs=2, metavar=("ZIEL", "INHALTSDATEI"))
+    ap.add_argument("--verify", action="store_true")
+    ap.add_argument("--project", default=None)
+    args = ap.parse_args()
+    project = lib.project_root(args.project)
+
+    if args.check_write:
+        target, content_file = args.check_write
+        with open(content_file, encoding="utf-8") as fh:
+            violations = check_write(project, target, fh.read())
+    elif args.verify:
+        violations = verify(project)
+    else:
+        ap.error("--check-write oder --verify angeben")
+        return 2
+
+    if violations:
+        for v in violations:
+            print("BAUPLAN-GUARD: %s" % v, file=sys.stderr)
+        return 2
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
