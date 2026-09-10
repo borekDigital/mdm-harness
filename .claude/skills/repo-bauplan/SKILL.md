@@ -153,9 +153,11 @@ Quelle nur als veroeffentlichte Seite existiert, ist nicht pflegbar.
    echo "$(grep -o '<text[ >]' "$f" | wc -l) offen / $(grep -c '</text>' "$f") zu"
    ```
 4. `Artifact` mit `file_path` auf **diese** Datei, plus `description` und Emoji-`favicon`.
-   Beim erneuten Veroeffentlichen derselben Etappe: `url` aus dem Manifest mitgeben,
-   `favicon` unveraendert lassen — ein neues Icon liest sich fuer den Betrachter als
-   andere Seite.
+   Beim erneuten Veroeffentlichen derselben Etappe: `url` aus dem Manifest mitgeben und
+   **dasselbe** `favicon` erneut setzen. Das Feld ist auch beim Aktualisieren Pflicht
+   (belegt am 10. September 2026: `favicon required to publish`) — weglassen geht nicht,
+   aendern verwirrt, weil Betrachter die Seite am Icon wiederfinden. Deshalb steht das
+   Icon im Manifest.
 
 Eine bereits veroeffentlichte Seite, deren Quelle im Repo fehlt, holt
 `bin/bauplan-import.py --repo <repo> --nr <n> --from-file <webfetch-datei>` zurueck.

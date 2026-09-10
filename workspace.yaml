@@ -46,7 +46,7 @@ repos:
     tech: "PHP 7.4 / Symfony"
     group: "middleware"
     default: false
-    branch: "main"
+    branch: "master"
 
   emailservice:
     name: "Emailservice"
@@ -56,7 +56,7 @@ repos:
     tech: "PHP 8.3 / Symfony 7.1"
     group: "middleware"
     default: false
-    branch: "main"
+    branch: "master"
 
   payment-service:
     name: "Payment-Service"
@@ -66,4 +66,4 @@ repos:
     tech: "PHP 8.3 / Symfony 7.1 / Nuxt"
     group: "middleware"
     default: false
-    branch: "main"
+    branch: "master"

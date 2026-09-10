@@ -155,6 +155,17 @@ def main():
                 continue
             print("  geaendert: %s" % (", ".join(sorted(touched)) or "nichts"))
 
+            # Stand nachziehen — sonst meldet der naechste Lauf dieselben
+            # Etappen erneut als veraltet und die Auffrischung laeuft im Kreis.
+            # Das ist eine Tatsache, keine Ermessensfrage: nicht dem Modell
+            # ueberlassen, sondern hier setzen.
+            head = repo_head(os.path.join(project, repo))
+            if head:
+                manifest = lib.load_manifest(repo, project)
+                manifest["last_seen_sha"] = head
+                lib.save_manifest(repo, manifest, project)
+                print("  last_seen_sha -> %s" % head[:10])
+
         # Bestand pruefen, bevor irgendetwas committet wird.
         guard = sh(sys.executable, os.path.join(project, "bin", "bauplan-guard.py"),
                    "--verify", "--project", project)
