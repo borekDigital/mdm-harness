@@ -590,6 +590,16 @@
       <code>main</code> bis zum aufgefrischten Blatt. Er gilt für Weg B aus Blatt 03, also
       für Änderungen ohne Claude-Sitzung. Jeder Schritt nennt den Handelnden.</p>
 
+    <p class="lead"><strong>Der Push löst den Lauf nicht aus.</strong> Der Workflow kennt
+      zwei Auslöser: den Zeitplan und den manuellen Start
+      (<code>.github/workflows/bauplan-refresh.yml:31</code>). Ein Push-Auslöser ist nicht
+      möglich, weil die beobachteten Repositorys fremde Repositorys sind — <code>emailservice</code>
+      liegt auf <code>gitlab.mdm.de</code>. Der Lauf wartet deshalb nicht auf ein Ereignis,
+      sondern vergleicht bei jedem Start den gespeicherten Commit mit dem aktuellen Stand. Wie
+      viele Pushes dazwischen lagen, ändert am Ergebnis nichts; der Diff spannt immer vom
+      Lesezeichen bis <code>HEAD</code>. Die Verzögerung beträgt bis zu 24 Stunden werktags und
+      bis zu 72 Stunden über ein Wochenende.</p>
+
     <figure>
       <svg viewBox="0 0 960 712" role="img" aria-label="Zehnstufiger Ablauf. Der Entwickler pusht auf main. Der geplante CI-Lauf startet, klont die Repositorys mit vollstaendiger Historie und vergleicht den gespeicherten Commit mit HEAD. Die Zuordnung liefert die betroffenen Etappen. Ohne Treffer endet der Lauf. Mit Treffern ruft die CI das Sprachmodell auf, das nur die gemeldeten Etappen neu schreibt. Zwei Pruefungen folgen: der Diff darf nur die erlaubten Dateien enthalten, und der Guard darf keinen Verlust melden. Danach oeffnet die CI einen Pull Request. Nach Review und Merge setzt die CI den gespeicherten Commit auf HEAD.">
         <defs>

@@ -87,6 +87,28 @@ Etappennummer deshalb nicht wiederholen.
 
 Die Erklaerung gehoert in den `description`-Parameter beim Veroeffentlichen.
 
+## Beschreibung — traegt die Unterscheidung
+
+Kurze Titel wiederholen sich ueber Blattsaetze hinweg: `Umfang` und `Eingang` gibt es
+in Connector und Emailservice. In der Artefakt-Galerie stehen die Karten nebeneinander,
+und der Titel allein unterscheidet sie dann nicht mehr. Diese Last traegt die
+`description` — sie ist die Untertitel-Zeile der Karte.
+
+Aufbau, in dieser Reihenfolge:
+
+    <Repo> · Etappe <N> — <Gegenstand>: <zwei bis drei belegte Kennzahlen>.
+
+> MDM Emailservice · Etappe 3 — Messenger: drei Busse, sechs Stamps, 26 Klassen im Nachrichtenfluss.
+> MDM Connector · Etappe 8 — Frontend: 1 991 Zeilen React, vier Seiten, acht verschachtelte Provider.
+
+Das Repo steht **vorn**, weil die Galerie lange Beschreibungen abschneidet. Die Kennzahlen
+stammen aus der Meta-Zeile des Titelblocks, nicht aus einer Schaetzung — sie sind dort
+bereits belegt. Ein Satz, unter 120 Zeichen.
+
+Bei jeder Veroeffentlichung mitgeben: laesst man `description` weg, bleibt die zuletzt
+gespeicherte stehen. Das ist beim reinen Neuveroeffentlichen richtig, beim Umbenennen
+einer Etappe aber falsch.
+
 ## Wording — technische Dokumentation, kein Essay
 
 Der Blattsatz muss auch von einer Person verstanden werden, die den Autor nicht kennt und
