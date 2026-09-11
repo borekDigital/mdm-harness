@@ -152,7 +152,8 @@ def main():
         for key, m in manifests.items() if key not in repos
     )
 
-    body = """<title>MDM Architektur-Blattsätze</title>
+    body = """<meta charset="utf-8">
+<title>MDM Architektur-Blattsätze</title>
 %s
 <div class="sheet">
 
@@ -188,6 +189,8 @@ def main():
       <span class="plate-no">Werkzeuge</span>
       <h2>Erzeugen, prüfen, weitergeben</h2>
     </div>
+    <p class="lead">Ausführlich erklärt in der <a href="bedienung.html"><b>Bedienungsanleitung</b></a>:
+      die drei Zugänge, was automatisch passiert und was wann zu tun ist.</p>
     <div class="tw">
       <table>
         <caption>Befehle im Workspace-Root</caption>

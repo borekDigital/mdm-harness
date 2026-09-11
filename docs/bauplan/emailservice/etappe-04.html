@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Skills: 8 Ordner, 4 aufrufbar, 5 Rules</title>
+<title>Eingang: 3 Controller, 11 Zähler, 1 Reparatur</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -394,157 +394,119 @@
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Harness · Etappe 4 · Skills, Rules und Rechte</p>
-      <h1>Skills: 8 Ordner,<br>4 aufrufbar, 5 Rules</h1>
-      <p>Skills sind Arbeitsanweisungen, Rules sind Konventionen, Permissions sind Rechte —
-         drei verschiedene Mechanismen, die oft verwechselt werden. Ein Skill wird
-         <strong>aufgerufen</strong>, eine Rule greift <strong>nach Pfad</strong>, ein Recht
-         entscheidet über einen <strong>einzelnen Werkzeugaufruf</strong>.</p>
+      <p class="tb-eyebrow">MDM Emailservice · Etappe 4 · Eingang und Messung</p>
+      <h1>Eingang: 3 Controller,<br>11 Zähler, 1 Reparatur</h1>
+      <p>Die Außengrenze ist schmal, aber sie tut zwei Dinge, die man kennen muss: sie
+         <strong>repariert die SAP-Nutzlast per Zeichenkettenersatz</strong>, bevor sie sie
+         parst, und sie ist die einzige Stelle, an der überhaupt etwas gemessen wird. Elf
+         Prometheus-Zähler sind die komplette Sicht auf den Verlauf einer Mail.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>8 SKILL.md · 5 Rules · settings.json</dd></div>
-      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 039 gesamt</dd></div>
-      <div class="tb-cell"><dt>Rechte</dt><dd>17 erlaubt · 2 verboten</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>3 Controller · MetricsService · Listener</dd></div>
+      <div class="tb-cell"><dt>Routen</dt><dd>4</dd></div>
+      <div class="tb-cell"><dt>Zähler</dt><dd>11</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>11. September 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>Aufrufbar <span>— user_invocable: true</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Nur intern <span>— von einem Skill geladen</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>Pfad-gebunden <span>— Rule greift automatisch</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>Lücke <span>— dokumentiert, aber nicht vorhanden</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Nutzdaten <span>— POST /sap</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Betrieb <span>— Healthcheck und Metriken</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Speicher <span>— Redis als Zählerablage</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Prüfpunkt <span>— Fragilität oder Lücke</span></span>
   </div>
 
   <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Die Drift geht in beide Richtungen</h2>
+      <h2>Vier Routen, drei Controller</h2>
     </div>
-    <p class="lead">Ob ein Skill mit <code>/</code> aufgerufen werden kann, entscheidet
-      allein <code>user_invocable: true</code> im Frontmatter. Die README listet sieben
-      Slash-Befehle — vier davon gibt es nicht, und der einzige mit über 300 Zeilen fehlt
-      dort ganz.</p>
+    <p class="lead">Geroutet wird über Attribute direkt an den Methoden
+      (<code>config/routes.yaml</code> zeigt nur auf <code>src/Controller/</code>). Es gibt
+      keine Route mit Parametern, keine Route mit Platzhaltern — vier feste Pfade.</p>
 
-    <figure>
-      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von acht Skills. Vier sind aufrufbar: connector-feature, middleware-feature, repo-bauplan und setup. Vier weitere stehen in der README mit Slash-Aufruf, tragen aber kein user_invocable und sind daher nicht aufrufbar.">
-        <text x="16" y="28" class="s-lbl f-dim">Skill</text>
-        <text x="440" y="28" text-anchor="middle" class="s-lbl f-dim">Frontmatter</text>
-        <text x="640" y="28" text-anchor="middle" class="s-lbl f-dim">README</text>
-        <text x="830" y="28" class="s-lbl f-dim">Wirkung</text>
-
-        <rect x="16" y="42" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="30" y="64" class="s-mono">connector-feature</text>
-        <text x="230" y="64" class="s-tiny f-dim">145 Zeilen</text>
-        <text x="440" y="64" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
-        <text x="640" y="64" text-anchor="middle" class="s-tiny">gelistet</text>
-        <text x="830" y="64" class="s-tiny f-web">aufrufbar, dokumentiert</text>
-
-        <rect x="16" y="84" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="30" y="106" class="s-mono">middleware-feature</text>
-        <text x="230" y="106" class="s-tiny f-dim">148 Zeilen</text>
-        <text x="440" y="106" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
-        <text x="640" y="106" text-anchor="middle" class="s-tiny">gelistet</text>
-        <text x="830" y="106" class="s-tiny f-web">aufrufbar, dokumentiert</text>
-
-        <rect x="16" y="126" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="30" y="148" class="s-mono">setup</text>
-        <text x="230" y="148" class="s-tiny f-dim">38 Zeilen</text>
-        <text x="440" y="148" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
-        <text x="640" y="148" text-anchor="middle" class="s-tiny">gelistet</text>
-        <text x="830" y="148" class="s-tiny f-web">aufrufbar, dokumentiert</text>
-
-        <rect x="16" y="168" width="928" height="34" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
-        <text x="30" y="190" class="s-mono f-alert">repo-bauplan</text>
-        <text x="230" y="190" class="s-tiny f-dim">315 Zeilen — der größte</text>
-        <text x="440" y="190" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
-        <text x="640" y="190" text-anchor="middle" class="s-tiny f-worker">nachgetragen</text>
-        <text x="830" y="190" class="s-tiny f-worker">aufrufbar, dokumentiert</text>
-
-        <rect x="16" y="210" width="928" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-        <text x="30" y="230" class="s-mono f-alert">mdm-template · mdm-block · figma-to-liquid · mdm-notes</text>
-        <text x="230" y="250" class="s-tiny f-dim">120 · 90 · 105 · 78 Zeilen</text>
-        <text x="440" y="240" text-anchor="middle" class="s-tiny f-alert">kein user_invocable</text>
-        <text x="640" y="240" text-anchor="middle" class="s-tiny">als /befehl gelistet</text>
-        <text x="830" y="240" class="s-tiny f-alert">nicht aufrufbar</text>
-
-        <text x="16" y="282" class="s-tiny f-dim">Das ist nicht zwangsläufig ein Fehler: mdm-block wird laut README von mdm-template delegiert, figma-to-liquid ist eine Konventionssammlung. Nur die README behauptet etwas anderes.</text>
-      </svg>
-      <figcaption><b>Eine Entscheidung bleibt offen.</b>
-        <code>repo-bauplan</code> ist am 10. September 2026 in beide READMEs nachgetragen
-        worden. Bei den vier übrigen ist zu entscheiden, ob sie von Hand aufrufbar sein
-        <em>sollen</em> — dann
-        <code>user_invocable: true</code> ergänzen — oder ob sie interne Bausteine bleiben,
-        dann gehören sie in der README nicht in die Slash-Tabelle.</figcaption>
-    </figure>
+    <div class="tw">
+      <table>
+        <caption>Alle Routen des Dienstes</caption>
+        <thead><tr><th class="m">Route</th><th class="m">Methoden</th><th class="m">Controller</th><th>Zweck</th></tr></thead>
+        <tbody>
+          <tr><td class="m">POST /sap</td><td class="m">POST</td><td class="m">SapController::sap</td><td>Die einzige Route mit Nutzdaten. Nimmt die SAP-Anforderung an, stellt sie ein, antwortet sofort.</td></tr>
+          <tr><td class="m">/</td><td class="m">GET·POST</td><td class="m">SapController::index</td><td>Antwortet <code>405 Method not allowed</code> — bewusst, damit ein Aufruf der Wurzel nicht wie ein defekter Dienst aussieht.</td></tr>
+          <tr><td class="m">/healthcheck</td><td class="m">GET·POST</td><td class="m">HealthcheckController</td><td>Gibt <code>OK</code> zurück und zählt mit. Prüft nichts — weder Broker noch Emarsys noch SAP.</td></tr>
+          <tr><td class="m">/metrics</td><td class="m">GET</td><td class="m">MetricsController</td><td>Prometheus-Textformat. Hinter eigener Basic Auth (<code>prom</code>), siehe Etappe 2.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead">Eine Abweichung im Aufbau: <code>MetricsController</code> ist als
+      <code>readonly class</code> deklariert und erbt <strong>nicht</strong> von
+      <code>AbstractController</code>, die beiden anderen schon. Funktional unauffällig —
+      der Controller braucht nichts aus der Basisklasse — aber es ist die einzige Stelle, an
+      der das Muster bricht.</p>
   </section>
 
   <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Wo Rules greifen, und wo nicht</h2>
+      <h2>Die Nutzlast wird vor dem Parsen repariert</h2>
     </div>
-    <p class="lead">Rules werden nicht aufgerufen, sondern nach Pfad zugeschaltet. Fünf
-      Dateien deklarieren zusammen vierzehn Pfadmuster. Interessant sind die Bereiche, die
-      keines davon trifft.</p>
+    <p class="lead">SAP liefert JSON, das nicht immer JSON ist. Der Controller behebt das
+      mit zwei Zeichenkettenersetzungen, bevor irgendein Parser es sieht.</p>
+
+    <pre><code><span class="fp">www/src/Controller/SapController.php:52–57</span>
+$content = $request-&gt;getContent();
+$content = str_replace(['"true"', '"false"'], ['true', 'false'], $content);
+if (!json_validate($content)) {
+    $content = str_replace("\'", "'", $content);
+}
+$mailRequest = $systemMailService-&gt;handleMailRequest($content);</code></pre>
 
     <figure>
-      <svg viewBox="0 0 960 322" role="img" aria-label="Pfad-Abdeckung der fünf Rules. Theme ist durch drei Rules abgedeckt, Connector app config db lib durch eine, die drei Middleware-Repos durch eine gemeinsame. Nicht abgedeckt sind connector-worktrees, connector spec, datalayer und die Harness selbst.">
-        <text x="16" y="28" class="s-lbl f-vite">abgedeckt — 14 Pfadmuster</text>
-        <text x="540" y="28" class="s-lbl f-alert">nicht abgedeckt</text>
+      <svg viewBox="0 0 960 268" role="img" aria-label="Der Rohtext von SAP durchläuft zwei Reparaturen. Erstens werden die Zeichenketten true und false in Anführungszeichen durch echte Wahrheitswerte ersetzt, und zwar unbedingt. Zweitens wird ein maskiertes Apostroph entschärft, aber nur wenn der Text vorher nicht als gültiges JSON durchgeht.">
+        <defs>
+          <marker id="e4m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
 
-        <rect x="16" y="42" width="500" height="264" rx="3" fill="var(--vite)" fill-opacity="0.06" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <rect x="16" y="52" width="200" height="70" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
+        <text x="30" y="42" class="s-lbl f-dim">von SAP</text>
+        <text x="30" y="78" class="s-tiny">Rohtext des Requests</text>
+        <text x="30" y="96" class="s-tiny f-dim">soll JSON sein</text>
+        <text x="30" y="112" class="s-tiny f-dim">ist es nicht immer</text>
 
-        <text x="30" y="66" class="s-mono">liquid-conventions</text>
-        <text x="44" y="84" class="s-tiny f-dim">theme/sections · snippets · blocks · layout</text>
-        <text x="490" y="66" text-anchor="end" class="s-tiny f-dim">50 Zeilen</text>
+        <line x1="216" y1="87" x2="256" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e4m1)"></line>
 
-        <text x="30" y="112" class="s-mono">templates-json</text>
-        <text x="44" y="130" class="s-tiny f-dim">theme/templates</text>
-        <text x="490" y="112" text-anchor="end" class="s-tiny f-dim">16 Zeilen</text>
+        <rect x="256" y="52" width="280" height="70" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="270" y="42" class="s-lbl f-alert">Reparatur 1 — unbedingt</text>
+        <text x="270" y="78" class="s-mono">"true" → true</text>
+        <text x="270" y="96" class="s-mono">"false" → false</text>
+        <text x="270" y="114" class="s-tiny f-dim">wirkt auf den gesamten Text</text>
 
-        <text x="30" y="158" class="s-mono">merchant-config</text>
-        <text x="44" y="176" class="s-tiny f-dim">theme/config · theme/locales</text>
-        <text x="490" y="158" text-anchor="end" class="s-tiny f-dim">20 Zeilen</text>
+        <line x1="536" y1="87" x2="576" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e4m1)"></line>
 
-        <text x="30" y="204" class="s-mono">connector-conventions</text>
-        <text x="44" y="222" class="s-tiny f-dim">connector/app · config · db · lib</text>
-        <text x="490" y="204" text-anchor="end" class="s-tiny f-dim">27 Zeilen</text>
+        <rect x="576" y="52" width="368" height="70" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="590" y="42" class="s-lbl f-web">Reparatur 2 — nur bei Bedarf</text>
+        <text x="590" y="78" class="s-mono">if (!json_validate($content))</text>
+        <text x="590" y="96" class="s-tiny">maskiertes Apostroph entschärfen</text>
+        <text x="590" y="114" class="s-tiny f-dim">greift nur, wenn der Text vorher ungültig war</text>
 
-        <text x="30" y="250" class="s-mono">middleware-conventions</text>
-        <text x="44" y="268" class="s-tiny f-dim">creditcheck · emailservice · payment-service</text>
-        <text x="490" y="250" text-anchor="end" class="s-tiny f-dim">43 Zeilen</text>
+        <rect x="16" y="150" width="928" height="46" rx="2" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="32" y="170" class="s-tiny f-alert">Reparatur 1 kennt keinen Kontext: sie ersetzt auch dort, wo "true" ein legitimer Textwert ist.</text>
+        <text x="32" y="188" class="s-tiny f-dim">Ein Kundenname, ein Betreff oder ein Freitextfeld mit dem Inhalt "true" wird zum Wahrheitswert und bricht die Deserialisierung.</text>
 
-        <text x="30" y="294" class="s-tiny f-dim">Theme trägt 3 Rules und 7 Muster — dort sitzen die meisten Fallstricke.</text>
-
-        <rect x="540" y="42" width="404" height="264" rx="3" fill="var(--alert)" fill-opacity="0.06" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-
-        <rect x="556" y="58" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="570" y="78" class="s-mono f-alert">connector-worktrees/**</text>
-        <text x="570" y="96" class="s-tiny f-dim">wo laut Konvention jede Feature-Arbeit stattfindet</text>
-
-        <rect x="556" y="122" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="570" y="142" class="s-mono f-alert">connector/spec/**</text>
-        <text x="570" y="160" class="s-tiny f-dim">Tests — obwohl TDD Pflicht ist</text>
-
-        <rect x="556" y="186" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="570" y="206" class="s-mono f-alert">datalayer/**</text>
-        <text x="570" y="224" class="s-tiny f-dim">im Entscheidungsbaum genannt, ohne Rule und ohne Agent</text>
-
-        <rect x="556" y="250" width="372" height="42" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="570" y="270" class="s-mono">.claude/** · bin/** · docs/**</text>
-        <text x="570" y="286" class="s-tiny f-dim">die Harness selbst — bewusst ohne Rule</text>
+        <rect x="16" y="210" width="928" height="46" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="230" class="s-tiny">Reparatur 2 ist umgekehrt gebaut: sie prüft erst und greift nur ein, wenn es nötig ist.</text>
+        <text x="32" y="248" class="s-tiny f-dim">Dasselbe Muster auf Reparatur 1 angewandt würde den Fehler oben beseitigen, ohne die Absicht zu ändern.</text>
       </svg>
-      <figcaption><b>Die Worktree-Lücke ist die folgenreichste.</b>
-        <code>CLAUDE.md</code> schreibt für Connector-Features einen eigenen Worktree unter
-        <code>connector-worktrees/&lt;branch&gt;/</code> vor. Die
-        <code>connector-conventions</code> greifen aber nur unter <code>connector/</code> —
-        also genau im Haupt-Worktree, in dem laut derselben Konvention nicht gearbeitet
-        wird. Der Fix ist ein zusätzliches Muster
-        <code>connector-worktrees/*/app/**</code> je Bereich.</figcaption>
+      <figcaption><b>Relevant bei einem unerklärlichen Deserialisierungsfehler:</b> der Text,
+        den <code>RequestHandlerService</code> sieht, ist nicht der Text, den SAP geschickt
+        hat. Wer einen Fehlerfall nachstellt, muss beide Ersetzungen mit anwenden — sonst
+        sucht er im falschen Dokument. Dass die Reparatur nötig ist, ist selbst der Befund:
+        sauberer wäre, das SAP-seitige Format zu korrigieren, statt es hier zu
+        überschreiben.</figcaption>
     </figure>
   </section>
 
@@ -552,122 +514,142 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>17 Rechte erlaubt, 2 verboten</h2>
+      <h2>Elf Zähler sind die ganze Beobachtbarkeit</h2>
     </div>
-    <p class="lead">Die <code>permissions</code>-Liste in <code>settings.json</code> ersetzt
-      Rückfragen. Sie ist bewusst eng: dreizehn Bash-Muster, vier MCP-Werkzeuge, und alle
-      dreizehn Bash-Einträge sind auf ein Repo-Verzeichnis festgelegt.</p>
+    <p class="lead">Der Dienst hält keinen Zustand (Etappe 1). Was mit einer Mail passiert
+      ist, lässt sich deshalb nur aus zwei Quellen rekonstruieren: dem Log und diesen elf
+      Zählern. Sie sind paarweise angelegt — je einer beim Betreten einer Station, je einer
+      beim Verlassen.</p>
 
-    <div class="tw">
-      <table>
-        <caption>settings.json — permissions</caption>
-        <thead><tr><th class="m">Art</th><th class="m">Anzahl</th><th>Inhalt</th></tr></thead>
-        <tbody>
-          <tr><td class="m">allow · Bash</td><td class="m">13</td><td>Lesende Shopify-CLI (<code>theme check/info/list</code>), <code>git status/diff/log</code>, Connector-Linter (<code>rubocop</code>, <code>brakeman</code>, <code>rspec</code>), <code>git worktree</code> — jeweils mit <code>cd &lt;repo&gt; &amp;&amp;</code> davor</td></tr>
-          <tr><td class="m">allow · MCP</td><td class="m">4</td><td><code>learn_shopify_api</code>, <code>search_docs_chunks</code>, <code>validate_theme</code>, <code>validate_theme_codeblocks</code></td></tr>
-          <tr><td class="m">deny</td><td class="m">2</td><td><code>Edit</code> und <code>Write</code> auf <code>theme/config/settings_data.json</code></td></tr>
-          <tr><td class="m">MCP-Server</td><td class="m">1</td><td><code>shopify-dev-mcp</code> in <code>enabledMcpjsonServers</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="lead">Bemerkenswert ist die Doppelung bei <code>settings_data.json</code>: die
-      Datei steht auf der <code>deny</code>-Liste <em>und</em> wird von
-      <code>protect-merchant-files.sh:19</code> hart blockiert. Das ist keine Redundanz aus
-      Versehen — die <code>deny</code>-Regel greift nur bei exakt diesem Pfad, der Hook
-      erkennt zusätzlich <code>*/theme/config/settings_data.json</code> in Worktrees und
-      anderen Klonen.</p>
+    <figure>
+      <svg viewBox="0 0 960 314" role="img" aria-label="Die elf Prometheus-Zähler entlang der vier Stationen. Je Warteschlange gibt es ein Paar aus process und processed, dazu zwei Zähler am Eingang, zwei für Erfolg und Fehler bei Emarsys und einer für den Healthcheck. Die Differenz eines Paares zeigt, wie viele Nachrichten in dieser Station stecken geblieben sind.">
+        <text x="16" y="28" class="s-lbl f-dim">Station</text>
+        <text x="300" y="28" class="s-lbl f-dim">Zähler beim Betreten</text>
+        <text x="620" y="28" class="s-lbl f-dim">Zähler beim Verlassen</text>
+
+        <rect x="16" y="42" width="928" height="42" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="30" y="68" class="s-tiny">Request POST /sap</text>
+        <text x="300" y="68" class="s-mono">incoming_request</text>
+        <text x="620" y="68" class="s-mono">processing_request</text>
+
+        <rect x="16" y="92" width="928" height="42" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="30" y="118" class="s-tiny">Queue 1 incoming</text>
+        <text x="300" y="118" class="s-mono">process_incoming_mail_queue</text>
+        <text x="620" y="118" class="s-mono">processed_incoming_mail_queue</text>
+
+        <rect x="16" y="142" width="928" height="42" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="30" y="168" class="s-tiny">Queue 2 enrichment</text>
+        <text x="300" y="168" class="s-mono">process_enrichment_mail_queue</text>
+        <text x="620" y="168" class="s-mono">processed_enrichment_mail_queue</text>
+
+        <rect x="16" y="192" width="928" height="42" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="30" y="218" class="s-tiny">Queue 3 emarsys</text>
+        <text x="300" y="218" class="s-mono">process_emarsys_mail_queue</text>
+        <text x="620" y="218" class="s-mono">processed_emarsys_mail_queue</text>
+
+        <rect x="16" y="242" width="928" height="42" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="30" y="268" class="s-tiny">Ergebnis bei Emarsys</text>
+        <text x="300" y="268" class="s-mono">success_emarsys_mail_queue</text>
+        <text x="620" y="268" class="s-mono">error_emarsys_mail_queue</text>
+
+        <text x="16" y="302" class="s-tiny f-dim">Dazu healthcheck. Alle elf tragen dieselben fünf Beschriftungen: method, endpoint, status_code, message, event_id.</text>
+      </svg>
+      <figcaption><b>So liest man einen Rückstau:</b> die Differenz eines Paares nennt die
+        Zahl der Nachrichten, die diese Station betreten und nicht verlassen haben. Wächst
+        <code>process_enrichment</code> stärker als <code>processed_enrichment</code>,
+        stauen sich die Nachrichten in dieser Station. Für den Erfolgsfall genügt der Vergleich von
+        <code>incoming_request</code> mit <code>success_emarsys_mail_queue</code> — alles
+        dazwischen ist Durchsatz.</figcaption>
+    </figure>
+
+    <p class="lead">Die Beschriftung <code>message</code> ist dabei ein Risiko: sie wird mit
+      freiem Text gefüllt, etwa dem Antworttext von Emarsys
+      (<code>EmarsysEventHandler</code>). Jeder neue Wert erzeugt in Prometheus eine eigene
+      Zeitreihe — bei variablen Fehlermeldungen wächst die Zahl der Serien unbegrenzt.</p>
   </section>
 
   <!-- ============ BLATT 04 ============ -->
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Spec-Driven: 13 Dateien, 7 Bereiche</h2>
+      <h2>Fehler werden übersetzt, nicht durchgereicht</h2>
     </div>
-    <p class="lead"><code>CLAUDE.md</code> schreibt vor, dass jede Änderung mit einer Spec
-      beginnt. Der Bestand zeigt, wo das praktiziert wird und wo bisher nur das Verzeichnis
-      angelegt ist.</p>
+    <p class="lead">Ein <code>ExceptionListener</code> hängt am
+      <code>kernel.exception</code>-Ereignis und wandelt Ausnahmen in JSON-Antworten um —
+      allerdings nur eine Sorte davon.</p>
 
-    <div class="tw">
-      <table>
-        <caption>.claude/specs/ — Bestand</caption>
-        <thead><tr><th class="m">Bereich</th><th class="m">Specs</th><th>Inhalt</th></tr></thead>
-        <tbody>
-          <tr><td class="m">theme/</td><td class="m">6</td><td><code>_conventions.md</code>, <code>breadcrumbs.md</code>, <code>hilfe-hub.md</code>, <code>hilfe-template.md</code>, <code>page-title.md</code>, <code>global-brand-overrides.md</code></td></tr>
-          <tr><td class="m">harness/</td><td class="m">1</td><td><code>mdm-harness-repo.md</code> — die Spec dieses Repos</td></tr>
-          <tr><td class="m">connector/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
-          <tr><td class="m">creditcheck/ · emailservice/ · payment-service/ · datalayer/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="lead">Die Theme-Arbeit läuft also spec-getrieben, alles andere bisher nicht —
-      obwohl <code>CLAUDE.md</code> es für <strong>jede</strong> Änderung fordert. Das ist
-      kein Widerspruch, den man wegdokumentieren sollte: entweder gilt die Regel für alle
-      Bereiche, oder sie gilt für das Theme.</p>
+    <pre><code><span class="fp">www/src/EventListener/ExceptionListener.php:42–57</span>
+$exception = $event-&gt;getThrowable();
+if ($exception instanceof TypeError) {
+    $exception = new InvalidArgumentException(...);   <span class="fp">// TypeError umdeuten</span>
+}
+$error = $this-&gt;converter-&gt;convert($exception);
+if ($error instanceof SystemError) {                  <span class="fp">// nur dann antworten</span>
+    $event-&gt;setResponse(JsonResponse::fromJsonString(...));
+}</code></pre>
 
     <div class="checks">
       <div class="check">
         <span class="check-no">01</span>
         <div>
-          <h3>Vier dokumentierte Slash-Befehle existieren nicht</h3>
-          <p><b>Beleg:</b> <code>README.md</code> und <code>.claude/README.md</code>
-             listen <code>/mdm-template</code>, <code>/mdm-block</code>,
-             <code>/figma-to-liquid</code> und <code>/mdm-notes</code>. Keine der vier
-             <code>SKILL.md</code> trägt <code>user_invocable: true</code>. Dies ist der
-             einzige verbliebene Punkt der Doku-Drift — die übrigen sechzehn wurden am
-             10. September 2026 nachgetragen.</p>
-          <p><b>Konsequenz:</b> Wer sie tippt, bekommt keinen Skill und keine Fehlermeldung,
-             die das erklärt.</p>
+          <h3>Nicht jede Ausnahme wird zur Antwort</h3>
+          <p><b>Beleg:</b> <code>ExceptionListener.php:53</code> setzt eine Antwort nur,
+             wenn <code>ExceptionConverter::convert</code> einen <code>SystemError</code>
+             liefert. Für alles andere bleibt das Ereignis unbehandelt.</p>
+          <p><b>Konsequenz:</b> SAP erhält dann die Symfony-Standardantwort. Im
+             Produktionsmodus ist das eine leere <code>500</code> ohne die
+             <code>status_msg</code>-Struktur, die <code>SapController</code> sonst
+             zurückgibt — ein anderes Antwortformat für denselben Endpunkt.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Die Worktrees haben keine Konventionen</h3>
-          <p><b>Beleg:</b> <code>connector-conventions.md</code> deklariert
-             <code>connector/app/**</code>, <code>config/**</code>, <code>db/**</code>,
-             <code>lib/**</code>. <code>CLAUDE.md</code> verlangt für Feature-Arbeit einen
-             Worktree unter <code>connector-worktrees/&lt;branch&gt;/</code>.</p>
-          <p><b>Konsequenz:</b> Genau in dem Verzeichnis, in dem laut Konvention gearbeitet
-             wird, greift die Konventionsdatei nicht. Im Haupt-Worktree, wo sie greift, soll
-             nicht gearbeitet werden.</p>
-          <p><b>Fix:</b> Pfadmuster <code>connector-worktrees/*/app/**</code> und Geschwister
-             ergänzen. Dasselbe gilt für <code>connector/spec/**</code>, das trotz
-             TDD-Pflicht in keinem Scope steht.</p>
+          <h3>Der Healthcheck prüft nichts</h3>
+          <p><b>Beleg:</b> <code>HealthcheckController::index</code> setzt
+             <code>200</code> und den Text <code>OK</code>, zählt mit und kehrt zurück.
+             Kein Zugriff auf AMQP, Redis, SAP oder Emarsys.</p>
+          <p><b>Konsequenz:</b> Der Endpunkt sagt aus, dass php-fpm antwortet — mehr nicht.
+             Ein Dienst mit totem Broker oder falschen Emarsys-Zugangsdaten meldet sich als
+             gesund. Für den Swarm-Rollout ist das die entscheidende Einschränkung: eine
+             defekte Version wird als lauffähig übernommen.</p>
+          <p><b>Fix:</b> AMQP-Verbindung und Redis-Erreichbarkeit prüfen. Beide sind
+             billig abzufragen und decken die häufigsten Startfehler ab.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">03</span>
         <div>
-          <h3>Spec-Driven ist für einen von sieben Bereichen gelebt</h3>
-          <p><b>Beleg:</b> <code>.claude/specs/</code> enthält dreizehn Dateien; sechs davon
-             liegen unter <code>theme/</code>, eine unter <code>harness/</code>, der Rest sind
-             <code>.gitkeep</code>-Platzhalter.</p>
-          <p><b>Konsequenz:</b> Für Connector- und Middleware-Features gibt es die geforderte
-             Spec nicht. Entweder wird die Regel dort nicht angewandt, oder sie wird
-             angewandt, ohne dass ein Artefakt entsteht — beides sollte man wissen, bevor man
-             sich auf „Spec-Driven Development" beruft.</p>
+          <h3>Die Zähler-Beschriftung <code>message</code> ist unbegrenzt</h3>
+          <p><b>Beleg:</b> <code>MetricsService::track</code> reicht <code>$message</code>
+             unverändert als Prometheus-Label durch; aufgerufen wird es unter anderem mit
+             <code>sprintf('code: %s, text: %s', $replyCode, $replyText)</code> aus der
+             Emarsys-Antwort.</p>
+          <p><b>Konsequenz:</b> Jede neue Fehlermeldung erzeugt eine eigene Zeitreihe.
+             Das ist der klassische Weg, einen Prometheus-Server über Wochen langsam
+             volllaufen zu lassen.</p>
+          <p><b>Fix:</b> <code>replyCode</code> als Label behalten, <code>replyText</code>
+             ins Log verschieben.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">04</span>
         <div>
-          <h3>Gute Nachricht: die Rechte sind eng und repo-gebunden</h3>
-          <p><b>Beleg:</b> Alle dreizehn <code>allow</code>-Einträge für Bash beginnen mit
-             <code>cd &lt;repo&gt; &amp;&amp;</code> oder betreffen lesende
-             <code>git</code>-Befehle. Kein Eintrag erlaubt <code>Bash(*)</code> oder ein
-             schreibendes Kommando.</p>
-          <p><b>Konsequenz:</b> Eine Rückfrage entfällt genau dort, wo sie nur Zeit kostet —
-             Linter und Statusabfragen. Alles Schreibende bleibt bestätigungspflichtig
-             beziehungsweise wird von den Hooks aus Etappe 3 abgefangen.</p>
+          <h3>Gute Nachricht: die Zähler liegen in Redis, nicht im Prozess</h3>
+          <p><b>Beleg:</b> <code>MetricsService::__construct</code> nutzt
+             <code>Prometheus\Storage\Redis</code> mit <code>REDIS_HOST</code> aus der
+             Umgebung.</p>
+          <p><b>Konsequenz:</b> Die Zähler überleben den stündlichen Worker-Neustart aus
+             Etappe 2 und sind über alle vier Container hinweg gemeinsam. Mit
+             prozesslokalem Speicher wäre die Messung bei diesem Neustart-Takt wertlos.</p>
         </div>
       </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Harness · Etappe 4 von 4</span>
-    <span>Ende des Blattsatzes — Übersicht: docs/bauplan/index.html</span>
+    <span>MDM Emailservice · Etappe 4 von 7</span>
+    <span>Als nächstes: das Registrierungsmuster in services.yaml</span>
     <span>Design bauplan-v1</span>
   </footer>
 

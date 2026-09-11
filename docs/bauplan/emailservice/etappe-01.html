@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Emailservice: 11 000 Zeilen, kein Datenmodell</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
@@ -685,7 +686,11 @@
           <p><b>Konsequenz:</b> Eine gute Nachricht — Änderungen an der Emarsys-Anbindung sind
              abgedeckt. In der GitLab-Pipeline läuft PHPUnit allerdings nicht; dort stehen nur
              PHPStan, PHPMD, Codestyle und der Copy-Paste-Detector, alle mit
-             <code>allow_failure: true</code> (<code>.gitlab-ci.yml:34–52</code>).</p>
+             <code>allow_failure: true</code> (<code>.gitlab-ci.yml:49–67</code>).</p>
+          <p><b>Geklärt in Etappe 7:</b> Die Testsuite läuft, nur in der anderen Pipeline.
+             <code>Jenkinsfile:85</code> führt die Stufe <code>Execute phpunit</code> aus.
+             Der Dienst ist also getestet — wer das anhand der <code>.gitlab-ci.yml</code>
+             beurteilt, kommt zum falschen Schluss.</p>
         </div>
       </div>
       <div class="check">

@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
@@ -639,11 +640,10 @@
         <rect x="16" y="164" width="928" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="32" y="185" class="s-tiny">Derselbe Bruch erklärt, warum es die CI braucht: wer ohne Claude committet, löst den PostToolUse-Hook nie aus. Die Zuordnungsregel ist deshalb in bin/bauplan_lib.py, nicht im Hook.</text>
       </svg>
-      <figcaption><b>Die Trennung ist die eigentliche Konstruktion:</b> die deterministische
-        Hälfte — welche Etappe betrifft diese Datei — liegt in einer Python-Datei, die Hook
-        und CI gemeinsam aufrufen. Nur die Hälfte, die Urteilsvermögen braucht, hängt am
-        Modell. Das ist der Grund, warum lokal und in der CI nie etwas Unterschiedliches als
-        veraltet gilt.</figcaption>
+      <figcaption><b>Die Trennung folgt aus dieser Grenze.</b> Der deterministische Teil —
+        welche Etappe betrifft diese Datei — liegt in einer Python-Datei, die Hook und CI
+        gemeinsam aufrufen. Nur der Teil, der Urteilsvermögen benötigt, hängt am
+        Sprachmodell. Lokal und in der CI gilt deshalb dasselbe als veraltet.</figcaption>
     </figure>
 
     <div class="checks">

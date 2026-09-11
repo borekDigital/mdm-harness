@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Container: 6 Dienste, 2 Compose-Welten</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
@@ -549,11 +550,11 @@ exec /usr/local/bin/php "bin/console" "messenger:consume" "${QUEUE_NAME}" ${WORK
         <rect x="16" y="200" width="928" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="32" y="220" class="s-tiny">Überall gesetzt: QUEUE_TIME_LIMIT=3600. Nirgends gesetzt: QUEUE_LIMIT — die Worker begrenzen ihre Nachrichtenzahl also nicht.</text>
       </svg>
-      <figcaption><b>Warum das eine gute Aufteilung ist:</b> ein Rückstau in einer Station
-        blockiert die anderen nicht, und jede Station lässt sich einzeln skalieren, indem man
-        <code>replicas</code> erhöht. Der Preis: die Reihenfolge der Stationen steht nicht in
-        der Konfiguration, sondern im Code jedes Handlers — wer sie ändern will, ändert
-        <code>MessageBusInterface</code>-Injektionen, nicht YAML.</figcaption>
+      <figcaption><b>Die Aufteilung hat zwei Folgen.</b> Ein Rückstau in einer Station
+        blockiert die anderen nicht, und jede Station lässt sich einzeln skalieren: Der
+        Betreiber erhöht dafür <code>replicas</code>. Die Reihenfolge der Stationen steht
+        dafür nicht in der Konfiguration, sondern im Code jedes Handlers. Eine Änderung
+        betrifft die <code>MessageBusInterface</code>-Injektionen, nicht YAML.</figcaption>
     </figure>
   </section>
 
@@ -599,7 +600,7 @@ exec /usr/local/bin/php "bin/console" "messenger:consume" "${QUEUE_NAME}" ${WORK
         <text x="32" y="180" class="s-tiny">Beim Neustart geht keine Nachricht verloren: AMQP bestätigt erst nach erfolgreicher Verarbeitung.</text>
         <text x="32" y="194" class="s-tiny f-dim">Eine Nachricht, die beim Exit gerade in Arbeit war, wird erneut ausgeliefert — Handler müssen also mehrfache Ausführung verkraften.</text>
       </svg>
-      <figcaption><b>Zwei Stellen, an denen man sich beim Betrieb verletzt:</b> ohne
+      <figcaption><b>Zwei Punkte betreffen den Betrieb.</b> Ohne
         <code>--memory-limit</code> kann ein Worker innerhalb seiner Stunde bis an die
         Swarm-Grenze von 512 MB wachsen und wird dann hart beendet — was wie ein Absturz
         aussieht, aber Ressourcendruck ist. Und weil eine unterbrochene Nachricht erneut

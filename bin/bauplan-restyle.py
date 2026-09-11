@@ -23,6 +23,7 @@ import bauplan_lib as lib  # noqa: E402
 
 HEAD_ASSET = ".claude/skills/repo-bauplan/assets/bauplan-head.html"
 TRENNER = '<div class="sheet">'
+CHARSET = '<meta charset="utf-8">'
 
 
 def restyle(path, head):
@@ -34,7 +35,12 @@ def restyle(path, head):
     if not titel:
         return None, "kein <title>"
     rumpf = alt[alt.index(TRENNER):]
-    neu = titel.group(0) + "\n" + head.rstrip("\n") + "\n" + rumpf
+    # Reihenfolge ist bindend: der Zeichensatz muss vor dem ersten Nicht-ASCII-Zeichen
+    # stehen, also vor dem <title>. Der Titel muss innerhalb der ersten 8 KB stehen,
+    # weil das Artifact-Werkzeug ihn nur dort liest — deshalb kann der Design-Kopf
+    # nicht davor.
+    neu = (CHARSET + "\n" + titel.group(0) + "\n"
+           + head.rstrip("\n") + "\n" + rumpf)
     if neu == alt:
         return False, None
     with open(path, "w", encoding="utf-8") as fh:
@@ -54,6 +60,22 @@ def main():
 
     repos = [args.repo] if args.repo else [r for r, _p, _m in lib.iter_manifests(project)]
     geaendert = 0
+
+    # Eigenstaendige Seiten direkt unter docs/bauplan/ — etwa bedienung.html.
+    # Sie gehoeren zu keinem Manifest, tragen aber denselben Design-Kopf.
+    if not args.repo:
+        for name in sorted(os.listdir(lib.docs_dir(project))):
+            if not name.endswith(".html") or name == "index.html":
+                continue
+            pfad = os.path.join(lib.docs_dir(project), name)
+            ok, grund = restyle(pfad, head)
+            if ok is None:
+                print("  UEBERSPRUNGEN %s — %s" % (name, grund))
+            elif ok:
+                print("  nachgezogen   docs/bauplan/%s (%.0f KB)" % (name, os.path.getsize(pfad) / 1024))
+                geaendert += 1
+            else:
+                print("  unveraendert  docs/bauplan/%s" % name)
     for repo in repos:
         manifest = lib.load_manifest(repo, project)
         if manifest is None:

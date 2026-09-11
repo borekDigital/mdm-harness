@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Messenger: 3 Busse, 6 Stamps, 1 toter Pfad</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
@@ -395,7 +396,7 @@
     <div class="tb-main">
       <p class="tb-eyebrow">MDM Emailservice · Etappe 3 · Messenger und Nachrichtenfluss</p>
       <h1>Messenger: 3 Busse,<br>6 Stamps, 1 toter Pfad</h1>
-      <p>Der Nachrichtenfluss ist die Architektur dieses Dienstes. Drei Busse, drei Transporte,
+      <p>Der Nachrichtenfluss bestimmt den Aufbau dieses Dienstes. Drei Busse, drei Transporte,
          drei Handler — geroutet wird über <strong>Basisklassen</strong>, nicht über konkrete
          Nachrichtentypen. Und eine auskommentierte Zeile trennt die SAP-Anreicherung samt
          Opt-out-Filter vom Rest des Systems ab.</p>
@@ -424,8 +425,8 @@
     </div>
     <p class="lead">In <code>messenger.yaml</code> stehen drei Routing-Regeln, und jede nennt
       eine <em>abstrakte Basisklasse</em>. Symfony ordnet eine Nachricht dem Transport zu, wenn
-      ihre Klasse von der genannten erbt. Das ist der Grund, warum ein neuer Mailtyp keine
-      Änderung an dieser Datei braucht.</p>
+      ihre Klasse von der genannten erbt. Ein neuer Mailtyp benötigt deshalb keine Änderung
+      an dieser Datei.</p>
 
     <pre><code><span class="fp">www/config/packages/messenger.yaml:9–12</span>
 routing:

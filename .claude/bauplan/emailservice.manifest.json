@@ -1,7 +1,7 @@
 {
   "repo": "emailservice",
   "design_system": "bauplan-v1",
-  "generated": "2026-09-10",
+  "generated": "2026-09-11",
   "last_seen_sha": "d58530dd91f42d6412dd449b6339f55ab15c5790",
   "etappen": [
     {
@@ -73,28 +73,85 @@
         "Fuehrt Emarsys je Mandant eine Unterdrueckungsliste, die die SAP-Werbesperre abbildet? nur mit Emarsys-Zugang pruefbar"
       ],
       "closes": []
-    }
-  ],
-  "plan": [
+    },
     {
       "nr": 4,
-      "title": "Eingang: 3 Controller, 1 Nutzdaten-Route",
-      "frage": "Wer kommt herein, wie wird die SAP-Nutzlast repariert, was messen die Zaehler"
+      "title": "Eingang: 3 Controller, 11 Zähler, 1 Reparatur",
+      "url": "https://claude.ai/code/artifact/b04414ec-a509-4559-ac4e-2092b3d7419a",
+      "favicon": "📧",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "www/src/Controller/**",
+        "www/src/Services/Metrics/**",
+        "www/src/Enums/**",
+        "www/src/EventListener/**",
+        "www/src/Services/Error/**",
+        "www/config/routes.yaml"
+      ],
+      "open_questions": [],
+      "closes": []
     },
     {
       "nr": 5,
-      "title": "Registrierung: 2 Mailtypen, 6 Listen",
-      "frage": "Das Registry-Muster in services.yaml und was ein neuer Mailtyp kostet"
+      "title": "Registrierung: 10 Listen, 22 Einträge, 2 Mailtypen",
+      "url": "https://claude.ai/code/artifact/e1194f5b-363c-40e3-b5f7-9b2327a235d1",
+      "favicon": "📧",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "www/config/services.yaml",
+        "www/src/Handler/**",
+        "www/src/Preparer/**",
+        "www/src/Services/Emarsys/Templating/Mapper/**",
+        "www/src/Services/Emarsys/Templating/Placeholder/**"
+      ],
+      "open_questions": [],
+      "closes": []
     },
     {
       "nr": 6,
-      "title": "Emarsys: 6 Mandanten, 1 wirksames Mapping",
-      "frage": "companies.yaml, der MailMappings-Einrueckungsfehler, Templating und Platzhalter"
+      "title": "Emarsys: 6 Mandanten, 1 wirksame Zuordnung",
+      "url": "https://claude.ai/code/artifact/83aef8a2-3d27-4a72-b6ad-3c2d72b99ba9",
+      "favicon": "📧",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "www/config/companies.yaml",
+        "www/src/Services/Emarsys/Configuration/**",
+        "www/src/Services/Emarsys/Templating/**",
+        "www/src/Services/Emarsys/Events/**",
+        "www/src/Services/Emarsys/Domain/**"
+      ],
+      "open_questions": [
+        "Schicken die fuenf Mandanten ausser MDM ueberhaupt Anfragen? nur an den Prometheus-Zaehlern ablesbar"
+      ],
+      "closes": []
     },
     {
       "nr": 7,
-      "title": "Deploy: GitLab CI, Docker Swarm",
-      "frage": "Pipeline, Kaniko-Builds, Swarm-Rollout, was in CI nicht laeuft"
+      "title": "Deploy: 2 CI-Systeme, 3 Images, 1 Testlauf",
+      "url": "https://claude.ai/code/artifact/b2032434-c396-4584-a0ae-1fc29fe19bf6",
+      "favicon": "📧",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        ".gitlab-ci.yml",
+        "Jenkinsfile",
+        "conf/**",
+        "docker/**",
+        "docker-compose*.yml",
+        "www/phpstan.neon",
+        "www/phpcs.xml.dist",
+        "www/phpunit.xml.dist",
+        "www/tests/**"
+      ],
+      "open_questions": [
+        "Welche Pipeline bei einem Push tatsaechlich anlaeuft, entscheidet die Jenkins-Konfiguration ausserhalb des Repos"
+      ],
+      "closes": [
+        "Etappe 1: PHPUnit laeuft in Jenkins, nicht in GitLab CI"
+      ]
     }
   ]
 }

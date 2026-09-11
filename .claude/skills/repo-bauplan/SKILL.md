@@ -43,8 +43,11 @@ Referenz-Ergebnis: der Connector-Blattsatz vom 3. September 2026, neun Etappen.
 4. **Offene Fragen werden geschlossen.** Wenn eine spaetere Etappe eine `⚠️`-Frage einer
    frueheren beantwortet, das ausdruecklich im Anhang festhalten („schliesst die offene
    Frage aus Etappe 4, Anhang 04").
-5. **Deutsch.** Alle Seiten, Bildunterschriften und Anhaenge auf Deutsch, Datumsformat
-   `3. September 2026`. Code, Bezeichner und Dateipfade bleiben im Original.
+5. **Deutsch, technisch.** Alle Seiten, Bildunterschriften und Anhaenge auf Deutsch,
+   Datumsformat `3. September 2026`. Code, Bezeichner und Dateipfade bleiben im Original.
+   Verbindlich sind die Wording-Regeln in `design-system.md`: Satzbau
+   Wer-macht-was-womit-wann, Praesens, aktiv, `muss`/`soll`/`kann` unterschieden, keine
+   Metaphern, keine Wertungen — und die Wortliste, die nicht verwendet wird.
 
 ## Phasen
 
@@ -141,9 +144,17 @@ Quelle nur als veroeffentlichte Seite existiert, ist nicht pflegbar.
 2. Body im Scratchpad schreiben, dann zusammensetzen und **als Quelle ablegen**:
 
    ```bash
-   { echo '<title>Befund</title>'; cat .claude/skills/repo-bauplan/assets/bauplan-head.html; \
+   { echo '<meta charset="utf-8">'; echo '<title>Befund</title>'; \
+     cat .claude/skills/repo-bauplan/assets/bauplan-head.html; \
      cat "$SCRATCH/body.html"; } > docs/bauplan/<repo>/etappe-NN.html
    ```
+
+   Die Reihenfolge ist bindend. Der Zeichensatz steht vor dem ersten
+   Nicht-ASCII-Zeichen, also vor dem `<title>`. Fehlt er, raten Browser beim
+   Oeffnen der lokalen Datei eine Einbyte-Kodierung und zerlegen alle Umlaute
+   (belegt am 11. September 2026). Der Titel steht in den ersten 8 KB, weil das
+   Artifact-Werkzeug ihn nur dort liest; der Design-Kopf ist mit 150 KB zu gross,
+   um davor zu passen.
 
    Die Datei ist ein **Fragment**, kein vollstaendiges Dokument: kein `<!doctype>`, kein
    `<html>`, `<head>` oder `<body>`. Genau so nimmt das Artifact-Tool sie an; PDF-Export

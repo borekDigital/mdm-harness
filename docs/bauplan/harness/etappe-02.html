@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Agenten: 12 Dateien, 4 Rollen, 3 Bereiche</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
@@ -624,11 +625,11 @@
         <rect x="16" y="196" width="928" height="32" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="32" y="216" class="s-tiny">Abgefedert wird das durch die Hooks: protect-merchant-files und bauplan-guard greifen unabhängig davon, welcher Agent schreibt. Etappe 3.</text>
       </svg>
-      <figcaption><b>Warum das trotzdem tragfähig ist:</b> die Absicherung sitzt eine Schicht
-        tiefer. Ein Umsetzer, der versehentlich <code>theme/config/settings_data.json</code>
-        anfasst, wird nicht von seinem Frontmatter gestoppt, sondern vom PreToolUse-Hook —
-        und zwar unabhängig davon, welcher Agent gerade läuft. Wer die Grenzen härter zieht,
-        sollte das dort tun und nicht in zwölf Frontmattern.</figcaption>
+      <figcaption><b>Die Absicherung liegt eine Schicht tiefer.</b> Ein Umsetzer, der
+        <code>theme/config/settings_data.json</code> ändert, wird nicht von seinem
+        Frontmatter gestoppt, sondern vom PreToolUse-Hook — unabhängig davon, welcher Agent
+        läuft. Engere Grenzen gehören deshalb in die Hooks, nicht in zwölf
+        Frontmatter.</figcaption>
     </figure>
 
     <div class="checks">

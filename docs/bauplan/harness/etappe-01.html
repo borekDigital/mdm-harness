@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Harness: 1 Repo, 6 Arbeitskopien, 0 Anwendungscode</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
@@ -562,13 +563,13 @@
         <text x="32" y="318" class="s-tiny f-dim">Der post-merge-Hook muss auf jedem Rechner einzeln eingerichtet werden — Git verteilt Hooks nicht über den Klon.</text>
         <text x="32" y="336" class="s-tiny f-dim">Ein Rechner ohne diesen Hook arbeitet nach einem Pull mit einer veralteten CLAUDE.md weiter, ohne Hinweis.</text>
       </svg>
-      <figcaption><b>Warum das eine Design-Entscheidung mit Folgen ist:</b> die
-        <code>CLAUDE.md</code> lässt sich nicht direkt verbessern — eine Änderung dort
-        verschwindet beim nächsten <code>sync.sh</code>. Wer den Text ändern will, ändert
-        <code>templates/</code>. Dass <code>sync.sh</code> ohne YAML-Parser arbeitet
-        (<code>yaml_get</code> nutzt <code>sed</code>-Bereiche, <code>sync.sh:31–37</code>),
-        macht es abhängig von der genauen Einrückung: zwei Leerzeichen für Repo-Schlüssel,
-        vier für Felder.</figcaption>
+      <figcaption><b>Die Erzeugung hat zwei Folgen für die Bearbeitung.</b> Eine Änderung
+        direkt in der <code>CLAUDE.md</code> verschwindet beim nächsten
+        <code>sync.sh</code>; der Benutzer muss <code>templates/</code> ändern. Und
+        <code>sync.sh</code> arbeitet ohne YAML-Parser (<code>yaml_get</code> nutzt
+        <code>sed</code>-Bereiche, <code>sync.sh:31–37</code>) und ist deshalb von der
+        genauen Einrückung abhängig: zwei Leerzeichen für Repo-Schlüssel, vier für
+        Felder.</figcaption>
     </figure>
   </section>
 
@@ -646,9 +647,9 @@
         <text x="32" y="308" class="s-tiny">Der zweite Teil von check_consistency funktioniert: er meldet Repos, die in .workspace.local.yaml stehen, deren Verzeichnis aber fehlt.</text>
         <text x="32" y="324" class="s-tiny f-dim">Diese Hälfte hat mit Zeitstempeln nichts zu tun und ist deshalb von beiden Fehlern unberührt.</text>
       </svg>
-      <figcaption><b>Warum das lange unbemerkt blieb:</b> eine Warnung, die immer erscheint,
-        wird zur Tapete. Sechs Zeilen bei jedem Lauf lesen sich wie Teil der normalen
-        Ausgabe, nicht wie ein Befund. Der Fix braucht beide Stellen: in
+      <figcaption><b>Die Warnung erscheint bei jedem Lauf und bleibt deshalb unbeachtet.</b>
+        Sechs Zeilen gehören für den Benutzer zur normalen Ausgabe, nicht zu einem Befund.
+        Der Fix muss beide Stellen ändern: in
         <code>sync.sh:208</code> <code>sed 's/^[^:]*: *//'</code> statt der greedy Variante,
         und den Aufruf von <code>update_local_timestamps</code> nach
         <code>check_consistency</code> verschieben.</figcaption>
@@ -687,8 +688,8 @@
       geschrumpftes Manifest — lässt den Lauf scheitern und nennt den
       Wiederherstellungsbefehl. Eine <strong>Lücke</strong> — Etappe im Manifest, Quelle nie
       angelegt — wird gelistet, bricht aber nicht ab. Ohne diese Trennung wäre jeder CI-Lauf
-      rot, solange irgendein älterer Blattsatz noch unvollständig zurückgeholt ist, und ein
-      dauerhaft rotes Signal sagt nichts mehr.</p>
+      rot, solange irgendein älterer Blattsatz noch unvollständig zurückgeholt ist, Ein dauerhaft rotes Signal ist als
+      Warnung wirkungslos.</p>
 
     <div class="checks">
       <div class="check">

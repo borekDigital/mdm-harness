@@ -83,25 +83,67 @@ Die Fachbezeichner des Projekts gehoeren in den Titel, wenn sie die Komponente *
 
 Die Erklaerung gehoert in den `description`-Parameter beim Veroeffentlichen.
 
-## Wording — sachlich, nicht bildhaft
+## Wording — technische Dokumentation, kein Essay
 
-Der Blattsatz ist technische Dokumentation, kein Essay. Wer ihn liest, sucht eine Antwort,
-keine Pointe.
+Der Blattsatz muss auch von einer Person verstanden werden, die den Autor nicht kennt und
+den Zusammenhang nicht aus fruehreren Gespraechen kennt. Jede Aussage beantwortet deshalb:
+**Was? Warum? Wie? Wann? Unter welchen Bedingungen?**
 
-- **Keine Metaphern fuer Technik.** Ein Cron ist ein Cron — kein Uhrwerk, kein Herzschlag,
-  kein Taktgeber. Eine Queue ist eine Queue, kein Fliessband.
-- **Keine Dramatisierung.** „faellt aus", nicht „bricht zusammen". „nicht abgesichert",
-  nicht „steht offen".
-- **Aktiv und konkret.** „`SendMailHandler::__invoke` laedt den Kunden aus SAP" statt
-  „hier kommen die Kundendaten ins Spiel".
-- **Zahlen ausschreiben, wo gezaehlt wurde.** `11 Handler`, nicht „zahlreiche Handler".
-- **Bildunterschrift beginnt bei der Konsequenz**, nicht bei einer Wertung:
-  „Relevant beim Erweitern: …", „Faellt SAP aus, …", „Zwei Stellen brechen, wenn …".
-- **Anriss nennt Mechanik, nicht Bedeutung.** Was laeuft wo, in welcher Reihenfolge, mit
-  welchem Transport — nicht, warum das elegant ist.
+### Satzbau
 
-Die Ausnahme sind Stellen, an denen ein Vergleich echte Arbeit spart: „verhaelt sich wie
-ein Cache, invalidiert aber nie" ist eine Aussage, kein Bild.
+Aufbau: **Wer oder was → macht was → womit oder worauf → unter welcher Bedingung.**
+
+| Statt | Besser |
+|---|---|
+| „Die Anwendung schaut sich die Daten an." | „Die Anwendung prueft die Eingabedaten." |
+| „Die Konfiguration wird vom System gespeichert." | „Das System speichert die Konfiguration." |
+| „Die Verbindung wird nach einiger Zeit beendet." | „Die Verbindung wird nach 30 Sekunden beendet." |
+| „Die Funktion sorgt dafuer, dass der Dienst aktiviert wird." | „Die Funktion aktiviert den Dienst." |
+
+Kurze Saetze. Ein Sachverhalt je Satz. Aktiv statt Passiv. Praesens; Praeteritum nur fuer
+abgeschlossene Vorgaenge („Die Schnittstelle wurde in Version 2.4 angepasst").
+
+### Muss, soll, kann
+
+Diese drei Woerter unterscheiden Anforderung von Empfehlung von Option. Sie werden nicht
+gemischt und nicht abgeschwaecht.
+
+- **muss** — zwingende Voraussetzung. „Der Server muss ueber Port 443 erreichbar sein."
+- **soll** — empfohlenes Verhalten. „Die Anwendung soll nach einem Neustart automatisch starten."
+- **kann** — Option. „Der Benutzer kann die Protokollierung aktivieren."
+
+Nicht: „sollte vielleicht", „idealerweise", „am besten", „normalerweise".
+
+### Wortliste — nicht verwenden
+
+`einfach` · `schnell` · `problemlos` · `normalerweise` · `in der Regel` · `etc.` · `usw.`
+· `gegebenenfalls` · `moeglichst` · `ein bisschen` · `einige` · `entsprechend` ·
+`wie gewohnt`
+
+Diese Woerter ersetzen eine Zahl oder eine Bedingung durch ein Gefuehl. Wo eine konkrete
+Angabe existiert, steht die Angabe: `nach 30 Sekunden`, `ab 8 Zeichen`, `bei Exit-Code 2`.
+
+### Keine Metaphern, keine Wertungen
+
+Ein Cron ist ein Cron — kein Uhrwerk, kein Herzschlag, kein Taktgeber. Eine Queue ist eine
+Queue, kein Fliessband. „Die Verarbeitung dauert maximal 5 Sekunden" statt „Die
+Verarbeitung ist sehr schnell". Kein „elegant", „sauber", „unschoen".
+
+Auch keine erzaehlende Rahmung: nicht „Daraus folgt alles andere", nicht „Der wichtigste
+Punkt ist", nicht „Das ist die eigentliche Konstruktion". Die Aussage steht fuer sich.
+
+### Begriffe konsistent halten
+
+Ein Begriff je Sache, im ganzen Blattsatz derselbe. `Etappe`, nicht abwechselnd Etappe,
+Kapitel, Seite. `Blatt`, nicht Abschnitt. `Blattsatz`, nicht Doku oder Dokumentation.
+Fachbegriffe beim ersten Auftreten ausschreiben: `AMQP (Advanced Message Queuing
+Protocol)`.
+
+### Bildunterschrift
+
+Sie nennt die Konsequenz, nicht die Bedeutung. Zulaessige Anfaenge:
+„Relevant beim Erweitern: …", „Faellt SAP aus, …", „Bei einem Rueckstau gilt: …".
+Nicht: „Das Interessante daran ist", „Das zeigt, wie …".
 
 ## Druckfassung
 
