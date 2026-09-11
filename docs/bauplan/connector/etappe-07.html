@@ -554,8 +554,7 @@
       <h2>Typen und Basisklassen</h2>
     </div>
     <p class="lead">31 Dateien in <code>types/</code>, aber elf davon sind Basisklassen aus dem
-      Generator — und vier von denen wird nie beerbt. Nützlich zu wissen, damit du beim Aufräumen
-      nicht die falschen anfasst.</p>
+      Generator — und vier von denen wird nie beerbt. Beim Aufräumen sind daher nur die nie beerbten Basisklassen zu entfernen.</p>
 
     <figure>
       <svg viewBox="0 0 960 340" role="img" aria-label="Inventar der GraphQL-Typen: links die genutzten Basisklassen mit Anzahl der Ableitungen, rechts die vier Basisklassen aus der Generator-Vorlage, die nie beerbt werden.">
@@ -770,7 +769,7 @@
 
         <rect x="24" y="334" width="912" height="40" rx="2" fill="var(--web)" fill-opacity="0.08" stroke="var(--web)" stroke-opacity="0.4"></rect>
         <text x="42" y="353" class="s-note">Die gute Nachricht steht in der letzten Spalte oben: query_log_tags hängt den GraphQL-Feldnamen an jede SQL-Anweisung.</text>
-        <text x="42" y="369" class="s-tiny f-dim">In den Postgres-Logs siehst du damit direkt, welcher Resolver eine langsame oder wiederholte Abfrage verursacht — ohne zusätzliches Werkzeug.</text>
+        <text x="42" y="369" class="s-tiny f-dim">In den Postgres-Logs ist damit ablesbar, welcher Resolver eine langsame oder wiederholte Abfrage verursacht — ohne zusätzliches Werkzeug.</text>
       </svg>
       <figcaption><b>Die praktisch wichtigste Lücke ist die letzte.</b> Der Dataloader ist
         eingeschaltet, wird aber nirgends verwendet — es gibt keinen einzigen

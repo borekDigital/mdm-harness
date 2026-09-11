@@ -427,7 +427,7 @@
       <code>docker-compose.yml</code> plus <code>docker-compose.override.yml</code> — so steht es
       in <code>.env:2</code> als <code>COMPOSE_FILE</code>. Wer ihn deployt, benutzt
       <code>docker/docker-compose.prod.yml</code>, ausgewählt von der Pipeline
-      (<code>.gitlab-ci.yml:112</code>). Der Unterschied ist das Interessante.</p>
+      (<code>.gitlab-ci.yml:112</code>). Der Unterschied liegt in der Ausführungsumgebung.</p>
 
     <figure>
       <svg viewBox="0 0 960 386" role="img" aria-label="Vergleich der beiden Compose-Welten. Links die Entwicklung mit Wurzel-Compose plus Override, lokal gebauten Images, RabbitMQ als Container und nginx auf Port 8888. Rechts der Swarm-Deploy mit Images aus der Registry, Traefik-Labels, Loki-Logging und Ressourcengrenzen.">

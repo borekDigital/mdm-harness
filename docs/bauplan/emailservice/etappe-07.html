@@ -526,7 +526,7 @@
         <text x="356" y="210" class="s-tiny f-dim">consume.sh statt php-fpm, gesetzt im Compose-Eintrag, nicht im Dockerfile (Etappe 2).</text>
         <text x="356" y="230" class="s-tiny f-alert">Zwei identische Dateien bedeuten: jede Änderung muss zweimal gemacht werden.</text>
       </svg>
-      <figcaption><b>Warum die Verdopplung ein Risiko ist:</b> die beiden Dateien werden
+      <figcaption><b>Risiko der Verdopplung:</b> die beiden Dateien werden
         auseinanderlaufen, sobald jemand eine PHP-Erweiterung nur in einer nachträgt. Der
         Unterschied fiele erst auf, wenn ein Worker eine Funktion aufruft, die der Webserver
         hat und er nicht. Da beide denselben Inhalt haben, genügt eine Datei plus

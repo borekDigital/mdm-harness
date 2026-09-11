@@ -557,8 +557,7 @@
         <text x="475" y="307" text-anchor="middle" class="s-note">Gems liegen global pro Ruby-Version, nicht wie node_modules im Projektordner — deshalb erzwingt bundle exec die gelockten Versionen.</text>
       </svg>
       <figcaption><b>Die Lock-Datei verhindert abweichende Gem-Versionen zwischen Arbeitsplätzen.</b>
-        Sie ist eingecheckt, also bekommen du, ein Kollege, die CI und der Docker-Build beim
-        <code>bundle install</code> dieselben Versionen. Geschrieben wird sie <em>immer</em> von
+        Sie ist eingecheckt, also erhalten alle Arbeitsplätze, die CI und der Docker-Build beim <code>bundle install</code> dieselben Versionen. Geschrieben wird sie <em>immer</em> von
         Bundler, niemals von Hand — bei einem Merge-Konflikt löst man den im <code>Gemfile</code>
         und lässt <code>bundle install</code> neu laufen.</figcaption>
     </figure>
@@ -733,8 +732,7 @@
       <span class="plate-no">Anhang</span>
       <h2>Drei Altlasten in der README</h2>
     </div>
-    <p class="lead">Damit du nicht darauf reinfällst. Alle drei sind belegt — es sind
-      Copy-Paste-Reste, keine Vermutungen.</p>
+    <p class="lead">Die README beschreibt an drei Stellen nicht diesen Code. Alle drei sind belegt — es sind Copy-Paste-Reste, keine Vermutungen.</p>
 
     <div class="checks">
       <div class="check">
@@ -744,8 +742,7 @@
           <p><code>README.md:106–112</code> behauptet, <code>npm run dev</code> starte Rails, Vite
             und Sidekiq zusammen. In <code>package.json:6</code> steht aber exakt
             <code>"dev": "vite dev"</code> — nur der Vite-Server.</p>
-          <p>Die drei Prozesse startest du über <code>bin/dev</code> oder
-            <code>shopify app dev</code>. Und <code>@shopify/cli</code> steht in keiner
+          <p>Die drei Prozesse starten über <code>bin/dev</code> oder <code>shopify app dev</code>. Und <code>@shopify/cli</code> steht in keiner
             Dependency-Liste, ist also wirklich global zu installieren.</p>
         </div>
       </div>

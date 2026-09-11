@@ -685,7 +685,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
         <!-- Zeile 1: Dev-Browser -->
         <rect x="20" y="66" width="160" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
         <text x="100" y="89" text-anchor="middle" class="s-mono">Browser</text>
-        <text x="100" y="104" text-anchor="middle" class="s-tiny f-dim">dein Rechner</text>
+        <text x="100" y="104" text-anchor="middle" class="s-tiny f-dim">lokaler Rechner</text>
 
         <line x1="180" y1="92" x2="248" y2="92" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah4)"></line>
         <text x="214" y="84" text-anchor="middle" class="s-tiny f-dim">:5173</text>
@@ -765,8 +765,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
       <span class="plate-no">Blatt 05/06</span>
       <h2>Der Herzschlag: vier Cron-Jobs</h2>
     </div>
-    <p class="lead">Wenn du eine Sache aus dieser Etappe mitnimmst, dann diese:
-      <strong>der Connector ist im Kern ein Uhrwerk.</strong> Bestellungen kommen per Webhook
+    <p class="lead">Die Kernaussage dieser Etappe: <strong>der Connector ist im Kern ein Uhrwerk.</strong> Bestellungen kommen per Webhook
       herein, aber der Abgleich Richtung SAP läuft getaktet — und <code>config/sidekiq.yml</code>
       ist die Datei, in der dieser Takt steht.</p>
 
@@ -869,8 +868,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
       <span class="plate-no">Blatt 06/06</span>
       <h2>Die Secrets sind die Inhaltsangabe</h2>
     </div>
-    <p class="lead"><code>.env.template</code> gruppiert sich nach Fremdsystem — und genau diese
-      Gruppen findest du als Ordner unter <code>app/services/</code> wieder. Wer die
+    <p class="lead"><code>.env.template</code> gruppiert sich nach Fremdsystem — und dieselben Gruppen liegen als Ordner unter <code>app/services/</code>. Wer die
       <code>.env</code> liest, kennt den Aufgabenzuschnitt der App.</p>
 
     <figure>

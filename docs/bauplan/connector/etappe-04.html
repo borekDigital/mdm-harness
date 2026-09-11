@@ -548,8 +548,7 @@
       <h2>Die Vererbung setzt die Regeln durch</h2>
     </div>
     <p class="lead">Kein Controller prüft selbst, ob er darf. Die Prüfung hängt an der
-      <strong>Basisklasse</strong>, die er beerbt. Wenn du wissen willst, wie ein Endpunkt
-      geschützt ist, schaust du nicht in die Action — du schaust nach oben.</p>
+      <strong>Basisklasse</strong>, die er beerbt. Der Schutz eines Endpunkts steht nicht in der Action, sondern in der Basisklasse darüber.</p>
 
     <figure>
       <svg viewBox="0 0 960 540" role="img" aria-label="Vererbungsbaum der Controller: ActionController::Base, darunter ApplicationController mit global abgeschaltetem CSRF-Schutz, darunter sechs Basisklassen mit je eigenen Sicherungs-Concerns und deren konkrete Controller.">
@@ -828,9 +827,7 @@ end                                              <span class="fp"># shopify/webh
         <rect x="24" y="346" width="912" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="480" y="368" text-anchor="middle" class="s-note">Fünftes Verfahren: Rack::Auth::Basic für /sidekiq — mit SHA256-Vergleich und secure_compare, aber nur registriert, wenn Rails.env.production?</text>
       </svg>
-      <figcaption><b>Die Konsequenz für dich:</b> drei Verfahren kannst du nicht kaputt machen, weil
-        sie im Gem liegen. Das vierte liegt in einer 32-Zeilen-Datei
-        (<code>app/services/auth/jwt.rb</code>) und ist deine Verantwortung — dort steht die
+      <figcaption><b>Folge:</b> drei Verfahren liegen im Gem und sind durch eigenen Code nicht veränderbar. Das vierte liegt in einer 32-Zeilen-Datei (<code>app/services/auth/jwt.rb</code>) und liegt damit in der Verantwortung des Projekts — dort steht die
         Laufzeit von 24 Stunden als Konstante <code>EXPIRATION_TIME = 24</code>, und dort wird das
         Geheimnis <em>beim Laden der Klasse</em> festgehalten, nicht bei jedem Aufruf.</figcaption>
     </figure>

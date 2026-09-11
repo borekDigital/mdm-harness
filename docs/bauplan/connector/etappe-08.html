@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>MDM Architektur-Blattsätze</title>
+<title>Frontend</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -390,158 +390,515 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
-
 <div class="sheet">
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Workspace · Übersicht</p>
-      <h1>Architektur-<br>Blattsätze</h1>
-      <p>Einstiegspunkt in die Architektur-Dokumentation des Workspace. Jeder Blattsatz
-         deckt ein Repo ab, jede Etappe eine Frage, jede Aussage ist mit
-         <code>Datei:Zeile</code> belegt. Die HTML-Quellen liegen unter
-         <code>docs/bauplan/</code> und sind versioniert — Stände lassen sich also
-         vergleichen und als PDF weitergeben.</p>
+      <p class="tb-eyebrow">MDM Connector · Etappe 8 · Das Frontend</p>
+      <h1>Frontend</h1>
+      <p>1 991 Zeilen React, ein einziger Entrypoint, vier Seiten — und davon trägt eine allein
+         ein Viertel des Codes. Das Admin-UI hat genau eine Aufgabe: Bestellungen und ihren
+         SAP-Status anzeigen und einen fehlgeschlagenen Sync neu anstoßen. Dafür stapelt es <strong>acht Provider</strong> übereinander.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Repos</dt><dd>2 von 6 dokumentiert</dd></div>
-      <div class="tb-cell"><dt>Etappen</dt><dd>20</dd></div>
-      <div class="tb-cell"><dt>HTML-Quellen</dt><dd>17 von 20</dd></div>
-      <div class="tb-cell"><dt>Design</dt><dd>bauplan-v1</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>11. September 2026</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>app/frontend/ — 23 Dateien</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>1 991</dd></div>
+      <div class="tb-cell"><dt>Seiten</dt><dd>4</dd></div>
+      <div class="tb-cell"><dt>Entrypoints</dt><dd>1</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>React <span>— unser Code</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Shopify <span>— Polaris und App Bridge</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Rails <span>— liefert aus, antwortet</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>toter Code <span>— siehe Blatt 05</span></span>
   </div>
 
+  <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">theme</span>
-      <h2>Shopify Theme</h2>
+      <span class="plate-no">Blatt 01/05</span>
+      <h2>Acht Provider, zwei Apollo-Clients</h2>
     </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan theme</code>.
-      Liquid/CSS/JS (Hyper 1.3.3)</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">connector</span>
-      <h2>Shopify Connector</h2>
-    </div>
-    <p class="lead">Rails 8.1 / React 18 / Polaris — 9 Etappen, Stand 2026-09-03.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis connector</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Umfang</td><td class="m">4</td><td class="m">3</td><td class="m">—</td><td class="m"><a href="connector/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Prozesse</td><td class="m">6</td><td class="m">3</td><td class="m">2</td><td class="m"><a href="connector/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Acht Tabellen, drei Ströme</td><td class="m">5</td><td class="m">5</td><td class="m">1</td><td class="m"><a href="https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Eingang</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="connector/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Action, API, Transformer</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Jobs</td><td class="m">5</td><td class="m">5</td><td class="m">—</td><td class="m"><a href="connector/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>GraphQL</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="connector/etappe-07.html">HTML</a> · <a href="https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0">Artefakt</a></td></tr>
-          <tr><td class="m">08</td><td>Frontend</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="connector/etappe-08.html">HTML</a> · <a href="https://claude.ai/code/artifact/fecb7450-82c9-4e17-b636-16c702063b17">Artefakt</a></td></tr>
-          <tr><td class="m">09</td><td>Sechs Extensions, zwei Images</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">datalayer</span>
-      <h2>GTM Datalayer</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan datalayer</code>.
-      JavaScript</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">creditcheck</span>
-      <h2>Creditcheck + CustomerInfo</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan creditcheck</code>.
-      PHP 7.4 / Symfony</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">emailservice</span>
-      <h2>Emailservice</h2>
-    </div>
-    <p class="lead">PHP 8.3 / Symfony 7.1 — 7 Etappen, Stand 2026-09-11.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis emailservice</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Umfang</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Container</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Messenger</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Eingang</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/b04414ec-a509-4559-ac4e-2092b3d7419a">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Registrierung</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-05.html">HTML</a> · <a href="https://claude.ai/code/artifact/e1194f5b-363c-40e3-b5f7-9b2327a235d1">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Mandanten</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/83aef8a2-3d27-4a72-b6ad-3c2d72b99ba9">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>Deploy</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-07.html">HTML</a> · <a href="https://claude.ai/code/artifact/b2032434-c396-4584-a0ae-1fc29fe19bf6">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">payment-service</span>
-      <h2>Payment-Service</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan payment-service</code>.
-      PHP 8.3 / Symfony 7.1 / Nuxt</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">harness</span>
-      <h2>MDM Harness</h2>
-    </div>
-    <p class="lead">Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules — 4 Etappen, Stand 2026-09-10.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis harness</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Aufbau</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Agenten</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Hooks</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="harness/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Skills und Rules</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
+    <p class="lead">Bevor die erste Seite rendert, liegen acht Kontext-Anbieter übereinander. Zwei
+      davon sind Apollo-Clients — und der äußere wird vom inneren <strong>vollständig
+      überschattet</strong>. Alles, was die App tatsächlich abfragt, läuft über den inneren.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 540" role="img" aria-label="Die acht verschachtelten Provider von StrictMode über den Polaris-AppProvider, BrowserRouter, einen ersten ApolloProvider, den AppBridgeProvider, einen zweiten ApolloProvider im CustomApolloProvider und den ShopProvider bis zu Navigation und Routes. Der erste ApolloProvider wird vom zweiten überschattet.">
+        <rect x="24" y="44" width="912" height="440" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"></rect>
+        <text x="36" y="62" class="s-tiny f-dim">React.StrictMode</text>
+
+        <rect x="48" y="68" width="864" height="410" rx="3" fill="var(--web)" fill-opacity="0.06" stroke="var(--web)" stroke-opacity="0.4"></rect>
+        <text x="60" y="86" class="s-tiny f-web">AppProvider — Polaris, i18n: en, linkComponent: AppBridgeLink</text>
+        <text x="900" y="86" text-anchor="end" class="s-tiny f-dim">entrypoints/index.jsx</text>
+
+        <rect x="72" y="92" width="816" height="380" rx="3" fill="var(--vite)" fill-opacity="0.06" stroke="var(--vite)" stroke-opacity="0.4"></rect>
+        <text x="84" y="110" class="s-tiny f-vite">BrowserRouter</text>
+        <text x="876" y="110" text-anchor="end" class="s-tiny f-dim">App.jsx ab hier</text>
+
+        <rect x="96" y="116" width="768" height="350" rx="3" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.5" stroke-dasharray="5 4"></rect>
+        <text x="108" y="134" class="s-tiny f-alert">ApolloProvider — client: apolloClient()</text>
+        <text x="852" y="134" text-anchor="end" class="s-tiny f-alert">wird überschattet, ohne Wirkung</text>
+
+        <rect x="120" y="140" width="720" height="320" rx="3" fill="var(--web)" fill-opacity="0.06" stroke="var(--web)" stroke-opacity="0.4"></rect>
+        <text x="132" y="158" class="s-tiny f-web">AppBridgeProvider — liest #shopify-app-init, sonst rotes Banner</text>
+
+        <rect x="144" y="164" width="672" height="290" rx="3" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="156" y="182" class="s-tiny f-vite">CustomApolloProvider — eigener ApolloProvider, uri: /graphql</text>
+        <text x="804" y="182" text-anchor="end" class="s-tiny f-vite">dieser gewinnt</text>
+
+        <rect x="168" y="188" width="624" height="260" rx="3" fill="var(--vite)" fill-opacity="0.06" stroke="var(--vite)" stroke-opacity="0.4"></rect>
+        <text x="180" y="206" class="s-tiny f-vite">ShopProvider — fragt activeShop, rendert nichts bis die Antwort da ist</text>
+
+        <rect x="192" y="212" width="576" height="230" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="204" y="230" class="s-tiny f-dim">Inhalt</text>
+
+        <rect x="212" y="248" width="260" height="44" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="226" y="266" class="s-tiny">Navigation</text>
+        <text x="226" y="282" class="s-tiny f-dim">App-Bridge-NavigationMenu, 1 Link</text>
+
+        <rect x="488" y="248" width="260" height="44" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="502" y="266" class="s-tiny">Routes</text>
+        <text x="502" y="282" class="s-tiny f-dim">dateibasiert über import.meta.glob</text>
+
+        <text x="212" y="322" class="s-tiny f-dim">Die vier Seiten dahinter:</text>
+        <text x="212" y="344" class="s-tiny">pages/index.jsx<tspan class="f-dim">  →  leitet sofort auf /orders um, 5 Zeilen</tspan></text>
+        <text x="212" y="362" class="s-tiny">pages/orders/index.jsx<tspan class="f-dim">  →  Polaris-Page mit OrdersList, 14 Zeilen</tspan></text>
+        <text x="212" y="380" class="s-tiny">pages/orders/[id].jsx<tspan class="f-dim">  →  die Detailseite, 490 Zeilen</tspan></text>
+        <text x="212" y="398" class="s-tiny">pages/NotFound.jsx<tspan class="f-dim">  →  Polaris-EmptyState, 21 Zeilen</tspan></text>
+        <text x="212" y="424" class="s-tiny f-dim">Dazu components/orders/OrdersList.jsx mit 461 Zeilen — Filter, Tabelle, Modal.</text>
+
+        <rect x="24" y="496" width="912" height="34" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.4"></rect>
+        <text x="480" y="518" text-anchor="middle" class="s-note">Beide Apollo-Clients zeigen auf /graphql — der Unterschied liegt nur darin, wie sie das Session-Token besorgen.</text>
+      </svg>
+      <figcaption><b>Der Code zeigt, warum es zwei Clients gibt.</b> Der äußere
+        (<code>graphql/client.js</code>) holt das Token über <code>window.app</code> — eine globale
+        Variable, die aus der alten Sprockets-Datei <code>shopify_app.js</code> stammen soll. Der
+        innere holt es über den React-Hook <code>useAuthenticatedFetch</code>, was nur
+        <em>innerhalb</em> des <code>AppBridgeProvider</code> möglich ist — deshalb sitzt er weiter
+        innen. Der äußere ist damit ein Überrest aus der Zeit vor dem Hook. Er wird bei jedem
+        Render von <code>App</code> neu erzeugt und sofort verworfen.</figcaption>
+    </figure>
   </section>
 
+  <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Werkzeuge</span>
-      <h2>Erzeugen, prüfen, weitergeben</h2>
+      <span class="plate-no">Blatt 02/05</span>
+      <h2>Wie die SPA in die Seite kommt</h2>
     </div>
-    <p class="lead">Ausführlich erklärt in der <a href="bedienung.html"><b>Bedienungsanleitung</b></a>:
-      die drei Zugänge, was automatisch passiert und was wann zu tun ist.</p>
-    <div class="tw">
-      <table>
-        <caption>Befehle im Workspace-Root</caption>
-        <thead><tr><th class="m">Befehl</th><th>Wirkung</th></tr></thead>
-        <tbody>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
-          <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
-          <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>
-          <tr><td class="m">bin/bauplan-guard.py --verify</td><td>Bestand gegen den letzten Commit prüfen</td></tr>
-        </tbody>
-      </table>
+    <p class="lead">Vier Stationen von Rails bis React — und ein zweiter, unauffälliger Kanal: der
+      <code>&lt;div id="shopify-app-init"&gt;</code> mit <code>data-</code>-Attributen. Ohne den
+      zeigt die App statt der Oberfläche ein rotes Banner.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 300" role="img" aria-label="Der Bootstrap-Weg von HomeController über die ERB-Ansicht mit dem root-Div und den Vite-Tags zum Entrypoint und zur App-Komponente. Darunter der Datenkanal über das shopify-app-init-Div, aus dem der AppBridgeProvider apiKey und host liest.">
+        <defs>
+          <marker id="e8ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <rect x="24" y="46" width="210" height="80" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="38" y="68" class="s-tiny f-worker">HomeController#index</text>
+        <text x="38" y="86" class="s-tiny f-dim">EmbeddedApp · EnsureInstalled</text>
+        <text x="38" y="102" class="s-tiny f-dim">ShopAccessScopesVerification</text>
+        <text x="38" y="118" class="s-tiny">setzt @shop_origin und @host</text>
+        <line x1="234" y1="86" x2="250" y2="86" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah2)"></line>
+
+        <rect x="254" y="46" width="210" height="80" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="268" y="68" class="s-tiny f-worker">views/home/index.html.erb</text>
+        <text x="268" y="86" class="s-mono">&lt;div id="root"&gt;&lt;/div&gt;</text>
+        <text x="268" y="104" class="s-tiny f-dim">vite_client_tag</text>
+        <text x="268" y="118" class="s-tiny f-dim">vite_javascript_tag 'index.jsx'</text>
+        <line x1="464" y1="86" x2="480" y2="86" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah2)"></line>
+
+        <rect x="484" y="46" width="210" height="80" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="498" y="68" class="s-tiny f-vite">entrypoints/index.jsx</text>
+        <text x="498" y="86" class="s-tiny">createRoot(#root).render(…)</text>
+        <text x="498" y="104" class="s-tiny f-dim">Polaris-CSS wird hier importiert</text>
+        <text x="498" y="118" class="s-tiny f-dim">definiert AppBridgeLink</text>
+        <line x1="694" y1="86" x2="710" y2="86" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah2)"></line>
+
+        <rect x="714" y="46" width="222" height="80" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="728" y="68" class="s-tiny f-vite">App.jsx</text>
+        <text x="728" y="86" class="s-tiny">8 verschachtelte Provider</text>
+        <text x="728" y="104" class="s-tiny f-dim">import.meta.glob über pages/</text>
+        <text x="728" y="118" class="s-tiny f-dim">siehe Blatt 01</text>
+
+        <!-- Zweiter Kanal -->
+        <text x="24" y="170" class="s-lbl f-dim">Der zweite Kanal — Konfiguration über das DOM</text>
+
+        <rect x="24" y="182" width="440" height="80" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="38" y="204" class="s-tiny f-worker">layouts/embedded_app.html.erb</text>
+        <text x="38" y="222" class="s-mono">&lt;div id="shopify-app-init" data-…&gt;</text>
+        <text x="38" y="240" class="s-tiny f-dim">api_key · shop_origin · host · debug</text>
+        <text x="38" y="256" class="s-tiny f-dim">kommt aus dem shopify_app-Gem</text>
+
+        <line x1="464" y1="222" x2="490" y2="222" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah2)"></line>
+
+        <rect x="494" y="182" width="442" height="80" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="508" y="204" class="s-tiny f-web">AppBridgeProvider</text>
+        <text x="508" y="222" class="s-mono">document.getElementById('shopify-app-init').dataset</text>
+        <text x="508" y="240" class="s-tiny">host auch aus ?host= und window.__SHOPIFY_DEV_HOST</text>
+        <text x="508" y="256" class="s-tiny f-alert">fehlt apiKey oder host → rotes Banner statt App</text>
+
+        <text x="24" y="288" class="s-tiny f-dim">Beide ERB-Dateien sind vollständige HTML-Dokumente — siehe Anhang 03.</text>
+      </svg>
+      <figcaption><b>Der zweite Kanal erklärt die Fehlermeldung „Missing host query argument“.</b> Beim Aufruf der App-URL außerhalb des Shopify-Admin fehlt der <code>host</code>-Parameter; die App zeigt dann diese Meldung statt der Oberfläche. Deshalb merkt sich der Provider den Wert in
+        <code>window.__SHOPIFY_DEV_HOST</code> und in <code>useState</code>: er darf bei
+        Navigation innerhalb der App nicht verloren gehen.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/05</span>
+      <h2>Routen entstehen aus Dateinamen</h2>
+    </div>
+    <p class="lead">Es gibt keine Routen-Datei mit Einträgen. <code>Routes.jsx</code> liest den
+      Ordner <code>pages/</code> zur Bauzeit ein und rechnet aus jedem Dateipfad einen Router-Pfad
+      — vier Ersetzungen hintereinander, ähnlich wie beim Webhook-Dispatcher aus Etappe 4.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 340" role="img" aria-label="Umwandlung eines Dateipfads in einen Router-Pfad in vier Schritten, danach die Tabelle der vier daraus entstehenden Routen.">
+        <defs>
+          <marker id="e8ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="24" y="42" class="s-lbl f-dim">Vier Ersetzungen</text>
+
+        <rect x="24" y="54" width="176" height="70" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="112" y="76" text-anchor="middle" class="s-tiny f-dim">glob-Schlüssel</text>
+        <text x="112" y="96" text-anchor="middle" class="s-tiny">pages/orders/[id].jsx</text>
+        <text x="112" y="114" text-anchor="middle" class="s-tiny f-dim">import.meta.glob</text>
+        <line x1="200" y1="89" x2="210" y2="89" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah3)"></line>
+
+        <rect x="214" y="54" width="176" height="70" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="302" y="76" text-anchor="middle" class="s-tiny f-dim">'/pages' entfernen</text>
+        <text x="302" y="96" text-anchor="middle" class="s-tiny">/orders/[id].jsx</text>
+        <line x1="390" y1="89" x2="400" y2="89" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah3)"></line>
+
+        <rect x="404" y="54" width="176" height="70" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="492" y="76" text-anchor="middle" class="s-tiny f-dim">Endung weg, /index → /</text>
+        <text x="492" y="96" text-anchor="middle" class="s-tiny">/orders/[id]</text>
+        <line x1="580" y1="89" x2="590" y2="89" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah3)"></line>
+
+        <rect x="594" y="54" width="176" height="70" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="682" y="76" text-anchor="middle" class="s-tiny f-dim">ersten Buchstaben klein</text>
+        <text x="682" y="96" text-anchor="middle" class="s-tiny">/orders/[id]</text>
+        <text x="682" y="114" text-anchor="middle" class="s-tiny f-dim">hier ohne Wirkung</text>
+        <line x1="770" y1="89" x2="780" y2="89" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah3)"></line>
+
+        <rect x="784" y="54" width="152" height="70" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="860" y="76" text-anchor="middle" class="s-tiny f-dim">[wort] → :wort</text>
+        <text x="860" y="96" text-anchor="middle" class="s-name f-worker">/orders/:id</text>
+        <text x="860" y="114" text-anchor="middle" class="s-tiny f-dim">React-Router-Pfad</text>
+
+        <!-- Tabelle -->
+        <text x="24" y="168" class="s-lbl f-dim">Die vier Routen, die dabei herauskommen</text>
+        <line x1="24" y1="176" x2="936" y2="176" stroke="currentColor" stroke-opacity="0.2"></line>
+
+        <text x="24" y="198" class="s-mono">pages/index.jsx</text>
+        <text x="330" y="198" class="s-tiny f-worker">/</text>
+        <text x="440" y="198" class="s-tiny f-dim">leitet mit &lt;Navigate&gt; sofort auf /orders um</text>
+
+        <text x="24" y="222" class="s-mono">pages/orders/index.jsx</text>
+        <text x="330" y="222" class="s-tiny f-worker">/orders</text>
+        <text x="440" y="222" class="s-tiny f-dim">Polaris-Page „Orders“ mit OrdersList</text>
+
+        <text x="24" y="246" class="s-mono">pages/orders/[id].jsx</text>
+        <text x="330" y="246" class="s-tiny f-worker">/orders/:id</text>
+        <text x="440" y="246" class="s-tiny f-dim">Detailseite mit SAP-Events und Bonitätsdaten</text>
+
+        <text x="24" y="270" class="s-mono">pages/NotFound.jsx</text>
+        <text x="330" y="270" class="s-tiny f-worker">/notFound</text>
+        <text x="440" y="270" class="s-tiny f-dim">wird zusätzlich als Catch-All für path="*" eingesetzt</text>
+
+        <rect x="24" y="288" width="912" height="42" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="42" y="308" class="s-note">Empfindliche Stelle: Routes.jsx sucht die Catch-All-Komponente mit routes.find(({ path }) =&gt; path === '/notFound').component</text>
+        <text x="42" y="324" class="s-tiny f-dim">Wird pages/NotFound.jsx umbenannt oder verschoben, liefert find() undefined — und der Zugriff auf .component wirft beim ersten Render.</text>
+      </svg>
+      <figcaption><b>Der Vorteil ist echt:</b> eine neue Seite anlegen heißt eine Datei mit
+        Default-Export in <code>pages/</code> ablegen, fertig. Der Preis sind zwei implizite
+        Verträge — der Dateiname <em>ist</em> die URL, und
+        <code>pages/NotFound.jsx</code> muss unter genau diesem Namen existieren. Beides steht
+        nirgends als Prüfung im Code, nur als Konvention. Der Glob-Ausdruck schließt übrigens
+        <code>*.test.jsx</code> aus, es gibt aber keine einzige Testdatei.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/05</span>
+      <h2>Der Weg einer Abfrage</h2>
+    </div>
+    <p class="lead">Von <code>useQuery</code> bis zum privaten Schema sind es fünf Stationen. Die
+      interessanteste ist die dritte: dort hängt <strong>App Bridge das Session-Token an</strong> —
+      und prüft die Antwort auf ein Kopffeld, das eine Neuanmeldung verlangt.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 330" role="img" aria-label="Der Weg einer GraphQL-Abfrage von der Komponente über den Apollo-Client, den authentifizierten Fetch mit Session-Token und den Rails-Endpunkt bis zum privaten Schema. Bei einem Reauthorize-Kopffeld leitet App Bridge auf die Neuanmeldung um.">
+        <defs>
+          <marker id="e8ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <rect x="24" y="50" width="176" height="86" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="38" y="72" class="s-tiny f-vite">Komponente</text>
+        <text x="38" y="90" class="s-tiny">useQuery(GET_ORDERS)</text>
+        <text x="38" y="108" class="s-tiny f-dim">OrdersList · [id].jsx</text>
+        <text x="38" y="126" class="s-tiny f-dim">ShopProvider</text>
+        <line x1="200" y1="93" x2="210" y2="93" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah4)"></line>
+
+        <rect x="214" y="50" width="176" height="86" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="228" y="72" class="s-tiny f-vite">Apollo-Client</text>
+        <text x="228" y="90" class="s-tiny">errorLink → Toast</text>
+        <text x="228" y="108" class="s-tiny">HttpLink uri: /graphql</text>
+        <text x="228" y="126" class="s-tiny f-dim">InMemoryCache</text>
+        <line x1="390" y1="93" x2="400" y2="93" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah4)"></line>
+
+        <rect x="404" y="50" width="176" height="86" rx="2" fill="var(--web)" fill-opacity="0.11" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="418" y="72" class="s-tiny f-web">useAuthenticatedFetch</text>
+        <text x="418" y="90" class="s-tiny">App Bridge hängt das</text>
+        <text x="418" y="104" class="s-tiny">Session-Token an</text>
+        <text x="418" y="126" class="s-tiny f-dim">X-Shopify-Access-Token</text>
+        <line x1="580" y1="93" x2="590" y2="93" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah4)"></line>
+
+        <rect x="594" y="50" width="176" height="86" rx="2" fill="var(--worker)" fill-opacity="0.11" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="608" y="72" class="s-tiny f-worker">POST /graphql</text>
+        <text x="608" y="90" class="s-tiny">GraphqlController</text>
+        <text x="608" y="108" class="s-tiny f-dim">EnsureHasSession</text>
+        <text x="608" y="126" class="s-tiny f-dim">set_shop, sonst 401</text>
+        <line x1="770" y1="93" x2="780" y2="93" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e8ah4)"></line>
+
+        <rect x="784" y="50" width="152" height="86" rx="2" fill="var(--worker)" fill-opacity="0.11" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="798" y="72" class="s-tiny f-worker">PrivateGraphql</text>
+        <text x="798" y="86" class="s-tiny f-worker">Schema</text>
+        <text x="798" y="108" class="s-tiny f-dim">context: { shop: }</text>
+        <text x="798" y="126" class="s-tiny f-dim">Etappe 7</text>
+
+        <!-- Rückweg -->
+        <path d="M860 136 L 860 168 L 492 168 L 492 192" fill="none" stroke="var(--web)" stroke-opacity="0.6" stroke-dasharray="5 4" marker-end="url(#e8ah4)"></path>
+        <text x="676" y="162" text-anchor="middle" class="s-tiny f-web">Antwort — die Kopffelder werden geprüft</text>
+
+        <rect x="24" y="196" width="440" height="76" rx="2" fill="var(--web)" fill-opacity="0.08" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="38" y="218" class="s-tiny f-web">Fall A · Neuanmeldung nötig</text>
+        <text x="38" y="236" class="s-mono">X-Shopify-API-Request-Failure-Reauthorize: 1</text>
+        <text x="38" y="254" class="s-tiny f-dim">→ Redirect.Action.REMOTE auf die Reauthorize-URL</text>
+        <text x="38" y="268" class="s-tiny f-dim">Rückfallwert, falls kein Kopffeld: /api/auth</text>
+
+        <rect x="496" y="196" width="440" height="76" rx="2" fill="var(--vite)" fill-opacity="0.08" stroke="var(--vite)" stroke-opacity="0.45"></rect>
+        <text x="510" y="218" class="s-tiny f-vite">Fall B · GraphQL-Fehler in der Antwort</text>
+        <text x="510" y="236" class="s-tiny">errorLink zeigt jeden Fehler als App-Bridge-Toast</text>
+        <text x="510" y="254" class="s-tiny f-dim">inklusive message, locations und path — 2 Sekunden</text>
+        <text x="510" y="268" class="s-tiny f-alert">also technische Meldungen direkt im Merchant-UI</text>
+
+        <rect x="24" y="288" width="912" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="480" y="310" text-anchor="middle" class="s-note">Alle Abfragen gehen an genau einen Endpunkt — es gibt im Frontend keinen einzigen REST-Aufruf.</text>
+      </svg>
+      <figcaption><b>Zwei Dinge sind hier bemerkenswert.</b> Erstens: <code>ShopProvider</code>
+        fragt mit <code>fetchPolicy: 'no-cache'</code> ab und rendert <code>null</code>, solange
+        keine Antwort da ist — die App zeigt also bis dahin eine leere Seite, ohne Ladeanzeige.
+        Zweitens zeigt der <code>errorLink</code> rohe GraphQL-Fehlertexte als Toast. Praktisch
+        beim Entwickeln, im Produktivbetrieb sieht der Merchant damit
+        Implementierungsdetails.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 05 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 05/05</span>
+      <h2>Was lebt und was nicht</h2>
+    </div>
+    <p class="lead">Von 1 991 Zeilen sind gut 250 nachweislich unerreichbar — plus eine Datei mit
+      312 Zeilen, von der genau ein Export benutzt wird. Die Suche nach einem Export führt daher leicht in die falsche Datei.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 400" role="img" aria-label="Inventar des Frontends: links die tatsächlich genutzten Dateien mit Zeilenzahl, rechts die sechs nachweislich unbenutzten Stellen einschließlich eines doppelten Hooks, eines überschatteten Apollo-Clients und einer README, die ein anderes Projekt beschreibt.">
+        <text x="16" y="30" class="s-lbl f-worker">In Gebrauch</text>
+        <rect x="16" y="40" width="470" height="312" rx="3" fill="var(--worker)" fill-opacity="0.06" stroke="var(--worker)" stroke-opacity="0.4"></rect>
+
+        <text x="34" y="64" class="s-tiny">pages/orders/[id].jsx</text>
+        <text x="470" y="64" text-anchor="end" class="s-tiny f-worker">490</text>
+        <text x="34" y="86" class="s-tiny">components/orders/OrdersList.jsx</text>
+        <text x="470" y="86" text-anchor="end" class="s-tiny f-worker">461</text>
+        <text x="34" y="108" class="s-tiny">providers/AppBridgeProvider.jsx</text>
+        <text x="470" y="108" text-anchor="end" class="s-tiny f-worker">102</text>
+        <text x="34" y="130" class="s-tiny">Routes.jsx</text>
+        <text x="470" y="130" text-anchor="end" class="s-tiny f-worker">71</text>
+        <text x="34" y="152" class="s-tiny">providers/ShopProvider.jsx</text>
+        <text x="470" y="152" text-anchor="end" class="s-tiny f-worker">60</text>
+        <text x="34" y="174" class="s-tiny">entrypoints/index.jsx</text>
+        <text x="470" y="174" text-anchor="end" class="s-tiny f-worker">47</text>
+        <text x="34" y="196" class="s-tiny">providers/CustomApolloProvider.jsx</text>
+        <text x="470" y="196" text-anchor="end" class="s-tiny f-worker">40</text>
+        <text x="34" y="218" class="s-tiny">hooks/useAuthenticatedFetch.jsx</text>
+        <text x="470" y="218" text-anchor="end" class="s-tiny f-worker">41</text>
+        <text x="34" y="240" class="s-tiny">App.jsx · Navigation · 4 Seiten · style.css</text>
+        <text x="470" y="240" text-anchor="end" class="s-tiny f-worker">112</text>
+        <text x="34" y="262" class="s-tiny">graphql/queries.js · mutations.js · useLocationQuery.js</text>
+        <text x="470" y="262" text-anchor="end" class="s-tiny f-worker">137</text>
+
+        <line x1="34" y1="278" x2="470" y2="278" stroke="var(--worker)" stroke-opacity="0.3"></line>
+
+        <text x="34" y="300" class="s-tiny f-alert">globals.js — 312 Zeilen Hilfsfunktionen</text>
+        <text x="34" y="316" class="s-tiny f-dim">importiert wird daraus genau eine: titleize, in [id].jsx</text>
+        <text x="34" y="340" class="s-tiny f-dim">disambiguateLabel, isEmpty und die übrigen Exporte ruft niemand auf.</text>
+
+        <text x="502" y="30" class="s-lbl f-alert">Nachweislich unbenutzt</text>
+        <rect x="502" y="40" width="434" height="312" rx="3" fill="none" stroke="var(--alert)" stroke-opacity="0.45" stroke-dasharray="5 4"></rect>
+
+        <text x="520" y="64" class="s-tiny">useAuthenticatedFetch.js</text>
+        <text x="920" y="64" text-anchor="end" class="s-tiny f-alert">41</text>
+        <text x="520" y="80" class="s-tiny f-dim">byte-identisch mit hooks/useAuthenticatedFetch.jsx</text>
+
+        <text x="520" y="112" class="s-tiny">components/DatePickerInput.jsx</text>
+        <text x="920" y="112" text-anchor="end" class="s-tiny f-alert">82</text>
+        <text x="520" y="128" class="s-tiny f-dim">nirgends importiert — OrdersList nutzt Polaris-DatePicker direkt</text>
+
+        <text x="520" y="160" class="s-tiny">graphql/client.js</text>
+        <text x="920" y="160" text-anchor="end" class="s-tiny f-alert">12</text>
+        <text x="520" y="176" class="s-tiny f-dim">der äußere Apollo-Client aus Blatt 01 — überschattet</text>
+
+        <text x="520" y="208" class="s-tiny">GET_EXAMPLE in graphql/queries.js</text>
+        <text x="920" y="208" text-anchor="end" class="s-tiny f-alert">5</text>
+        <text x="520" y="224" class="s-tiny f-dim">fragt testField ab — dieses Feld gibt es im Schema nicht</text>
+
+        <text x="520" y="256" class="s-tiny">ORDER_SAP_RESYNC in graphql/mutations.js</text>
+        <text x="920" y="256" text-anchor="end" class="s-tiny f-alert">24</text>
+        <text x="520" y="272" class="s-tiny f-dim">nie importiert — OrdersList nutzt zweimal ORDER_SUBMIT</text>
+
+        <text x="520" y="304" class="s-tiny">app/frontend/README.md</text>
+        <text x="520" y="320" class="s-tiny f-alert">beschreibt ein völlig anderes Projekt:</text>
+        <text x="520" y="336" class="s-tiny f-dim">„Payment app“ mit CSV-Import und Transaktionsübersicht —</text>
+        <text x="520" y="350" class="s-tiny f-dim">nichts davon existiert in diesem Frontend.</text>
+
+        <rect x="16" y="362" width="920" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="476" y="384" text-anchor="middle" class="s-note">Zwei Drittel des Frontend-Codes stecken in zwei Dateien: OrdersList.jsx und pages/orders/[id].jsx.</text>
+      </svg>
+      <figcaption><b>Die Verteilung zeigt, wo Änderungen anfallen.</b> Fast jede Änderung am Admin-UI
+        landet in <code>OrdersList.jsx</code> (Liste, Filter, Sortierung, Modal) oder in
+        <code>pages/orders/[id].jsx</code> (Detailansicht mit SAP-Events und Bonitätsdaten). Der
+        ganze Rest ist Gerüst — Provider, Routing, Bootstrap. Die
+        <code>README.md</code> in diesem Ordner stammt aus einem anderen Projekt und beschreibt
+        diesen Code nicht.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ ANHANG ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Anhang</span>
+      <h2>Sechs Beobachtungen</h2>
+    </div>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Der Apollo-Cache wird bei jedem Render verworfen</h3>
+          <p>Belegt: <code>providers/CustomApolloProvider.jsx:34</code> erzeugt
+            <code>new ApolloClient({...})</code> direkt im Komponentenrumpf, ohne
+            <code>useMemo</code>. Jeder Re-Render dieses Providers baut damit einen neuen Client
+            mit einer neuen, leeren <code>InMemoryCache</code>.</p>
+          <p>Dasselbe gilt für <code>App.jsx:17</code> mit <code>apolloClient()</code> — dort ohne Folgen, weil dieser Provider überschattet wird. Der Fix ist in beiden
+            Fällen ein <code>useMemo</code> mit leerer Abhängigkeitsliste.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3><code>ShopProvider</code> kann Fehler nicht erkennen</h3>
+          <p>Belegt: <code>providers/ShopProvider.jsx:14–18</code> liest
+            <code>const { loading, data, queryError } = useQuery(...)</code>. Apollo gibt das Feld
+            aber als <code>error</code> zurück, nicht als <code>queryError</code> — die Variable
+            ist damit immer <code>undefined</code>.</p>
+          <p>Folge: der Fehlerzweig in Zeile 26 und die Fehleranzeige in Zeile 32 laufen nie.
+            Schlägt die <code>activeShop</code>-Abfrage fehl, wird
+            <code>domain</code> auf <code>undefined</code> gesetzt — und weil die Abbruchbedingung
+            in Zeile 41 auf <code>=== null</code> prüft, rendert die App weiter, nur ohne
+            Shop-Domain. Statt einer Fehlermeldung sieht man eine halb funktionierende
+            Oberfläche.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Zwei vollständige HTML-Dokumente ineinander</h3>
+          <p>Belegt: <code>app/views/home/index.html.erb</code> beginnt mit
+            <code>&lt;!DOCTYPE html&gt;</code> und hat eigene <code>&lt;head&gt;</code>- und
+            <code>&lt;body&gt;</code>-Elemente. <code>HomeController</code> bindet über
+            <code>ShopifyApp::EmbeddedApp</code> aber das Layout
+            <code>embedded_app.html.erb</code> ein — und das ist ebenfalls ein vollständiges
+            Dokument.</p>
+          <p>Dass das Layout wirklich rendert, ist indirekt belegt: der
+            <code>AppBridgeProvider</code> braucht <code>#shopify-app-init</code>, und dieses Div
+            erzeugt nur das Layout. ⚠️ Vermutung zur Auswirkung: Browser ziehen die inneren
+            <code>head</code>/<code>body</code>-Elemente stillschweigend zusammen, weshalb es
+            funktioniert. Sauber ist es nicht — die Ansicht sollte nur den
+            <code>#root</code>-Container und die Vite-Tags enthalten.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Neun ESLint-Pakete, keine Konfiguration</h3>
+          <p>Belegt: <code>package.json:8–22</code> listet <code>eslint</code>,
+            <code>@eslint/js</code>, <code>eslint-config-airbnb</code> und sechs Plugins. Eine
+            Suche im Projekt findet <em>keine</em> <code>eslint.config.js</code> und keine
+            <code>.eslintrc</code>. Es gibt auch kein <code>lint</code>-Script — nur
+            <code>build</code> und <code>dev</code>.</p>
+          <p>Der Linter kann also nicht laufen, obwohl der Code sichtbar nach Airbnb-Regeln
+            geschrieben ist: <code>entrypoints/index.jsx:1–3</code> deaktiviert drei Regeln
+            dateiweit. Entweder fehlt die Konfigurationsdatei, oder die Pakete sind Überrest.
+            Dasselbe Bild bei Tests: <code>jsdom</code> ist installiert, es gibt keinen
+            Test-Runner und keine Testdatei.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">05</span>
+        <div>
+          <h3><code>clearFilters</code> verwirft die eigene Arbeit</h3>
+          <p>Belegt: <code>components/orders/OrdersList.jsx:52–67</code>. Die Funktion legt
+            <code>const searchParams = {}</code> an, löscht dann in einer Schleife die
+            Filter-Schlüssel aus <code>search</code> — und übergibt am Ende
+            <code>qs.stringify(searchParams)</code>, also das leere Objekt. Die Schleife hat damit
+            keine Wirkung, alle übrigen Parameter gehen verloren.</p>
+          <p>Zusätzlich navigiert sie nach <code>/?…</code> statt <code>/orders?…</code>. Weil
+            <code>pages/index.jsx</code> sofort auf <code>/orders</code> umleitet, fällt das nicht
+            als Fehler auf — es erzeugt nur einen zusätzlichen Sprung.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">06</span>
+        <div>
+          <h3>Die Catch-All-Route hängt an einem Dateinamen</h3>
+          <p>Belegt: <code>Routes.jsx:63</code> —
+            <code>routes.find(({ path }) =&gt; path === '/notFound').component</code>, ohne
+            Absicherung gegen <code>undefined</code>.</p>
+          <p>Solange <code>pages/NotFound.jsx</code> existiert, passt es. Wird die Datei
+            umbenannt, verschoben oder ihr Default-Export entfernt, gibt <code>find</code>
+            <code>undefined</code> zurück und der Zugriff auf <code>.component</code> lässt die
+            ganze App beim ersten Render abbrechen — nicht nur die 404-Seite. Ein
+            <code>?.component</code> mit Rückfallwert würde reichen.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Workspace · docs/bauplan/index.html</span>
-    <span>Erzeugt von bin/bauplan-index.py</span>
-    <span>Bestandsquelle: workspace.yaml</span>
+    <span>MDM Connector · Etappe 8 von 9</span>
+    <span>Als nächstes: Extensions und Deploy — was bei Shopify läuft und wie es rausgeht</span>
   </footer>
 
 </div>

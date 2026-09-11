@@ -778,7 +778,7 @@ end</pre>
         <text x="42" y="320" class="s-note">Weg 2 ist der wichtigste und der am leichtesten zu übersehende.</text>
         <text x="42" y="336" class="s-tiny f-dim">Ein SAP-Timeout erzeugt keinen roten Job in Sidekiq — er erzeugt eine Bestellung mit sap_status = failed und ein sap_order_event mit code 408.</text>
       </svg>
-      <figcaption><b>Wo du im Fehlerfall hinschaust, hängt vom Weg ab.</b> Bei Weg 3 in
+      <figcaption><b>Der Ort des Fehlersignals hängt vom Weg ab.</b> Bei Weg 3 in
         <code>/sidekiq</code>. Bei Weg 2 <em>nicht</em> dort, sondern in der Datenbank
         (<code>orders.sap_status</code>, <code>sap_order_events.response_data</code>) und in
         Rollbar. Weg 1 erzeugt kein Signal im Admin-UI, kann aber lange dauern: bei anhaltendem Throttling
