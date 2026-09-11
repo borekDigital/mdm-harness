@@ -54,7 +54,7 @@
     },
     {
       "nr": 3,
-      "title": "Acht Tabellen, drei Ströme",
+      "title": "Datenmodell",
       "url": "https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e",
       "favicon": "🗃️",
       "blaetter": 5,
@@ -91,7 +91,7 @@
     },
     {
       "nr": 5,
-      "title": "Action, API, Transformer",
+      "title": "Fachlogik",
       "url": "https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7",
       "favicon": "⚗️",
       "blaetter": 5,
@@ -150,7 +150,7 @@
     },
     {
       "nr": 9,
-      "title": "Sechs Extensions, zwei Images",
+      "title": "Deploy",
       "url": "https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3",
       "favicon": "🚢",
       "blaetter": 5,
@@ -176,5 +176,5 @@
       ]
     }
   ],
-  "last_seen_sha": "3e540486418652b644dd66c4fc09112b499f0363"
+  "last_seen_sha": "69455cd4daf5676eb1ddd0b6bb4947e89ac23d66"
 }

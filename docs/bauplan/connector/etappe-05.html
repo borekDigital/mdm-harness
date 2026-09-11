@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>MDM Architektur-Blattsätze</title>
+<title>Fachlogik</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -390,158 +390,405 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
-
 <div class="sheet">
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Workspace · Übersicht</p>
-      <h1>Architektur-<br>Blattsätze</h1>
-      <p>Einstiegspunkt in die Architektur-Dokumentation des Workspace. Jeder Blattsatz
-         deckt ein Repo ab, jede Etappe eine Frage, jede Aussage ist mit
-         <code>Datei:Zeile</code> belegt. Die HTML-Quellen liegen unter
-         <code>docs/bauplan/</code> und sind versioniert — Stände lassen sich also
-         vergleichen und als PDF weitergeben.</p>
+      <p class="tb-eyebrow">MDM Connector · Etappe 5 · Fachlogik</p>
+      <h1>Action, API,<br>Transformer</h1>
+      <p>88 Dateien, 4 227 Zeilen, fünf Fremdsysteme — und drei Rollen, die sich über alle
+         Namensräume wiederholen. Die Aufrufregel steht in sieben Zeilen. Zwei Dateien
+         enthalten eine Methode, die nie ausgeführt wird.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Repos</dt><dd>2 von 6 dokumentiert</dd></div>
-      <div class="tb-cell"><dt>Etappen</dt><dd>20</dd></div>
-      <div class="tb-cell"><dt>HTML-Quellen</dt><dd>20 von 20</dd></div>
-      <div class="tb-cell"><dt>Design</dt><dd>bauplan-v1</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>11. September 2026</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>app/services/ — 88 Dateien</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>4 227</dd></div>
+      <div class="tb-cell"><dt>Namensräume</dt><dd>5</dd></div>
+      <div class="tb-cell"><dt>Rollen</dt><dd>22 Action · 49 Api · 15 Transformer</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Action <span>— steuert den Ablauf</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Transformer <span>— bildet Daten ab</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Api <span>— spricht HTTP</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>unerreichbar <span>— siehe Blatt 05</span></span>
   </div>
 
+  <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">theme</span>
-      <h2>Shopify Theme</h2>
+      <span class="plate-no">Blatt 01/05</span>
+      <h2>Drei Rollen und eine Aufrufregel</h2>
     </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan theme</code>.
-      Liquid/CSS/JS (Hyper 1.3.3)</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">connector</span>
-      <h2>Shopify Connector</h2>
-    </div>
-    <p class="lead">Rails 8.1 / React 18 / Polaris — 9 Etappen, Stand 2026-09-03.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis connector</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Umfang</td><td class="m">4</td><td class="m">3</td><td class="m">—</td><td class="m"><a href="connector/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Prozesse</td><td class="m">6</td><td class="m">3</td><td class="m">2</td><td class="m"><a href="connector/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Datenmodell</td><td class="m">5</td><td class="m">5</td><td class="m">1</td><td class="m"><a href="connector/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Eingang</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="connector/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Fachlogik</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="connector/etappe-05.html">HTML</a> · <a href="https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Jobs</td><td class="m">5</td><td class="m">5</td><td class="m">—</td><td class="m"><a href="connector/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>GraphQL</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="connector/etappe-07.html">HTML</a> · <a href="https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0">Artefakt</a></td></tr>
-          <tr><td class="m">08</td><td>Frontend</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="connector/etappe-08.html">HTML</a> · <a href="https://claude.ai/code/artifact/fecb7450-82c9-4e17-b636-16c702063b17">Artefakt</a></td></tr>
-          <tr><td class="m">09</td><td>Deploy</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="connector/etappe-09.html">HTML</a> · <a href="https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">datalayer</span>
-      <h2>GTM Datalayer</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan datalayer</code>.
-      JavaScript</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">creditcheck</span>
-      <h2>Creditcheck + CustomerInfo</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan creditcheck</code>.
-      PHP 7.4 / Symfony</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">emailservice</span>
-      <h2>Emailservice</h2>
-    </div>
-    <p class="lead">PHP 8.3 / Symfony 7.1 — 7 Etappen, Stand 2026-09-11.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis emailservice</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Umfang</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Container</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Messenger</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Eingang</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/b04414ec-a509-4559-ac4e-2092b3d7419a">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Registrierung</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-05.html">HTML</a> · <a href="https://claude.ai/code/artifact/e1194f5b-363c-40e3-b5f7-9b2327a235d1">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Mandanten</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/83aef8a2-3d27-4a72-b6ad-3c2d72b99ba9">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>Deploy</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-07.html">HTML</a> · <a href="https://claude.ai/code/artifact/b2032434-c396-4584-a0ae-1fc29fe19bf6">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">payment-service</span>
-      <h2>Payment-Service</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan payment-service</code>.
-      PHP 8.3 / Symfony 7.1 / Nuxt</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">harness</span>
-      <h2>MDM Harness</h2>
-    </div>
-    <p class="lead">Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules — 4 Etappen, Stand 2026-09-10.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis harness</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Aufbau</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Agenten</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Hooks</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="harness/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Skills und Rules</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
+    <p class="lead">Die gesamte Fachlogik folgt einem Muster:
+      <code>Irgendwas::Rolle::Name.call(...)</code>. Möglich macht das eine Basisklasse mit
+      <strong>sieben Zeilen</strong>. Jede der 88 Dateien ist entweder Action, Api oder
+      Transformer — bis auf zwei.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 434" role="img" aria-label="Die drei Rollen der Fachlogik. ApplicationService definiert die Klassenmethode call. Darunter die Rollen Action mit 22 Dateien, Api mit 49 und Transformer mit 15, jeweils mit Aufgabe und Rueckgabewert. Unten die beiden Dateien ausserhalb der Rollen.">
+        <defs>
+          <marker id="e5ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <rect x="284" y="36" width="392" height="68" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.45"></rect>
+        <text x="480" y="60" text-anchor="middle" class="s-name">ApplicationService</text>
+        <text x="480" y="80" text-anchor="middle" class="s-mono">def self.call(...) = new(...).call</text>
+        <text x="480" y="96" text-anchor="middle" class="s-tiny f-dim">app/services/application_service.rb — 7 Zeilen, sonst nichts</text>
+
+        <path d="M380 104 L380 126 L164 126 L164 150" fill="none" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#e5ar)"></path>
+        <path d="M480 104 L480 150" fill="none" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#e5ar)"></path>
+        <path d="M580 104 L580 126 L796 126 L796 150" fill="none" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#e5ar)"></path>
+
+        <rect x="24" y="150" width="280" height="150" rx="3" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="40" y="174" class="s-lbl f-web">Action — 22 Dateien</text>
+        <text x="40" y="200" class="s-tiny">Steuert einen Vorgang von Anfang bis Ende.</text>
+        <text x="40" y="220" class="s-tiny f-dim">1. Transformer aufrufen</text>
+        <text x="40" y="236" class="s-tiny f-dim">2. Api::Resource aufrufen</text>
+        <text x="40" y="252" class="s-tiny f-dim">3. Fehler in user_errors sammeln</text>
+        <text x="40" y="276" class="s-tiny">Rückgabe: Hash mit request_data,</text>
+        <text x="40" y="292" class="s-tiny">response_data und user_errors</text>
+
+        <rect x="340" y="150" width="280" height="150" rx="3" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="356" y="174" class="s-lbl f-vite">Api — 49 Dateien</text>
+        <text x="356" y="200" class="s-tiny">Führt genau einen HTTP- oder</text>
+        <text x="356" y="216" class="s-tiny">GraphQL-Aufruf aus.</text>
+        <text x="356" y="240" class="s-tiny f-dim">Enthält keine Fachlogik. Kennt weder</text>
+        <text x="356" y="256" class="s-tiny f-dim">Shop-Konfiguration noch Datenbank.</text>
+        <text x="356" y="280" class="s-tiny">Rückgabe: geparster Antwortkörper</text>
+        <text x="356" y="296" class="s-tiny f-dim">oder eine Ausnahme</text>
+
+        <rect x="656" y="150" width="280" height="150" rx="3" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="672" y="174" class="s-lbl f-worker">Transformer — 15 Dateien</text>
+        <text x="672" y="200" class="s-tiny">Bildet Daten von einem Format</text>
+        <text x="672" y="216" class="s-tiny">auf ein anderes ab.</text>
+        <text x="672" y="240" class="s-tiny f-dim">Keine Seiteneffekte, kein Netzzugriff.</text>
+        <text x="672" y="256" class="s-tiny f-dim">Liest Shop-Konfiguration, schreibt nichts.</text>
+        <text x="672" y="280" class="s-tiny">Rückgabe: Hash oder JSON-String</text>
+        <text x="672" y="296" class="s-tiny f-dim">für den Api-Aufruf</text>
+
+        <rect x="24" y="326" width="912" height="92" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="42" y="348" class="s-lbl f-dim">Zwei Dateien außerhalb der drei Rollen</text>
+        <text x="42" y="372" class="s-mono">app/services/application_service.rb</text>
+        <text x="360" y="372" class="s-tiny f-dim">die Basisklasse selbst, 7 Zeilen</text>
+        <text x="42" y="392" class="s-mono">app/services/auth/jwt.rb</text>
+        <text x="360" y="392" class="s-tiny f-dim">32 Zeilen — das einzige selbst geschriebene Auth-Verfahren, siehe Etappe 4</text>
+        <text x="42" y="412" class="s-tiny">Fünf Namensräume: auth (1) · credit (9) · openiban (9) · sap (17) · shopify (51).</text>
+      </svg>
+      <figcaption><b>Die Trennung ist durchgehalten, nicht nur benannt.</b> Kein Transformer
+        greift auf das Netz zu, keine Api-Klasse liest <code>sap_config_data</code>. Das macht
+        die Transformer einzeln prüfbar: sie bekommen Shop und Daten herein und geben einen
+        Hash zurück. Die 15 Transformer sind damit der Teil der Fachlogik, der sich ohne
+        laufende Fremdsysteme testen lässt — <code>spec/</code> enthält dafür bisher nur die
+        Grundgerüste.</figcaption>
+    </figure>
   </section>
 
+  <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Werkzeuge</span>
-      <h2>Erzeugen, prüfen, weitergeben</h2>
+      <span class="plate-no">Blatt 02/05</span>
+      <h2>Zwei verschiedene API-Muster</h2>
     </div>
-    <p class="lead">Ausführlich erklärt in der <a href="bedienung.html"><b>Bedienungsanleitung</b></a>:
-      die drei Zugänge, was automatisch passiert und was wann zu tun ist.</p>
+    <p class="lead">Die 49 Api-Dateien folgen <strong>nicht</strong> einem Muster, sondern
+      zwei. Welches gilt, hängt davon ab, ob das Fremdsystem über HTTParty oder über das
+      Shopify-Gem angesprochen wird.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 420" role="img" aria-label="Vergleich der beiden API-Muster. Muster A gilt fuer credit, openiban und sap: fuenf gleiche Geruestdateien plus Resource-Unterordner, Transport ueber HTTParty. Muster B gilt fuer shopify: 25 flache Dateien, die von Resource erben und ihre GraphQL-Abfrage als Konstante tragen.">
+        <rect x="24" y="40" width="440" height="300" rx="3" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="40" y="64" class="s-lbl f-vite">Muster A — credit · openiban · sap</text>
+        <text x="40" y="86" class="s-tiny f-dim">Transport: HTTParty · je Fremdsystem dasselbe Gerüst</text>
+
+        <rect x="40" y="100" width="408" height="118" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="54" y="120" class="s-mono">client.rb</text>
+        <text x="200" y="120" class="s-tiny f-dim">Header, Basic Auth, Timeout, Aufruf</text>
+        <text x="54" y="140" class="s-mono">http_request.rb</text>
+        <text x="200" y="140" class="s-tiny f-dim">method · path · query · body · headers</text>
+        <text x="54" y="160" class="s-mono">http_response.rb</text>
+        <text x="200" y="160" class="s-tiny f-dim">hüllt die HTTParty-Antwort ein</text>
+        <text x="54" y="180" class="s-mono">error.rb</text>
+        <text x="200" y="180" class="s-tiny f-dim">&lt; StandardError</text>
+        <text x="54" y="200" class="s-mono">timeout_error.rb</text>
+        <text x="200" y="200" class="s-tiny f-dim">&lt; StandardError, mit Liste der Timeout-Klassen</text>
+
+        <text x="40" y="242" class="s-tiny">Dazu je ein <tspan class="s-mono">resource/</tspan>-Ordner mit einer Datei je Endpunkt:</text>
+        <text x="40" y="264" class="s-tiny f-dim">credit: base + check/information</text>
+        <text x="40" y="280" class="s-tiny f-dim">openiban: base + validate/information</text>
+        <text x="40" y="296" class="s-tiny f-dim">sap: base + order/create · product/fetch · product/fetch_stock_level</text>
+        <text x="40" y="322" class="s-tiny f-alert">Drei Gerüste, fast identisch — siehe Blatt 03.</text>
+
+        <rect x="496" y="40" width="440" height="300" rx="3" fill="var(--web)" fill-opacity="0.07" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="512" y="64" class="s-lbl f-web">Muster B — shopify</text>
+        <text x="512" y="86" class="s-tiny f-dim">Transport: ShopifyAPI::Clients::Graphql::Admin</text>
+
+        <rect x="512" y="100" width="408" height="80" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="526" y="120" class="s-mono">resource.rb</text>
+        <text x="672" y="120" class="s-tiny f-dim">Basisklasse, 63 Zeilen — führt die Abfrage aus</text>
+        <text x="526" y="140" class="s-mono">error.rb</text>
+        <text x="672" y="140" class="s-tiny f-dim">&lt; StandardError</text>
+        <text x="526" y="160" class="s-mono">too_many_requests_error.rb</text>
+        <text x="672" y="160" class="s-tiny f-dim">für Throttling</text>
+
+        <text x="512" y="204" class="s-tiny">Dazu 22 flache Dateien, eine je Operation:</text>
+        <text x="512" y="226" class="s-tiny f-dim">get_order · get_product · get_shop · get_locations · get_job</text>
+        <text x="512" y="242" class="s-tiny f-dim">get_metaobject(s) · get_metafield_definitions · get_product_variant</text>
+        <text x="512" y="258" class="s-tiny f-dim">set_product · set_metafields · create_metaobject · cancel_order</text>
+        <text x="512" y="274" class="s-tiny f-dim">capture_order · refund_order · adjust_inventory_quantity · …</text>
+        <text x="512" y="298" class="s-tiny">Jede trägt ihre GraphQL-Abfrage als Konstante <tspan class="s-mono">QUERY</tspan>.</text>
+        <text x="512" y="322" class="s-tiny f-dim">Eine Helper-Datei: user_errors.rb wirft bei userErrors in der Antwort.</text>
+
+        <rect x="24" y="358" width="912" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="42" y="380" class="s-note">Der Unterschied ist nicht willkürlich: Muster A muss Transport, Authentifizierung und Timeouts selbst bauen.</text>
+        <text x="42" y="398" class="s-tiny f-dim">Bei Muster B übernimmt das Shopify-Gem — übrig bleibt die Abfrage. Deshalb ist dort eine Datei je Operation ausreichend.</text>
+      </svg>
+      <figcaption><b>Muster A ist bei SAP am aufwendigsten.</b> Während
+        <code>credit/api/client.rb</code> und <code>openiban/api/client.rb</code> je 61 Zeilen
+        haben, sind es bei <code>sap/api/client.rb</code> 125. Der Unterschied ist ein
+        CSRF-Token: SAP verlangt für schreibende Aufrufe ein Token, das der Client vorab über
+        einen eigenen Aufruf holt, zusammen mit Cookies verschickt und bei Ablauf erneut
+        anfordert (<code>sap/api/client.rb:28, 49, 80</code>). Diese Zusatzrunde erklärt, warum
+        ein SAP-Schreibvorgang zwei HTTP-Aufrufe kostet.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/05</span>
+      <h2>credit und openiban sind dieselbe Datei</h2>
+    </div>
+    <p class="lead">Die fünf Gerüstdateien der beiden Namensräume unterscheiden sich in
+      <strong>sieben Zeilen</strong>. Nachgewiesen durch Vergleich nach Ersetzung der
+      Namensräume: vier der fünf Dateien sind danach zeichengleich.</p>
+
     <div class="tw">
       <table>
-        <caption>Befehle im Workspace-Root</caption>
-        <thead><tr><th class="m">Befehl</th><th>Wirkung</th></tr></thead>
+        <caption>Vergleich credit/api/ gegen openiban/api/ nach Ersetzung des Namensraums</caption>
+        <thead>
+          <tr><th>Datei</th><th class="m">Zeilen</th><th>Abweichung</th></tr>
+        </thead>
         <tbody>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
-          <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
-          <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>
-          <tr><td class="m">bin/bauplan-guard.py --verify</td><td>Bestand gegen den letzten Commit prüfen</td></tr>
+          <tr><td class="m">error.rb</td><td class="m">8</td><td>keine — zeichengleich</td></tr>
+          <tr><td class="m">http_response.rb</td><td class="m">—</td><td>keine — zeichengleich</td></tr>
+          <tr><td class="m">timeout_error.rb</td><td class="m">14</td><td>keine — zeichengleich</td></tr>
+          <tr><td class="m">http_request.rb</td><td class="m">—</td><td>2 Zeilen</td></tr>
+          <tr><td class="m">client.rb</td><td class="m">61</td><td>1 Zeile: <code>"#{API_URL}/creditcheck/…"</code> gegen <code>"#{API_URL}/…"</code></td></tr>
         </tbody>
       </table>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 960 244" role="img" aria-label="Die drei Unterschiede zwischen dem credit- und dem openiban-Geruest: der Modulname, vier Umgebungsvariablen und ein Pfadpraefix. Alles Uebrige ist identisch.">
+        <text x="24" y="38" class="s-lbl f-dim">Was sich unterscheidet</text>
+
+        <rect x="24" y="52" width="912" height="44" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="42" y="72" class="s-tiny f-dim">1 — der Modulname</text>
+        <text x="300" y="72" class="s-mono">module Credit</text>
+        <text x="560" y="72" class="s-mono f-dim">module Openiban</text>
+        <text x="42" y="88" class="s-tiny f-dim">2 — vier Umgebungsvariablen</text>
+        <text x="300" y="88" class="s-mono">CREDIT_API_URL · _USERNAME · _PASSWORD · _TIMEOUT_SECONDS</text>
+
+        <rect x="24" y="104" width="912" height="44" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="42" y="124" class="s-tiny f-alert">3 — ein Pfadpräfix</text>
+        <text x="300" y="124" class="s-mono">path = "#{API_URL}/creditcheck/#{http_request.path}"</text>
+        <text x="300" y="140" class="s-mono f-dim">path = "#{API_URL}/#{http_request.path}"</text>
+
+        <rect x="24" y="164" width="912" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="42" y="186" class="s-lbl f-dim">Was gleich ist</text>
+        <text x="42" y="208" class="s-tiny">Header-Vorgaben · Basic Auth · Timeout-Auflösung aus der Umgebung mit Rückfall auf 30 Sekunden ·</text>
+        <text x="42" y="224" class="s-tiny">Umwandlung von Timeout-Ausnahmen · Fehlerklassen · Antwort-Hülle · die Prüfung des Anfrageobjekts.</text>
+      </svg>
+      <figcaption><b>Eine Änderung am Transport muss zweimal gemacht werden.</b> Wird etwa das
+        Timeout-Verhalten angepasst oder eine Wiederholung eingebaut, betrifft das beide
+        Dateien. Der dritte Namensraum <code>sap</code> hat dieselbe Struktur, aber wegen des
+        CSRF-Tokens anderen Inhalt — eine gemeinsame Basisklasse müsste diesen Fall als
+        Erweiterung vorsehen. Solange nur zwei Dateien betroffen sind, ist der Aufwand
+        überschaubar; mit jedem weiteren Fremdsystem in Muster A wächst er.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/05</span>
+      <h2>Eine Bonitätsprüfung von vorn bis hinten</h2>
+    </div>
+    <p class="lead">Der kürzeste vollständige Weg durch alle drei Rollen. Er beginnt an der
+      GraphQL-Mutation <code>creditCheck</code> aus Etappe 7 und endet an einem
+      Datenbankeintrag aus Etappe 3.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 300" role="img" aria-label="Ablauf einer Bonitaetspruefung in sechs Schritten: GraphQL-Mutation, Action Check, Transformer CheckInformationInput, Api Resource Check Information, Client mit HTTParty, und zurueck als Hash mit user_errors.">
+        <defs>
+          <marker id="e5fl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <rect x="24" y="44" width="164" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="38" y="66" class="s-tiny f-dim">Etappe 7</text>
+        <text x="38" y="84" class="s-mono">creditCheck</text>
+        <text x="38" y="100" class="s-tiny f-dim">öffentliches Schema</text>
+        <line x1="188" y1="77" x2="208" y2="77" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e5fl)"></line>
+
+        <rect x="212" y="44" width="176" height="66" rx="2" fill="var(--web)" fill-opacity="0.11" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="226" y="66" class="s-tiny f-web">Action</text>
+        <text x="226" y="84" class="s-mono">Credit::Action::Check</text>
+        <text x="226" y="100" class="s-tiny f-dim">45 Zeilen</text>
+
+        <path d="M300 110 L300 134 L480 134 L480 158" fill="none" stroke="var(--worker)" stroke-opacity="0.6" marker-end="url(#e5fl)"></path>
+        <text x="312" y="130" class="s-tiny f-dim">Zeile 16</text>
+
+        <rect x="340" y="158" width="280" height="66" rx="2" fill="var(--worker)" fill-opacity="0.11" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="354" y="180" class="s-tiny f-worker">Transformer</text>
+        <text x="354" y="198" class="s-mono">CheckInformationInput</text>
+        <text x="354" y="214" class="s-tiny f-dim">baut den Body aus sap_config_data und Kundendaten</text>
+
+        <path d="M620 191 L664 191 L664 110" fill="none" stroke="var(--vite)" stroke-opacity="0.6" marker-end="url(#e5fl)"></path>
+        <text x="632" y="150" class="s-tiny f-dim">Zeile 19</text>
+
+        <rect x="412" y="44" width="176" height="66" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="426" y="66" class="s-tiny f-vite">Api::Resource</text>
+        <text x="426" y="84" class="s-mono">Check::Information</text>
+        <text x="426" y="100" class="s-tiny f-dim">setzt Methode und Pfad</text>
+        <line x1="588" y1="77" x2="608" y2="77" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e5fl)"></line>
+
+        <rect x="612" y="44" width="164" height="66" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="626" y="66" class="s-tiny f-vite">Api::Client</text>
+        <text x="626" y="84" class="s-mono">HTTParty</text>
+        <text x="626" y="100" class="s-tiny f-dim">Basic Auth, 30 s Timeout</text>
+        <line x1="776" y1="77" x2="796" y2="77" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e5fl)"></line>
+
+        <rect x="800" y="44" width="136" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <text x="814" y="66" class="s-tiny f-dim">Fremdsystem</text>
+        <text x="814" y="84" class="s-tiny">Bonitäts-API</text>
+        <text x="814" y="100" class="s-tiny f-dim">/creditcheck/…</text>
+
+        <rect x="24" y="244" width="912" height="48" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="42" y="264" class="s-lbl f-dim">Rückgabe der Action</text>
+        <text x="42" y="284" class="s-mono">{ request_data:, response_data: { success:, data: }, user_errors: [] }</text>
+        <text x="600" y="284" class="s-tiny f-dim">— die Mutation reicht das unverändert an den Checkout zurück.</text>
+
+        <text x="24" y="238" class="s-tiny f-dim">Zwei getrennte rescue-Zweige: Credit::Api::Error und Credit::Api::TimeoutError sind beide Kinder von StandardError, keines erbt vom anderen — beide Zweige sind erreichbar (check.rb:20, 22).</text>
+      </svg>
+      <figcaption><b>Die Action wirft nie.</b> Sie fängt beide Fehlerklassen und legt sie als
+        Einträge in <code>user_errors</code> ab (<code>credit/action/check.rb:21, 23</code>).
+        Ein Timeout der Bonitäts-API führt damit zu einer erfolgreichen GraphQL-Antwort mit
+        gefülltem <code>userErrors</code> — nicht zu einem HTTP-Fehler. Der Checkout muss das
+        Feld also auswerten; ein leeres <code>userErrors</code> ist die einzige Zusicherung,
+        dass die Prüfung stattgefunden hat.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ ANHANG ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 05/05</span>
+      <h2>Sechs Beobachtungen</h2>
+    </div>
+    <p class="lead">Befund 01 ist durch Ausführen belegt, nicht durch Lesen. Die übrigen fünf
+      stammen aus dem Quelltext.</p>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Zwei Paginierungsschleifen werden nie ausgeführt</h3>
+          <p>Belegt: In <code>shopify/api/get_order.rb</code> steht <code>def call</code> auf
+            Zeile 168 — <em>nach</em> dem <code>end</code> der Klasse auf Zeile 166. Die
+            Methode landet damit auf dem Modul <code>Shopify::Api</code>, nicht auf der Klasse
+            <code>GetOrder</code>. Dasselbe in <code>get_metaobject.rb:45</code>.</p>
+          <p>Nachgewiesen durch Laden der Datei in Ruby:
+            <code>GetOrder.instance_methods(false)</code> ist leer,
+            <code>GetOrder.instance_method(:call).owner</code> ist
+            <code>Shopify::Api::Resource</code>. Das Modul <code>Shopify::Api</code> wird
+            nirgends eingebunden, die Methode ist also unerreichbar.</p>
+          <p>Folge: <code>GetOrder</code> holt <code>lineItems(first: 250)</code>
+            (<code>Zeile 33</code>) in einem einzigen Aufruf. Eine Bestellung mit mehr als 250
+            Positionen verliert die übrigen ohne Meldung. Aufrufer sind
+            <code>app/models/order.rb:71</code> und
+            <code>shopify/action/order/create.rb:18</code> — also auch der Weg, der eine
+            Bestellung nach SAP schreibt. Für <code>GetMetaobject</code> gilt dasselbe bei
+            <code>referencedBy(first: 250)</code>.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3>Das credit- und das openiban-Gerüst sind bis auf sieben Zeilen gleich</h3>
+          <p>Belegt: Vergleich der fünf Dateien nach Ersetzung des Namensraums — drei sind
+            zeichengleich, <code>http_request.rb</code> weicht in zwei Zeilen ab,
+            <code>client.rb</code> in einer.</p>
+          <p>Folge: Jede Änderung am Transportverhalten ist zweimal zu machen. Ein Unterschied
+            zwischen beiden Dateien fällt erst auf, wenn ein Fremdsystem sich anders verhält
+            als das andere.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Eine Datei trägt elf Prozent der Fachlogik</h3>
+          <p>Belegt: <code>sap/transformer/order_input.rb</code> hat 468 Zeilen bei 4 227
+            Zeilen in <code>app/services/</code> insgesamt. Die zweitgrößte Datei
+            (<code>shopify/transformer/product_variants_input.rb</code>) hat 217.</p>
+          <p>Diese eine Datei baut die Bestellung für SAP auf. Sie ist der Ort, an dem sich
+            Änderungen am SAP-Vertrag auswirken — der Commit vor dem aktuellen Stand heißt
+            <code>change-sap-order-payload</code>.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Ein Klassenname enthält einen Tippfehler</h3>
+          <p>Belegt: <code>shopify/action/metaobject/sync_variant_custom_metafileds.rb</code> —
+            <code>Metafileds</code> statt <code>Metafields</code>, in Dateiname und
+            Klassenname. Derselbe Tippfehler steht im zugehörigen Job (Etappe 6).</p>
+          <p>Folge: Eine Suche nach <code>Metafields</code> findet diese Datei nicht. Ein
+            Umbenennen betrifft Datei, Klasse, Job und alle Aufrufstellen gleichzeitig.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">05</span>
+        <div>
+          <h3>Resource#call wartet vier Sekunden und wirft danach trotzdem</h3>
+          <p>Belegt: <code>shopify/api/resource.rb:43–47</code> — bei der Fehlermeldung
+            <code>Throttled</code> wird <code>sleep(SLEEP_TIMER)</code> ausgeführt und
+            anschließend <code>TooManyRequestsError</code> geworfen. Der Vorgabewert für
+            <code>SLEEP_TIMER</code> ist 4 Sekunden (<code>Zeile 10</code>).</p>
+          <p>Die Wartezeit nützt dem Aufrufer nichts, weil danach ohnehin abgebrochen wird.
+            Der Wiederholungsversuch kommt aus Sidekiq — das ist der zweite Wartevorgang, der
+            in Etappe 6 beschrieben ist. Ein Sidekiq-Thread bleibt währenddessen belegt.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">06</span>
+        <div>
+          <h3>GetMetaobject hat genau einen Aufrufer</h3>
+          <p>Belegt: Die einzige Verwendung steht in
+            <code>shopify/action/metaobject/sync_variant_custom_metafileds.rb:68</code> — also
+            in der Datei aus Befund 04.</p>
+          <p>Beide Befunde treffen damit dieselbe Stelle: Die Datei mit dem Tippfehler ist auch
+            die einzige, die von der nicht ausgeführten Paginierung in
+            <code>GetMetaobject</code> betroffen wäre.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Workspace · docs/bauplan/index.html</span>
-    <span>Erzeugt von bin/bauplan-index.py</span>
-    <span>Bestandsquelle: workspace.yaml</span>
+    <span>MDM Connector · Etappe 5 · Fachlogik</span>
+    <span>Quelle: app/services/ — 88 Dateien, 4 227 Zeilen</span>
+    <span>Stand: 11. September 2026 · Commit 69455cd</span>
   </footer>
 
 </div>

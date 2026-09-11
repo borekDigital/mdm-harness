@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>MDM Architektur-Blattsätze</title>
+<title>Deploy</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -390,158 +390,396 @@
     * { animation: none !important; transition: none !important; }
   }
 </style>
-
 <div class="sheet">
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Workspace · Übersicht</p>
-      <h1>Architektur-<br>Blattsätze</h1>
-      <p>Einstiegspunkt in die Architektur-Dokumentation des Workspace. Jeder Blattsatz
-         deckt ein Repo ab, jede Etappe eine Frage, jede Aussage ist mit
-         <code>Datei:Zeile</code> belegt. Die HTML-Quellen liegen unter
-         <code>docs/bauplan/</code> und sind versioniert — Stände lassen sich also
-         vergleichen und als PDF weitergeben.</p>
+      <p class="tb-eyebrow">MDM Connector · Etappe 9 · Bauen und Ausrollen</p>
+      <h1>Sieben Extensions,<br>zwei Images</h1>
+      <p>Ein Repository erzeugt drei Dinge, die getrennt ausgerollt werden: zwei Docker-Images
+         für die eigene Infrastruktur und sieben Shopify-Extensions für Shopifys. Das Deploy-Skript hat 85 Zeilen, die GitHub-CI 21. Geprüft wird ausschließlich der
+         Ruby-Stil.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Repos</dt><dd>2 von 6 dokumentiert</dd></div>
-      <div class="tb-cell"><dt>Etappen</dt><dd>20</dd></div>
-      <div class="tb-cell"><dt>HTML-Quellen</dt><dd>20 von 20</dd></div>
-      <div class="tb-cell"><dt>Design</dt><dd>bauplan-v1</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>11. September 2026</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>deploy.sh · 2 Dockerfiles · ci.yml</dd></div>
+      <div class="tb-cell"><dt>Extensions</dt><dd>7 — 5 UI, 2 Functions</dd></div>
+      <div class="tb-cell"><dt>Images</dt><dd>2 — web, worker</dd></div>
+      <div class="tb-cell"><dt>CI-Schritte</dt><dd>1 — RuboCop</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>eigene Infrastruktur <span>— Images, Registry, GitLab</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Shopify <span>— Extensions, eigener Weg</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>geprüft <span>— hat Tests oder Lint</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>ungeprüft <span>— siehe Blatt 04</span></span>
   </div>
 
+  <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">theme</span>
-      <h2>Shopify Theme</h2>
+      <span class="plate-no">Blatt 01/05</span>
+      <h2>Die sieben Extensions</h2>
     </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan theme</code>.
-      Liquid/CSS/JS (Hyper 1.3.3)</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">connector</span>
-      <h2>Shopify Connector</h2>
-    </div>
-    <p class="lead">Rails 8.1 / React 18 / Polaris — 9 Etappen, Stand 2026-09-03.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis connector</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Umfang</td><td class="m">4</td><td class="m">3</td><td class="m">—</td><td class="m"><a href="connector/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Prozesse</td><td class="m">6</td><td class="m">3</td><td class="m">2</td><td class="m"><a href="connector/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Datenmodell</td><td class="m">5</td><td class="m">5</td><td class="m">1</td><td class="m"><a href="connector/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/e600000d-225e-471e-900f-e5c1bbfa3b8e">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Eingang</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="connector/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Fachlogik</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="connector/etappe-05.html">HTML</a> · <a href="https://claude.ai/code/artifact/786acc1d-e3a6-429d-aef7-a8fe4727f0b7">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Jobs</td><td class="m">5</td><td class="m">5</td><td class="m">—</td><td class="m"><a href="connector/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>GraphQL</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="connector/etappe-07.html">HTML</a> · <a href="https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0">Artefakt</a></td></tr>
-          <tr><td class="m">08</td><td>Frontend</td><td class="m">5</td><td class="m">6</td><td class="m">1</td><td class="m"><a href="connector/etappe-08.html">HTML</a> · <a href="https://claude.ai/code/artifact/fecb7450-82c9-4e17-b636-16c702063b17">Artefakt</a></td></tr>
-          <tr><td class="m">09</td><td>Deploy</td><td class="m">5</td><td class="m">6</td><td class="m">—</td><td class="m"><a href="connector/etappe-09.html">HTML</a> · <a href="https://claude.ai/code/artifact/d071b227-6e12-43a3-8565-f48e5c671ff3">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">datalayer</span>
-      <h2>GTM Datalayer</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan datalayer</code>.
-      JavaScript</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">creditcheck</span>
-      <h2>Creditcheck + CustomerInfo</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan creditcheck</code>.
-      PHP 7.4 / Symfony</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">emailservice</span>
-      <h2>Emailservice</h2>
-    </div>
-    <p class="lead">PHP 8.3 / Symfony 7.1 — 7 Etappen, Stand 2026-09-11.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis emailservice</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Umfang</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Container</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Messenger</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Eingang</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/b04414ec-a509-4559-ac4e-2092b3d7419a">Artefakt</a></td></tr>
-          <tr><td class="m">05</td><td>Registrierung</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="emailservice/etappe-05.html">HTML</a> · <a href="https://claude.ai/code/artifact/e1194f5b-363c-40e3-b5f7-9b2327a235d1">Artefakt</a></td></tr>
-          <tr><td class="m">06</td><td>Mandanten</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-06.html">HTML</a> · <a href="https://claude.ai/code/artifact/83aef8a2-3d27-4a72-b6ad-3c2d72b99ba9">Artefakt</a></td></tr>
-          <tr><td class="m">07</td><td>Deploy</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="emailservice/etappe-07.html">HTML</a> · <a href="https://claude.ai/code/artifact/b2032434-c396-4584-a0ae-1fc29fe19bf6">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">payment-service</span>
-      <h2>Payment-Service</h2>
-    </div>
-    <p class="lead">Noch kein Blattsatz. Anlegen mit <code>/repo-bauplan payment-service</code>.
-      PHP 8.3 / Symfony 7.1 / Nuxt</p>
-  </section>
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">harness</span>
-      <h2>MDM Harness</h2>
-    </div>
-    <p class="lead">Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules — 4 Etappen, Stand 2026-09-10.</p>
-    <div class="tw">
-      <table>
-        <caption>Inhaltsverzeichnis harness</caption>
-        <thead><tr><th class="m">Nr</th><th>Etappe</th><th class="m">Blätter</th>
-          <th class="m">Funde</th><th class="m">Offen</th><th class="m">Quelle</th></tr></thead>
-        <tbody><tr><td class="m">01</td><td>Aufbau</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-01.html">HTML</a> · <a href="https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66">Artefakt</a></td></tr>
-          <tr><td class="m">02</td><td>Agenten</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-02.html">HTML</a> · <a href="https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac">Artefakt</a></td></tr>
-          <tr><td class="m">03</td><td>Hooks</td><td class="m">4</td><td class="m">4</td><td class="m">1</td><td class="m"><a href="harness/etappe-03.html">HTML</a> · <a href="https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908">Artefakt</a></td></tr>
-          <tr><td class="m">04</td><td>Skills und Rules</td><td class="m">4</td><td class="m">4</td><td class="m">—</td><td class="m"><a href="harness/etappe-04.html">HTML</a> · <a href="https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17">Artefakt</a></td></tr></tbody>
-      </table>
-    </div>
-  </section>
+    <p class="lead">Fünf UI-Extensions laufen im Checkout oder im Admin, zwei Functions laufen
+      in Shopifys WebAssembly-Umgebung. Der Unterschied entscheidet über Sprache, Testbarkeit
+      und Ausrollweg.</p>
 
-  <section class="plate">
-    <div class="plate-head">
-      <span class="plate-no">Werkzeuge</span>
-      <h2>Erzeugen, prüfen, weitergeben</h2>
-    </div>
-    <p class="lead">Ausführlich erklärt in der <a href="bedienung.html"><b>Bedienungsanleitung</b></a>:
-      die drei Zugänge, was automatisch passiert und was wann zu tun ist.</p>
     <div class="tw">
       <table>
-        <caption>Befehle im Workspace-Root</caption>
-        <thead><tr><th class="m">Befehl</th><th>Wirkung</th></tr></thead>
+        <caption>Extensions nach Typ, Quelle und Prüfung</caption>
+        <thead>
+          <tr><th>Verzeichnis</th><th class="m">Typ</th><th class="m">src</th><th class="m">dist</th><th class="m">Tests</th><th>Aufgabe</th></tr>
+        </thead>
         <tbody>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
-          <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
-          <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
-          <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
-          <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>
-          <tr><td class="m">bin/bauplan-guard.py --verify</td><td>Bestand gegen den letzten Commit prüfen</td></tr>
+          <tr><td class="m">credit-check</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Bonitätsprüfung im Checkout</td></tr>
+          <tr><td class="m">sepa-iban</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>IBAN-Eingabe und -Prüfung</td></tr>
+          <tr><td class="m">tax-information-display</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">2</td><td class="m">0</td><td>Steuerhinweis im Checkout</td></tr>
+          <tr><td class="m">order-credit-check-block</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Admin-Block zur Bonität</td></tr>
+          <tr><td class="m">order-sap-status-block</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Admin-Block zum SAP-Status</td></tr>
+          <tr><td class="m">payment-customization</td><td class="m">function</td><td class="m">3</td><td class="m">0</td><td class="m">14</td><td>Zahlarten ein- und ausblenden</td></tr>
+          <tr><td class="m">product-limit</td><td class="m">function</td><td class="m">3</td><td class="m">2</td><td class="m">5</td><td>Mengenbegrenzung je Kunde</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 960 300" role="img" aria-label="Vergleich der beiden Extension-Typen. UI-Extensions laufen im Browser des Kunden oder im Admin, sind in Preact geschrieben und haben keine Tests. Functions laufen als WebAssembly auf Shopifys Servern, sind in TypeScript oder Rust geschrieben und haben 19 Testdateien.">
+        <rect x="24" y="40" width="440" height="212" rx="3" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="40" y="64" class="s-lbl f-vite">UI-Extensions — 5 Stück</text>
+        <text x="40" y="90" class="s-tiny">Laufen im Browser: im Checkout oder im Admin.</text>
+        <text x="40" y="112" class="s-tiny f-dim">Preact, weil Shopifys Sandbox jedes Kilobyte zählt</text>
+        <text x="40" y="128" class="s-tiny f-dim">(siehe Etappe 1).</text>
+        <text x="40" y="154" class="s-tiny">Je eine Datei <tspan class="s-mono">src/Checkout.jsx</tspan> — die gesamte</text>
+        <text x="40" y="170" class="s-tiny">Logik einer Extension steht in einer Datei.</text>
+        <text x="40" y="196" class="s-tiny">Übersetzungen: 2 bis 3 Sprachen je Extension</text>
+        <text x="40" y="212" class="s-tiny f-dim">de · en.default · teilweise fr</text>
+        <text x="40" y="238" class="s-tiny f-alert">Keine einzige Testdatei.</text>
+
+        <rect x="496" y="40" width="440" height="212" rx="3" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="512" y="64" class="s-lbl f-worker">Functions — 2 Stück</text>
+        <text x="512" y="90" class="s-tiny">Laufen als WebAssembly auf Shopifys Servern,</text>
+        <text x="512" y="106" class="s-tiny">nicht im Browser und nicht bei uns.</text>
+        <text x="512" y="132" class="s-tiny f-dim">Eingabe und Ausgabe sind fest umrissen: Shopify</text>
+        <text x="512" y="148" class="s-tiny f-dim">reicht einen Warenkorb herein, erwartet Operationen</text>
+        <text x="512" y="164" class="s-tiny f-dim">zurück. Genau das macht sie gut testbar.</text>
+        <text x="512" y="190" class="s-tiny">Je drei Quelldateien: Logik, GraphQL-Eingabe,</text>
+        <text x="512" y="206" class="s-tiny">generierte Typen.</text>
+        <text x="512" y="238" class="s-tiny f-worker">19 Testdateien — 14 und 5, als JSON-Fixtures.</text>
+
+        <rect x="24" y="268" width="912" height="24" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="480" y="284" text-anchor="middle" class="s-note">Die Prüfbarkeit folgt der Bauform: Was eine reine Abbildung von Eingabe auf Ausgabe ist, hat Tests. Was eine Oberfläche ist, hat keine.</text>
+      </svg>
+      <figcaption><b>Die Fixture-Namen sind die beste Beschreibung der Zahlarten-Regeln.</b>
+        <code>payment-customization/tests/fixtures/</code> enthält unter anderem
+        <code>hide-cod-over-limit</code>, <code>hide-sepa-on-openiban-outage</code>,
+        <code>international-credit-card-only</code>,
+        <code>variant-metafield-payment-exclusion</code> und
+        <code>no-eligible-methods-fallback</code>. Jeder Name benennt eine fachliche Regel, die
+        sonst nirgends geschrieben steht — die Funktion selbst ist eine einzige
+        TypeScript-Datei. Wer wissen will, wann SEPA ausgeblendet wird, liest die
+        Fixture-Liste.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 02 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 02/05</span>
+      <h2>Zwei Images aus einer Codebase</h2>
+    </div>
+    <p class="lead"><code>Dockerfile.web</code> und <code>Dockerfile.worker</code>
+      unterscheiden sich in <strong>22 Zeilen</strong>. Der Unterschied ist genau einer:
+      Das Worker-Image baut kein Frontend.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 372" role="img" aria-label="Vergleich der beiden Dockerfiles. Beide teilen Basis, Bundler-Schritt, Nutzer rails und denselben Entrypoint. Das Web-Image installiert zusaetzlich Node und npm, baut die Vite-Assets und praekompiliert. Das Worker-Image ueberspringt diese Schritte und startet Sidekiq.">
+        <rect x="24" y="40" width="912" height="72" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="42" y="62" class="s-lbl f-dim">Gemeinsam</text>
+        <text x="42" y="84" class="s-tiny">Dieselbe Ruby-Basis · <tspan class="s-mono">bundle install</tspan> · Nutzer <tspan class="s-mono">rails:rails</tspan> statt root · derselbe Entrypoint</text>
+        <text x="42" y="102" class="s-mono f-dim">ENTRYPOINT ["/rails/bin/docker-entrypoint"]</text>
+
+        <rect x="24" y="132" width="440" height="176" rx="3" fill="var(--web)" fill-opacity="0.08" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="40" y="156" class="s-lbl f-web">Dockerfile.web — 70 Zeilen</text>
+        <text x="40" y="182" class="s-tiny">zusätzlich installiert: <tspan class="s-mono">nodejs npm</tspan></text>
+        <text x="40" y="204" class="s-mono">COPY package.json package-lock.json</text>
+        <text x="40" y="222" class="s-mono">RUN npm ci</text>
+        <text x="40" y="240" class="s-mono">RUN npm run build</text>
+        <text x="40" y="258" class="s-mono">RUN SECRET_KEY_BASE_DUMMY=1 …assets:precompile</text>
+        <text x="40" y="282" class="s-mono f-web">EXPOSE 3000</text>
+        <text x="40" y="298" class="s-mono f-web">CMD ["./bin/rails", "server"]</text>
+
+        <rect x="496" y="132" width="440" height="176" rx="3" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="512" y="156" class="s-lbl f-worker">Dockerfile.worker — 60 Zeilen</text>
+        <text x="512" y="182" class="s-tiny">kein Node, kein npm — die vier Schritte links</text>
+        <text x="512" y="198" class="s-tiny">fehlen vollständig</text>
+        <text x="512" y="222" class="s-tiny f-dim">räumt zusätzlich den apt-Zwischenspeicher auf:</text>
+        <text x="512" y="238" class="s-mono f-dim">rm -rf /var/lib/apt/lists /var/cache/apt/archives</text>
+        <text x="512" y="262" class="s-tiny f-dim">— dieser Schritt fehlt im Web-Image</text>
+        <text x="512" y="298" class="s-mono f-worker">CMD ["bundle","exec","sidekiq","-C",…]</text>
+
+        <rect x="24" y="328" width="912" height="36" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="42" y="348" class="s-tiny f-alert">Der Kommentar über dem Entrypoint des Workers sagt „Entrypoint runs db:migrate then starts the Sidekiq worker" (Dockerfile.worker:56).</text>
+        <text x="42" y="360" class="s-tiny f-alert">Der Entrypoint tut das nicht — siehe Anhang 01.</text>
+      </svg>
+      <figcaption><b>Der Entrypoint entscheidet anhand der letzten beiden Argumente.</b>
+        <code>bin/docker-entrypoint:10</code> prüft, ob der Aufruf auf
+        <code>./bin/rails server</code> endet, und führt nur dann <code>db:prepare</code> aus.
+        Das Worker-Image startet mit <code>bundle exec sidekiq</code> — der Zweig greift also
+        nie. Beide Images teilen sich die Datei, verhalten sich aber verschieden, und das ist
+        beabsichtigt: Ein Schema soll von einer Stelle wandern, nicht von zweien
+        gleichzeitig.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 03 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 03/05</span>
+      <h2>Der Weg eines Deploys</h2>
+    </div>
+    <p class="lead">Ein Mensch startet <code>./deploy.sh --production</code> auf seinem Rechner.
+      Von dort laufen sieben Schritte bis zu zwei GitLab-Pipelines. Das Skript ist der einzige
+      Weg — es gibt keinen Auslöser aus der GitHub-CI.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 448" role="img" aria-label="Sieben Schritte des Deploy-Skripts: Argument pruefen, .env laden, GitLab-Variablen pruefen, zwei Images mit Zeitstempel bauen, an der Registry anmelden, beide Images schieben, zwei GitLab-Pipelines ausloesen.">
+        <defs>
+          <marker id="e9ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="24" y="34" class="s-lbl f-dim">Schritt</text>
+        <text x="150" y="34" class="s-lbl f-dim">Was geschieht</text>
+        <text x="660" y="34" class="s-lbl f-dim">Bricht ab, wenn</text>
+
+        <rect x="24" y="46" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="38" y="72" class="s-mono f-dim">1</text>
+        <text x="150" y="64" class="s-tiny">Genau ein Argument prüfen</text>
+        <text x="150" y="80" class="s-tiny f-dim">--staging → stage · --production → prod</text>
+        <text x="660" y="72" class="s-tiny f-alert">kein oder falsches Argument</text>
+
+        <rect x="24" y="94" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="38" y="120" class="s-mono f-dim">2</text>
+        <text x="150" y="112" class="s-tiny">.env laden und exportieren</text>
+        <text x="150" y="128" class="s-mono f-dim">set -a; source .env; set +a</text>
+        <text x="660" y="120" class="s-tiny f-alert">.env fehlt</text>
+
+        <rect x="24" y="142" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="38" y="168" class="s-mono f-dim">3</text>
+        <text x="150" y="160" class="s-tiny">GITLAB_URL und GITLAB_TOKEN prüfen</text>
+        <text x="660" y="168" class="s-tiny f-alert">eine der beiden fehlt</text>
+
+        <rect x="24" y="190" width="912" height="56" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="38" y="222" class="s-mono f-web">4</text>
+        <text x="150" y="210" class="s-tiny">Zwei Images bauen, Tag aus Zeitstempel</text>
+        <text x="150" y="228" class="s-mono f-dim">…/backend:prod-20260911143022</text>
+        <text x="150" y="242" class="s-mono f-dim">…/worker:prod-20260911143022</text>
+        <text x="660" y="214" class="s-tiny f-alert">docker build scheitert</text>
+        <text x="660" y="232" class="s-tiny f-alert">Tag ohne Commit-Bezug — Anhang 03</text>
+
+        <rect x="24" y="252" width="912" height="42" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="38" y="278" class="s-mono f-web">5</text>
+        <text x="150" y="270" class="s-tiny">An registry.mdm.de anmelden</text>
+        <text x="150" y="286" class="s-mono f-dim">docker login registry.mdm.de</text>
+        <text x="660" y="278" class="s-tiny f-alert">fragt nach Eingabe — kein Lauf ohne Mensch</text>
+
+        <rect x="24" y="300" width="912" height="42" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="38" y="326" class="s-mono f-web">6</text>
+        <text x="150" y="318" class="s-tiny">Beide Images in die Registry schieben</text>
+        <text x="660" y="326" class="s-tiny f-alert">docker push scheitert</text>
+
+        <rect x="24" y="348" width="912" height="56" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="38" y="380" class="s-mono f-worker">7</text>
+        <text x="150" y="368" class="s-tiny">Zwei GitLab-Pipelines auslösen, je eine für web und worker</text>
+        <text x="150" y="386" class="s-mono f-dim">curl --fail -F "variables[CONTAINER_TAG]=…" -F "variables[CONTAINER_NAME]=web|worker"</text>
+        <text x="150" y="400" class="s-tiny f-dim">ref=main · TARGET_ENVIRONMENT=stage|prod</text>
+        <text x="660" y="380" class="s-tiny f-alert">curl --fail bei HTTP-Fehler</text>
+
+        <rect x="24" y="412" width="912" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="42" y="432" class="s-note">Ab Schritt 7 endet die Sichtbarkeit: Was GitLab mit dem Tag macht, steht in einem anderen Repository.</text>
+      </svg>
+      <figcaption><b>Die Schritte 4 bis 7 sind nicht zusammen zurücknehmbar.</b> Scheitert
+        Schritt 7 für den Worker, nachdem er für das Web durchlief, liegt eine halbe
+        Auslieferung vor. <code>docs/deployment.md</code> behandelt genau diesen Fall unter
+        „Manual Rollback Guidance" und verlangt, den letzten funktionierenden Tag von Hand zu
+        finden. Wie schwer das ist, hängt an Anhang 03.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 04 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 04/05</span>
+      <h2>Was die CI prüft</h2>
+    </div>
+    <p class="lead">Die GitHub-CI hat 21 Zeilen, einen Job und einen wirksamen Schritt:
+      <code>bin/rubocop</code>. Es gibt daneben ein zweites, ungenutztes CI-Gerüst aus dem
+      Rails-Generator.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 330" role="img" aria-label="Die CI-Lage. Links der aktive Workflow mit einem RuboCop-Schritt bei Pull Requests und Pushes auf main. Rechts das ungenutzte Geruest bin/ci und config/ci.rb, das nur bin/setup aufruft und von keinem Workflow gestartet wird. Unten die Uebersicht, was gar nicht geprueft wird.">
+        <rect x="24" y="40" width="440" height="150" rx="3" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="40" y="64" class="s-lbl f-worker">aktiv — .github/workflows/ci.yml</text>
+        <text x="40" y="90" class="s-tiny">Auslöser: <tspan class="s-mono">pull_request</tspan> und <tspan class="s-mono">push</tspan> auf <tspan class="s-mono">main</tspan></text>
+        <text x="40" y="114" class="s-tiny">Ein Job <tspan class="s-mono">lint</tspan>, drei Schritte:</text>
+        <text x="40" y="134" class="s-tiny f-dim">1. Checkout</text>
+        <text x="40" y="150" class="s-tiny f-dim">2. Ruby einrichten, Bundler zwischenspeichern</text>
+        <text x="40" y="166" class="s-tiny">3. <tspan class="s-mono">bin/rubocop -f github</tspan></text>
+
+        <rect x="496" y="40" width="440" height="150" rx="3" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
+        <text x="512" y="64" class="s-lbl f-alert">ungenutzt — bin/ci und config/ci.rb</text>
+        <text x="512" y="90" class="s-tiny">Rails-8-Gerüst für lokale CI-Läufe.</text>
+        <text x="512" y="114" class="s-tiny"><tspan class="s-mono">config/ci.rb</tspan> enthält genau einen Schritt:</text>
+        <text x="512" y="134" class="s-mono f-dim">step 'Setup', 'bin/setup --skip-server'</text>
+        <text x="512" y="158" class="s-tiny f-alert">Kein Workflow ruft bin/ci auf — geprüft über</text>
+        <text x="512" y="174" class="s-tiny f-alert">den einzigen Workflow im Repository.</text>
+
+        <text x="24" y="222" class="s-lbl f-dim">Was keine Prüfung durchläuft</text>
+
+        <rect x="24" y="234" width="220" height="76" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="38" y="256" class="s-tiny f-alert">Ruby-Verhalten</text>
+        <text x="38" y="274" class="s-tiny f-dim">RuboCop prüft Stil, nicht Funktion.</text>
+        <text x="38" y="290" class="s-tiny f-dim">Im Repository liegen keine Ruby-Tests;</text>
+        <text x="38" y="304" class="s-tiny f-dim">spec/ ist unversioniert im Aufbau.</text>
+
+        <rect x="256" y="234" width="220" height="76" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="270" y="256" class="s-tiny f-alert">Das Frontend</text>
+        <text x="270" y="274" class="s-tiny f-dim">1 991 Zeilen React (Etappe 8).</text>
+        <text x="270" y="290" class="s-tiny f-dim">Kein ESLint-Lauf, keine Tests,</text>
+        <text x="270" y="304" class="s-tiny f-dim">kein Build-Schritt in der CI.</text>
+
+        <rect x="488" y="234" width="220" height="76" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="502" y="256" class="s-tiny f-alert">Die fünf UI-Extensions</text>
+        <text x="502" y="274" class="s-tiny f-dim">Laufen im Checkout des Kunden.</text>
+        <text x="502" y="290" class="s-tiny f-dim">Keine Testdatei, kein CI-Schritt.</text>
+
+        <rect x="720" y="234" width="216" height="76" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="734" y="256" class="s-tiny f-worker">Die zwei Functions</text>
+        <text x="734" y="274" class="s-tiny f-dim">19 Fixture-Tests vorhanden —</text>
+        <text x="734" y="290" class="s-tiny f-dim">aber kein CI-Schritt führt sie aus.</text>
+        <text x="734" y="304" class="s-tiny f-dim">Sie laufen nur von Hand.</text>
+      </svg>
+      <figcaption><b>Die einzige automatische Zusicherung im Repository ist der Ruby-Stil.</b>
+        Das ist eine bewusste Lage, kein Defekt — die Alternative wäre Testinfrastruktur, die
+        es hier bisher nicht gibt. Erwähnenswert ist die Lücke zwischen Vorhandensein und
+        Ausführung: Für die Functions <em>existieren</em> 19 Tests, aber kein Workflow startet
+        sie. Ein Fehler in der Zahlarten-Logik fällt dadurch erst im Checkout auf, obwohl der
+        Test dafür im Repository liegt.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ ANHANG ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 05/05</span>
+      <h2>Sechs Beobachtungen</h2>
+    </div>
+    <p class="lead">Alle sechs sind aus den gelesenen Dateien belegt. Befund 05 ist zusätzlich
+      durch Ausführen abgesichert.</p>
+
+    <div class="checks">
+      <div class="check">
+        <span class="check-no">01</span>
+        <div>
+          <h3>Der Worker-Kommentar beschreibt etwas, das nicht geschieht</h3>
+          <p>Belegt: <code>Dockerfile.worker:56</code> sagt „Entrypoint runs db:migrate then
+            starts the Sidekiq worker". <code>bin/docker-entrypoint:10</code> führt den
+            Datenbankschritt nur aus, wenn die letzten beiden Argumente
+            <code>./bin/rails</code> und <code>server</code> lauten. Der Worker startet mit
+            <code>bundle exec sidekiq</code> (<code>Zeile 60</code>).</p>
+          <p>Zwei Fehler in einem Satz: Der Worker migriert nicht, und der Befehl heißt
+            <code>db:prepare</code>, nicht <code>db:migrate</code>. Das Verhalten selbst ist
+            richtig — nur eine Stelle soll das Schema wandern lassen. Falsch ist die
+            Beschreibung, und sie steht an der Stelle, an der man nachsieht.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">02</span>
+        <div>
+          <h3>Ein zweites CI-Gerüst liegt ungenutzt im Repository</h3>
+          <p>Belegt: <code>bin/ci</code> lädt <code>config/ci.rb</code>, das genau einen Schritt
+            definiert: <code>bin/setup --skip-server</code>. Der einzige Workflow
+            (<code>.github/workflows/ci.yml</code>) ruft <code>bin/rubocop</code> direkt auf und
+            erwähnt <code>bin/ci</code> nicht.</p>
+          <p>Folge: Wer <code>bin/ci</code> lokal ausführt, prüft nichts — er richtet das
+            Projekt ein. Der Name legt das Gegenteil nahe. Die Datei stammt aus dem
+            Rails-8-Generator, samt auskommentiertem Beispielblock.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">03</span>
+        <div>
+          <h3>Der Image-Tag trägt keinen Bezug zum Quelltext</h3>
+          <p>Belegt: <code>deploy.sh:40–44</code> baut den Tag ausschließlich aus
+            <code>date +%Y%m%d%H%M%S</code>. Das Skript enthält keinen Aufruf von
+            <code>git</code> — geprüft über die gesamte Datei.</p>
+          <p>Folge: Aus einem laufenden Image lässt sich nicht ableiten, welcher Commit darin
+            steckt. Für die Rückrollanweisung in <code>docs/deployment.md</code> („Identify the
+            last known good image tags") bedeutet das: Die Zuordnung von Tag zu Stand muss aus
+            einer Quelle außerhalb des Systems kommen. Ein zusätzliches
+            <code>-$(git rev-parse --short HEAD)</code> im Tag würde das schließen.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">04</span>
+        <div>
+          <h3>Gebaute Dateien liegen im Repository</h3>
+          <p>Belegt: 16 Dateien unter <code>extensions/*/dist/</code> sind versioniert,
+            darunter <code>product-limit/dist/function.wasm</code> und mehrere
+            <code>.js.map</code>. <code>git check-ignore</code> meldet für
+            <code>extensions/credit-check/dist</code> keinen Treffer.</p>
+          <p>Folge: Jeder Build erzeugt einen Diff, auch ohne Quelltextänderung. Im Vergleich
+            der letzten 22 Commits stehen unter anderem
+            <code>tax-information-display/dist/tax-information-display.js</code> und
+            <code>product-limit/dist/function.wasm</code>. Ob das gewollt ist — etwa weil
+            Shopifys Ausrollweg die gebaute Datei erwartet — lässt sich aus dem Repository
+            nicht entscheiden.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">05</span>
+        <div>
+          <h3>Die Argumentprüfung funktioniert trotz set -e</h3>
+          <p>Belegt durch Ausführen: <code>deploy.sh:2</code> setzt
+            <code>set -euo pipefail</code>, <code>Zeile 9</code> schreibt
+            <code>[[ $# -ne 1 ]] &amp;&amp; usage</code>. Diese Kombination bricht in vielen
+            Skripten ab, weil der fehlschlagende Test die Abbruchregel auslöst.</p>
+          <p>Ein Nachbau mit demselben Kopf und einem Argument läuft durch und endet mit
+            Rückgabewert 0. Bash nimmt Befehle links von <code>&amp;&amp;</code> von der
+            Abbruchregel aus. Der Befund ist damit <em>kein</em> Defekt — er steht hier, weil
+            die Stelle beim Lesen wie einer aussieht.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">06</span>
+        <div>
+          <h3>Die Deploy-Doku nennt den prod-Präfix nicht</h3>
+          <p>Belegt: <code>docs/deployment.md</code> beschreibt die Tags unter „Docker Image
+            Tagging" als <code>backend:&lt;YYYYMMDDHHMMSS&gt;</code>.
+            <code>deploy.sh:40–41</code> setzt für die Produktion jedoch
+            <code>backend:prod-&lt;Zeitstempel&gt;</code>; nur die Staging-Tags haben kein
+            Präfix.</p>
+          <p>Die übrige Datei ist genau — sie benennt sogar, dass web und worker ihren
+            Zeitstempel getrennt erzeugen und deshalb um eine Sekunde auseinanderliegen können.
+            Die fehlende Präfix-Angabe trifft ausgerechnet den Fall, in dem man die Tags von
+            Hand sucht: die Rückrollung.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Workspace · docs/bauplan/index.html</span>
-    <span>Erzeugt von bin/bauplan-index.py</span>
-    <span>Bestandsquelle: workspace.yaml</span>
+    <span>MDM Connector · Etappe 9 · Bauen und Ausrollen</span>
+    <span>Quelle: deploy.sh · Dockerfile.web · Dockerfile.worker · ci.yml · 7 Extensions</span>
+    <span>Stand: 11. September 2026 · Commit 69455cd</span>
   </footer>
 
 </div>
