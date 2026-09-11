@@ -48,6 +48,8 @@ Referenz-Ergebnis: der Connector-Blattsatz vom 3. September 2026, neun Etappen.
    Verbindlich sind die Wording-Regeln in `design-system.md`: Satzbau
    Wer-macht-was-womit-wann, Praesens, aktiv, `muss`/`soll`/`kann` unterschieden, keine
    Metaphern, keine Wertungen — und die Wortliste, die nicht verwendet wird.
+   **Diese Regeln gelten fuer Blattsaetze, nicht workspaceweit.** Code-Kommentare,
+   Commit-Messages und Ticket-Artefakte richten sich nach `CLAUDE.md`.
 
 ## Phasen
 
@@ -97,9 +99,9 @@ dann raten. Ergaenzend `grep` einsetzen, um Verwendung zu pruefen — „ist die
 ueberhaupt aufgerufen" ist eine der ertragreichsten Fragen.
 
 **2b. Den Befund benennen.** Eine Etappe hat **einen** Satz, der die Struktur
-beschreibt, die sie zeigt. Er wird zum Seitentitel und nennt Komponente plus Zahl —
-sachlich, nicht zugespitzt. `Messenger: 3 Queues, 11 Handler`, nicht „Der Versand ist ein
-Fliessband". Titelmuster und Wording-Regeln: `design-system.md`.
+beschreibt, die sie zeigt. Dieser Satz steht im Anriss, nicht im Titel. Der Titel ist der
+Name der Etappe: ein bis drei Woerter, keine Zahlen — `Messenger`, nicht
+`Messenger: 3 Queues, 11 Handler`. Titelregel und Wording: `design-system.md`.
 
 Findest du keinen Befund, hast du noch nicht genug gelesen.
 

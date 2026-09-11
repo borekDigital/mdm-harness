@@ -6,7 +6,7 @@
   "etappen": [
     {
       "nr": 1,
-      "title": "Emailservice: 11 000 Zeilen, kein Datenmodell",
+      "title": "Umfang",
       "url": "https://claude.ai/code/artifact/9dc6cdd3-7455-40aa-9af3-07f373dbc3bd",
       "favicon": "📧",
       "blaetter": 4,
@@ -27,7 +27,7 @@
     },
     {
       "nr": 2,
-      "title": "Container: 6 Dienste, 2 Compose-Welten",
+      "title": "Container",
       "url": "https://claude.ai/code/artifact/d88483ad-fd26-481a-9abe-042a6ce7b4ed",
       "favicon": "📧",
       "blaetter": 4,
@@ -52,7 +52,7 @@
     },
     {
       "nr": 3,
-      "title": "Messenger: 3 Busse, 6 Stamps, 1 toter Pfad",
+      "title": "Messenger",
       "url": "https://claude.ai/code/artifact/2c7f1e11-e9a8-4376-93cb-20efdf70eaee",
       "favicon": "📧",
       "blaetter": 4,
@@ -76,7 +76,7 @@
     },
     {
       "nr": 4,
-      "title": "Eingang: 3 Controller, 11 Zähler, 1 Reparatur",
+      "title": "Eingang",
       "url": "https://claude.ai/code/artifact/b04414ec-a509-4559-ac4e-2092b3d7419a",
       "favicon": "📧",
       "blaetter": 4,
@@ -94,7 +94,7 @@
     },
     {
       "nr": 5,
-      "title": "Registrierung: 10 Listen, 22 Einträge, 2 Mailtypen",
+      "title": "Registrierung",
       "url": "https://claude.ai/code/artifact/e1194f5b-363c-40e3-b5f7-9b2327a235d1",
       "favicon": "📧",
       "blaetter": 4,
@@ -111,7 +111,7 @@
     },
     {
       "nr": 6,
-      "title": "Emarsys: 6 Mandanten, 1 wirksame Zuordnung",
+      "title": "Mandanten",
       "url": "https://claude.ai/code/artifact/83aef8a2-3d27-4a72-b6ad-3c2d72b99ba9",
       "favicon": "📧",
       "blaetter": 4,
@@ -130,7 +130,7 @@
     },
     {
       "nr": 7,
-      "title": "Deploy: 2 CI-Systeme, 3 Images, 1 Testlauf",
+      "title": "Deploy",
       "url": "https://claude.ai/code/artifact/b2032434-c396-4584-a0ae-1fc29fe19bf6",
       "favicon": "📧",
       "blaetter": 4,

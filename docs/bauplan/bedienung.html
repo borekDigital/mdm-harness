@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Bedienung: 3 Zugänge, 4 Befehle</title>
+<title>Bedienung</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -395,7 +395,7 @@
   <div class="titleblock">
     <div class="tb-main">
       <p class="tb-eyebrow">MDM Workspace · Bedienung</p>
-      <h1>Bedienung: 3 Zugänge,<br>4 Befehle</h1>
+      <h1>Bedienung</h1>
       <p>Die Architektur-Dokumentation besteht aus HTML-Dateien im Repository
          <code>mdm-harness</code>. Es läuft kein Dienst und kein Server. Diese Seite
          beschreibt die drei Zugänge zu den Dateien, die vier Befehle für den Alltag und die
@@ -405,7 +405,7 @@
       <div class="tb-cell"><dt>Einstieg</dt><dd>docs/bauplan/index.html</dd></div>
       <div class="tb-cell"><dt>Blattsätze</dt><dd>3 von 7</dd></div>
       <div class="tb-cell"><dt>Werkzeuge</dt><dd>bin/ — 9 Skripte</dd></div>
-      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>11. September 2026</dd></div>
     </dl>
   </div>
@@ -420,7 +420,7 @@
   <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 01/04</span>
+      <span class="plate-no">Blatt 01/05</span>
       <h2>Drei Zugänge zur selben Quelle</h2>
     </div>
     <p class="lead">Jede Etappe liegt als eine HTML-Datei im Repository. Aus dieser Datei
@@ -473,7 +473,7 @@
   <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 02/04</span>
+      <span class="plate-no">Blatt 02/05</span>
       <h2>Vier Befehle für den Alltag</h2>
     </div>
     <p class="lead">Hooks und CI rufen die übrigen Skripte in <code>bin/</code> selbst auf.
@@ -524,7 +524,7 @@
   <!-- ============ BLATT 03 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 03/04</span>
+      <span class="plate-no">Blatt 03/05</span>
       <h2>Vorgänge ohne Aufruf</h2>
     </div>
     <p class="lead">Eine Änderung am Code macht eine Etappe nicht falsch. Sie macht sie
@@ -583,7 +583,117 @@
   <!-- ============ BLATT 04 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 04/04</span>
+      <span class="plate-no">Blatt 04/05</span>
+      <h2>Ablauf einer Änderung</h2>
+    </div>
+    <p class="lead">Der folgende Ablauf beschreibt den Weg von einem Push auf
+      <code>main</code> bis zum aufgefrischten Blatt. Er gilt für Weg B aus Blatt 03, also
+      für Änderungen ohne Claude-Sitzung. Jeder Schritt nennt den Handelnden.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 712" role="img" aria-label="Zehnstufiger Ablauf. Der Entwickler pusht auf main. Der geplante CI-Lauf startet, klont die Repositorys mit vollstaendiger Historie und vergleicht den gespeicherten Commit mit HEAD. Die Zuordnung liefert die betroffenen Etappen. Ohne Treffer endet der Lauf. Mit Treffern ruft die CI das Sprachmodell auf, das nur die gemeldeten Etappen neu schreibt. Zwei Pruefungen folgen: der Diff darf nur die erlaubten Dateien enthalten, und der Guard darf keinen Verlust melden. Danach oeffnet die CI einen Pull Request. Nach Review und Merge setzt die CI den gespeicherten Commit auf HEAD.">
+        <defs>
+          <marker id="ab1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="16" y="28" class="s-lbl f-dim">Handelnder</text>
+        <text x="200" y="28" class="s-lbl f-dim">Schritt</text>
+        <text x="820" y="28" class="s-lbl f-dim">Ergebnis</text>
+
+        <text x="16" y="66" class="s-tiny f-web">Entwickler</text>
+        <rect x="200" y="42" width="600" height="48" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="216" y="62" class="s-mono">git push origin main</text>
+        <text x="216" y="80" class="s-tiny f-dim">im Arbeits-Repo, zum Beispiel connector</text>
+        <text x="820" y="70" class="s-tiny f-dim">neuer HEAD</text>
+        <line x1="500" y1="90" x2="500" y2="104" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="130" class="s-tiny f-worker">Zeitplan</text>
+        <rect x="200" y="106" width="600" height="48" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="216" y="126" class="s-mono">CI-Lauf startet</text>
+        <text x="216" y="144" class="s-tiny f-dim">werktags 04:17 UTC, oder auf Aufruf mit gh workflow run</text>
+        <text x="820" y="134" class="s-tiny f-dim">Runner läuft</text>
+        <line x1="500" y1="154" x2="500" y2="168" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="194" class="s-tiny f-worker">CI</text>
+        <rect x="200" y="170" width="600" height="48" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="216" y="190" class="s-mono">Repositorys klonen</text>
+        <text x="216" y="208" class="s-tiny f-dim">vollständige Historie, weil der gespeicherte Commit erreichbar sein muss</text>
+        <text x="820" y="198" class="s-tiny f-dim">2 von 3 geklont</text>
+        <line x1="500" y1="218" x2="500" y2="232" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="258" class="s-tiny f-vite">CI</text>
+        <rect x="200" y="234" width="600" height="48" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="216" y="254" class="s-mono">Änderung erkennen</text>
+        <text x="216" y="272" class="s-tiny">git diff last_seen_sha..HEAD, dann Glob-Abgleich in bin/bauplan_lib.py</text>
+        <text x="820" y="262" class="s-tiny f-vite">Liste der Etappen</text>
+
+        <line x1="360" y1="282" x2="300" y2="300" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+        <line x1="640" y1="282" x2="700" y2="300" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <rect x="200" y="302" width="272" height="54" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="216" y="324" class="s-tiny">keine Etappe betroffen</text>
+        <text x="216" y="342" class="s-tiny f-dim">Exit 0, Lauf endet hier</text>
+
+        <rect x="528" y="302" width="272" height="54" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.6"></rect>
+        <text x="544" y="324" class="s-tiny f-alert">mindestens eine Etappe betroffen</text>
+        <text x="544" y="342" class="s-tiny f-dim">Exit 3</text>
+        <line x1="664" y1="356" x2="664" y2="374" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="400" class="s-tiny f-alert">Sprachmodell</text>
+        <rect x="200" y="376" width="600" height="62" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="216" y="396" class="s-mono">claude -p "/repo-bauplan &lt;repo&gt; --refresh"</text>
+        <text x="216" y="414" class="s-tiny">liest die geänderten Quelldateien und schreibt nur die gemeldeten Etappen neu</text>
+        <text x="216" y="430" class="s-tiny f-dim">Nur dieser Schritt benötigt ein Sprachmodell und ein API-Token.</text>
+        <text x="820" y="406" class="s-tiny f-alert">HTML geändert</text>
+        <line x1="500" y1="438" x2="500" y2="452" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="478" class="s-tiny f-vite">CI</text>
+        <rect x="200" y="454" width="600" height="62" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="216" y="474" class="s-mono">zwei Prüfungen</text>
+        <text x="216" y="492" class="s-tiny">1. Der Diff darf nur die erlaubten Dateien enthalten.</text>
+        <text x="216" y="508" class="s-tiny">2. Der Guard darf keinen Verlust melden.</text>
+        <text x="820" y="478" class="s-tiny f-alert">sonst Abbruch</text>
+        <line x1="500" y1="516" x2="500" y2="530" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="556" class="s-tiny f-worker">CI</text>
+        <rect x="200" y="532" width="600" height="48" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="216" y="552" class="s-mono">Pull Request öffnen</text>
+        <text x="216" y="570" class="s-tiny f-dim">Branch bauplan/auffrischung, Bericht als Beschreibung</text>
+        <text x="820" y="560" class="s-tiny f-dim">PR offen</text>
+        <line x1="500" y1="580" x2="500" y2="594" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="620" class="s-tiny f-web">Benutzer</text>
+        <rect x="200" y="596" width="600" height="48" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="216" y="616" class="s-mono">Review und Merge</text>
+        <text x="216" y="634" class="s-tiny f-dim">Die einzige Stelle, an der ein Mensch entscheidet.</text>
+        <text x="820" y="624" class="s-tiny f-web">Änderung auf main</text>
+        <line x1="500" y1="644" x2="500" y2="658" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ab1)"></line>
+
+        <text x="16" y="684" class="s-tiny f-worker">CI</text>
+        <rect x="200" y="660" width="600" height="44" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="216" y="680" class="s-mono">last_seen_sha := HEAD</text>
+        <text x="216" y="698" class="s-tiny f-dim">Ohne diesen Schritt meldet der nächste Lauf dieselben Etappen erneut.</text>
+        <text x="820" y="686" class="s-tiny f-dim">Kreis geschlossen</text>
+      </svg>
+      <figcaption><b>Der Ablauf enthält genau einen Schritt mit Sprachmodell und genau einen
+        mit einem Menschen.</b> Alle übrigen Schritte sind deterministisch: Klonen,
+        Glob-Abgleich, Diff-Vergleich, Guard, Pull Request. Bricht der Lauf ab, bleibt die
+        Dokumentation unverändert. Ein Blatt ändert sich nur über einen gemergten Pull
+        Request.</figcaption>
+    </figure>
+
+    <p class="lead">Der Zeitplan erzwingt kein Auffrischen. Ein Lauf mit
+      <code>regenerate = false</code> endet nach Schritt 4 und meldet nur, welche Etappen
+      betroffen sind. Der Benutzer kann dieselbe Meldung lokal erzeugen:
+      <code>bin/bauplan-ci.py --report</code>.</p>
+  </section>
+
+  <!-- ============ BLATT 05 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 05/05</span>
       <h2>Handlung je Situation</h2>
     </div>
 

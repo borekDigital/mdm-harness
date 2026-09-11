@@ -5,11 +5,11 @@
   "root": ".",
   "design_system": "bauplan-v1",
   "generated": "2026-09-10",
-  "last_seen_sha": "cf3c7dffbbc8354e71084f7c55cd761b5de8841b",
+  "last_seen_sha": "cc19ff2876b7881dd824c9cb868ea292ee8922c8",
   "etappen": [
     {
       "nr": 1,
-      "title": "Harness: 1 Repo, 6 Arbeitskopien, 0 Anwendungscode",
+      "title": "Aufbau",
       "url": "https://claude.ai/code/artifact/8c360be6-df97-4cb4-b200-02162755ab66",
       "favicon": "🧰",
       "blaetter": 4,
@@ -30,7 +30,7 @@
     },
     {
       "nr": 2,
-      "title": "Agenten: 12 Dateien, 4 Rollen, 3 Bereiche",
+      "title": "Agenten",
       "url": "https://claude.ai/code/artifact/a7961ad1-686a-47bd-b47c-e83dd6ed09ac",
       "favicon": "🧰",
       "blaetter": 4,
@@ -44,7 +44,7 @@
     },
     {
       "nr": 3,
-      "title": "Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade",
+      "title": "Hooks",
       "url": "https://claude.ai/code/artifact/62b3f888-be89-4f5b-b32b-04817f681908",
       "favicon": "🧰",
       "blaetter": 4,
@@ -63,7 +63,7 @@
     },
     {
       "nr": 4,
-      "title": "Skills: 8 Ordner, 4 aufrufbar, 5 Rules",
+      "title": "Skills und Rules",
       "url": "https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17",
       "favicon": "🧰",
       "blaetter": 4,

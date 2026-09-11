@@ -1,5 +1,10 @@
 # Design-Vertrag `bauplan-v1`
 
+**Geltungsbereich.** Dieser Vertrag gilt fuer die Blattsaetze unter `docs/bauplan/` und nur
+fuer sie. Er regelt nichts fuer Code-Kommentare, Commit-Messages, Ticket-Artefakte, Specs
+oder andere Skills. Die allgemeinen Sprachregeln des Workspace stehen in `CLAUDE.md`; dieser
+Abschnitt erweitert sie fuer einen Dokumenttyp und ersetzt sie nicht.
+
 Alle Blattsaetze im Workspace sehen gleich aus. Das ist kein Selbstzweck: wer den
 Connector-Satz gelesen hat, findet sich im Theme-Satz ohne Umlernen zurecht, weil Ocker
 dort dasselbe bedeutet.
@@ -64,22 +69,21 @@ die Grenze zwischen Prosa und Code sichtbar.
 
 ## Titel
 
-Der Titel benennt die **Komponente** und, wo gezaehlt wurde, die **Zahl**. Kein Bild, keine
-Zuspitzung, kein angehaengter Erklaerer. Ein Doppelpunkt trennt allenfalls Komponente von
-Zaehlung, nicht Name von Erklaerung.
+Der Titel ist der **Name der Etappe**, nicht ihre Zusammenfassung. Ein bis drei Woerter.
+Keine Zahlen, kein Doppelpunkt, kein angehaengter Erklaerer.
 
-Muster: `<Komponente>: <n> <Sache>, <m> <Sache>` — oder `<Komponente>: <Eigenschaft>`
+> Umfang · Container · Messenger · Eingang · Registrierung · Mandanten · Deploy ·
+> Aufbau · Agenten · Hooks · Skills und Rules · Bedienung
 
-> Messenger: 3 Queues, 11 Handler · Doctrine: 8 Entities, 12 Migrationen ·
-> Routing: 12 Endpunkte, 4 Auth-Verfahren · Deploy: GitLab CI, Docker Swarm ·
-> Emarsys: 7 Ereignistypen
+Zahlen gehoeren in die Meta-Zeile und in den Anriss. Falsch waere
+`Hooks: 11 Skripte, 3 Ereignisse, 17 Abbruchpfade`: die drei Zahlen stehen ohnehin in der
+Meta-Zeile, sie machen den Titel unlesbar, und sie veralten. Aendert sich eine Zahl, muss
+sonst der Titel nachgezogen werden — und mit ihm der Dateiname in keiner, aber der
+Artifact-Titel in jeder Veroeffentlichung.
 
-Zahlen bleiben, weil sie Information sind — sie geben die Groessenordnung, bevor die Seite
-geoeffnet wird. Was wegfaellt, ist die Metapher: nicht „Der Warenkorb ist der
-Nachrichtenkanal", sondern `Cart-Attribute: Kanal zwischen 3 Extensions`.
-
-Die Fachbezeichner des Projekts gehoeren in den Titel, wenn sie die Komponente **sind**:
-`Emarsys`, `Sidekiq`, `Satzart14`. Uebersetzen verschlechtert den Titel.
+Die Einordnung uebernimmt die Eyebrow-Zeile darueber:
+`MDM Emailservice · Etappe 3 · Messenger und Nachrichtenfluss`. Der Titel muss Repo und
+Etappennummer deshalb nicht wiederholen.
 
 Die Erklaerung gehoert in den `description`-Parameter beim Veroeffentlichen.
 
