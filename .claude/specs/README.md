@@ -17,6 +17,7 @@ und Constraints definiert — BEVOR Code geschrieben wird.
 ```
 .claude/specs/
 ├── README.md              Diese Datei
+├── harness/               Harness-Specs (Workspace, Setup, Werkzeuge)
 ├── theme/                 Theme-Specs (Sections, Templates, Globales)
 │   ├── _conventions.md    Theme-First-Regeln und Patterns
 │   ├── breadcrumbs.md     Section-Override-Spec
