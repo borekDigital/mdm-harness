@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Jobs</title>
+<title>Prozesse</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -392,564 +392,589 @@
 </style>
 <div class="sheet">
 
+  <!-- ============ TITELBLOCK ============ -->
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Connector · Etappe 6 · Jobs und Scheduler</p>
-      <h1>Jobs</h1>
-      <p>Hier wird der Takt aus Etappe 2 zu Arbeit. Kein Job tut selbst etwas fachliches — jeder
-         lädt zwei Objekte, ruft eine Action und ist fertig. Die Struktur steckt darin,
-         <strong>welcher Job welchen nächsten anstößt</strong>: aus einem Cron-Eintrag wird eine
-         siebenstufige Kette.</p>
+      <p class="tb-eyebrow">MDM Connector · Etappe 2 · Hochfahren und Prozesse</p>
+      <h1>Prozesse</h1>
+      <p>Eine laufende Instanz ist nicht ein Programm, sondern drei — und alle drei booten dieselbe
+         Rails-App. Sechs Blätter: was läuft, in welcher Reihenfolge es hochkommt, wer auf welchem
+         Port horcht, und in welchem Takt der SAP-Abgleich schlägt.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>app/jobs/ — 18 Dateien</dd></div>
-      <div class="tb-cell"><dt>Gelesen</dt><dd>6 Fan-out-Actions</dd></div>
-      <div class="tb-cell"><dt>Warteschlangen</dt><dd>critical · high · default</dd></div>
-      <div class="tb-cell"><dt>Retry-Regeln</dt><dd>1</dd></div>
-      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
+      <div class="tb-cell"><dt>Repo</dt><dd>connector/</dd></div>
+      <div class="tb-cell"><dt>Stack</dt><dd>Rails 8.1.3 · Ruby 4.0.2</dd></div>
+      <div class="tb-cell"><dt>Prozesse</dt><dd>web · worker · vite</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–06</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>3. September 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-alert"></i>critical <span>— zuerst geleert</span></span>
-    <span class="legend-item"><i class="swatch sw-web"></i>high <span>— danach</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>default <span>— wartet auf die anderen</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>Action <span>— erst hier wird gearbeitet</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>web <span>— synchron, HTTP</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>worker <span>— asynchron, Jobs</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>vite <span>— nur lokal</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Prüfpunkt <span>— unbelegt</span></span>
   </div>
 
   <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 01/05</span>
-      <h2>Der Job-Katalog</h2>
+      <span class="plate-no">Blatt 01/06</span>
+      <h2>Es sind drei Prozesse, nicht einer</h2>
     </div>
-    <p class="lead">Die Reihenfolge in <code>config/sidekiq.yml</code> ist eine echte Priorität:
-      Sidekiq schaut immer erst in <code>critical</code>, dann <code>high</code>, dann
-      <code>default</code>. Solange <code>critical</code> etwas hat, kommt <code>default</code>
-      nicht dran.</p>
+    <p class="lead">Zwei Dateien schreiben vor, was läuft. Lokal startet <code>bin/dev</code> über
+      <strong>foreman</strong> drei Prozesse in einem Terminal; auf dem Server bleiben zwei übrig,
+      weil das Frontend dort schon gebaut ist. Vor dem Start läuft einmalig die Migration.</p>
+
+    <pre><span class="fp"># Procfile.dev — lokal</span>
+web:    env RUBY_DEBUG_OPEN=true bin/rails server
+worker: bundle exec sidekiq -C config/sidekiq.yml
+vite:   bin/vite dev
+
+<span class="fp"># Procfile — Server</span>
+web:     bundle exec puma -C config/puma.rb
+worker:  bundle exec sidekiq -C config/sidekiq.yml
+release: bundle exec rake db:migrate</pre>
 
     <figure>
-      <svg viewBox="0 0 960 500" role="img" aria-label="Alle achtzehn Jobs nach Warteschlange gruppiert: acht in critical, vier in high, sechs in default, jeweils mit dem Auslöser.">
-        <!-- critical -->
-        <rect x="24" y="56" width="912" height="152" rx="3" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="40" y="78" class="s-lbl f-alert">critical · 8 Jobs</text>
-        <text x="920" y="78" text-anchor="end" class="s-tiny f-dim">Webhooks und alle Cron-Einstiege außer den Beständen</text>
+      <svg viewBox="0 0 960 400" role="img" aria-label="Vergleich: lokal startet bin/dev über foreman die drei Prozesse web, worker und vite; auf dem Server laufen nach einer einmaligen Migration nur web und worker, vite fällt weg.">
+        <defs>
+          <marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
 
-        <text x="40" y="98" class="s-tiny">Shopify::OrdersCreateJob</text>
-        <text x="466" y="98" text-anchor="end" class="s-tiny f-dim">Webhook orders/create</text>
-        <text x="500" y="98" class="s-tiny">Shopify::MetaobjectsUpdateJob</text>
-        <text x="920" y="98" text-anchor="end" class="s-tiny f-dim">Webhook metaobjects/update</text>
+        <!-- Rahmen -->
+        <text x="16" y="30" class="s-lbl">Lokal · Procfile.dev</text>
+        <rect x="16" y="40" width="452" height="336" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 4"></rect>
+        <text x="492" y="30" class="s-lbl">Server · Procfile</text>
+        <rect x="492" y="40" width="452" height="336" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 4"></rect>
 
-        <text x="40" y="128" class="s-tiny">Shopify::Shop::SyncUnprocessedOrdersJob</text>
-        <text x="466" y="128" text-anchor="end" class="s-tiny f-dim">Cron, alle 2 Min</text>
-        <text x="500" y="128" class="s-tiny">Shopify::Shop::SyncDeltaProductsJob</text>
-        <text x="920" y="128" text-anchor="end" class="s-tiny f-dim">Cron, alle 15 Min</text>
+        <!-- LINKS: bin/dev -> foreman -->
+        <rect x="172" y="64" width="140" height="32" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="242" y="85" text-anchor="middle" class="s-name">bin/dev</text>
+        <line x1="242" y1="100" x2="242" y2="120" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah1)"></line>
+        <text x="250" y="115" class="s-tiny f-dim">startet</text>
+        <rect x="152" y="124" width="180" height="32" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="242" y="145" text-anchor="middle" class="s-name">foreman</text>
 
-        <text x="40" y="158" class="s-tiny">Shopify::Shop::SyncAllShopifyProductsJob</text>
-        <text x="466" y="158" text-anchor="end" class="s-tiny f-dim">Cron, 22:00</text>
-        <text x="500" y="158" class="s-tiny">Sap::Order::SyncAllJob</text>
-        <text x="920" y="158" text-anchor="end" class="s-tiny f-dim">aus dem 2-Min-Job</text>
+        <line x1="242" y1="156" x2="242" y2="178" stroke="currentColor" stroke-opacity="0.45"></line>
+        <line x1="90" y1="178" x2="394" y2="178" stroke="currentColor" stroke-opacity="0.45"></line>
+        <line x1="90" y1="178" x2="90" y2="198" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah1)"></line>
+        <line x1="242" y1="178" x2="242" y2="198" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah1)"></line>
+        <line x1="394" y1="178" x2="394" y2="198" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah1)"></line>
 
-        <text x="40" y="188" class="s-tiny">Sap::Order::SyncJob</text>
-        <text x="466" y="188" text-anchor="end" class="s-tiny f-dim">je offene Bestellung</text>
-        <text x="500" y="188" class="s-tiny">Sap::Product::SyncDeltaJob</text>
-        <text x="920" y="188" text-anchor="end" class="s-tiny f-dim">aus dem 15-Min-Job</text>
+        <!-- LINKS: die drei Prozesse -->
+        <rect x="28" y="200" width="124" height="76" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="90" y="225" text-anchor="middle" class="s-name f-web">web</text>
+        <text x="90" y="243" text-anchor="middle" class="s-tiny">bin/rails server</text>
+        <text x="90" y="259" text-anchor="middle" class="s-tiny f-dim">Puma + Rails</text>
 
-        <!-- high -->
-        <rect x="24" y="216" width="912" height="92" rx="3" fill="var(--web)" fill-opacity="0.08" stroke="var(--web)" stroke-opacity="0.45"></rect>
-        <text x="40" y="238" class="s-lbl f-web">high · 4 Jobs</text>
-        <text x="920" y="238" text-anchor="end" class="s-tiny f-dim">die Arbeit je Datensatz</text>
+        <rect x="180" y="200" width="124" height="76" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="242" y="225" text-anchor="middle" class="s-name f-worker">worker</text>
+        <text x="242" y="243" text-anchor="middle" class="s-tiny">sidekiq</text>
+        <text x="242" y="259" text-anchor="middle" class="s-tiny f-dim">Jobs + Scheduler</text>
 
-        <text x="40" y="258" class="s-tiny">Sap::Product::SetJob</text>
-        <text x="466" y="258" text-anchor="end" class="s-tiny f-dim">Rohdaten → Tabellen</text>
-        <text x="500" y="258" class="s-tiny">Shopify::Product::SyncJob</text>
-        <text x="920" y="258" text-anchor="end" class="s-tiny f-dim">je unverarbeitetes Produkt</text>
+        <rect x="332" y="200" width="124" height="76" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="394" y="225" text-anchor="middle" class="s-name f-vite">vite</text>
+        <text x="394" y="243" text-anchor="middle" class="s-tiny">bin/vite dev</text>
+        <text x="394" y="259" text-anchor="middle" class="s-tiny f-dim">HMR, nur lokal</text>
 
-        <text x="40" y="288" class="s-tiny">Shopify::Product::SetOperationJob</text>
-        <text x="466" y="288" text-anchor="end" class="s-tiny f-dim">holt das Ergebnis, plant sich neu</text>
-        <text x="500" y="288" class="s-tiny">Shopify::Product::SyncInventoryJob</text>
-        <text x="920" y="288" text-anchor="end" class="s-tiny f-dim">je Variante</text>
+        <rect x="42" y="292" width="96" height="20" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="90" y="306" text-anchor="middle" class="s-tiny">:3000</text>
+        <rect x="194" y="292" width="96" height="20" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="242" y="306" text-anchor="middle" class="s-tiny f-dim">kein HTTP</text>
+        <rect x="346" y="292" width="96" height="20" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="394" y="306" text-anchor="middle" class="s-tiny">:5173</text>
 
-        <!-- default -->
-        <rect x="24" y="316" width="912" height="122" rx="3" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="40" y="338" class="s-lbl f-worker">default · 6 Jobs</text>
-        <text x="920" y="338" text-anchor="end" class="s-tiny f-dim">Verteiler-Jobs, Bestände und Einrichtung</text>
+        <text x="242" y="348" text-anchor="middle" class="s-note f-dim">stirbt ein Prozess, beendet foreman alle</text>
 
-        <text x="40" y="358" class="s-tiny">Shopify::Product::SyncAllJob</text>
-        <text x="466" y="358" text-anchor="end" class="s-tiny f-dim">Verteiler über Produkte</text>
-        <text x="500" y="358" class="s-tiny">Shopify::Product::SyncAllInventoryJob</text>
-        <text x="920" y="358" text-anchor="end" class="s-tiny f-dim">Verteiler über Varianten</text>
+        <!-- RECHTS: release -->
+        <rect x="616" y="56" width="204" height="52" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
+        <text x="718" y="74" text-anchor="middle" class="s-name">release</text>
+        <text x="718" y="89" text-anchor="middle" class="s-tiny">rake db:migrate</text>
+        <text x="718" y="102" text-anchor="middle" class="s-tiny f-dim">einmalig, vor dem Start</text>
 
-        <text x="40" y="388" class="s-tiny">Shopify::Shop::SyncAllProductInventoriesJob</text>
-        <text x="466" y="388" text-anchor="end" class="s-tiny f-dim">Cron, 23:00</text>
-        <text x="500" y="388" class="s-tiny">Shopify::AppUninstalledJob</text>
-        <text x="920" y="388" text-anchor="end" class="s-tiny f-dim">Webhook app/uninstalled</text>
+        <line x1="718" y1="108" x2="718" y2="178" stroke="currentColor" stroke-opacity="0.45"></line>
+        <line x1="566" y1="178" x2="718" y2="178" stroke="currentColor" stroke-opacity="0.45"></line>
+        <line x1="566" y1="178" x2="566" y2="198" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah1)"></line>
+        <line x1="718" y1="178" x2="718" y2="198" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah1)"></line>
 
-        <text x="40" y="418" class="s-tiny">Shopify::MetafieldDefinition::SyncJob</text>
-        <text x="466" y="418" text-anchor="end" class="s-tiny f-dim">Einrichtung, aus Shop</text>
-        <text x="500" y="418" class="s-tiny">Shopify::Metaobject::SyncVariantCustomMetafiledsJob</text>
-        <text x="920" y="418" text-anchor="end" class="s-tiny f-alert">Tippfehler im Namen</text>
+        <rect x="504" y="200" width="124" height="76" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="566" y="225" text-anchor="middle" class="s-name f-web">web</text>
+        <text x="566" y="243" text-anchor="middle" class="s-tiny">puma -C puma.rb</text>
+        <text x="566" y="259" text-anchor="middle" class="s-tiny f-dim">Puma + Rails</text>
 
-        <rect x="24" y="446" width="912" height="46" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="42" y="466" class="s-note">Die Verteiler-Jobs liegen in default, die Blätter, die sie erzeugen, in high.</text>
-        <text x="42" y="484" class="s-tiny f-dim">Der Verteiler wartet also hinten, seine Kinder werden dann vorne bevorzugt — und der 23:00-Cron-Einstieg ist der einzige Cron-Job, der nicht critical ist.</text>
+        <rect x="656" y="200" width="124" height="76" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="718" y="225" text-anchor="middle" class="s-name f-worker">worker</text>
+        <text x="718" y="243" text-anchor="middle" class="s-tiny">sidekiq</text>
+        <text x="718" y="259" text-anchor="middle" class="s-tiny f-dim">Jobs + Scheduler</text>
+
+        <rect x="808" y="200" width="124" height="76" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"></rect>
+        <text x="870" y="231" text-anchor="middle" class="s-tiny f-dim">kein vite</text>
+        <text x="870" y="250" text-anchor="middle" class="s-tiny f-dim">Assets sind</text>
+        <text x="870" y="264" text-anchor="middle" class="s-tiny f-dim">vorgebaut</text>
+
+        <rect x="518" y="292" width="96" height="20" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="566" y="306" text-anchor="middle" class="s-tiny">:3000 · $PORT</text>
+        <rect x="670" y="292" width="96" height="20" rx="10" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="718" y="306" text-anchor="middle" class="s-tiny f-dim">kein HTTP</text>
+
+        <text x="718" y="348" text-anchor="middle" class="s-note f-dim">Orchestrator startet web + worker</text>
       </svg>
-      <figcaption><b>Alle 18 Jobs sind zwischen 13 und 19 Zeilen lang</b> und sehen praktisch
-        identisch aus: <code>Shop.find(shop_id)</code>, optional ein zweites Objekt laden,
-        dann <code>Irgendwas::Action::…call</code>. Das ist Absicht — Jobs bekommen über Redis nur skalare Werte, niemals Objekte, also müssen sie am Anfang wieder aus IDs laden. Die
-        Fachlichkeit liegt komplett in <code>app/services/</code>.</figcaption>
+      <figcaption><b>Der Unterschied liegt in der Steuerung.</b> Lokal hängt ein Dirigent über den
+        Prozessen — foreman liest das Procfile, startet alles parallel in ein gemeinsames Log und
+        reißt alle mit, wenn einer stirbt. Auf dem Server gibt es keinen foreman: der Container-
+        Orchestrator startet <code>web</code> und <code>worker</code> als getrennte Container.
+        <code>vite</code> fällt weg, weil die Assets im Docker-Build vorgebaut werden. Und
+        <code>release</code> ist kein Prozess, sondern ein Einmal-Kommando davor.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 02/05</span>
-      <h2>Die Produkt-Pipeline — sieben Stufen</h2>
+      <span class="plate-no">Blatt 02/06</span>
+      <h2>Der Boot-Pfad: vier Dateien in Kette</h2>
     </div>
-    <p class="lead">Das ist die längste Kette im Projekt. Sie erklärt die Zahl der kleinen Jobs. Ein Cron-Eintrag alle 15 Minuten löst sie aus, und jede Stufe stellt die
-      nächste in die Warteschlange.</p>
+    <p class="lead">Aus „Prozess gestartet“ wird „Rails läuft“ über genau vier Dateien. Die
+      <code>require</code>-Kette läuft nach unten, ausgeführt wird von unten nach oben zurück.
+      Das ist die Feinheit: <strong>zuerst passiert das, was ganz unten steht.</strong></p>
 
     <figure>
-      <svg viewBox="0 0 960 630" role="img" aria-label="Siebenstufige Produkt-Pipeline vom 15-Minuten-Cron über den SAP-Delta-Abruf, die Normalisierung in Tabellen, den Verteiler über Produkte, den productSet-Aufruf, das Abholen des Ergebnisses bis zum Abschluss. Der sechste Schritt plant sich selbst alle zwei Sekunden neu, bis Shopify fertig ist.">
+      <svg viewBox="0 0 960 430" role="img" aria-label="Boot-Kette: config.ru fordert config/environment.rb an, das application.rb, das boot.rb. Ausgeführt wird von boot.rb aufwärts zurück bis config.ru. Web und Worker gehen beide durch diesen Pfad.">
         <defs>
-          <marker id="e6ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <text x="24" y="34" class="s-lbl f-dim">Vielfachheit</text>
-        <text x="200" y="34" class="s-lbl f-dim">Job und was er anstößt</text>
-        <text x="776" y="34" class="s-lbl f-dim">Warteschlange</text>
+        <!-- Rücklauf -->
+        <path d="M112 350 C 70 350 62 344 62 322 L 62 96 C 62 74 70 68 112 68"
+              fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="5 4" marker-end="url(#ah2)"></path>
+        <text transform="rotate(-90 42 210)" x="42" y="210" text-anchor="middle" class="s-tiny f-dim">Ausführung kehrt aufwärts zurück</text>
 
-        <!-- 1 -->
-        <text x="24" y="76" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="90" class="s-tiny f-dim">alle 15 Min</text>
-        <rect x="200" y="46" width="560" height="62" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="216" y="70" class="s-mono">Shopify::Shop::SyncDeltaProductsJob</text>
-        <text x="216" y="88" class="s-tiny f-dim">Shop.find_each — überspringt Shops ohne delta_product_sync_enabled?</text>
-        <text x="216" y="102" class="s-tiny f-dim">stößt je Shop den nächsten Job an</text>
-        <text x="776" y="76" class="s-tiny f-alert">critical</text>
-        <line x1="480" y1="108" x2="480" y2="124" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <!-- Kästen -->
+        <rect x="120" y="44" width="330" height="44" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="136" y="72" class="s-name">config.ru</text>
+        <text x="434" y="72" text-anchor="end" class="s-tiny f-web">Einstieg</text>
 
-        <!-- 2 -->
-        <text x="24" y="154" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="168" class="s-tiny f-dim">je Shop</text>
-        <rect x="200" y="124" width="560" height="62" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="216" y="148" class="s-mono">Sap::Product::SyncDeltaJob</text>
-        <text x="216" y="166" class="s-tiny">SAP holen (modus D) → sap_product_events.create! → SAP quittieren (modus R)</text>
-        <text x="216" y="180" class="s-tiny f-dim">erst speichern, dann quittieren — in dieser Reihenfolge, und das ist wichtig</text>
-        <text x="776" y="154" class="s-tiny f-alert">critical</text>
-        <line x1="480" y1="186" x2="480" y2="202" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="120" y="132" width="330" height="44" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="136" y="160" class="s-name">config/environment.rb</text>
 
-        <!-- 3 -->
-        <text x="24" y="232" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="246" class="s-tiny f-dim">je Shop</text>
-        <rect x="200" y="202" width="560" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="216" y="226" class="s-mono">Sap::Product::SetJob</text>
-        <text x="216" y="244" class="s-tiny">Rohdaten → products + product_variants, Schlüssel ist die sku</text>
-        <text x="216" y="258" class="s-tiny f-dim">setzt shopify_synced = false und markiert das Event als processed</text>
-        <text x="776" y="232" class="s-tiny f-web">high</text>
-        <line x1="480" y1="264" x2="480" y2="280" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="120" y="220" width="330" height="44" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="136" y="248" class="s-name">config/application.rb</text>
 
-        <!-- 4 -->
-        <text x="24" y="310" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="324" class="s-tiny f-dim">je Shop</text>
-        <rect x="200" y="280" width="560" height="62" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
-        <text x="216" y="304" class="s-mono">Shopify::Product::SyncAllJob</text>
-        <text x="216" y="322" class="s-tiny f-dim">Verteiler: products.unprocessed, älteste zuerst</text>
-        <text x="216" y="336" class="s-tiny f-dim">hier verzweigt die Kette in N parallele Stränge</text>
-        <text x="776" y="310" class="s-tiny f-worker">default</text>
-        <line x1="480" y1="342" x2="480" y2="358" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="120" y="308" width="330" height="44" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="136" y="336" class="s-name">config/boot.rb</text>
+        <text x="434" y="336" text-anchor="end" class="s-tiny f-worker">zuerst wirksam</text>
 
-        <!-- 5 -->
-        <text x="24" y="388" class="s-tiny f-web">N ×</text>
-        <text x="24" y="402" class="s-tiny f-dim">je Produkt</text>
-        <rect x="200" y="358" width="560" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="216" y="382" class="s-mono">Shopify::Product::SyncJob</text>
-        <text x="216" y="400" class="s-tiny">startet productSet bei Shopify — eine asynchrone Operation</text>
-        <text x="216" y="414" class="s-tiny f-dim">Shopify antwortet nur mit einer Operations-ID, nicht mit dem Ergebnis</text>
-        <text x="776" y="388" class="s-tiny f-web">high</text>
-        <line x1="480" y1="420" x2="480" y2="436" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <!-- Pfeile abwärts -->
+        <line x1="285" y1="88" x2="285" y2="128" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah2)"></line>
+        <text x="297" y="112" class="s-tiny f-dim">require 'config/environment'</text>
+        <line x1="285" y1="176" x2="285" y2="216" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah2)"></line>
+        <text x="297" y="200" class="s-tiny f-dim">require_relative 'application'</text>
+        <line x1="285" y1="264" x2="285" y2="304" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ah2)"></line>
+        <text x="297" y="288" class="s-tiny f-dim">require_relative 'boot'</text>
 
-        <!-- 6 -->
-        <text x="24" y="466" class="s-tiny f-web">N ×</text>
-        <text x="24" y="480" class="s-tiny f-dim">je Produkt</text>
-        <text x="24" y="496" class="s-tiny f-alert">+ Wiederholung</text>
-        <rect x="200" y="436" width="560" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="216" y="460" class="s-mono">Shopify::Product::SetOperationJob</text>
-        <text x="216" y="478" class="s-tiny">Status COMPLETE? → shopify_id und Varianten-IDs zurückschreiben</text>
-        <text x="216" y="492" class="s-tiny f-alert">sonst: sich selbst mit wait: 2.seconds erneut einplanen</text>
-        <path d="M760 452 C 812 452 812 490 760 490" fill="none" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="4 3" marker-end="url(#e6ah2)"></path>
-        <text x="824" y="468" class="s-tiny f-alert">alle 2 s,</text>
-        <text x="824" y="482" class="s-tiny f-alert">ohne Obergrenze</text>
-        <line x1="480" y1="498" x2="480" y2="514" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <!-- Anmerkungen rechts -->
+        <text x="520" y="60" class="s-tiny">Rack-Einstieg — Puma greift genau hier zu<tspan x="520" dy="16" class="f-dim">run Rails.application</tspan></text>
+        <text x="520" y="148" class="s-tiny">Rails.application.initialize!<tspan x="520" dy="16" class="f-dim">führt alle config/initializers/* aus</tspan></text>
+        <text x="520" y="228" class="s-tiny">Wählt die Rails-Teilframeworks aus<tspan x="520" dy="15" class="f-dim">kein Mailer · kein ActiveStorage · kein Cable</tspan><tspan x="520" dy="15">Bundler.require(*Rails.groups)</tspan><tspan x="520" dy="15" class="f-web">config.active_job.queue_adapter = :sidekiq</tspan></text>
+        <text x="520" y="324" class="s-tiny">require 'bundler/setup' — Gemfile.lock greift<tspan x="520" dy="16">require 'bootsnap/setup' — Boot-Cache in tmp/</tspan></text>
 
-        <!-- 7 -->
-        <text x="24" y="544" class="s-tiny f-vite">N ×</text>
-        <text x="24" y="558" class="s-tiny f-dim">je Produkt</text>
-        <rect x="200" y="514" width="560" height="62" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.5"></rect>
-        <text x="216" y="538" class="s-mono">Shopify::Action::Product::Finish</text>
-        <text x="216" y="556" class="s-tiny f-dim">kein eigener Job — läuft direkt im vorigen</text>
-        <text x="216" y="570" class="s-tiny f-dim">setzt Metafelder und schließt das Produkt ab</text>
-        <text x="776" y="544" class="s-tiny f-vite">Action</text>
-
-        <rect x="24" y="592" width="912" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="480" y="611" text-anchor="middle" class="s-note">Der 22:00-Vollabgleich springt direkt in Stufe 4 ein und nutzt denselben Rest der Kette.</text>
+        <!-- Bodenband -->
+        <rect x="16" y="376" width="928" height="40" rx="2" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="480" y="401" text-anchor="middle" class="s-note">Diesen Pfad gehen web und worker gemeinsam — Sidekiq bootet dieselbe Rails-App, nur ohne Webserver davor.</text>
       </svg>
-      <figcaption><b>Stufe 2 ist gut gebaut, Stufe 6 ist die riskante.</b> In Stufe 2 wird der
-        SAP-Datensatz <em>zuerst</em> in <code>sap_product_events</code> gespeichert und erst
-        <em>danach</em> gegenüber SAP quittiert — stirbt der Prozess dazwischen, schickt SAP das
-        Delta erneut, und weil über die <code>sku</code> aktualisiert wird, ist das harmlos.
-        Stufe 6 dagegen plant sich selbst neu, solange Shopify nicht <code>COMPLETE</code> meldet,
-        <em>ohne Versuchszähler</em>. Bleibt eine Shopify-Operation hängen, läuft dieser Job alle
-        zwei Sekunden weiter — unbegrenzt.</figcaption>
+      <figcaption><b>Wirkung:</b> ab <code>require 'bundler/setup'</code> in
+        <code>boot.rb</code> existieren nur noch die Versionen aus der <code>Gemfile.lock</code> —
+        das ist der Moment, in dem aus „viele Gems liegen auf der Platte“ ein definiertes
+        Abhängigkeits-Universum wird. Und weil der Worker dieselbe Kette durchläuft, kennen Jobs
+        alle Models und Services. Die eine Zeile <code>queue_adapter = :sidekiq</code> ist der
+        Schalter, der die <code>worker</code>-Zeile im Procfile überhaupt sinnvoll macht.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 03 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 03/05</span>
-      <h2>Bestellungen und Webhooks</h2>
+      <span class="plate-no">Blatt 03/06</span>
+      <h2>Puma: ein Prozess, drei Threads</h2>
     </div>
-    <p class="lead">Die Bestell-Kette ist deutlich kürzer — vier Stufen, und die Arbeit passiert
-      ganz am Ende. Die drei Webhook-Ketten darunter sind nur ein bis zwei Schritte lang.</p>
+    <p class="lead"><code>config/puma.rb</code> ist zu 90 % Kommentar; wirksam sind vier Zeilen.
+      Puma kennt zwei Ebenen von Parallelität — <strong>Worker</strong> (eigene Prozesse) und
+      <strong>Threads</strong> (innerhalb eines Prozesses). Hier ist nur die zweite in Gebrauch.</p>
+
+    <pre>threads_count = ENV.fetch('RAILS_MAX_THREADS', 3)   <span class="fp"># Zeile 30</span>
+threads threads_count, threads_count                <span class="fp"># Zeile 31</span>
+port ENV.fetch('PORT', 3000)                        <span class="fp"># Zeile 34</span>
+plugin :tmp_restart                                 <span class="fp"># Zeile 37</span></pre>
 
     <figure>
-      <svg viewBox="0 0 960 420" role="img" aria-label="Oben die vierstufige Bestell-Kette vom 2-Minuten-Cron bis zur Sync-Action. Unten die drei Webhook-Ketten für orders/create, metaobjects/update und app/uninstalled mit ihren Warteschlangen.">
+      <svg viewBox="0 0 960 280" role="img" aria-label="Ein Puma-Worker-Prozess mit drei Threads beantwortet drei Requests gleichzeitig; ein vierter Request wartet in der Queue. Die Threads warten auf PostgreSQL und auf HTTP zu SAP, Credit und OpenIBAN.">
         <defs>
-          <marker id="e6ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <text x="24" y="40" class="s-lbl f-alert">Bestell-Kette · alle 2 Minuten · durchgehend critical</text>
+        <text x="16" y="26" class="s-lbl">HTTP-Requests</text>
+        <text x="250" y="26" class="s-tiny f-dim">WEB_CONCURRENCY nicht gesetzt → 1 Prozess    ·    RAILS_MAX_THREADS Default → 3 Threads</text>
 
-        <rect x="24" y="52" width="170" height="76" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.5" stroke-dasharray="4 3"></rect>
-        <text x="109" y="80" text-anchor="middle" class="s-tiny f-alert">Cron */2</text>
-        <text x="109" y="98" text-anchor="middle" class="s-tiny f-dim">sidekiq.yml</text>
-        <text x="109" y="114" text-anchor="middle" class="s-tiny f-dim">Europe/Berlin</text>
-        <line x1="194" y1="90" x2="210" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <text x="16" y="107" class="s-tiny f-dim">Req 1</text>
+        <text x="16" y="145" class="s-tiny f-dim">Req 2</text>
+        <text x="16" y="183" class="s-tiny f-dim">Req 3</text>
+        <line x1="62" y1="103" x2="244" y2="103" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah3)"></line>
+        <line x1="62" y1="141" x2="244" y2="141" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah3)"></line>
+        <line x1="62" y1="179" x2="244" y2="179" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah3)"></line>
+        <text x="16" y="215" class="s-tiny f-alert">Req 4 — wartet in der Queue</text>
 
-        <rect x="214" y="52" width="170" height="76" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="299" y="76" text-anchor="middle" class="s-tiny">SyncUnprocessed</text>
-        <text x="299" y="90" text-anchor="middle" class="s-tiny">OrdersJob</text>
-        <text x="299" y="108" text-anchor="middle" class="s-tiny f-dim">Shop.find_each</text>
-        <text x="299" y="122" text-anchor="middle" class="s-tiny f-dim">1 × je Shop</text>
-        <line x1="384" y1="90" x2="400" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <rect x="250" y="56" width="380" height="152" rx="3" fill="var(--web)" fill-opacity="0.07" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="440" y="78" text-anchor="middle" class="s-mono f-web">Puma · 1 Worker-Prozess</text>
 
-        <rect x="404" y="52" width="170" height="76" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="489" y="76" text-anchor="middle" class="s-tiny">Sap::Order::</text>
-        <text x="489" y="90" text-anchor="middle" class="s-tiny">SyncAllJob</text>
-        <text x="489" y="108" text-anchor="middle" class="s-tiny f-dim">orders.unprocessed</text>
-        <text x="489" y="122" text-anchor="middle" class="s-tiny f-dim">N × je Bestellung</text>
-        <line x1="574" y1="90" x2="590" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <rect x="270" y="88" width="340" height="30" rx="2" fill="var(--surface)" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="284" y="107" class="s-tiny">Thread 1</text>
+        <rect x="270" y="126" width="340" height="30" rx="2" fill="var(--surface)" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="284" y="145" class="s-tiny">Thread 2</text>
+        <rect x="270" y="164" width="340" height="30" rx="2" fill="var(--surface)" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="284" y="183" class="s-tiny">Thread 3</text>
 
-        <rect x="594" y="52" width="170" height="76" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="679" y="76" text-anchor="middle" class="s-tiny">Sap::Order::</text>
-        <text x="679" y="90" text-anchor="middle" class="s-tiny">SyncJob</text>
-        <text x="679" y="108" text-anchor="middle" class="s-tiny f-dim">lädt Shop + Order</text>
-        <text x="679" y="122" text-anchor="middle" class="s-tiny f-dim">und ruft die Action</text>
-        <line x1="764" y1="90" x2="780" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <line x1="612" y1="104" x2="698" y2="104" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah3)"></line>
+        <text x="638" y="97" class="s-tiny f-dim">SQL</text>
+        <line x1="612" y1="170" x2="698" y2="170" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah3)"></line>
+        <text x="636" y="163" class="s-tiny f-dim">HTTP</text>
 
-        <rect x="784" y="52" width="152" height="76" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-width="1.5"></rect>
-        <text x="860" y="76" text-anchor="middle" class="s-tiny f-vite">Sap::Action::</text>
-        <text x="860" y="90" text-anchor="middle" class="s-tiny f-vite">Order::Sync</text>
-        <text x="860" y="108" text-anchor="middle" class="s-tiny f-dim">with_lock</text>
-        <text x="860" y="122" text-anchor="middle" class="s-tiny f-dim">→ Blatt 02, Etappe 5</text>
+        <rect x="700" y="84" width="180" height="40" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="790" y="109" text-anchor="middle" class="s-mono">PostgreSQL</text>
+        <rect x="700" y="150" width="230" height="40" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="815" y="175" text-anchor="middle" class="s-tiny">SAP · Credit · OpenIBAN</text>
 
-        <!-- Webhooks -->
-        <text x="24" y="172" class="s-lbl f-dim">Webhook-Ketten</text>
-        <line x1="24" y1="180" x2="936" y2="180" stroke="currentColor" stroke-opacity="0.2"></line>
-
-        <rect x="24" y="190" width="200" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="40" y="212" class="s-mono">orders/create</text>
-        <text x="40" y="230" class="s-tiny f-dim">bei jeder Bestellung</text>
-        <line x1="224" y1="216" x2="250" y2="216" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <rect x="254" y="190" width="300" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="270" y="212" class="s-tiny">Shopify::OrdersCreateJob</text>
-        <text x="540" y="212" text-anchor="end" class="s-tiny f-alert">critical</text>
-        <text x="270" y="230" class="s-tiny f-dim">find_by! + rescue RecordNotFound → nur Logeintrag</text>
-        <line x1="554" y1="216" x2="580" y2="216" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <text x="584" y="212" class="s-tiny f-vite">Shopify::Action::Order::Create</text>
-        <text x="584" y="230" class="s-tiny f-dim">legt die Bestellung an, liest das Bonitäts-Attribut aus</text>
-
-        <rect x="24" y="250" width="200" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="40" y="272" class="s-mono">metaobjects/update</text>
-        <text x="40" y="290" class="s-tiny f-dim">nur type:laenderschlue</text>
-        <line x1="224" y1="276" x2="250" y2="276" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <rect x="254" y="250" width="300" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="270" y="272" class="s-tiny">Shopify::MetaobjectsUpdateJob</text>
-        <text x="540" y="272" text-anchor="end" class="s-tiny f-alert">critical</text>
-        <text x="270" y="290" class="s-tiny f-dim">stößt nur den nächsten Job an</text>
-        <line x1="554" y1="276" x2="580" y2="276" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <text x="584" y="272" class="s-tiny f-worker">SyncVariantCustomMetafiledsJob</text>
-        <text x="584" y="290" class="s-tiny f-dim">default — landet also hinter allem anderen</text>
-
-        <rect x="24" y="310" width="200" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="40" y="332" class="s-mono">app/uninstalled</text>
-        <text x="40" y="350" class="s-tiny f-dim">Deinstallation</text>
-        <line x1="224" y1="336" x2="250" y2="336" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <rect x="254" y="310" width="300" height="52" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="270" y="332" class="s-tiny">Shopify::AppUninstalledJob</text>
-        <text x="540" y="332" text-anchor="end" class="s-tiny f-worker">default</text>
-        <text x="270" y="350" class="s-tiny f-alert">find_by ohne ! und ohne rescue — Anhang 03</text>
-        <line x1="554" y1="336" x2="580" y2="336" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <text x="584" y="332" class="s-tiny f-vite">DeletePaymentCustomization → shop.destroy!</text>
-        <text x="584" y="350" class="s-tiny f-dim">löscht den Shop und per dependent: :destroy alles daran</text>
-
-        <rect x="24" y="378" width="912" height="34" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.4"></rect>
-        <text x="480" y="400" text-anchor="middle" class="s-note">Die Bestell-Kette ist auf allen vier Stufen critical — sie kann deshalb nie hinter einem Produktabgleich warten.</text>
+        <rect x="16" y="232" width="928" height="36" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="480" y="255" text-anchor="middle" class="s-note">Threads bringen Durchsatz nur, WÄHREND gewartet wird. Wegen Rubys GVL rechnet pro Prozess immer nur ein Thread.</text>
       </svg>
-      <figcaption><b>Der Vergleich der drei Webhook-Jobs zeigt drei verschiedene Sorgfaltsstufen.</b>
-        <code>OrdersCreateJob</code> nutzt <code>find_by!</code> mit einem
-        <code>rescue</code>, das den Fehler nur protokolliert — ein unbekannter Shop führt also zu
-        keinem Retry. <code>MetaobjectsUpdateJob</code> macht dasselbe. <code>AppUninstalledJob</code>
-        dagegen nutzt <code>find_by</code> ohne Ausrufezeichen und ohne <code>rescue</code>: ist der
-        Shop schon weg, läuft der Job in einen <code>NoMethodError</code> und wird von Sidekiq
-        25-mal wiederholt.</figcaption>
+      <figcaption><b>Diese Instanz beantwortet drei Requests gleichzeitig.</b> Das klingt wenig,
+        passt aber zur Aufgabe: eine Integrations-App verbringt fast ihre ganze Zeit mit Warten auf
+        Postgres und auf HTTP zu SAP. Genau dabei helfen Threads. Rechnen darf wegen des
+        <b>GVL</b> (Global VM Lock) pro Prozess trotzdem nur einer — mehr Durchsatz gäbe es erst
+        über <code>WEB_CONCURRENCY</code>, also mehr Prozesse.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 04 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 04/05</span>
-      <h2>Eine Zeile regelt alle Wiederholungen</h2>
+      <span class="plate-no">Blatt 04/06</span>
+      <h2>Zwei Wege hinein, ein Rails</h2>
     </div>
-    <p class="lead"><code>ApplicationJob</code> hat genau <strong>eine</strong> aktive Zeile. Alles,
-      was nicht darunter fällt, landet im Sidekiq-Standard — und ein dritter Teil der Fehler
-      erreicht die Job-Ebene nie, weil die Actions sie selbst abfangen.</p>
-
-    <pre>class ApplicationJob &lt; ActiveJob::Base
-  <span class="fp"># retry_on ActiveRecord::Deadlocked            — auskommentiert</span>
-  <span class="fp"># discard_on ActiveJob::DeserializationError   — auskommentiert</span>
-
-  retry_on Shopify::Api::TooManyRequestsError, wait: 4.seconds, attempts: :unlimited
-end</pre>
+    <p class="lead">Im Dev gibt es zwei völlig verschiedene Eingänge. Der <strong>Entwickler-Zugang</strong> geht auf den
+      Vite-Server; er liefert Assets selbst und reicht nur <code>/</code> und <code>/graphql</code>
+      an Rails weiter. <strong>Shopify</strong> erreicht Rails ausschließlich über den
+      Tunnel — eine embedded App kann nicht auf <code>localhost</code> laufen, weil Shopify sie aus
+      dem Netz in ein iframe lädt.</p>
 
     <figure>
-      <svg viewBox="0 0 960 350" role="img" aria-label="Drei Wege, die ein Fehler nehmen kann: Shopify-Throttling wird unbegrenzt wiederholt, von den Actions selbst gefangene Fehler erreichen den Job nie und werden über den Status abgewickelt, alles andere landet im Sidekiq-Standard mit 25 Versuchen.">
+      <svg viewBox="0 0 960 320" role="img" aria-label="Zwei Eingänge in dieselbe Rails-Instanz: der Browser über den Vite-Dev-Server mit Proxy, und Shopify über einen HTTPS-Tunnel. Rails legt Jobs in Redis ab, der Sidekiq-Worker holt sie dort heraus.">
         <defs>
-          <marker id="e6ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <rect x="330" y="40" width="300" height="70" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.55"></rect>
-        <text x="480" y="66" text-anchor="middle" class="s-name">ApplicationJob</text>
-        <text x="480" y="84" text-anchor="middle" class="s-tiny f-dim">genau eine retry_on-Regel</text>
-        <text x="480" y="100" text-anchor="middle" class="s-tiny f-dim">alle 18 Jobs erben davon</text>
+        <!-- Zeile 1: Dev-Browser -->
+        <rect x="20" y="66" width="160" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="100" y="89" text-anchor="middle" class="s-mono">Browser</text>
+        <text x="100" y="104" text-anchor="middle" class="s-tiny f-dim">dein Rechner</text>
 
-        <line x1="480" y1="110" x2="480" y2="134" stroke="currentColor" stroke-opacity="0.5"></line>
-        <line x1="169" y1="134" x2="792" y2="134" stroke="currentColor" stroke-opacity="0.5"></line>
-        <line x1="169" y1="134" x2="169" y2="156" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah4)"></line>
-        <line x1="481" y1="134" x2="481" y2="156" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah4)"></line>
-        <line x1="792" y1="134" x2="792" y2="156" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah4)"></line>
+        <line x1="180" y1="92" x2="248" y2="92" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah4)"></line>
+        <text x="214" y="84" text-anchor="middle" class="s-tiny f-dim">:5173</text>
 
-        <rect x="24" y="160" width="290" height="126" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
-        <text x="40" y="182" class="s-lbl f-web">Weg 1 · geregelt</text>
-        <text x="40" y="204" class="s-tiny">Shopify::Api::</text>
-        <text x="40" y="218" class="s-tiny">TooManyRequestsError</text>
-        <text x="40" y="240" class="s-tiny f-dim">wait: 4 s · attempts: unlimited</text>
-        <text x="40" y="258" class="s-tiny f-alert">plus die 4 s sleep, die die</text>
-        <text x="40" y="272" class="s-tiny f-alert">API-Schicht davor macht = 8 s</text>
+        <rect x="250" y="66" width="180" height="52" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="340" y="89" text-anchor="middle" class="s-name f-vite">Vite Dev-Server</text>
+        <text x="340" y="104" text-anchor="middle" class="s-tiny f-dim">liefert JS/CSS + HMR selbst</text>
 
-        <rect x="336" y="160" width="290" height="126" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
-        <text x="352" y="182" class="s-lbl f-vite">Weg 2 · abgefangen</text>
-        <text x="352" y="204" class="s-tiny">Sap::Api::Error</text>
-        <text x="352" y="218" class="s-tiny">Sap::Api::TimeoutError</text>
-        <text x="352" y="240" class="s-tiny f-dim">erreichen den Job nie — die</text>
-        <text x="352" y="254" class="s-tiny f-dim">Action fängt sie und setzt</text>
-        <text x="352" y="268" class="s-tiny f-dim">sap_status auf failed</text>
-        <text x="352" y="282" class="s-tiny f-vite">der Cron holt sie danach wieder</text>
+        <line x1="430" y1="92" x2="498" y2="92" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah4)"></line>
+        <text x="464" y="84" text-anchor="middle" class="s-tiny f-dim">Proxy</text>
+        <text x="464" y="58" text-anchor="middle" class="s-tiny f-dim">/ und /graphql</text>
 
-        <rect x="648" y="160" width="288" height="126" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="664" y="182" class="s-lbl f-worker">Weg 3 · Standard</text>
-        <text x="664" y="204" class="s-tiny">alles andere</text>
-        <text x="664" y="218" class="s-tiny f-dim">z. B. NoMethodError, RecordInvalid</text>
-        <text x="664" y="240" class="s-tiny f-dim">Sidekiq-Standard:</text>
-        <text x="664" y="254" class="s-tiny f-dim">25 Versuche über etwa 21 Tage,</text>
-        <text x="664" y="268" class="s-tiny f-dim">dann in den Dead Set</text>
-        <text x="664" y="282" class="s-tiny f-worker">sichtbar unter /sidekiq</text>
+        <!-- Zeile 2: Shopify -->
+        <rect x="20" y="196" width="160" height="60" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="100" y="218" text-anchor="middle" class="s-mono">Shopify</text>
+        <text x="100" y="233" text-anchor="middle" class="s-tiny f-dim">Admin-iframe</text>
+        <text x="100" y="247" text-anchor="middle" class="s-tiny f-dim">Storefront</text>
 
-        <rect x="24" y="300" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="42" y="320" class="s-note">Weg 2 ist der wichtigste und der am leichtesten zu übersehende.</text>
-        <text x="42" y="336" class="s-tiny f-dim">Ein SAP-Timeout erzeugt keinen roten Job in Sidekiq — er erzeugt eine Bestellung mit sap_status = failed und ein sap_order_event mit code 408.</text>
+        <line x1="180" y1="226" x2="248" y2="226" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah4)"></line>
+        <text x="214" y="218" text-anchor="middle" class="s-tiny f-dim">HTTPS</text>
+
+        <rect x="250" y="200" width="180" height="52" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
+        <text x="340" y="223" text-anchor="middle" class="s-name">Tunnel</text>
+        <text x="340" y="238" text-anchor="middle" class="s-tiny f-dim">ngrok / cloudflared</text>
+
+        <line x1="430" y1="226" x2="498" y2="226" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah4)"></line>
+        <text x="464" y="218" text-anchor="middle" class="s-tiny f-dim">Webhooks</text>
+
+        <!-- Rails -->
+        <rect x="500" y="66" width="180" height="190" rx="3" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="590" y="156" text-anchor="middle" class="s-name f-web">Rails · Puma</text>
+        <text x="590" y="174" text-anchor="middle" class="s-tiny f-dim">:3000</text>
+
+        <!-- Redis / Sidekiq -->
+        <line x1="680" y1="102" x2="748" y2="102" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah4)"></line>
+        <text x="714" y="94" text-anchor="middle" class="s-tiny f-dim">enqueue</text>
+
+        <rect x="750" y="80" width="180" height="44" rx="2" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.6"></rect>
+        <text x="840" y="108" text-anchor="middle" class="s-mono f-worker">Redis</text>
+
+        <line x1="840" y1="124" x2="840" y2="174" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah4)"></line>
+        <text x="850" y="153" class="s-tiny f-dim">pop</text>
+
+        <rect x="750" y="178" width="180" height="56" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="840" y="201" text-anchor="middle" class="s-name f-worker">Sidekiq</text>
+        <text x="840" y="217" text-anchor="middle" class="s-tiny f-dim">worker-Prozess</text>
+
+        <text x="480" y="298" text-anchor="middle" class="s-note f-dim">Redis ist die einzige Verbindung zwischen web und worker — die beiden reden nie direkt miteinander.</text>
       </svg>
-      <figcaption><b>Wo du im Fehlerfall hinschaust, hängt vom Weg ab.</b> Bei Weg 3 in
-        <code>/sidekiq</code>. Bei Weg 2 <em>nicht</em> dort, sondern in der Datenbank
-        (<code>orders.sap_status</code>, <code>sap_order_events.response_data</code>) und in
-        Rollbar. Weg 1 erzeugt kein Signal im Admin-UI, kann aber lange dauern: bei anhaltendem Throttling
-        wiederholt Rails unbegrenzt, mit acht Sekunden pro Runde — und jede dieser Runden hält
-        vier Sekunden einen von zehn Sidekiq-Threads belegt.</figcaption>
+      <figcaption><b>Der Vite-Proxy legt lokal alles unter einen Origin.</b>
+        Hot-Reload und Backend-Daten liegen damit unter derselben Adresse. Der zweite Weg ist
+        der, der auf dem Server allein übrig bleibt. Ganz rechts steckt die Kopplung, die man
+        leicht übersieht: <code>web</code> und <code>worker</code> tauschen sich <em>nur</em> über
+        Redis aus — Rails legt einen Job ab, Sidekiq nimmt ihn irgendwann heraus.</figcaption>
     </figure>
+
+    <div class="tw">
+      <table>
+        <caption>Ports im Dev-Setup</caption>
+        <thead>
+          <tr><th class="m">Port</th><th>Wer</th><th>Festgelegt in</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="m">3000</td><td>Rails / Puma</td><td class="m">puma.rb:34 · Default</td></tr>
+          <tr><td class="m">3001</td><td>von der Shopify-CLI erwartet</td><td class="m">shopify.web.toml:1</td></tr>
+          <tr><td class="m">5173</td><td>Vite Dev-Server</td><td class="m">vite.config.ts:43</td></tr>
+          <tr><td class="m">3036</td><td>Vite laut <code>vite_rails</code></td><td class="m">config/vite.json:9</td></tr>
+          <tr><td class="m">64999</td><td>Vite HMR-WebSocket</td><td class="m">vite.config.ts:19</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <!-- ============ BLATT 05 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 05/05</span>
-      <h2>Wie aus einem Job tausende werden</h2>
+      <span class="plate-no">Blatt 05/06</span>
+      <h2>Der Herzschlag: vier Cron-Jobs</h2>
     </div>
-    <p class="lead">Beide Nacht-Cron-Einträge sehen gleich aus, verzweigen aber auf verschiedenen
-      Ebenen: der eine <strong>je Produkt</strong>, der andere <strong>je Variante</strong>. Bei
-      einem Münzshop ist das ein großer Unterschied.</p>
+    <p class="lead">Wenn du eine Sache aus dieser Etappe mitnimmst, dann diese:
+      <strong>der Connector ist im Kern ein Uhrwerk.</strong> Bestellungen kommen per Webhook
+      herein, aber der Abgleich Richtung SAP läuft getaktet — und <code>config/sidekiq.yml</code>
+      ist die Datei, in der dieser Takt steht.</p>
+
+    <pre>:concurrency: 10
+:queues:
+  - critical        <span class="fp"># wird immer zuerst geleert</span>
+  - high
+  - default         <span class="fp"># wartet, solange critical etwas hat</span></pre>
 
     <figure>
-      <svg viewBox="0 0 960 350" role="img" aria-label="Vergleich der beiden Nacht-Ketten: der 22-Uhr-Produktabgleich verzweigt je Produkt, der 23-Uhr-Bestandsabgleich je Variante. Die zweite Kette erzeugt deutlich mehr Jobs.">
+      <svg viewBox="0 0 960 360" role="img" aria-label="24-Stunden-Zeitachse mit vier geplanten Jobs: Bestellungen alle zwei Minuten, Produkt-Delta alle 15 Minuten, voller Produkt-Sync um 22 Uhr und voller Bestands-Sync um 23 Uhr.">
         <defs>
-          <marker id="e6ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <pattern id="p-dense" width="6" height="18" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="18" stroke="var(--worker)" stroke-width="1.6"></line>
+          </pattern>
+          <pattern id="p-med" width="22" height="18" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="18" stroke="var(--worker)" stroke-width="1.6"></line>
+          </pattern>
+        </defs>
+
+        <!-- Nachtfenster -->
+        <rect x="850" y="36" width="70" height="278" fill="currentColor" fill-opacity="0.05"></rect>
+        <text x="885" y="28" text-anchor="middle" class="s-tiny f-dim">Nachtfenster</text>
+
+        <!-- Lane 1 -->
+        <text x="80" y="50" class="s-mono"><tspan class="f-web">*/2 * * * *</tspan><tspan class="f-dim">  ·  Shopify::Shop::SyncUnprocessedOrdersJob</tspan></text>
+        <text x="920" y="50" text-anchor="end" class="s-tiny f-worker">720× / Tag</text>
+        <rect x="80" y="56" width="840" height="18" fill="url(#p-dense)"></rect>
+        <rect x="80" y="56" width="840" height="18" fill="none" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <text x="80" y="92" class="s-note f-dim">Bestellungen nachschieben, die noch nicht in SAP sind — das Netz für verlorene Webhooks</text>
+
+        <!-- Lane 2 -->
+        <text x="80" y="126" class="s-mono"><tspan class="f-web">*/15 * * * *</tspan><tspan class="f-dim">  ·  Shopify::Shop::SyncDeltaProductsJob</tspan></text>
+        <text x="920" y="126" text-anchor="end" class="s-tiny f-worker">96× / Tag</text>
+        <rect x="80" y="132" width="840" height="18" fill="url(#p-med)"></rect>
+        <rect x="80" y="132" width="840" height="18" fill="none" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <text x="80" y="168" class="s-note f-dim">Produkt-Änderungen von SAP holen — nur das Delta seit dem letzten Lauf</text>
+
+        <!-- Lane 3 -->
+        <text x="80" y="200" class="s-mono"><tspan class="f-web">0 22 * * *</tspan><tspan class="f-dim">  ·  Shopify::Shop::SyncAllShopifyProductsJob</tspan></text>
+        <text x="920" y="200" text-anchor="end" class="s-tiny f-worker">1× / Tag</text>
+        <line x1="80" y1="215" x2="920" y2="215" stroke="currentColor" stroke-opacity="0.14"></line>
+        <rect x="848" y="206" width="5" height="18" fill="var(--worker)"></rect>
+        <line x1="850" y1="226" x2="850" y2="308" stroke="var(--worker)" stroke-opacity="0.35" stroke-dasharray="3 4"></line>
+        <text x="80" y="240" class="s-note f-dim">Voller Produkt-Sync</text>
+
+        <!-- Lane 4 -->
+        <text x="80" y="262" class="s-mono"><tspan class="f-web">0 23 * * *</tspan><tspan class="f-dim">  ·  Shopify::Shop::SyncAllProductInventoriesJob</tspan></text>
+        <text x="920" y="262" text-anchor="end" class="s-tiny f-worker">1× / Tag</text>
+        <line x1="80" y1="277" x2="920" y2="277" stroke="currentColor" stroke-opacity="0.14"></line>
+        <rect x="883" y="268" width="5" height="18" fill="var(--worker)"></rect>
+        <line x1="885" y1="288" x2="885" y2="308" stroke="var(--worker)" stroke-opacity="0.35" stroke-dasharray="3 4"></line>
+        <text x="80" y="302" class="s-note f-dim">Voller Bestands-Sync</text>
+
+        <!-- Achse -->
+        <line x1="80" y1="314" x2="920" y2="314" stroke="currentColor" stroke-opacity="0.4"></line>
+        <g stroke="currentColor" stroke-opacity="0.4">
+          <line x1="80" y1="310" x2="80" y2="318"></line>
+          <line x1="150" y1="310" x2="150" y2="318"></line>
+          <line x1="220" y1="310" x2="220" y2="318"></line>
+          <line x1="290" y1="310" x2="290" y2="318"></line>
+          <line x1="360" y1="310" x2="360" y2="318"></line>
+          <line x1="430" y1="310" x2="430" y2="318"></line>
+          <line x1="500" y1="310" x2="500" y2="318"></line>
+          <line x1="570" y1="310" x2="570" y2="318"></line>
+          <line x1="640" y1="310" x2="640" y2="318"></line>
+          <line x1="710" y1="310" x2="710" y2="318"></line>
+          <line x1="780" y1="310" x2="780" y2="318"></line>
+          <line x1="850" y1="310" x2="850" y2="318"></line>
+          <line x1="920" y1="310" x2="920" y2="318"></line>
+        </g>
+        <g class="s-tiny f-dim" text-anchor="middle">
+          <text x="80" y="334">00</text>
+          <text x="150" y="334">02</text>
+          <text x="220" y="334">04</text>
+          <text x="290" y="334">06</text>
+          <text x="360" y="334">08</text>
+          <text x="430" y="334">10</text>
+          <text x="500" y="334">12</text>
+          <text x="570" y="334">14</text>
+          <text x="640" y="334">16</text>
+          <text x="710" y="334">18</text>
+          <text x="780" y="334">20</text>
+          <text x="850" y="334">22</text>
+          <text x="920" y="334">24</text>
+        </g>
+        <text x="80" y="352" class="s-tiny f-dim">Uhrzeit · Europe/Berlin</text>
+      </svg>
+      <figcaption><b>Die Dichte der Balken ist die Aussage.</b> Der 2-Minuten-Takt ist kein
+        Sync-Mechanismus, sondern eine Versicherung: falls ein <code>orders/create</code>-Webhook
+        verloren geht, holt dieser Job die Bestellung spätestens zwei Minuten später nach. Die
+        beiden Vollabgleiche liegen bewusst nachts, weil sie teuer sind. Diese vier Klassennamen
+        sind übrigens der Einstiegspunkt in <code>app/jobs/</code>.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 06 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 06/06</span>
+      <h2>Die Secrets sind die Inhaltsangabe</h2>
+    </div>
+    <p class="lead"><code>.env.template</code> gruppiert sich nach Fremdsystem — und genau diese
+      Gruppen findest du als Ordner unter <code>app/services/</code> wieder. Wer die
+      <code>.env</code> liest, kennt den Aufgabenzuschnitt der App.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 250" role="img" aria-label="Der Connector hat vier ausgehende Integrationen: Shopify und SAP in beide Richtungen, Credit-API und OpenIBAN nur ausgehend. Jede entspricht einem Präfix in der .env und einem Ordner unter app/services.">
+        <defs>
+          <marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <text x="24" y="40" class="s-lbl f-web">22:00 · Produktabgleich — verzweigt je Produkt</text>
+        <!-- Kanten -->
+        <line x1="380" y1="110" x2="264" y2="74" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah6)" marker-start="url(#ah6)"></line>
+        <text x="322" y="106" text-anchor="middle" class="s-tiny f-dim">Webhooks rein<tspan x="322" dy="13">GraphQL raus</tspan></text>
 
-        <rect x="24" y="52" width="200" height="70" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
-        <text x="124" y="80" text-anchor="middle" class="s-tiny">Cron 0 22 * * *</text>
-        <text x="124" y="98" text-anchor="middle" class="s-name f-dim">1 Job</text>
-        <line x1="224" y1="87" x2="250" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <line x1="580" y1="110" x2="696" y2="74" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah6)" marker-start="url(#ah6)"></line>
+        <text x="638" y="106" text-anchor="middle" class="s-tiny f-dim">Bestellungen raus<tspan x="638" dy="13">Produkte rein</tspan></text>
 
-        <rect x="254" y="52" width="200" height="70" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="354" y="74" text-anchor="middle" class="s-tiny">SyncAllShopifyProductsJob</text>
-        <text x="354" y="94" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="354" y="112" text-anchor="middle" class="s-tiny f-alert">critical</text>
-        <line x1="454" y1="87" x2="480" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <line x1="380" y1="140" x2="264" y2="176" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah6)"></line>
+        <text x="322" y="146" text-anchor="middle" class="s-tiny f-dim">nur ausgehend</text>
 
-        <rect x="484" y="52" width="200" height="70" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="584" y="74" text-anchor="middle" class="s-tiny">Product::SyncAllJob</text>
-        <text x="584" y="94" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="584" y="112" text-anchor="middle" class="s-tiny f-worker">default</text>
-        <line x1="684" y1="87" x2="710" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <line x1="580" y1="140" x2="696" y2="176" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#ah6)"></line>
+        <text x="638" y="146" text-anchor="middle" class="s-tiny f-dim">nur ausgehend</text>
 
-        <rect x="714" y="52" width="222" height="70" rx="2" fill="var(--web)" fill-opacity="0.13" stroke="var(--web)" stroke-width="1.5"></rect>
-        <text x="825" y="74" text-anchor="middle" class="s-tiny">Product::SyncJob</text>
-        <text x="825" y="94" text-anchor="middle" class="s-name f-web">1 Job je Produkt</text>
-        <text x="825" y="112" text-anchor="middle" class="s-tiny f-dim">high · plus je einen SetOperationJob</text>
+        <!-- Zentrum -->
+        <rect x="380" y="95" width="200" height="60" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.55"></rect>
+        <text x="480" y="121" text-anchor="middle" class="s-name">MDM Connector</text>
+        <text x="480" y="138" text-anchor="middle" class="s-tiny f-dim">app/services/</text>
 
-        <text x="24" y="166" class="s-lbl f-alert">23:00 · Bestandsabgleich — verzweigt je Variante</text>
+        <!-- Vier Systeme -->
+        <rect x="30" y="34" width="234" height="58" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="46" y="58" class="s-name">Shopify</text>
+        <text x="46" y="76" class="s-tiny f-dim">SHOPIFY_API_* · services/shopify</text>
 
-        <rect x="24" y="178" width="200" height="70" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
-        <text x="124" y="206" text-anchor="middle" class="s-tiny">Cron 0 23 * * *</text>
-        <text x="124" y="224" text-anchor="middle" class="s-name f-dim">1 Job</text>
-        <line x1="224" y1="213" x2="250" y2="213" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="696" y="34" width="234" height="58" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="712" y="58" class="s-name">SAP</text>
+        <text x="712" y="76" class="s-tiny f-dim">SAP_API_* · services/sap</text>
 
-        <rect x="254" y="178" width="200" height="70" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="354" y="200" text-anchor="middle" class="s-tiny">SyncAllProductInventoriesJob</text>
-        <text x="354" y="220" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="354" y="238" text-anchor="middle" class="s-tiny f-worker">default</text>
-        <line x1="454" y1="213" x2="480" y2="213" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="30" y="158" width="234" height="58" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="46" y="182" class="s-name">Credit-API</text>
+        <text x="46" y="200" class="s-tiny f-dim">CREDIT_API_* · services/credit</text>
 
-        <rect x="484" y="178" width="200" height="70" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="584" y="200" text-anchor="middle" class="s-tiny">SyncAllInventoryJob</text>
-        <text x="584" y="220" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="584" y="238" text-anchor="middle" class="s-tiny f-dim">iteriert Produkte UND Varianten</text>
-        <line x1="684" y1="213" x2="710" y2="213" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="696" y="158" width="234" height="58" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="712" y="182" class="s-name">OpenIBAN</text>
+        <text x="712" y="200" class="s-tiny f-dim">OPENIBAN_API_* · services/openiban</text>
 
-        <rect x="714" y="178" width="222" height="70" rx="2" fill="var(--alert)" fill-opacity="0.14" stroke="var(--alert)" stroke-width="1.5"></rect>
-        <text x="825" y="200" text-anchor="middle" class="s-tiny">Product::SyncInventoryJob</text>
-        <text x="825" y="220" text-anchor="middle" class="s-name f-alert">1 Job je Variante</text>
-        <text x="825" y="238" text-anchor="middle" class="s-tiny f-dim">high · mit eigenem idempotency_key</text>
-
-        <rect x="24" y="266" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="42" y="286" class="s-note">Der idempotency_key ist gut gelöst: SecureRandom.uuid entsteht beim Einstellen des Jobs, nicht bei der Ausführung.</text>
-        <text x="42" y="302" class="s-tiny f-dim">Weil Sidekiq die Argumente mitspeichert, benutzt jeder Wiederholungsversuch denselben Schlüssel — Shopify erkennt die Wiederholung also als dieselbe Buchung.</text>
-
-        <text x="24" y="332" class="s-tiny f-dim">Beide Ketten laufen nur, wenn der Shop es erlaubt: delta_product_sync_enabled? bzw. product_inventory_sync_enabled? aus sap_config_data.</text>
+        <text x="480" y="238" text-anchor="middle" class="s-note f-dim">Dazu ROLLBAR (Fehler), SIDEKIQ_USERNAME/PASSWORD (Weboberfläche) und GITLAB (Deploy-Trigger) — keine fachlichen Integrationen.</text>
       </svg>
-      <figcaption><b>Wirkung:</b> die Bestandskette erzeugt einen Job <em>pro Variante</em>
-        und filtert dabei nichts — es gibt kein <code>unprocessed</code>-Kriterium wie bei den
-        Produkten, sondern <code>shop.products.includes(:product_variants).find_each</code> über
-        alles. Bei einem Katalog mit mehreren tausend Münzvarianten entstehen um 23:00 ebenso viele <code>high</code>-Jobs auf einmal, abgearbeitet von zehn Threads. Das
-        ist gewollt und harmlos, solange es bis zum nächsten Lauf durch ist — aber es ist die
-        Stelle, an der man bei Wachstum zuerst nachdenken muss.</figcaption>
+      <figcaption><b>Die <code>.env</code> ist ein reines Lokal-Konzept.</b> Gelesen wird sie vom
+        Gem <code>dotenv-rails</code>, und das steht im Gemfile in
+        <code>group :development, :test</code> — in Production kommen die Variablen vom
+        Container-Orchestrator. Deshalb sagt <code>bin/dev</code> dem foreman auch ausdrücklich
+        <code>--env /dev/null</code>: es soll genau eine Stelle geben, die die
+        <code>.env</code> liest.</figcaption>
     </figure>
   </section>
 
-  <!-- ============ ANHANG ============ -->
+  <!-- ============ PRÜFPUNKTE ============ -->
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Fünf Beobachtungen</h2>
+      <h2>Drei Prüfpunkte, nicht belegt</h2>
     </div>
+    <p class="lead">Diese drei Punkte stehen so im Code, ihre Wirkung lässt sich aber ohne
+      laufende Instanz nicht beweisen. Notiert als Vermutung, nicht als Befund.</p>
 
     <div class="checks">
       <div class="check">
         <span class="check-no">01</span>
         <div>
-          <h3>Ein Job ohne Versuchsgrenze</h3>
-          <p>Belegt: <code>shopify/action/product/set_operation.rb:42–45</code> — ist die
-            Shopify-Operation nicht <code>COMPLETE</code>, planet sich der Job mit
-            <code>set(wait: 2.seconds)</code> selbst neu. Es gibt keinen Zähler und keine
-            Abbruchbedingung.</p>
-          <p>Bleibt eine <code>productSet</code>-Operation bei Shopify dauerhaft in einem anderen
-            Status, läuft dieser Job alle zwei Sekunden weiter — unbegrenzt, und für jedes
-            betroffene Produkt einzeln. Ein Zähler in den Job-Argumenten begrenzt die Wiederholungen.</p>
+          <h3>Der Verbindungspool heißt vermutlich falsch</h3>
+          <p><code>config/database.yml:6</code> setzt <code>max_connections</code>. Der
+            Rails-Schlüssel dafür heißt <code>pool</code>. Der Kommentar in
+            <code>config/puma.rb:27–29</code> verlangt ausdrücklich, dass der Pool mindestens so
+            groß ist wie die Thread-Zahl — und nennt dabei selbst <code>pool</code>.</p>
+          <p>Bei drei Puma-Threads fällt das nicht auf. Bei Sidekiq mit
+            <code>concurrency: 10</code> könnte es klemmen.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Bei Throttling wird zweimal gewartet</h3>
-          <p>Belegt: <code>shopify/api/resource.rb:44–46</code> macht <code>sleep(4)</code>
-            <em>und</em> wirft danach <code>TooManyRequestsError</code>.
-            <code>application_job.rb:10</code> fängt den und wartet erneut
-            <code>4.seconds</code>.</p>
-          <p>Ergebnis: acht Sekunden pro Runde, von denen die ersten vier einen Sidekiq-Thread
-            blockieren. Der <code>sleep</code> ist überflüssig, weil <code>retry_on</code> das
-            Warten schon übernimmt.</p>
+          <h3>Zwei widersprüchliche Vite-Ports</h3>
+          <p><code>vite.config.ts:43</code> sagt <code>5173</code>,
+            <code>config/vite.json:9</code> sagt <code>3036</code>. Da explizite Nutzer-Config in
+            Vite die Plugin-Config überschreibt, gewinnt vermutlich <code>5173</code> — während die
+            Ruby-Seite den Dev-Server auf <code>3036</code> sucht. Das würde HMR brechen.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">03</span>
         <div>
-          <h3><code>AppUninstalledJob</code> prüft nicht auf nil</h3>
-          <p>Belegt: <code>shopify/app_uninstalled_job.rb:8–12</code> nutzt <code>find_by</code>
-            ohne Ausrufezeichen und ohne <code>rescue</code>. Ist der Shop bereits gelöscht, ist
-            <code>shop</code> gleich <code>nil</code>, und <code>shop.destroy!</code> wirft einen
-            <code>NoMethodError</code>.</p>
-          <p>Sidekiq wiederholt das dann 25-mal über etwa 21 Tage. Die beiden anderen
-            Webhook-Jobs machen es richtig: <code>find_by!</code> plus
-            <code>rescue ActiveRecord::RecordNotFound</code> mit Logeintrag.</p>
-        </div>
-      </div>
-      <div class="check">
-        <span class="check-no">04</span>
-        <div>
-          <h3>Verteiler-Jobs haben niedrigere Priorität als ihre Kinder</h3>
-          <p>Belegt: <code>Shopify::Product::SyncAllJob</code> und
-            <code>SyncAllInventoryJob</code> sind <code>default</code>, die Jobs die sie erzeugen
-            (<code>SyncJob</code>, <code>SyncInventoryJob</code>) sind <code>high</code>. Und
-            <code>SyncAllProductInventoriesJob</code> ist der einzige Cron-Einstieg, der nicht
-            <code>critical</code> ist.</p>
-          <p>Praktische Folge: solange <code>critical</code> und <code>high</code> Arbeit haben,
-            startet der Verteiler gar nicht — die Kette beginnt also erst, wenn alles andere
-            leer ist. Bei den Beständen ist das plausibel gewählt, bei
-            <code>Product::SyncAllJob</code> wirkt es eher unbeabsichtigt, weil es die
-            Produkt-Pipeline in Stufe 4 ausbremst.</p>
-        </div>
-      </div>
-      <div class="check">
-        <span class="check-no">05</span>
-        <div>
-          <h3>Ein Tippfehler ist im Klassennamen festgeschrieben</h3>
-          <p>Belegt: <code>Shopify::Metaobject::SyncVariantCustomMetafiledsJob</code> —
-            „Metafileds“ statt „Metafields“. Derselbe Tippfehler steckt im Dateinamen
-            <code>sync_variant_custom_metafileds_job.rb</code> und in der Action
-            <code>shopify/action/metaobject/sync_variant_custom_metafileds.rb</code>.</p>
-          <p>Harmlos, aber lästig beim Suchen. Umbenennen ist unkritisch, weil der Name nicht in
-            <code>shopify.app.toml</code> oder in einer Datenbankspalte steht — anders als bei den
-            Webhook-Jobs, deren Namen aus dem Topic errechnet werden (Etappe 4, Blatt 03).</p>
+          <h3>Fremde Tunnel-Hosts fest eingetragen</h3>
+          <p><code>vite.config.ts:41</code> listet <code>allowedHosts</code> mit
+            <code>latori-14.ngrok.io</code> und <code>latori-5.ngrok.io</code> — Tunnel-Namen der
+            vorherigen Agentur. Dein eigener ngrok-Host muss dort ergänzt werden, sonst blockt Vite
+            ihn.</p>
         </div>
       </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Connector · Etappe 6 von 9</span>
-    <span>Als nächstes: GraphQL — zwei Schemas, zwei Zielgruppen</span>
+    <span>MDM Connector · Etappe 2 von 9</span>
+    <span>Als nächstes: Blatt-Satz „Datenmodell“ — db/schema.rb und die acht Models</span>
   </footer>
 
 </div>

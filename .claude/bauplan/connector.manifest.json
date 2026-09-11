@@ -5,7 +5,7 @@
   "etappen": [
     {
       "nr": 1,
-      "title": "Zwei Rollen, eine Codebase",
+      "title": "Umfang",
       "url": "https://claude.ai/code/artifact/7fac8e25-069d-49cd-a1b8-8af5ecad4948",
       "favicon": "📇",
       "blaetter": 4,
@@ -23,7 +23,7 @@
     },
     {
       "nr": 2,
-      "title": "Drei Prozesse, eine App",
+      "title": "Prozesse",
       "url": "https://claude.ai/code/artifact/5128cc44-23ef-442e-83e0-ec63bcd96c50",
       "favicon": "⚙️",
       "blaetter": 6,
@@ -71,7 +71,7 @@
     },
     {
       "nr": 4,
-      "title": "Acht Türen, vier Wächter",
+      "title": "Eingang",
       "url": "https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21",
       "favicon": "🚪",
       "blaetter": 5,
@@ -106,7 +106,7 @@
     },
     {
       "nr": 6,
-      "title": "Achtzehn Jobs, drei Warteschlangen",
+      "title": "Jobs",
       "url": "https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf",
       "favicon": "🕰️",
       "blaetter": 5,
@@ -120,7 +120,7 @@
     },
     {
       "nr": 7,
-      "title": "Zwei Schemas, zwei Welten",
+      "title": "GraphQL",
       "url": "https://claude.ai/code/artifact/1ba81c2f-9b3f-4436-b774-fc9ddce438b0",
       "favicon": "🔀",
       "blaetter": 5,

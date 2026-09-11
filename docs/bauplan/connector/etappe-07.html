@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Jobs</title>
+<title>GraphQL</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -394,110 +394,93 @@
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Connector · Etappe 6 · Jobs und Scheduler</p>
-      <h1>Jobs</h1>
-      <p>Hier wird der Takt aus Etappe 2 zu Arbeit. Kein Job tut selbst etwas fachliches — jeder
-         lädt zwei Objekte, ruft eine Action und ist fertig. Die Struktur steckt darin,
-         <strong>welcher Job welchen nächsten anstößt</strong>: aus einem Cron-Eintrag wird eine
-         siebenstufige Kette.</p>
+      <p class="tb-eyebrow">MDM Connector · Etappe 7 · GraphQL</p>
+      <h1>GraphQL</h1>
+      <p>Zwei GraphQL-Endpunkte, zwei Zielgruppen, zwei Wächter — und zusammen gerade sechs
+         Operationen. Der Umfang ist absichtlich klein: das Schema deckt nur ab, was das Admin-UI
+         anzeigen und was der Checkout fragen muss. Der Vergleich beider Schemas zeigt, welche Operationen fehlen.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>app/jobs/ — 18 Dateien</dd></div>
-      <div class="tb-cell"><dt>Gelesen</dt><dd>6 Fan-out-Actions</dd></div>
-      <div class="tb-cell"><dt>Warteschlangen</dt><dd>critical · high · default</dd></div>
-      <div class="tb-cell"><dt>Retry-Regeln</dt><dd>1</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>app/graphql/ — 20 Dateien</dd></div>
+      <div class="tb-cell"><dt>Operationen</dt><dd>3 privat · 3 öffentlich</dd></div>
+      <div class="tb-cell"><dt>Typ-Dateien</dt><dd>31</dd></div>
+      <div class="tb-cell"><dt>Basisklassen</dt><dd>11, davon 4 ungenutzt</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-alert"></i>critical <span>— zuerst geleert</span></span>
-    <span class="legend-item"><i class="swatch sw-web"></i>high <span>— danach</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>default <span>— wartet auf die anderen</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>Action <span>— erst hier wird gearbeitet</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>privat <span>— Admin-UI im iframe</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>öffentlich <span>— Checkout und Theme</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Typ <span>— Schema-Baustein</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Lücke <span>— siehe Anhang</span></span>
   </div>
 
   <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/05</span>
-      <h2>Der Job-Katalog</h2>
+      <h2>Zwei Schemas, zwei Vertrauensstufen</h2>
     </div>
-    <p class="lead">Die Reihenfolge in <code>config/sidekiq.yml</code> ist eine echte Priorität:
-      Sidekiq schaut immer erst in <code>critical</code>, dann <code>high</code>, dann
-      <code>default</code>. Solange <code>critical</code> etwas hat, kommt <code>default</code>
-      nicht dran.</p>
+    <p class="lead">Nicht wegen unterschiedlicher Daten, sondern wegen unterschiedlicher
+      <strong>Vertrauensstufen</strong>. Das private Schema erreicht nur, wer eine
+      Shopify-Admin-Session hat. Das öffentliche erreicht jeder Kunde im Checkout — die Grenze muss
+      also im Schema selbst liegen.</p>
 
     <figure>
-      <svg viewBox="0 0 960 500" role="img" aria-label="Alle achtzehn Jobs nach Warteschlange gruppiert: acht in critical, vier in high, sechs in default, jeweils mit dem Auslöser.">
-        <!-- critical -->
-        <rect x="24" y="56" width="912" height="152" rx="3" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="40" y="78" class="s-lbl f-alert">critical · 8 Jobs</text>
-        <text x="920" y="78" text-anchor="end" class="s-tiny f-dim">Webhooks und alle Cron-Einstiege außer den Beständen</text>
+      <svg viewBox="0 0 960 380" role="img" aria-label="Vergleich des privaten und des öffentlichen GraphQL-Schemas nach Endpunkt, Aufrufer, Sicherungsverfahren, Kontext und Umfang.">
+        <text x="24" y="46" class="s-lbl f-dim">Eigenschaft</text>
+        <text x="220" y="46" class="s-lbl f-web">PrivateGraphqlSchema</text>
+        <text x="586" y="46" class="s-lbl f-vite">PublicGraphqlSchema</text>
 
-        <text x="40" y="98" class="s-tiny">Shopify::OrdersCreateJob</text>
-        <text x="466" y="98" text-anchor="end" class="s-tiny f-dim">Webhook orders/create</text>
-        <text x="500" y="98" class="s-tiny">Shopify::MetaobjectsUpdateJob</text>
-        <text x="920" y="98" text-anchor="end" class="s-tiny f-dim">Webhook metaobjects/update</text>
+        <text x="24" y="88" class="s-mono">Endpunkt</text>
+        <rect x="220" y="60" width="350" height="46" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="234" y="89" class="s-tiny">POST /graphql</text>
+        <rect x="586" y="60" width="350" height="46" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.45"></rect>
+        <text x="600" y="89" class="s-tiny">POST /app_proxy/shopify/graphql</text>
 
-        <text x="40" y="128" class="s-tiny">Shopify::Shop::SyncUnprocessedOrdersJob</text>
-        <text x="466" y="128" text-anchor="end" class="s-tiny f-dim">Cron, alle 2 Min</text>
-        <text x="500" y="128" class="s-tiny">Shopify::Shop::SyncDeltaProductsJob</text>
-        <text x="920" y="128" text-anchor="end" class="s-tiny f-dim">Cron, alle 15 Min</text>
+        <text x="24" y="140" class="s-mono">Aufrufer</text>
+        <rect x="220" y="112" width="350" height="46" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="234" y="132" class="s-tiny">das eingebettete Admin-UI</text>
+        <text x="234" y="148" class="s-tiny f-dim">React 18 + Apollo Client 4</text>
+        <rect x="586" y="112" width="350" height="46" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="600" y="132" class="s-tiny">Checkout-Extensions und Theme</text>
+        <text x="600" y="148" class="s-tiny f-dim">Preact, ganz normales fetch</text>
 
-        <text x="40" y="158" class="s-tiny">Shopify::Shop::SyncAllShopifyProductsJob</text>
-        <text x="466" y="158" text-anchor="end" class="s-tiny f-dim">Cron, 22:00</text>
-        <text x="500" y="158" class="s-tiny">Sap::Order::SyncAllJob</text>
-        <text x="920" y="158" text-anchor="end" class="s-tiny f-dim">aus dem 2-Min-Job</text>
+        <text x="24" y="192" class="s-mono">Wächter</text>
+        <rect x="220" y="164" width="350" height="46" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="234" y="184" class="s-tiny f-web">ShopifyApp::EnsureHasSession</text>
+        <text x="234" y="200" class="s-tiny f-dim">über AuthenticatedController</text>
+        <rect x="586" y="164" width="350" height="46" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.45"></rect>
+        <text x="600" y="184" class="s-tiny f-vite">ShopifyApp::AppProxyVerification</text>
+        <text x="600" y="200" class="s-tiny f-dim">über AppProxyController</text>
 
-        <text x="40" y="188" class="s-tiny">Sap::Order::SyncJob</text>
-        <text x="466" y="188" text-anchor="end" class="s-tiny f-dim">je offene Bestellung</text>
-        <text x="500" y="188" class="s-tiny">Sap::Product::SyncDeltaJob</text>
-        <text x="920" y="188" text-anchor="end" class="s-tiny f-dim">aus dem 15-Min-Job</text>
+        <text x="24" y="244" class="s-mono">Kontext</text>
+        <rect x="220" y="216" width="350" height="46" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="234" y="236" class="s-tiny">{ shop: @shop }</text>
+        <text x="234" y="252" class="s-tiny f-dim">Shop aus current_shopify_domain</text>
+        <rect x="586" y="216" width="350" height="46" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="600" y="236" class="s-tiny">{ shop: @shop }</text>
+        <text x="600" y="252" class="s-tiny f-dim">Shop aus params[:shop]</text>
 
-        <!-- high -->
-        <rect x="24" y="216" width="912" height="92" rx="3" fill="var(--web)" fill-opacity="0.08" stroke="var(--web)" stroke-opacity="0.45"></rect>
-        <text x="40" y="238" class="s-lbl f-web">high · 4 Jobs</text>
-        <text x="920" y="238" text-anchor="end" class="s-tiny f-dim">die Arbeit je Datensatz</text>
+        <text x="24" y="296" class="s-mono">Umfang</text>
+        <rect x="220" y="268" width="350" height="46" rx="2" fill="var(--web)" fill-opacity="0.14" stroke="var(--web)" stroke-opacity="0.6"></rect>
+        <text x="234" y="288" class="s-tiny f-web">2 Queries · 1 Mutation</text>
+        <text x="234" y="304" class="s-tiny f-dim">activeShop · orders · orderSapResync</text>
+        <rect x="586" y="268" width="350" height="46" rx="2" fill="var(--vite)" fill-opacity="0.14" stroke="var(--vite)" stroke-opacity="0.6"></rect>
+        <text x="600" y="288" class="s-tiny f-vite">1 Query · 2 Mutationen</text>
+        <text x="600" y="304" class="s-tiny f-dim">activeShop · creditCheck · openibanValidate</text>
 
-        <text x="40" y="258" class="s-tiny">Sap::Product::SetJob</text>
-        <text x="466" y="258" text-anchor="end" class="s-tiny f-dim">Rohdaten → Tabellen</text>
-        <text x="500" y="258" class="s-tiny">Shopify::Product::SyncJob</text>
-        <text x="920" y="258" text-anchor="end" class="s-tiny f-dim">je unverarbeitetes Produkt</text>
-
-        <text x="40" y="288" class="s-tiny">Shopify::Product::SetOperationJob</text>
-        <text x="466" y="288" text-anchor="end" class="s-tiny f-dim">holt das Ergebnis, plant sich neu</text>
-        <text x="500" y="288" class="s-tiny">Shopify::Product::SyncInventoryJob</text>
-        <text x="920" y="288" text-anchor="end" class="s-tiny f-dim">je Variante</text>
-
-        <!-- default -->
-        <rect x="24" y="316" width="912" height="122" rx="3" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="40" y="338" class="s-lbl f-worker">default · 6 Jobs</text>
-        <text x="920" y="338" text-anchor="end" class="s-tiny f-dim">Verteiler-Jobs, Bestände und Einrichtung</text>
-
-        <text x="40" y="358" class="s-tiny">Shopify::Product::SyncAllJob</text>
-        <text x="466" y="358" text-anchor="end" class="s-tiny f-dim">Verteiler über Produkte</text>
-        <text x="500" y="358" class="s-tiny">Shopify::Product::SyncAllInventoryJob</text>
-        <text x="920" y="358" text-anchor="end" class="s-tiny f-dim">Verteiler über Varianten</text>
-
-        <text x="40" y="388" class="s-tiny">Shopify::Shop::SyncAllProductInventoriesJob</text>
-        <text x="466" y="388" text-anchor="end" class="s-tiny f-dim">Cron, 23:00</text>
-        <text x="500" y="388" class="s-tiny">Shopify::AppUninstalledJob</text>
-        <text x="920" y="388" text-anchor="end" class="s-tiny f-dim">Webhook app/uninstalled</text>
-
-        <text x="40" y="418" class="s-tiny">Shopify::MetafieldDefinition::SyncJob</text>
-        <text x="466" y="418" text-anchor="end" class="s-tiny f-dim">Einrichtung, aus Shop</text>
-        <text x="500" y="418" class="s-tiny">Shopify::Metaobject::SyncVariantCustomMetafiledsJob</text>
-        <text x="920" y="418" text-anchor="end" class="s-tiny f-alert">Tippfehler im Namen</text>
-
-        <rect x="24" y="446" width="912" height="46" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="42" y="466" class="s-note">Die Verteiler-Jobs liegen in default, die Blätter, die sie erzeugen, in high.</text>
-        <text x="42" y="484" class="s-tiny f-dim">Der Verteiler wartet also hinten, seine Kinder werden dann vorne bevorzugt — und der 23:00-Cron-Einstieg ist der einzige Cron-Job, der nicht critical ist.</text>
+        <rect x="24" y="326" width="912" height="44" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="42" y="346" class="s-note">Die beiden Schema-Dateien sind bis auf zwei Zeilen identisch — nur die Wurzeltypen unterscheiden sich.</text>
+        <text x="42" y="362" class="s-tiny f-dim">Die restlichen 43 Zeilen sind unveränderte Generator-Vorlage, inklusive eines resolve_type, das eine RequiredImplementationMissingError wirft.</text>
       </svg>
-      <figcaption><b>Alle 18 Jobs sind zwischen 13 und 19 Zeilen lang</b> und sehen praktisch
-        identisch aus: <code>Shop.find(shop_id)</code>, optional ein zweites Objekt laden,
-        dann <code>Irgendwas::Action::…call</code>. Das ist Absicht — Jobs bekommen über Redis nur skalare Werte, niemals Objekte, also müssen sie am Anfang wieder aus IDs laden. Die
-        Fachlichkeit liegt komplett in <code>app/services/</code>.</figcaption>
+      <figcaption><b>Die Trennung ist der Kern der Sicherheit hier.</b> Es gibt keine
+        Feld-Autorisierung, keine Rollen, kein <code>authorized?</code> irgendwo im Schema. Die
+        einzige Grenze ist, <em>welches Schema</em> ein Request erreicht — und innerhalb dessen,
+        dass jeder Resolver von <code>context[:shop]</code> ausgeht. Deshalb darf
+        <code>orders</code> nicht im öffentlichen Schema landen: es gäbe dort nichts, was den
+        Zugriff verhindert.</figcaption>
     </figure>
   </section>
 
@@ -505,105 +488,62 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/05</span>
-      <h2>Die Produkt-Pipeline — sieben Stufen</h2>
+      <h2>Alle sechs Operationen</h2>
     </div>
-    <p class="lead">Das ist die längste Kette im Projekt. Sie erklärt die Zahl der kleinen Jobs. Ein Cron-Eintrag alle 15 Minuten löst sie aus, und jede Stufe stellt die
-      nächste in die Warteschlange.</p>
+    <p class="lead">Das komplette Schema auf einem Blatt. <strong>Keine der sechs Operationen liefert Produkte</strong> — der Katalog ist rein intern und läuft über Jobs. Und
+      keine Mutation ändert Daten direkt; sie stellen Jobs ein oder fragen fremde Dienste.</p>
 
     <figure>
-      <svg viewBox="0 0 960 630" role="img" aria-label="Siebenstufige Produkt-Pipeline vom 15-Minuten-Cron über den SAP-Delta-Abruf, die Normalisierung in Tabellen, den Verteiler über Produkte, den productSet-Aufruf, das Abholen des Ergebnisses bis zum Abschluss. Der sechste Schritt plant sich selbst alle zwei Sekunden neu, bis Shopify fertig ist.">
-        <defs>
-          <marker id="e6ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
-          </marker>
-        </defs>
+      <svg viewBox="0 0 960 510" role="img" aria-label="Alle sechs GraphQL-Operationen mit Klasse, Argumenten und Rückgabetyp: privat activeShop, orders und orderSapResync; öffentlich activeShop, creditCheck und openibanValidate.">
+        <text x="24" y="40" class="s-lbl f-web">Privates Schema · nur aus dem Admin-UI erreichbar</text>
 
-        <text x="24" y="34" class="s-lbl f-dim">Vielfachheit</text>
-        <text x="200" y="34" class="s-lbl f-dim">Job und was er anstößt</text>
-        <text x="776" y="34" class="s-lbl f-dim">Warteschlange</text>
+        <rect x="24" y="52" width="912" height="58" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="40" y="74" class="s-name f-web">activeShop</text>
+        <text x="920" y="74" text-anchor="end" class="s-tiny f-worker">ShopType!</text>
+        <text x="40" y="92" class="s-tiny f-dim">Resolvers::Private::Shop::ActiveShop — gibt schlicht context[:shop] zurück</text>
+        <text x="40" y="106" class="s-tiny f-dim">keine Argumente · liefert id und shopifyDomain</text>
 
-        <!-- 1 -->
-        <text x="24" y="76" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="90" class="s-tiny f-dim">alle 15 Min</text>
-        <rect x="200" y="46" width="560" height="62" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="216" y="70" class="s-mono">Shopify::Shop::SyncDeltaProductsJob</text>
-        <text x="216" y="88" class="s-tiny f-dim">Shop.find_each — überspringt Shops ohne delta_product_sync_enabled?</text>
-        <text x="216" y="102" class="s-tiny f-dim">stößt je Shop den nächsten Job an</text>
-        <text x="776" y="76" class="s-tiny f-alert">critical</text>
-        <line x1="480" y1="108" x2="480" y2="124" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="24" y="116" width="912" height="58" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="40" y="138" class="s-name f-web">orders</text>
+        <text x="920" y="138" text-anchor="end" class="s-tiny f-worker">OrderType.connection_type!</text>
+        <text x="40" y="156" class="s-tiny f-dim">Resolvers::Private::Order::Orders — über search_object, Relay-Paginierung</text>
+        <text x="40" y="170" class="s-tiny">filter: shopifyId · sapStatus · startDate · endDate · sortBy · sortDirection</text>
 
-        <!-- 2 -->
-        <text x="24" y="154" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="168" class="s-tiny f-dim">je Shop</text>
-        <rect x="200" y="124" width="560" height="62" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="216" y="148" class="s-mono">Sap::Product::SyncDeltaJob</text>
-        <text x="216" y="166" class="s-tiny">SAP holen (modus D) → sap_product_events.create! → SAP quittieren (modus R)</text>
-        <text x="216" y="180" class="s-tiny f-dim">erst speichern, dann quittieren — in dieser Reihenfolge, und das ist wichtig</text>
-        <text x="776" y="154" class="s-tiny f-alert">critical</text>
-        <line x1="480" y1="186" x2="480" y2="202" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="24" y="180" width="912" height="58" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="40" y="202" class="s-name f-web">orderSapResync</text>
+        <text x="920" y="202" text-anchor="end" class="s-tiny f-worker">{ order, userErrors }</text>
+        <text x="40" y="220" class="s-tiny f-dim">Mutations::Private::Order::SapResync — stellt Sap::Order::SyncJob ein</text>
+        <text x="40" y="234" class="s-tiny">orderId: String!<tspan class="f-alert">      verwirft seine eigenen userErrors — Anhang 01</tspan></text>
 
-        <!-- 3 -->
-        <text x="24" y="232" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="246" class="s-tiny f-dim">je Shop</text>
-        <rect x="200" y="202" width="560" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="216" y="226" class="s-mono">Sap::Product::SetJob</text>
-        <text x="216" y="244" class="s-tiny">Rohdaten → products + product_variants, Schlüssel ist die sku</text>
-        <text x="216" y="258" class="s-tiny f-dim">setzt shopify_synced = false und markiert das Event als processed</text>
-        <text x="776" y="232" class="s-tiny f-web">high</text>
-        <line x1="480" y1="264" x2="480" y2="280" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <text x="24" y="278" class="s-lbl f-vite">Öffentliches Schema · vom Checkout und aus dem Theme erreichbar</text>
 
-        <!-- 4 -->
-        <text x="24" y="310" class="s-tiny f-dim">1 ×</text>
-        <text x="24" y="324" class="s-tiny f-dim">je Shop</text>
-        <rect x="200" y="280" width="560" height="62" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
-        <text x="216" y="304" class="s-mono">Shopify::Product::SyncAllJob</text>
-        <text x="216" y="322" class="s-tiny f-dim">Verteiler: products.unprocessed, älteste zuerst</text>
-        <text x="216" y="336" class="s-tiny f-dim">hier verzweigt die Kette in N parallele Stränge</text>
-        <text x="776" y="310" class="s-tiny f-worker">default</text>
-        <line x1="480" y1="342" x2="480" y2="358" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="24" y="290" width="912" height="58" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.45"></rect>
+        <text x="40" y="312" class="s-name f-vite">activeShop</text>
+        <text x="920" y="312" text-anchor="end" class="s-tiny f-worker">ShopType!</text>
+        <text x="40" y="330" class="s-tiny f-dim">Resolvers::Public::Shop::ActiveShop — Zeile für Zeile identisch zur privaten Variante</text>
+        <text x="40" y="344" class="s-tiny f-dim">zwei Dateien, derselbe Rumpf — nur in verschiedenen Namensräumen</text>
 
-        <!-- 5 -->
-        <text x="24" y="388" class="s-tiny f-web">N ×</text>
-        <text x="24" y="402" class="s-tiny f-dim">je Produkt</text>
-        <rect x="200" y="358" width="560" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="216" y="382" class="s-mono">Shopify::Product::SyncJob</text>
-        <text x="216" y="400" class="s-tiny">startet productSet bei Shopify — eine asynchrone Operation</text>
-        <text x="216" y="414" class="s-tiny f-dim">Shopify antwortet nur mit einer Operations-ID, nicht mit dem Ergebnis</text>
-        <text x="776" y="388" class="s-tiny f-web">high</text>
-        <line x1="480" y1="420" x2="480" y2="436" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="24" y="354" width="912" height="58" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.45"></rect>
+        <text x="40" y="376" class="s-name f-vite">creditCheck</text>
+        <text x="920" y="376" text-anchor="end" class="s-tiny f-worker">{ responseData, requestData, userErrors }</text>
+        <text x="40" y="394" class="s-tiny f-dim">Mutations::Public::Credit::Check — ruft Credit::Action::Check, schreibt nichts</text>
+        <text x="40" y="408" class="s-tiny">order: OrderInputType!<tspan class="f-dim">   ·   </tspan>customer: CustomerInputType!<tspan class="f-alert">      requestData → Anhang 06</tspan></text>
 
-        <!-- 6 -->
-        <text x="24" y="466" class="s-tiny f-web">N ×</text>
-        <text x="24" y="480" class="s-tiny f-dim">je Produkt</text>
-        <text x="24" y="496" class="s-tiny f-alert">+ Wiederholung</text>
-        <rect x="200" y="436" width="560" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="216" y="460" class="s-mono">Shopify::Product::SetOperationJob</text>
-        <text x="216" y="478" class="s-tiny">Status COMPLETE? → shopify_id und Varianten-IDs zurückschreiben</text>
-        <text x="216" y="492" class="s-tiny f-alert">sonst: sich selbst mit wait: 2.seconds erneut einplanen</text>
-        <path d="M760 452 C 812 452 812 490 760 490" fill="none" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="4 3" marker-end="url(#e6ah2)"></path>
-        <text x="824" y="468" class="s-tiny f-alert">alle 2 s,</text>
-        <text x="824" y="482" class="s-tiny f-alert">ohne Obergrenze</text>
-        <line x1="480" y1="498" x2="480" y2="514" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah2)"></line>
+        <rect x="24" y="418" width="912" height="58" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.45"></rect>
+        <text x="40" y="440" class="s-name f-vite">openibanValidate</text>
+        <text x="920" y="440" text-anchor="end" class="s-tiny f-worker">{ responseData, userErrors }</text>
+        <text x="40" y="458" class="s-tiny f-dim">Mutations::Public::Openiban::Validate — 4 Zeilen Rumpf, reiner Durchgriff</text>
+        <text x="40" y="472" class="s-tiny">iban: String!<tspan class="f-dim">   ·   nutzt context[:shop] gar nicht</tspan></text>
 
-        <!-- 7 -->
-        <text x="24" y="544" class="s-tiny f-vite">N ×</text>
-        <text x="24" y="558" class="s-tiny f-dim">je Produkt</text>
-        <rect x="200" y="514" width="560" height="62" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.5"></rect>
-        <text x="216" y="538" class="s-mono">Shopify::Action::Product::Finish</text>
-        <text x="216" y="556" class="s-tiny f-dim">kein eigener Job — läuft direkt im vorigen</text>
-        <text x="216" y="570" class="s-tiny f-dim">setzt Metafelder und schließt das Produkt ab</text>
-        <text x="776" y="544" class="s-tiny f-vite">Action</text>
-
-        <rect x="24" y="592" width="912" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="480" y="611" text-anchor="middle" class="s-note">Der 22:00-Vollabgleich springt direkt in Stufe 4 ein und nutzt denselben Rest der Kette.</text>
+        <rect x="24" y="486" width="912" height="22" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="480" y="501" text-anchor="middle" class="s-note">Sechs Operationen — keine liefert Produkte, keine schreibt fachliche Daten direkt.</text>
       </svg>
-      <figcaption><b>Stufe 2 ist gut gebaut, Stufe 6 ist die riskante.</b> In Stufe 2 wird der
-        SAP-Datensatz <em>zuerst</em> in <code>sap_product_events</code> gespeichert und erst
-        <em>danach</em> gegenüber SAP quittiert — stirbt der Prozess dazwischen, schickt SAP das
-        Delta erneut, und weil über die <code>sku</code> aktualisiert wird, ist das harmlos.
-        Stufe 6 dagegen plant sich selbst neu, solange Shopify nicht <code>COMPLETE</code> meldet,
-        <em>ohne Versuchszähler</em>. Bleibt eine Shopify-Operation hängen, läuft dieser Job alle
-        zwei Sekunden weiter — unbegrenzt.</figcaption>
+      <figcaption><b>Zwei Dinge, die die Karte verrät.</b> Erstens: das Admin-UI kann nur
+        <em>Bestellungen ansehen und einen Sync neu anstoßen</em> — mehr gibt das Schema nicht her,
+        also kann das Frontend auch nicht mehr können. Zweitens ist
+        <code>docs/overview.md</code> hier veraltet: sie listet für das öffentliche Schema nur
+        <code>credit_check</code>, aber <code>openibanValidate</code> steht seit dem SEPA-Feature
+        gleichberechtigt daneben (<code>public_mutation_type.rb:6</code>).</figcaption>
     </figure>
   </section>
 
@@ -611,104 +551,73 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/05</span>
-      <h2>Bestellungen und Webhooks</h2>
+      <h2>Typen und Basisklassen</h2>
     </div>
-    <p class="lead">Die Bestell-Kette ist deutlich kürzer — vier Stufen, und die Arbeit passiert
-      ganz am Ende. Die drei Webhook-Ketten darunter sind nur ein bis zwei Schritte lang.</p>
+    <p class="lead">31 Dateien in <code>types/</code>, aber elf davon sind Basisklassen aus dem
+      Generator — und vier von denen wird nie beerbt. Nützlich zu wissen, damit du beim Aufräumen
+      nicht die falschen anfasst.</p>
 
     <figure>
-      <svg viewBox="0 0 960 420" role="img" aria-label="Oben die vierstufige Bestell-Kette vom 2-Minuten-Cron bis zur Sync-Action. Unten die drei Webhook-Ketten für orders/create, metaobjects/update und app/uninstalled mit ihren Warteschlangen.">
-        <defs>
-          <marker id="e6ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
-          </marker>
-        </defs>
+      <svg viewBox="0 0 960 340" role="img" aria-label="Inventar der GraphQL-Typen: links die genutzten Basisklassen mit Anzahl der Ableitungen, rechts die vier Basisklassen aus der Generator-Vorlage, die nie beerbt werden.">
+        <text x="16" y="30" class="s-lbl f-worker">In Gebrauch</text>
+        <rect x="16" y="40" width="560" height="256" rx="3" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-opacity="0.45"></rect>
 
-        <text x="24" y="40" class="s-lbl f-alert">Bestell-Kette · alle 2 Minuten · durchgehend critical</text>
+        <text x="34" y="66" class="s-mono">Types::BaseObject</text>
+        <text x="560" y="66" text-anchor="end" class="s-tiny f-worker">11 Ableitungen</text>
+        <text x="34" y="82" class="s-tiny f-dim">4 Wurzeltypen + ShopType · OrderType · SapOrderEventType · CreditCheckEventType</text>
+        <text x="34" y="96" class="s-tiny f-dim">CheckType · ValidateType · UserErrorType</text>
 
-        <rect x="24" y="52" width="170" height="76" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.5" stroke-dasharray="4 3"></rect>
-        <text x="109" y="80" text-anchor="middle" class="s-tiny f-alert">Cron */2</text>
-        <text x="109" y="98" text-anchor="middle" class="s-tiny f-dim">sidekiq.yml</text>
-        <text x="109" y="114" text-anchor="middle" class="s-tiny f-dim">Europe/Berlin</text>
-        <line x1="194" y1="90" x2="210" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <line x1="34" y1="110" x2="560" y2="110" stroke="var(--worker)" stroke-opacity="0.25"></line>
 
-        <rect x="214" y="52" width="170" height="76" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="299" y="76" text-anchor="middle" class="s-tiny">SyncUnprocessed</text>
-        <text x="299" y="90" text-anchor="middle" class="s-tiny">OrdersJob</text>
-        <text x="299" y="108" text-anchor="middle" class="s-tiny f-dim">Shop.find_each</text>
-        <text x="299" y="122" text-anchor="middle" class="s-tiny f-dim">1 × je Shop</text>
-        <line x1="384" y1="90" x2="400" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <text x="34" y="132" class="s-mono">Types::BaseEnum</text>
+        <text x="560" y="132" text-anchor="end" class="s-tiny f-worker">5 Ableitungen</text>
+        <text x="34" y="148" class="s-tiny f-dim">SapStatus · SapOrderEventAction · CreditCheckEventAction · SortBy · SortDirection</text>
 
-        <rect x="404" y="52" width="170" height="76" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="489" y="76" text-anchor="middle" class="s-tiny">Sap::Order::</text>
-        <text x="489" y="90" text-anchor="middle" class="s-tiny">SyncAllJob</text>
-        <text x="489" y="108" text-anchor="middle" class="s-tiny f-dim">orders.unprocessed</text>
-        <text x="489" y="122" text-anchor="middle" class="s-tiny f-dim">N × je Bestellung</text>
-        <line x1="574" y1="90" x2="590" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <line x1="34" y1="162" x2="560" y2="162" stroke="var(--worker)" stroke-opacity="0.25"></line>
 
-        <rect x="594" y="52" width="170" height="76" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="679" y="76" text-anchor="middle" class="s-tiny">Sap::Order::</text>
-        <text x="679" y="90" text-anchor="middle" class="s-tiny">SyncJob</text>
-        <text x="679" y="108" text-anchor="middle" class="s-tiny f-dim">lädt Shop + Order</text>
-        <text x="679" y="122" text-anchor="middle" class="s-tiny f-dim">und ruft die Action</text>
-        <line x1="764" y1="90" x2="780" y2="90" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
+        <text x="34" y="184" class="s-mono">Types::BaseInputObject</text>
+        <text x="560" y="184" text-anchor="end" class="s-tiny f-worker">4 Ableitungen</text>
+        <text x="34" y="200" class="s-tiny f-dim">OrdersFilterInput · OrderInputType · CustomerInputType · CustomerAddressInputType</text>
 
-        <rect x="784" y="52" width="152" height="76" rx="2" fill="var(--vite)" fill-opacity="0.11" stroke="var(--vite)" stroke-width="1.5"></rect>
-        <text x="860" y="76" text-anchor="middle" class="s-tiny f-vite">Sap::Action::</text>
-        <text x="860" y="90" text-anchor="middle" class="s-tiny f-vite">Order::Sync</text>
-        <text x="860" y="108" text-anchor="middle" class="s-tiny f-dim">with_lock</text>
-        <text x="860" y="122" text-anchor="middle" class="s-tiny f-dim">→ Blatt 02, Etappe 5</text>
+        <line x1="34" y1="214" x2="560" y2="214" stroke="var(--worker)" stroke-opacity="0.25"></line>
 
-        <!-- Webhooks -->
-        <text x="24" y="172" class="s-lbl f-dim">Webhook-Ketten</text>
-        <line x1="24" y1="180" x2="936" y2="180" stroke="currentColor" stroke-opacity="0.2"></line>
+        <text x="34" y="236" class="s-mono">BaseField · BaseArgument</text>
+        <text x="560" y="236" text-anchor="end" class="s-tiny f-dim">verdrahtet, nicht beerbt</text>
+        <text x="34" y="252" class="s-tiny f-dim">in BaseObject und BaseMutation als field_class / argument_class gesetzt</text>
 
-        <rect x="24" y="190" width="200" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="40" y="212" class="s-mono">orders/create</text>
-        <text x="40" y="230" class="s-tiny f-dim">bei jeder Bestellung</text>
-        <line x1="224" y1="216" x2="250" y2="216" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <rect x="254" y="190" width="300" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="270" y="212" class="s-tiny">Shopify::OrdersCreateJob</text>
-        <text x="540" y="212" text-anchor="end" class="s-tiny f-alert">critical</text>
-        <text x="270" y="230" class="s-tiny f-dim">find_by! + rescue RecordNotFound → nur Logeintrag</text>
-        <line x1="554" y1="216" x2="580" y2="216" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <text x="584" y="212" class="s-tiny f-vite">Shopify::Action::Order::Create</text>
-        <text x="584" y="230" class="s-tiny f-dim">legt die Bestellung an, liest das Bonitäts-Attribut aus</text>
+        <text x="34" y="274" class="s-mono">BaseConnection · BaseEdge</text>
+        <text x="560" y="274" text-anchor="end" class="s-tiny f-dim">verdrahtet</text>
+        <text x="34" y="290" class="s-tiny f-dim">tragen die Relay-Paginierung der orders-Query</text>
 
-        <rect x="24" y="250" width="200" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="40" y="272" class="s-mono">metaobjects/update</text>
-        <text x="40" y="290" class="s-tiny f-dim">nur type:laenderschlue</text>
-        <line x1="224" y1="276" x2="250" y2="276" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <rect x="254" y="250" width="300" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="270" y="272" class="s-tiny">Shopify::MetaobjectsUpdateJob</text>
-        <text x="540" y="272" text-anchor="end" class="s-tiny f-alert">critical</text>
-        <text x="270" y="290" class="s-tiny f-dim">stößt nur den nächsten Job an</text>
-        <line x1="554" y1="276" x2="580" y2="276" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <text x="584" y="272" class="s-tiny f-worker">SyncVariantCustomMetafiledsJob</text>
-        <text x="584" y="290" class="s-tiny f-dim">default — landet also hinter allem anderen</text>
+        <text x="592" y="30" class="s-lbl f-alert">Generator-Vorlage, nie beerbt</text>
+        <rect x="592" y="40" width="344" height="256" rx="3" fill="none" stroke="var(--alert)" stroke-opacity="0.45" stroke-dasharray="5 4"></rect>
 
-        <rect x="24" y="310" width="200" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="40" y="332" class="s-mono">app/uninstalled</text>
-        <text x="40" y="350" class="s-tiny f-dim">Deinstallation</text>
-        <line x1="224" y1="336" x2="250" y2="336" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <rect x="254" y="310" width="300" height="52" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="270" y="332" class="s-tiny">Shopify::AppUninstalledJob</text>
-        <text x="540" y="332" text-anchor="end" class="s-tiny f-worker">default</text>
-        <text x="270" y="350" class="s-tiny f-alert">find_by ohne ! und ohne rescue — Anhang 03</text>
-        <line x1="554" y1="336" x2="580" y2="336" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah3)"></line>
-        <text x="584" y="332" class="s-tiny f-vite">DeletePaymentCustomization → shop.destroy!</text>
-        <text x="584" y="350" class="s-tiny f-dim">löscht den Shop und per dependent: :destroy alles daran</text>
+        <text x="610" y="66" class="s-mono f-dim">Types::BaseInterface</text>
+        <text x="610" y="82" class="s-tiny f-dim">es gibt keine Interfaces im Schema</text>
 
-        <rect x="24" y="378" width="912" height="34" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.4"></rect>
-        <text x="480" y="400" text-anchor="middle" class="s-note">Die Bestell-Kette ist auf allen vier Stufen critical — sie kann deshalb nie hinter einem Produktabgleich warten.</text>
+        <text x="610" y="112" class="s-mono f-dim">Types::BaseUnion</text>
+        <text x="610" y="128" class="s-tiny f-dim">es gibt keine Unions im Schema</text>
+
+        <text x="610" y="158" class="s-mono f-dim">Types::BaseScalar</text>
+        <text x="610" y="174" class="s-tiny f-dim">es gibt keine eigenen Skalare —</text>
+        <text x="610" y="188" class="s-tiny f-dim">JSON und ISO8601DateTime kommen aus dem Gem</text>
+
+        <text x="610" y="218" class="s-mono f-dim">Types::NodeType</text>
+        <text x="610" y="234" class="s-tiny f-dim">Relay-Node-Interface wird nicht eingesetzt</text>
+
+        <text x="610" y="264" class="s-tiny f-alert">Folge: resolve_type in beiden Schemas</text>
+        <text x="610" y="278" class="s-tiny f-alert">wird nie aufgerufen — der raise darin</text>
+        <text x="610" y="292" class="s-tiny f-alert">ist deshalb harmlos.</text>
+
+        <rect x="16" y="306" width="920" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="476" y="325" text-anchor="middle" class="s-note">Beide Schemas nutzen GraphQL::Types::JSON für die rohen jsonb-Spalten — queryData, responseData und data gehen unverändert nach draußen.</text>
       </svg>
-      <figcaption><b>Der Vergleich der drei Webhook-Jobs zeigt drei verschiedene Sorgfaltsstufen.</b>
-        <code>OrdersCreateJob</code> nutzt <code>find_by!</code> mit einem
-        <code>rescue</code>, das den Fehler nur protokolliert — ein unbekannter Shop führt also zu
-        keinem Retry. <code>MetaobjectsUpdateJob</code> macht dasselbe. <code>AppUninstalledJob</code>
-        dagegen nutzt <code>find_by</code> ohne Ausrufezeichen und ohne <code>rescue</code>: ist der
-        Shop schon weg, läuft der Job in einen <code>NoMethodError</code> und wird von Sidekiq
-        25-mal wiederholt.</figcaption>
+      <figcaption><b>Der Einsatz von <code>GraphQL::Types::JSON</code> ist die pragmatische
+        Entscheidung dieses Schemas.</b> <code>SapOrderEventType</code> gibt
+        <code>queryData</code> und <code>responseData</code> als undurchsichtiges JSON heraus, also
+        genau das, was in der jsonb-Spalte steht. Für ein Log-Fenster im Admin-UI ist das richtig —
+        man will die rohe SAP-Antwort sehen. Der Preis: das Schema beschreibt diese Inhalte nicht,
+        das Frontend muss sie selbst deuten.</figcaption>
     </figure>
   </section>
 
@@ -716,74 +625,70 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/05</span>
-      <h2>Eine Zeile regelt alle Wiederholungen</h2>
+      <h2>Der einzige echte Resolver</h2>
     </div>
-    <p class="lead"><code>ApplicationJob</code> hat genau <strong>eine</strong> aktive Zeile. Alles,
-      was nicht darunter fällt, landet im Sidekiq-Standard — und ein dritter Teil der Fehler
-      erreicht die Job-Ebene nie, weil die Actions sie selbst abfangen.</p>
-
-    <pre>class ApplicationJob &lt; ActiveJob::Base
-  <span class="fp"># retry_on ActiveRecord::Deadlocked            — auskommentiert</span>
-  <span class="fp"># discard_on ActiveJob::DeserializationError   — auskommentiert</span>
-
-  retry_on Shopify::Api::TooManyRequestsError, wait: 4.seconds, attempts: :unlimited
-end</pre>
+    <p class="lead">Vier der sechs Operationen sind Einzeiler. <code>orders</code> ist die Ausnahme
+      — 56 Zeilen, mit <code>search_object</code>, sechs Filtern und einem
+      <strong>Nebeneffekt, den man in einer Query nicht erwartet</strong>.</p>
 
     <figure>
-      <svg viewBox="0 0 960 350" role="img" aria-label="Drei Wege, die ein Fehler nehmen kann: Shopify-Throttling wird unbegrenzt wiederholt, von den Actions selbst gefangene Fehler erreichen den Job nie und werden über den Status abgewickelt, alles andere landet im Sidekiq-Standard mit 25 Versuchen.">
+      <svg viewBox="0 0 960 420" role="img" aria-label="Ablauf des orders-Resolvers: die Mandantengrenze über scope, dann apply_filter mit sechs Filtern, und ein Nebeneffekt, der bei Angabe einer shopifyId eine fehlende Bestellung erst per Shopify-Aufruf anlegt.">
         <defs>
-          <marker id="e6ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <marker id="e7ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <rect x="330" y="40" width="300" height="70" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.55"></rect>
-        <text x="480" y="66" text-anchor="middle" class="s-name">ApplicationJob</text>
-        <text x="480" y="84" text-anchor="middle" class="s-tiny f-dim">genau eine retry_on-Regel</text>
-        <text x="480" y="100" text-anchor="middle" class="s-tiny f-dim">alle 18 Jobs erben davon</text>
+        <rect x="24" y="46" width="912" height="44" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="40" y="64" class="s-tiny f-dim">Query kommt an</text>
+        <text x="40" y="80" class="s-mono">orders(filter: { shopifyId: "gid://shopify/Order/123", sapStatus: FAILED }, first: 20)</text>
 
-        <line x1="480" y1="110" x2="480" y2="134" stroke="currentColor" stroke-opacity="0.5"></line>
-        <line x1="169" y1="134" x2="792" y2="134" stroke="currentColor" stroke-opacity="0.5"></line>
-        <line x1="169" y1="134" x2="169" y2="156" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah4)"></line>
-        <line x1="481" y1="134" x2="481" y2="156" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah4)"></line>
-        <line x1="792" y1="134" x2="792" y2="156" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah4)"></line>
+        <line x1="480" y1="90" x2="480" y2="108" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e7ah4)"></line>
 
-        <rect x="24" y="160" width="290" height="126" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
-        <text x="40" y="182" class="s-lbl f-web">Weg 1 · geregelt</text>
-        <text x="40" y="204" class="s-tiny">Shopify::Api::</text>
-        <text x="40" y="218" class="s-tiny">TooManyRequestsError</text>
-        <text x="40" y="240" class="s-tiny f-dim">wait: 4 s · attempts: unlimited</text>
-        <text x="40" y="258" class="s-tiny f-alert">plus die 4 s sleep, die die</text>
-        <text x="40" y="272" class="s-tiny f-alert">API-Schicht davor macht = 8 s</text>
+        <rect x="24" y="112" width="912" height="44" rx="2" fill="var(--web)" fill-opacity="0.13" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="40" y="130" class="s-tiny f-web">Mandantengrenze — nicht umgehbar</text>
+        <text x="40" y="146" class="s-mono">scope do  context[:shop].orders  end</text>
+        <text x="920" y="140" text-anchor="end" class="s-tiny f-dim">jede Filterung baut auf diesem scope auf</text>
 
-        <rect x="336" y="160" width="290" height="126" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
-        <text x="352" y="182" class="s-lbl f-vite">Weg 2 · abgefangen</text>
-        <text x="352" y="204" class="s-tiny">Sap::Api::Error</text>
-        <text x="352" y="218" class="s-tiny">Sap::Api::TimeoutError</text>
-        <text x="352" y="240" class="s-tiny f-dim">erreichen den Job nie — die</text>
-        <text x="352" y="254" class="s-tiny f-dim">Action fängt sie und setzt</text>
-        <text x="352" y="268" class="s-tiny f-dim">sap_status auf failed</text>
-        <text x="352" y="282" class="s-tiny f-vite">der Cron holt sie danach wieder</text>
+        <line x1="480" y1="156" x2="480" y2="174" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e7ah4)"></line>
 
-        <rect x="648" y="160" width="288" height="126" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="664" y="182" class="s-lbl f-worker">Weg 3 · Standard</text>
-        <text x="664" y="204" class="s-tiny">alles andere</text>
-        <text x="664" y="218" class="s-tiny f-dim">z. B. NoMethodError, RecordInvalid</text>
-        <text x="664" y="240" class="s-tiny f-dim">Sidekiq-Standard:</text>
-        <text x="664" y="254" class="s-tiny f-dim">25 Versuche über etwa 21 Tage,</text>
-        <text x="664" y="268" class="s-tiny f-dim">dann in den Dead Set</text>
-        <text x="664" y="282" class="s-tiny f-worker">sichtbar unter /sidekiq</text>
+        <rect x="24" y="178" width="600" height="140" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="40" y="198" class="s-lbl f-dim">apply_filter — der Reihe nach</text>
 
-        <rect x="24" y="300" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="42" y="320" class="s-note">Weg 2 ist der wichtigste und der am leichtesten zu übersehende.</text>
-        <text x="42" y="336" class="s-tiny f-dim">Ein SAP-Timeout erzeugt keinen roten Job in Sidekiq — er erzeugt eine Bestellung mit sap_status = failed und ein sap_order_event mit code 408.</text>
+        <rect x="36" y="206" width="576" height="26" rx="2" fill="var(--alert)" fill-opacity="0.13" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="48" y="223" class="s-tiny f-alert">shopifyId gesetzt? → ensure_order_record_for_shopify_id, dann where(shopify_id:)</text>
+
+        <text x="48" y="252" class="s-tiny">sapStatus gesetzt? → where(sap_status:)</text>
+        <text x="48" y="270" class="s-tiny">startDate und/oder endDate → BETWEEN, ab, oder bis</text>
+        <text x="48" y="288" class="s-tiny">sortBy gesetzt? → order(feld =&gt; richtung || 'DESC')</text>
+        <text x="48" y="306" class="s-tiny f-dim">sonst immer: order('orders.created_at DESC')</text>
+
+        <line x1="624" y1="240" x2="646" y2="240" stroke="var(--alert)" stroke-opacity="0.6" marker-end="url(#e7ah4)"></line>
+
+        <rect x="650" y="196" width="286" height="96" rx="2" fill="var(--alert)" fill-opacity="0.11" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="664" y="218" class="s-tiny f-alert">Der Nebeneffekt</text>
+        <text x="664" y="236" class="s-tiny">Bestellung nicht in der Datenbank?</text>
+        <text x="664" y="252" class="s-tiny">→ Shopify::Action::Order::Create</text>
+        <text x="664" y="270" class="s-tiny f-dim">also: HTTP zu Shopify und ein</text>
+        <text x="664" y="284" class="s-tiny f-dim">INSERT — mitten in einer Query</text>
+
+        <text x="650" y="310" class="s-tiny f-dim">rescue StandardError → nur Rails.logger.warn</text>
+
+        <line x1="480" y1="318" x2="480" y2="336" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e7ah4)"></line>
+
+        <rect x="24" y="340" width="912" height="44" rx="2" fill="var(--worker)" fill-opacity="0.11" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="40" y="358" class="s-tiny f-worker">Rückgabe</text>
+        <text x="40" y="374" class="s-mono">OrderType.connection_type — edges, node, pageInfo</text>
+        <text x="920" y="368" text-anchor="end" class="s-tiny f-alert">je node werden Events nachgeladen — Anhang 04</text>
+
+        <rect x="24" y="392" width="912" height="24" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="480" y="408" text-anchor="middle" class="s-note">BaseSearchResolver bringt außerdem escape_search_term mit — das ruft niemand auf.</text>
       </svg>
-      <figcaption><b>Wo du im Fehlerfall hinschaust, hängt vom Weg ab.</b> Bei Weg 3 in
-        <code>/sidekiq</code>. Bei Weg 2 <em>nicht</em> dort, sondern in der Datenbank
-        (<code>orders.sap_status</code>, <code>sap_order_events.response_data</code>) und in
-        Rollbar. Weg 1 erzeugt kein Signal im Admin-UI, kann aber lange dauern: bei anhaltendem Throttling
-        wiederholt Rails unbegrenzt, mit acht Sekunden pro Runde — und jede dieser Runden hält
-        vier Sekunden einen von zehn Sidekiq-Threads belegt.</figcaption>
+      <figcaption><b>Der Nebeneffekt ist nachvollziehbar, aber unerwartet.</b> Sucht jemand im
+        Admin-UI nach einer Shopify-Bestellnummer, die der Connector noch nicht kennt, holt der
+        Resolver sie kurzerhand von Shopify und legt sie an — damit die Suche ein Ergebnis hat.
+        Praktisch für den Merchant. Aber: eine Query verändert damit Daten, macht einen
+        Netzwerkaufruf und verschluckt jeden Fehler dabei in einer Log-Warnung. Ein Suchvorgang kann damit einen SAP-Sync auslösen, ohne dass der Aufrufer es erkennt.</figcaption>
     </figure>
   </section>
 
@@ -791,80 +696,90 @@ end</pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 05/05</span>
-      <h2>Wie aus einem Job tausende werden</h2>
+      <h2>Wo Schutzgrenzen fehlen</h2>
     </div>
-    <p class="lead">Beide Nacht-Cron-Einträge sehen gleich aus, verzweigen aber auf verschiedenen
-      Ebenen: der eine <strong>je Produkt</strong>, der andere <strong>je Variante</strong>. Bei
-      einem Münzshop ist das ein großer Unterschied.</p>
+    <p class="lead">Der Weg eines Requests durch vier Stationen — und an jeder eine Antwort darauf,
+      was vorhanden ist und was nicht. Die Lücken sind beim <strong>öffentlichen</strong> Schema
+      relevanter, weil dort jeder Checkout-Besucher anfragen darf.</p>
 
     <figure>
-      <svg viewBox="0 0 960 350" role="img" aria-label="Vergleich der beiden Nacht-Ketten: der 22-Uhr-Produktabgleich verzweigt je Produkt, der 23-Uhr-Bestandsabgleich je Variante. Die zweite Kette erzeugt deutlich mehr Jobs.">
+      <svg viewBox="0 0 960 380" role="img" aria-label="Vier Stationen auf dem Weg eines GraphQL-Requests mit den vorhandenen und den fehlenden Schutzmechanismen: Controller, Schema, Resolver und Datenbank.">
         <defs>
-          <marker id="e6ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <marker id="e7ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <text x="24" y="40" class="s-lbl f-web">22:00 · Produktabgleich — verzweigt je Produkt</text>
+        <rect x="24" y="52" width="210" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="129" y="80" text-anchor="middle" class="s-name">Controller</text>
+        <text x="129" y="98" text-anchor="middle" class="s-tiny f-dim">Graphql · Shopify::Graphql</text>
+        <line x1="234" y1="85" x2="250" y2="85" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e7ah5)"></line>
 
-        <rect x="24" y="52" width="200" height="70" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
-        <text x="124" y="80" text-anchor="middle" class="s-tiny">Cron 0 22 * * *</text>
-        <text x="124" y="98" text-anchor="middle" class="s-name f-dim">1 Job</text>
-        <line x1="224" y1="87" x2="250" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="254" y="52" width="210" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="359" y="80" text-anchor="middle" class="s-name">Schema</text>
+        <text x="359" y="98" text-anchor="middle" class="s-tiny f-dim">Private· / PublicGraphqlSchema</text>
+        <line x1="464" y1="85" x2="480" y2="85" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e7ah5)"></line>
 
-        <rect x="254" y="52" width="200" height="70" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="354" y="74" text-anchor="middle" class="s-tiny">SyncAllShopifyProductsJob</text>
-        <text x="354" y="94" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="354" y="112" text-anchor="middle" class="s-tiny f-alert">critical</text>
-        <line x1="454" y1="87" x2="480" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="484" y="52" width="210" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="589" y="80" text-anchor="middle" class="s-name">Resolver</text>
+        <text x="589" y="98" text-anchor="middle" class="s-tiny f-dim">Mutation oder Resolver</text>
+        <line x1="694" y1="85" x2="710" y2="85" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e7ah5)"></line>
 
-        <rect x="484" y="52" width="200" height="70" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="584" y="74" text-anchor="middle" class="s-tiny">Product::SyncAllJob</text>
-        <text x="584" y="94" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="584" y="112" text-anchor="middle" class="s-tiny f-worker">default</text>
-        <line x1="684" y1="87" x2="710" y2="87" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="714" y="52" width="222" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
+        <text x="825" y="80" text-anchor="middle" class="s-name">ActiveRecord</text>
+        <text x="825" y="98" text-anchor="middle" class="s-tiny f-dim">PostgreSQL</text>
 
-        <rect x="714" y="52" width="222" height="70" rx="2" fill="var(--web)" fill-opacity="0.13" stroke="var(--web)" stroke-width="1.5"></rect>
-        <text x="825" y="74" text-anchor="middle" class="s-tiny">Product::SyncJob</text>
-        <text x="825" y="94" text-anchor="middle" class="s-name f-web">1 Job je Produkt</text>
-        <text x="825" y="112" text-anchor="middle" class="s-tiny f-dim">high · plus je einen SetOperationJob</text>
+        <!-- Details -->
+        <rect x="24" y="140" width="210" height="180" rx="2" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="38" y="160" class="s-tiny f-worker">vorhanden</text>
+        <text x="38" y="180" class="s-tiny">Session bzw. Proxy-Signatur</text>
+        <text x="38" y="196" class="s-tiny">set_shop, sonst 401</text>
+        <text x="38" y="212" class="s-tiny">Fehler nur im Dev sichtbar</text>
+        <text x="38" y="248" class="s-tiny f-alert">fehlt</text>
+        <text x="38" y="268" class="s-tiny f-dim">Rate-Limiting je Aufrufer</text>
+        <text x="38" y="284" class="s-tiny f-dim">CORS ist offen (Etappe 4)</text>
 
-        <text x="24" y="166" class="s-lbl f-alert">23:00 · Bestandsabgleich — verzweigt je Variante</text>
+        <rect x="254" y="140" width="210" height="180" rx="2" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="268" y="160" class="s-tiny f-worker">vorhanden</text>
+        <text x="268" y="180" class="s-tiny">max_query_string_tokens</text>
+        <text x="268" y="196" class="s-tiny f-dim">5 000</text>
+        <text x="268" y="212" class="s-tiny">validate_max_errors 100</text>
+        <text x="268" y="248" class="s-tiny f-alert">fehlt</text>
+        <text x="268" y="268" class="s-tiny f-dim">max_depth</text>
+        <text x="268" y="284" class="s-tiny f-dim">max_complexity</text>
+        <text x="268" y="300" class="s-tiny f-dim">default_max_page_size</text>
 
-        <rect x="24" y="178" width="200" height="70" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
-        <text x="124" y="206" text-anchor="middle" class="s-tiny">Cron 0 23 * * *</text>
-        <text x="124" y="224" text-anchor="middle" class="s-name f-dim">1 Job</text>
-        <line x1="224" y1="213" x2="250" y2="213" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="484" y="140" width="210" height="180" rx="2" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="498" y="160" class="s-tiny f-worker">vorhanden</text>
+        <text x="498" y="180" class="s-tiny">scope über context[:shop]</text>
+        <text x="498" y="196" class="s-tiny f-dim">in allen Resolvern</text>
+        <text x="498" y="212" class="s-tiny">shop.orders.find_by(id:)</text>
+        <text x="498" y="248" class="s-tiny f-alert">fehlt</text>
+        <text x="498" y="268" class="s-tiny f-dim">authorized? / visible?</text>
+        <text x="498" y="284" class="s-tiny f-dim">keine Feld- oder Rollenprüfung</text>
 
-        <rect x="254" y="178" width="200" height="70" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="354" y="200" text-anchor="middle" class="s-tiny">SyncAllProductInventoriesJob</text>
-        <text x="354" y="220" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="354" y="238" text-anchor="middle" class="s-tiny f-worker">default</text>
-        <line x1="454" y1="213" x2="480" y2="213" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
+        <rect x="714" y="140" width="222" height="180" rx="2" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="728" y="160" class="s-tiny f-worker">vorhanden</text>
+        <text x="728" y="180" class="s-tiny">use GraphQL::Dataloader</text>
+        <text x="728" y="196" class="s-tiny f-dim">in beiden Schemas aktiviert</text>
+        <text x="728" y="212" class="s-tiny">query_log_tags mit Feldname</text>
+        <text x="728" y="248" class="s-tiny f-alert">fehlt</text>
+        <text x="728" y="268" class="s-tiny f-dim">jede Nutzung des Dataloaders —</text>
+        <text x="728" y="284" class="s-tiny f-dim">kein einziger dataloader.with</text>
+        <text x="728" y="300" class="s-tiny f-alert">→ N+1 bei orders + Events</text>
 
-        <rect x="484" y="178" width="200" height="70" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <text x="584" y="200" text-anchor="middle" class="s-tiny">SyncAllInventoryJob</text>
-        <text x="584" y="220" text-anchor="middle" class="s-name f-dim">1 Job je Shop</text>
-        <text x="584" y="238" text-anchor="middle" class="s-tiny f-dim">iteriert Produkte UND Varianten</text>
-        <line x1="684" y1="213" x2="710" y2="213" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e6ah5)"></line>
-
-        <rect x="714" y="178" width="222" height="70" rx="2" fill="var(--alert)" fill-opacity="0.14" stroke="var(--alert)" stroke-width="1.5"></rect>
-        <text x="825" y="200" text-anchor="middle" class="s-tiny">Product::SyncInventoryJob</text>
-        <text x="825" y="220" text-anchor="middle" class="s-name f-alert">1 Job je Variante</text>
-        <text x="825" y="238" text-anchor="middle" class="s-tiny f-dim">high · mit eigenem idempotency_key</text>
-
-        <rect x="24" y="266" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="42" y="286" class="s-note">Der idempotency_key ist gut gelöst: SecureRandom.uuid entsteht beim Einstellen des Jobs, nicht bei der Ausführung.</text>
-        <text x="42" y="302" class="s-tiny f-dim">Weil Sidekiq die Argumente mitspeichert, benutzt jeder Wiederholungsversuch denselben Schlüssel — Shopify erkennt die Wiederholung also als dieselbe Buchung.</text>
-
-        <text x="24" y="332" class="s-tiny f-dim">Beide Ketten laufen nur, wenn der Shop es erlaubt: delta_product_sync_enabled? bzw. product_inventory_sync_enabled? aus sap_config_data.</text>
+        <rect x="24" y="334" width="912" height="40" rx="2" fill="var(--web)" fill-opacity="0.08" stroke="var(--web)" stroke-opacity="0.4"></rect>
+        <text x="42" y="353" class="s-note">Die gute Nachricht steht in der letzten Spalte oben: query_log_tags hängt den GraphQL-Feldnamen an jede SQL-Anweisung.</text>
+        <text x="42" y="369" class="s-tiny f-dim">In den Postgres-Logs siehst du damit direkt, welcher Resolver eine langsame oder wiederholte Abfrage verursacht — ohne zusätzliches Werkzeug.</text>
       </svg>
-      <figcaption><b>Wirkung:</b> die Bestandskette erzeugt einen Job <em>pro Variante</em>
-        und filtert dabei nichts — es gibt kein <code>unprocessed</code>-Kriterium wie bei den
-        Produkten, sondern <code>shop.products.includes(:product_variants).find_each</code> über
-        alles. Bei einem Katalog mit mehreren tausend Münzvarianten entstehen um 23:00 ebenso viele <code>high</code>-Jobs auf einmal, abgearbeitet von zehn Threads. Das
-        ist gewollt und harmlos, solange es bis zum nächsten Lauf durch ist — aber es ist die
-        Stelle, an der man bei Wachstum zuerst nachdenken muss.</figcaption>
+      <figcaption><b>Die praktisch wichtigste Lücke ist die letzte.</b> Der Dataloader ist
+        eingeschaltet, wird aber nirgends verwendet — es gibt keinen einzigen
+        <code>dataloader.with</code>-Aufruf im Projekt. Fragt das Admin-UI 20 Bestellungen mit
+        ihren <code>sapOrderEvents</code> ab, sind das 21 Abfragen statt zwei. Im Development
+        würde <code>bullet</code> das melden. Die fehlenden <code>max_depth</code>- und
+        <code>max_complexity</code>-Grenzen sind für das private Schema unkritisch, weil dort nur
+        Admins anfragen — beim öffentlichen Schema wären sie die naheliegende
+        Absicherung.</figcaption>
     </figure>
   </section>
 
@@ -872,84 +787,99 @@ end</pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Fünf Beobachtungen</h2>
+      <h2>Sechs Beobachtungen</h2>
     </div>
 
     <div class="checks">
       <div class="check">
         <span class="check-no">01</span>
         <div>
-          <h3>Ein Job ohne Versuchsgrenze</h3>
-          <p>Belegt: <code>shopify/action/product/set_operation.rb:42–45</code> — ist die
-            Shopify-Operation nicht <code>COMPLETE</code>, planet sich der Job mit
-            <code>set(wait: 2.seconds)</code> selbst neu. Es gibt keinen Zähler und keine
-            Abbruchbedingung.</p>
-          <p>Bleibt eine <code>productSet</code>-Operation bei Shopify dauerhaft in einem anderen
-            Status, läuft dieser Job alle zwei Sekunden weiter — unbegrenzt, und für jedes
-            betroffene Produkt einzeln. Ein Zähler in den Job-Argumenten begrenzt die Wiederholungen.</p>
+          <h3><code>orderSapResync</code> verwirft seine eigenen Fehler</h3>
+          <p>Belegt: <code>mutations/private/order/sap_resync.rb:16–33</code>. Die Mutation baut
+            eine <code>user_errors</code>-Liste auf und legt bei fehlender Bestellung
+            <code>{ field: 'order_id', message: 'Order not found' }</code> hinein — gibt am Ende
+            aber <code>user_errors: []</code> zurück, also die leere Literal-Liste statt der
+            aufgebauten Variablen.</p>
+          <p>Folge: bei einer unbekannten <code>orderId</code> antwortet die API mit
+            <code>order: null, userErrors: []</code>. Das Frontend kann nicht unterscheiden, ob
+            der Neuversuch gestartet wurde oder die Bestellung nicht existiert. Einzeiler-Fix:
+            <code>user_errors:</code> statt <code>user_errors: []</code>.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Bei Throttling wird zweimal gewartet</h3>
-          <p>Belegt: <code>shopify/api/resource.rb:44–46</code> macht <code>sleep(4)</code>
-            <em>und</em> wirft danach <code>TooManyRequestsError</code>.
-            <code>application_job.rb:10</code> fängt den und wartet erneut
-            <code>4.seconds</code>.</p>
-          <p>Ergebnis: acht Sekunden pro Runde, von denen die ersten vier einen Sidekiq-Thread
-            blockieren. Der <code>sleep</code> ist überflüssig, weil <code>retry_on</code> das
-            Warten schon übernimmt.</p>
+          <h3>Eine Query legt Daten an und ruft Shopify</h3>
+          <p>Belegt: <code>resolvers/private/order/orders.rb:47–55</code> —
+            <code>ensure_order_record_for_shopify_id</code> ruft bei gesetztem
+            <code>shopifyId</code> und fehlendem Datensatz
+            <code>Shopify::Action::Order::Create</code> auf. Das macht einen GraphQL-Aufruf zu
+            Shopify und ein <code>INSERT</code>.</p>
+          <p>Zusätzlich fängt <code>rescue StandardError</code> in Zeile 53 jeden Fehler ab und
+            schreibt nur eine Warnung ins Log — der Client sieht davon nichts. Sauberer wäre eine
+            eigene Mutation, die das Nachladen explizit macht.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">03</span>
         <div>
-          <h3><code>AppUninstalledJob</code> prüft nicht auf nil</h3>
-          <p>Belegt: <code>shopify/app_uninstalled_job.rb:8–12</code> nutzt <code>find_by</code>
-            ohne Ausrufezeichen und ohne <code>rescue</code>. Ist der Shop bereits gelöscht, ist
-            <code>shop</code> gleich <code>nil</code>, und <code>shop.destroy!</code> wirft einen
-            <code>NoMethodError</code>.</p>
-          <p>Sidekiq wiederholt das dann 25-mal über etwa 21 Tage. Die beiden anderen
-            Webhook-Jobs machen es richtig: <code>find_by!</code> plus
-            <code>rescue ActiveRecord::RecordNotFound</code> mit Logeintrag.</p>
+          <h3>Keine Tiefen- oder Komplexitätsgrenze</h3>
+          <p>Belegt: beide Schemas setzen nur
+            <code>max_query_string_tokens(5000)</code> und
+            <code>validate_max_errors(100)</code>. Eine Suche über das ganze Projekt findet kein
+            <code>max_depth</code>, <code>max_complexity</code> oder
+            <code>default_max_page_size</code>.</p>
+          <p>Beim privaten Schema unkritisch. Beim öffentlichen erreicht jeder Checkout-Besucher
+            den Endpunkt — dort sind das die üblichen Standardgrenzen, und sie kosten je eine
+            Zeile.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">04</span>
         <div>
-          <h3>Verteiler-Jobs haben niedrigere Priorität als ihre Kinder</h3>
-          <p>Belegt: <code>Shopify::Product::SyncAllJob</code> und
-            <code>SyncAllInventoryJob</code> sind <code>default</code>, die Jobs die sie erzeugen
-            (<code>SyncJob</code>, <code>SyncInventoryJob</code>) sind <code>high</code>. Und
-            <code>SyncAllProductInventoriesJob</code> ist der einzige Cron-Einstieg, der nicht
-            <code>critical</code> ist.</p>
-          <p>Praktische Folge: solange <code>critical</code> und <code>high</code> Arbeit haben,
-            startet der Verteiler gar nicht — die Kette beginnt also erst, wenn alles andere
-            leer ist. Bei den Beständen ist das plausibel gewählt, bei
-            <code>Product::SyncAllJob</code> wirkt es eher unbeabsichtigt, weil es die
-            Produkt-Pipeline in Stufe 4 ausbremst.</p>
+          <h3>Der Dataloader ist aktiviert, aber unbenutzt</h3>
+          <p>Belegt: <code>use GraphQL::Dataloader</code> in beiden Schemas (Zeile 8), und im
+            ganzen <code>app/</code>-Baum kein einziger <code>dataloader.with</code>-Aufruf.
+            <code>OrderType</code> hat zwei Listenfelder — <code>sapOrderEvents</code> und
+            <code>creditCheckEvents</code> (<code>order_type.rb:10–11</code>).</p>
+          <p>Bei einer Bestellliste mit Events entsteht damit ein klassisches N+1. Für die
+            aktuellen Datenmengen im Admin-UI folgenlos, aber es ist die Stelle, die zuerst
+            langsam wird.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">05</span>
         <div>
-          <h3>Ein Tippfehler ist im Klassennamen festgeschrieben</h3>
-          <p>Belegt: <code>Shopify::Metaobject::SyncVariantCustomMetafiledsJob</code> —
-            „Metafileds“ statt „Metafields“. Derselbe Tippfehler steckt im Dateinamen
-            <code>sync_variant_custom_metafileds_job.rb</code> und in der Action
-            <code>shopify/action/metaobject/sync_variant_custom_metafileds.rb</code>.</p>
-          <p>Harmlos, aber lästig beim Suchen. Umbenennen ist unkritisch, weil der Name nicht in
-            <code>shopify.app.toml</code> oder in einer Datenbankspalte steht — anders als bei den
-            Webhook-Jobs, deren Namen aus dem Topic errechnet werden (Etappe 4, Blatt 03).</p>
+          <h3><code>escape_search_term</code> ist toter Code</h3>
+          <p>Belegt: <code>resolvers/base_search_resolver.rb:7–10</code> definiert die Methode;
+            eine Suche über <code>app/</code> findet nur diese Definition und keinen Aufruf.</p>
+          <p>Sie würde einen Suchbegriff für ein SQL-<code>LIKE</code> vorbereiten
+            (<code>%wort%</code>). Offenbar war eine Freitextsuche geplant, die es nicht ins
+            Schema geschafft hat — <code>OrdersFilterInput</code> hat kein Suchfeld.</p>
+        </div>
+      </div>
+      <div class="check">
+        <span class="check-no">06</span>
+        <div>
+          <h3><code>creditCheck</code> gibt die Anfrage an den Client zurück</h3>
+          <p>Belegt: <code>mutations/public/credit/check.rb:8</code> deklariert
+            <code>field :request_data, GraphQL::Types::JSON</code>, und
+            <code>Credit::Action::Check</code> liefert diese Nutzlast mit. Die
+            Checkout-Extension liest sie auch aus
+            (<code>extensions/credit-check/src/Checkout.jsx:486</code>).</p>
+          <p>Darin stehen die Daten, die zur Bonitätsprüfung an den Dienstleister gehen — Name,
+            Adresse, Geburtsdatum. Sie kommen zwar ursprünglich vom Client selbst, gehen also
+            nicht neu nach draußen. Trotzdem: personenbezogene Daten über das öffentliche Schema
+            zurückzugeben, sollte eine bewusste Entscheidung sein und keine Nebenwirkung. Falls
+            die Extension die Daten nicht braucht, ist das Feld überflüssig.</p>
         </div>
       </div>
     </div>
   </section>
 
   <footer>
-    <span>MDM Connector · Etappe 6 von 9</span>
-    <span>Als nächstes: GraphQL — zwei Schemas, zwei Zielgruppen</span>
+    <span>MDM Connector · Etappe 7 von 9</span>
+    <span>Als nächstes: das Frontend — React, Polaris und Apollo im iframe</span>
   </footer>
 
 </div>

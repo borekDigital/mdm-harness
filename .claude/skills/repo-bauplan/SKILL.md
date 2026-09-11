@@ -233,6 +233,21 @@ Im Chat: Tabelle aller Etappen mit Links, dann **drei Abschnitte**:
 Zum Abschluss: Memory-Eintrag mit den URLs anlegen (`type: reference`), Zeiger in
 `MEMORY.md`.
 
+#### Freigabe — Handarbeit, kein Werkzeug
+
+Das `Artifact`-Werkzeug kennt keinen Parameter fuer Freigaben. Jede Seite ist nach dem
+Veroeffentlichen privat; die Freigabe setzt ein Mensch im Teilen-Menue der Seite auf
+claude.ai. Das gilt auch fuer jede neue Seite — es gibt kein Feld, mit dem sich eine
+Voreinstellung mitgeben liesse.
+
+Nach Phase 4 deshalb im Chat nennen: **welche URLs noch freizugeben sind.**
+
+Empfehlung fuer diesen Blattsatz: **Ansehen und Kommentieren, nicht Bearbeiten.** Die
+Quelle ist das HTML in `docs/bauplan/`. Ein Eingriff in der Oberflaeche geht beim naechsten
+`Artifact`-Aufruf verloren — der CI-Lauf schreibt die Seite aus dem Repo zurueck. Wer
+etwas aendern will, aendert die Datei im Repo. Kommentare auf der Seite bleiben erhalten
+und lassen sich mit `Artifact action: comments` auslesen.
+
 ## Auffrischen — nur das Veraltete
 
 `--refresh` ist ein chirurgischer Eingriff. Die Versuchung, „bei der Gelegenheit" auch
