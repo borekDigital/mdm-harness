@@ -682,6 +682,13 @@
       jeder Sitzung gegen den letzten Commit. Der Auslöser dafür war genau dieses Szenario —
       eine Sitzung, die aus einem halb geklonten Workspace schließt, die übrigen Repos gäbe
       es nicht.</p>
+    <p class="lead">Der Guard unterscheidet dabei zwei Fälle, und die Unterscheidung
+      entscheidet über seine Brauchbarkeit. Ein <strong>Verlust</strong> — gelöschtes Blatt,
+      geschrumpftes Manifest — lässt den Lauf scheitern und nennt den
+      Wiederherstellungsbefehl. Eine <strong>Lücke</strong> — Etappe im Manifest, Quelle nie
+      angelegt — wird gelistet, bricht aber nicht ab. Ohne diese Trennung wäre jeder CI-Lauf
+      rot, solange irgendein älterer Blattsatz noch unvollständig zurückgeholt ist, und ein
+      dauerhaft rotes Signal sagt nichts mehr.</p>
 
     <div class="checks">
       <div class="check">
