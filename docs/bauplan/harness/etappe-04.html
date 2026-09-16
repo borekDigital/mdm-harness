@@ -406,7 +406,7 @@
       <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 067 gesamt</dd></div>
       <div class="tb-cell"><dt>Rechte</dt><dd>17 erlaubt · 2 verboten</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>11. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
     </dl>
   </div>
 
@@ -498,15 +498,15 @@
         <rect x="16" y="42" width="500" height="264" rx="3" fill="var(--vite)" fill-opacity="0.06" stroke="var(--vite)" stroke-width="1.5"></rect>
 
         <text x="30" y="66" class="s-mono">liquid-conventions</text>
-        <text x="44" y="84" class="s-tiny f-dim">theme/sections · snippets · blocks · layout</text>
+        <text x="44" y="84" class="s-tiny f-dim">themes/*/sections · snippets · blocks · layout</text>
         <text x="490" y="66" text-anchor="end" class="s-tiny f-dim">50 Zeilen</text>
 
         <text x="30" y="112" class="s-mono">templates-json</text>
-        <text x="44" y="130" class="s-tiny f-dim">theme/templates</text>
+        <text x="44" y="130" class="s-tiny f-dim">themes/*/templates</text>
         <text x="490" y="112" text-anchor="end" class="s-tiny f-dim">16 Zeilen</text>
 
         <text x="30" y="158" class="s-mono">merchant-config</text>
-        <text x="44" y="176" class="s-tiny f-dim">theme/config · theme/locales</text>
+        <text x="44" y="176" class="s-tiny f-dim">themes/*/config · themes/*/locales</text>
         <text x="490" y="158" text-anchor="end" class="s-tiny f-dim">20 Zeilen</text>
 
         <text x="30" y="204" class="s-mono">connector-conventions</text>
@@ -564,7 +564,7 @@
         <tbody>
           <tr><td class="m">allow · Bash</td><td class="m">13</td><td>Lesende Shopify-CLI (<code>theme check/info/list</code>), <code>git status/diff/log</code>, Connector-Linter (<code>rubocop</code>, <code>brakeman</code>, <code>rspec</code>), <code>git worktree</code> — jeweils mit <code>cd &lt;repo&gt; &amp;&amp;</code> davor</td></tr>
           <tr><td class="m">allow · MCP</td><td class="m">4</td><td><code>learn_shopify_api</code>, <code>search_docs_chunks</code>, <code>validate_theme</code>, <code>validate_theme_codeblocks</code></td></tr>
-          <tr><td class="m">deny</td><td class="m">2</td><td><code>Edit</code> und <code>Write</code> auf <code>theme/config/settings_data.json</code></td></tr>
+          <tr><td class="m">deny</td><td class="m">2</td><td><code>Edit</code> und <code>Write</code> auf <code>themes/*/config/settings_data.json</code></td></tr>
           <tr><td class="m">MCP-Server</td><td class="m">1</td><td><code>shopify-dev-mcp</code> in <code>enabledMcpjsonServers</code></td></tr>
         </tbody>
       </table>
@@ -573,7 +573,7 @@
       Datei steht auf der <code>deny</code>-Liste <em>und</em> wird von
       <code>protect-merchant-files.sh:19</code> hart blockiert. Das ist keine Redundanz aus
       Versehen — die <code>deny</code>-Regel greift nur bei exakt diesem Pfad, der Hook
-      erkennt zusätzlich <code>*/theme/config/settings_data.json</code> in Worktrees und
+      erkennt zusätzlich <code>*/themes/*/config/settings_data.json</code> in Worktrees und
       anderen Klonen.</p>
   </section>
 

@@ -406,7 +406,7 @@
       <div class="tb-cell"><dt>Zeilen</dt><dd>992 gesamt</dd></div>
       <div class="tb-cell"><dt>Schreibgesperrt</dt><dd>4 von 12</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>10. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
     </dl>
   </div>
 
@@ -626,7 +626,7 @@
         <text x="32" y="216" class="s-tiny">Abgefedert wird das durch die Hooks: protect-merchant-files und bauplan-guard greifen unabhängig davon, welcher Agent schreibt. Etappe 3.</text>
       </svg>
       <figcaption><b>Die Absicherung liegt eine Schicht tiefer.</b> Ein Umsetzer, der
-        <code>theme/config/settings_data.json</code> ändert, wird nicht von seinem
+        <code>themes/*/config/settings_data.json</code> ändert, wird nicht von seinem
         Frontmatter gestoppt, sondern vom PreToolUse-Hook — unabhängig davon, welcher Agent
         läuft. Engere Grenzen gehören deshalb in die Hooks, nicht in zwölf
         Frontmatter.</figcaption>
