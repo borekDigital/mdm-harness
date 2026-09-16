@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Hooks</title>
+<title>Übertragung</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -394,324 +394,544 @@
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Harness · Etappe 3 · Hooks und Durchsetzung</p>
-      <h1>Hooks</h1>
-      <p>Die Hooks sind die einzige Schicht, die etwas <strong>verhindern</strong> kann. Drei
-         laufen vor einem Werkzeugaufruf und dürfen ihn abbrechen, vier danach, vier am
-         Sitzungsende. Was in diesem Workspace technisch unmöglich ist, steht in diesen
-         elf Dateien, nicht in der README.</p>
+      <p class="tb-eyebrow">MDM Harness · Etappe 6 · Änderungen zwischen den Marken-Themes</p>
+      <h1>Übertragung</h1>
+      <p>Die drei Marken-Themes teilen keine Git-Historie. <code>bin/theme-sync.sh</code>
+         bewegt eine Änderung deshalb zwischen Arbeitsbäumen statt über einen Merge. Das
+         Skript stellt drei Kommandos bereit, prüft an zwölf Stellen ab und schreibt weder
+         einen Commit noch einen Push. Der Drift-Bericht vergleicht den Arbeitsbaum — nicht
+         den Stand auf dem Remote.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>11 Skripte · settings.json</dd></div>
-      <div class="tb-cell"><dt>Zeilen</dt><dd>639 gesamt</dd></div>
-      <div class="tb-cell"><dt>Blockierend</dt><dd>6 Skripte</dd></div>
-      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>bin/theme-sync.sh · specs/harness/theme-sync.md · templates/repo-themes.md</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>413 · 3 Kommandos</dd></div>
+      <div class="tb-cell"><dt>Gemessen</dt><dd>7 Dateien mit Drift · 89 markenspezifisch</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-alert"></i>Blockiert <span>— exit 2, Aufruf findet nicht statt</span></span>
-    <span class="legend-item"><i class="swatch sw-web"></i>Fragt nach <span>— permissionDecision: ask</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Berichtet <span>— exit 0, nur Ausgabe</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>Schreibt Datei <span>— Ausgabe überlebt die Sitzung</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Arbeitsbaum <span>— der Stand auf der Platte</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Übertragung <span>— Kopie oder Patch</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Blockliste <span>— markenspezifisch, bleibt liegen</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Abbruch <span>— Prüfung greift, nichts wird geschrieben</span></span>
   </div>
 
   <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 01/04</span>
-      <h2>Ereignisse und Wirkung</h2>
+      <span class="plate-no">Blatt 01/05</span>
+      <h2>Bestand</h2>
     </div>
-    <p class="lead">Der Zeitpunkt entscheidet über die Macht des Hooks. Vor dem Aufruf kann er
-      ihn verhindern; danach nur noch kommentieren; am Sitzungsende schreibt er allenfalls
-      eine Datei. Alle Verdrahtung steht in <code>.claude/settings.json</code>.</p>
+    <p class="lead"><code>discover_themes</code> in <code>bin/theme-sync.sh:76–85</code>
+      leitet den Bestand nicht aus <code>workspace.yaml</code> ab, sondern aus zwei
+      Dateiprüfungen je Verzeichnis unter <code>themes/</code>: ein Verzeichnis
+      <code>.git</code> (Zeile 81) und eine Datei <code>config/settings_schema.json</code>
+      (Zeile 82). Fällt eine der beiden aus, überspringt die Schleife das Verzeichnis ohne
+      Meldung. Der Kommentar in Zeile 73–75 hält fest, dass eine nicht geklonte Marke als
+      übersprungen gilt und nicht als abgeschafft.</p>
 
     <figure>
-      <svg viewBox="0 0 960 350" role="img" aria-label="Zeitachse eines Werkzeugaufrufs. Vor dem Aufruf laufen drei PreToolUse-Hooks, die mit exit 2 abbrechen können. Danach laufen vier PostToolUse-Hooks, von denen drei Linter ebenfalls exit 2 verwenden. Am Sitzungsende laufen vier Stop-Hooks, alle asynchron.">
+      <svg viewBox="0 0 960 268" role="img" aria-label="Jedes Verzeichnis unter themes/ durchläuft zwei Prüfungen: ein .git-Verzeichnis und eine Datei config/settings_schema.json. Nur wer beide besteht, zählt als Theme. Ein nicht geklontes Verzeichnis fällt still heraus.">
         <defs>
-          <marker id="h3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          <marker id="e6a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <line x1="16" y1="50" x2="930" y2="50" stroke="currentColor" stroke-opacity="0.35" marker-end="url(#h3a)"></line>
-        <text x="16" y="32" class="s-lbl f-dim">Zeit</text>
+        <text x="40" y="34" class="s-lbl f-dim">Verzeichnis</text>
+        <text x="288" y="34" class="s-lbl f-dim">Prüfung 81</text>
+        <text x="512" y="34" class="s-lbl f-dim">Prüfung 82</text>
+        <text x="782" y="34" class="s-lbl f-dim">Ergebnis</text>
 
-        <rect x="16" y="66" width="288" height="120" rx="3" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-width="1.5"></rect>
-        <text x="30" y="88" class="s-lbl f-alert">PreToolUse · blockierend</text>
-        <text x="30" y="110" class="s-mono">git-safety</text>
-        <text x="290" y="110" text-anchor="end" class="s-tiny f-alert">9 Abbrüche</text>
-        <text x="30" y="130" class="s-mono">protect-merchant-files</text>
-        <text x="290" y="130" text-anchor="end" class="s-tiny f-alert">2 + Rückfragen</text>
-        <text x="30" y="150" class="s-mono">bauplan-guard</text>
-        <text x="290" y="150" text-anchor="end" class="s-tiny f-alert">3 Abbrüche</text>
-        <text x="30" y="174" class="s-tiny f-dim">exit 2 heißt: der Aufruf findet nicht statt.</text>
+        <line x1="40" y1="44" x2="920" y2="44" stroke="currentColor" stroke-opacity="0.2"></line>
 
-        <rect x="320" y="46" width="120" height="40" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.4"></rect>
-        <text x="380" y="70" text-anchor="middle" class="s-name">Werkzeug</text>
+        <rect x="40" y="58" width="180" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.4"></rect>
+        <text x="52" y="78" class="s-name">themes/mdm/</text>
+        <text x="288" y="78" class="s-mono f-web">.git/ ja</text>
+        <text x="512" y="78" class="s-mono f-web">settings_schema.json ja</text>
+        <rect x="778" y="58" width="142" height="30" rx="2" fill="var(--web)" fill-opacity="0.14" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="790" y="78" class="s-mono f-web">zählt als Theme</text>
 
-        <rect x="456" y="66" width="288" height="120" rx="3" fill="var(--web)" fill-opacity="0.07" stroke="var(--web)" stroke-width="1.5"></rect>
-        <text x="470" y="88" class="s-lbl f-web">PostToolUse · nach dem Schreiben</text>
-        <text x="470" y="110" class="s-mono">post-edit-theme-check</text>
-        <text x="730" y="110" text-anchor="end" class="s-tiny f-alert">exit 2</text>
-        <text x="470" y="130" class="s-mono">post-edit-rubocop</text>
-        <text x="730" y="130" text-anchor="end" class="s-tiny f-alert">exit 2</text>
-        <text x="470" y="150" class="s-mono">post-edit-phpstan</text>
-        <text x="730" y="150" text-anchor="end" class="s-tiny f-alert">exit 2</text>
-        <text x="470" y="170" class="s-mono">bauplan-staleness</text>
-        <text x="730" y="170" text-anchor="end" class="s-tiny f-worker">exit 0</text>
+        <rect x="40" y="96" width="180" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.4"></rect>
+        <text x="52" y="116" class="s-name">themes/borek/</text>
+        <text x="288" y="116" class="s-mono f-web">.git/ ja</text>
+        <text x="512" y="116" class="s-mono f-web">settings_schema.json ja</text>
+        <rect x="778" y="96" width="142" height="30" rx="2" fill="var(--web)" fill-opacity="0.14" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="790" y="116" class="s-mono f-web">zählt als Theme</text>
 
-        <rect x="760" y="66" width="184" height="120" rx="3" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="774" y="88" class="s-lbl f-worker">Stop · alle async</text>
-        <text x="774" y="110" class="s-mono">stop-notify</text>
-        <text x="774" y="130" class="s-mono">harness-sync</text>
-        <text x="774" y="150" class="s-mono">bauplan-report</text>
-        <text x="774" y="170" class="s-mono">bauplan-verify</text>
+        <rect x="40" y="134" width="180" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.4"></rect>
+        <text x="52" y="154" class="s-name">themes/imm/</text>
+        <text x="288" y="154" class="s-mono f-web">.git/ ja</text>
+        <text x="512" y="154" class="s-mono f-web">settings_schema.json ja</text>
+        <rect x="778" y="134" width="142" height="30" rx="2" fill="var(--web)" fill-opacity="0.14" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="790" y="154" class="s-mono f-web">zählt als Theme</text>
 
-        <rect x="16" y="204" width="728" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="32" y="224" class="s-tiny">Die drei Linter sind nicht bloß informativ: sie brechen mit exit 2 ab, wenn der Linter meckert.</text>
-        <text x="32" y="242" class="s-tiny f-dim">Die Datei ist dann schon geschrieben — der Abbruch zwingt die Sitzung, den Befund zu bearbeiten, statt weiterzulaufen.</text>
+        <rect x="40" y="176" width="180" height="30" rx="2" fill="none" stroke="var(--vite)" stroke-width="1.2" stroke-dasharray="4 3"></rect>
+        <text x="52" y="196" class="s-name f-vite">themes/&lt;marke&gt;/</text>
+        <text x="288" y="196" class="s-mono f-vite">.git/ fehlt</text>
+        <text x="512" y="196" class="s-mono f-dim">wird nicht mehr geprüft</text>
+        <rect x="778" y="176" width="142" height="30" rx="2" fill="none" stroke="var(--vite)" stroke-width="1.2" stroke-dasharray="4 3"></rect>
+        <text x="790" y="196" class="s-mono f-vite">übersprungen</text>
 
-        <rect x="16" y="272" width="928" height="66" rx="2" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-opacity="0.5"></rect>
-        <text x="32" y="292" class="s-tiny">Timeouts aus settings.json: 10 s für die Blockierer, 60 bis 90 s für die Linter, 15 s für die Zuordnung, 5 bis 20 s am Ende.</text>
-        <text x="32" y="310" class="s-tiny f-dim">Ein Linter, der länger braucht als sein Timeout, wird abgeschnitten — bei 90 s für Theme Check auf einem großen Theme erreichbar.</text>
-        <text x="32" y="328" class="s-tiny f-dim">Alle drei Linter filtern deshalb auf die eine editierte Datei statt das ganze Repo zu prüfen.</text>
+        <g stroke="var(--web)" stroke-width="1.2" fill="none" color="var(--web)" stroke-opacity="0.55">
+          <line x1="228" y1="73" x2="276" y2="73" marker-end="url(#e6a1)"></line>
+          <line x1="228" y1="111" x2="276" y2="111" marker-end="url(#e6a1)"></line>
+          <line x1="228" y1="149" x2="276" y2="149" marker-end="url(#e6a1)"></line>
+        </g>
+        <g stroke="var(--vite)" stroke-width="1.2" fill="none" color="var(--vite)" stroke-opacity="0.55">
+          <line x1="228" y1="191" x2="276" y2="191" marker-end="url(#e6a1)"></line>
+        </g>
+
+        <text x="40" y="238" class="s-note f-dim">Die Reihenfolge ist bindend: fehlt das Verzeichnis <tspan class="s-mono">.git</tspan>, prüft die Schleife Zeile 82 nicht mehr.</text>
+        <text x="40" y="256" class="s-note f-dim">Gemessen am 16. September 2026: drei geklonte Marken, 688 bis 691 versionierte Dateien je Theme.</text>
       </svg>
-      <figcaption><b>Relevant beim Hinzufügen eines Hooks:</b> die Wirkungsart ist nicht
-        wählbar, sondern folgt aus dem Ereignis. Verhindern verlangt
-        <code>PreToolUse</code>. Eine Mitteilung am Sitzungsende verlangt eine
-        Datei — siehe Blatt 03.</figcaption>
+      <figcaption>Relevant beim Aufsetzen einer vierten Marke: ein Klon ohne
+        <code>config/settings_schema.json</code> erscheint weder in <code>list</code> noch in
+        <code>drift</code> und löst keinen Fehler aus. <code>assert_theme</code>
+        (<code>bin/theme-sync.sh:89–101</code>) meldet den Fehlbestand erst, wenn
+        <code>port</code> die Marke als Quelle oder Ziel benennt.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 02/04</span>
-      <h2>Abbruchpfade</h2>
+      <span class="plate-no">Blatt 02/05</span>
+      <h2>Drift</h2>
     </div>
-    <p class="lead">Neun der siebzehn Abbruchpfade stecken in
-      <code>git-safety.sh</code>. Sie sind die Liste der Dinge, die in diesem Workspace nicht
-      passieren können — unabhängig davon, welcher Agent es versucht.</p>
+    <p class="lead"><code>cmd_drift</code> (<code>bin/theme-sync.sh:125–228</code>) bildet je
+      Theme zwei Listen: <code>git ls-files</code> liefert die versionierten Pfade (Zeile
+      139), <code>git hash-object --stdin-paths</code> liest dieselben Pfade von der Platte
+      und gibt je Zeile den Blob-Hash zurück (Zeile 142). <code>paste</code> führt beides
+      zusammen (Zeile 143). Ein awk-Programm (Zeile 154–222) gruppiert die Themes je Pfad
+      nach gleichem Hash und gibt nur Pfade mit mehr als einer Gruppe aus.</p>
 
-    <div class="tw">
-      <table>
-        <caption>Abbruchpfade nach Datei und Zeile</caption>
-        <thead><tr><th class="m">Fundstelle</th><th>Blockiert</th><th>Grund</th></tr></thead>
-        <tbody>
-          <tr><td class="m">git-safety.sh:18</td><td><code>git push --force</code></td><td>überschreibt fremde Historie</td></tr>
-          <tr><td class="m">git-safety.sh:21</td><td><code>git push origin main</code></td><td>Änderungen gehen über PR</td></tr>
-          <tr><td class="m">git-safety.sh:24</td><td><code>git reset --hard</code></td><td>Hinweis auf <code>git stash</code></td></tr>
-          <tr><td class="m">git-safety.sh:27</td><td><code>git clean -f</code></td><td>löscht ungetrackte Arbeit</td></tr>
-          <tr><td class="m">git-safety.sh:30</td><td>Push auf Remote <code>latori</code></td><td>nur historische Referenz</td></tr>
-          <tr><td class="m">git-safety.sh:37</td><td><code>shopify theme publish</code></td><td>Veröffentlichen macht Konrad selbst</td></tr>
-          <tr><td class="m">git-safety.sh:40</td><td><code>shopify theme delete</code></td><td>dito</td></tr>
-          <tr><td class="m">git-safety.sh:43</td><td><code>theme push --live</code></td><td>nur <code>--unpublished</code></td></tr>
-          <tr><td class="m">git-safety.sh:46</td><td><code>--theme-editor-sync</code></td><td>CLI-Bug löscht extern geänderte JSON</td></tr>
-          <tr><td class="m">protect-merchant-files.sh:19</td><td><code>settings_data.json</code></td><td>gehört dem Theme-Editor</td></tr>
-          <tr><td class="m">protect-merchant-files.sh:29</td><td><code>blocks/ai_gen_block_*</code></td><td>vom Editor generiert</td></tr>
-          <tr><td class="m">bauplan-guard.sh</td><td><code>rm</code> auf <code>docs/bauplan</code>, Manifest-Schrumpfen, Repo-Entfernung</td><td>Bestand wird aktualisiert, nicht entfernt</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="lead"><code>protect-merchant-files.sh</code> hat eine dritte Wirkungsart, die
-      sonst keiner nutzt: statt zu blockieren gibt es über
-      <code>permissionDecision: ask</code> eine Rückfrage zurück
-      (<code>protect-merchant-files.sh:32</code>). Das greift bei den FoxEcom-Kerndateien —
-      eine Section ohne <code>mdm-</code>-Präfix zu ändern ist nicht verboten, aber
-      begründungspflichtig.</p>
+    <figure>
+      <svg viewBox="0 0 960 330" role="img" aria-label="Der Drift-Bericht bildet je Theme Pfad-Hash-Paare aus dem Arbeitsbaum und gruppiert sie im awk-Programm nach gleichem Blob-Hash. Pfade mit nur einer Gruppe gelten als gleich und werden nicht ausgegeben.">
+        <defs>
+          <marker id="e6a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="40" y="34" class="s-lbl f-dim">je Theme</text>
+        <text x="614" y="34" class="s-lbl f-dim">Zusammenführung</text>
+
+        <rect x="40" y="52" width="150" height="56" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="52" y="74" class="s-name">git ls-files</text>
+        <text x="52" y="92" class="s-tiny f-dim">Pfade aus dem Index</text>
+
+        <rect x="234" y="52" width="196" height="56" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="246" y="74" class="s-name">git hash-object</text>
+        <text x="246" y="92" class="s-tiny f-web">liest die Platte, nicht HEAD</text>
+
+        <rect x="474" y="52" width="110" height="56" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="486" y="74" class="s-name">paste</text>
+        <text x="486" y="92" class="s-tiny f-dim">Pfad + Hash</text>
+
+        <g stroke="var(--web)" stroke-width="1.4" fill="none" color="var(--web)">
+          <line x1="196" y1="80" x2="228" y2="80" marker-end="url(#e6a2)"></line>
+          <line x1="436" y1="80" x2="468" y2="80" marker-end="url(#e6a2)"></line>
+        </g>
+
+        <rect x="40" y="124" width="544" height="26" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="3 3"></rect>
+        <text x="52" y="141" class="s-mono f-dim">dreimal ausgeführt: mdm · borek · imm</text>
+
+        <rect x="640" y="52" width="280" height="98" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="654" y="74" class="s-name f-worker">awk — Gruppierung je Pfad</text>
+        <text x="654" y="94" class="s-tiny f-dim">gleicher Hash bildet eine Gruppe</text>
+        <text x="654" y="112" class="s-tiny f-dim">eine Gruppe  →  gleich, keine Ausgabe</text>
+        <text x="654" y="130" class="s-tiny f-worker">zwei Gruppen  →  Drift, Ausgabe</text>
+
+        <g stroke="var(--worker)" stroke-width="1.4" fill="none" color="var(--worker)">
+          <path d="M 590 80 L 616 80 L 616 101 L 634 101" marker-end="url(#e6a2)"></path>
+        </g>
+
+        <line x1="40" y1="178" x2="920" y2="178" stroke="currentColor" stroke-opacity="0.2"></line>
+        <text x="40" y="200" class="s-lbl f-dim">Ausgabe am 16. September 2026</text>
+
+        <rect x="40" y="212" width="600" height="24" rx="2" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="52" y="229" class="s-mono">assets/header.js</text>
+        <text x="430" y="229" class="s-mono f-worker">borek=mdm | imm</text>
+
+        <rect x="40" y="240" width="600" height="24" rx="2" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="52" y="257" class="s-mono">sections/mdm-product-related-categories.liquid</text>
+        <text x="430" y="257" class="s-mono f-alert">borek | imm | mdm</text>
+
+        <rect x="40" y="268" width="600" height="24" rx="2" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="52" y="285" class="s-mono">snippets/mdm-card-product.liquid</text>
+        <text x="430" y="285" class="s-mono f-alert">borek | imm | mdm</text>
+
+        <text x="672" y="229" class="s-mono f-dim">7 Dateien mit Drift</text>
+        <text x="672" y="257" class="s-mono f-vite">89 markenspezifisch</text>
+        <text x="672" y="285" class="s-mono f-dim">11 nur in einem Theme</text>
+
+        <text x="40" y="316" class="s-note f-dim">Drei Gruppen bedeuten drei verschiedene Stände. Zwei der sieben Dateien stehen so.</text>
+      </svg>
+      <figcaption>Relevant vor jeder Übertragung: <code>drift</code> nennt die Pfade, nicht
+        die Richtung. Die Gruppenschreibweise <code>borek=imm | mdm</code> sagt, dass Borek
+        und IMM übereinstimmen und MDM abweicht — welcher Stand der gewollte ist, entscheidet
+        die Datei, nicht das Werkzeug.</figcaption>
+    </figure>
   </section>
 
   <!-- ============ BLATT 03 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 03/04</span>
-      <h2>Drift-Meldung</h2>
+      <span class="plate-no">Blatt 03/05</span>
+      <h2>Arbeitsbaum und Remote</h2>
     </div>
-    <p class="lead"><code>post-implement-harness-sync.sh</code> prüft nach jeder Sitzung, ob
-      alle Agenten, Skills, Hooks und Rules in <code>README.md</code> und
-      <code>harness-app/data.json</code> vorkommen. Der Hook <strong>funktioniert</strong>:
-      am 10. September 2026 meldete er siebzehn Abweichungen. Er schreibt sie nach
-      <code>stdout</code>, und er läuft <code>async</code> — deshalb sah sie niemand.
-      Nach dem Nachtragen der Dokumentation meldet er null. Der Ausgabeweg ist damit
-      unverändert der Schwachpunkt: der nächste Rückstand bleibt genauso unsichtbar.</p>
-
-    <pre><code><span class="fp">Manueller Aufruf, 10. September 2026 — vor dem Nachtragen</span>
-⚠️  Harness-Doku nicht synchron:
-   - Skill 'repo-bauplan' fehlt in README.md
-   - Hook 'bauplan-guard' fehlt in README.md
-   - Hook 'bauplan-report' fehlt in README.md
-   - Hook 'bauplan-staleness' fehlt in README.md
-   - Hook 'bauplan-verify' fehlt in README.md
-   ... 12 weitere, davon 12 zu data.json
-
-<span class="fp">Derselbe Aufruf nach dem Nachtragen</span>
-(keine Ausgabe)</code></pre>
+    <p class="lead">Der Kommentar in <code>bin/theme-sync.sh:124</code> hält fest, dass
+      <code>drift</code> den Arbeitsbaum vergleicht und nicht <code>HEAD</code>. Ein
+      veralteter lokaler Checkout erzeugt damit eine Drift-Meldung, die es auf den Remotes
+      nicht gibt. Am 16. September 2026 trifft das auf <code>themes/mdm</code> zu: der lokale
+      Branch <code>main</code> trägt den Wurzel-Commit <code>a6fbe2c</code>,
+      <code>origin/main</code> trägt <code>7dd3fa4f</code>. <code>git merge-base</code>
+      liefert für dieses Paar keinen Commit.</p>
 
     <figure>
-      <svg viewBox="0 0 960 262" role="img" aria-label="Vergleich der vier Stop-Hooks. Drei erzeugen eine wahrnehmbare Wirkung: eine macOS-Benachrichtigung oder eine Datei auf der Platte. Der Drift-Melder schreibt nur auf stdout und läuft asynchron, weshalb seine Ausgabe verworfen wird.">
-        <text x="16" y="28" class="s-lbl f-dim">Stop-Hook</text>
-        <text x="320" y="28" class="s-lbl f-dim">Ausgabeweg</text>
-        <text x="700" y="28" class="s-lbl f-dim">kommt an?</text>
+      <svg viewBox="0 0 960 300" role="img" aria-label="Die Galerie-Änderung liegt in allen drei Themes auf origin/main. Im lokalen Arbeitsbaum von themes/mdm fehlt sie, weil der lokale Branch main eine unverbundene Historie trägt. Der Drift-Bericht meldet deshalb eine Abweichung, die auf den Remotes nicht besteht.">
+        <defs>
+          <marker id="e6a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"></path>
+          </marker>
+        </defs>
 
-        <rect x="16" y="42" width="928" height="46" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.5"></rect>
-        <text x="30" y="70" class="s-mono">stop-notify</text>
-        <text x="320" y="64" class="s-tiny">macOS-Benachrichtigung</text>
-        <text x="320" y="80" class="s-tiny f-dim">Nebenwirkung, keine Textausgabe</text>
-        <text x="700" y="70" class="s-tiny f-worker">ja</text>
+        <text x="40" y="34" class="s-lbl f-dim">Theme</text>
+        <text x="250" y="34" class="s-lbl f-web">Arbeitsbaum</text>
+        <text x="470" y="34" class="s-lbl f-dim">origin/main</text>
+        <text x="680" y="34" class="s-lbl f-dim">Meldung von drift</text>
 
-        <rect x="16" y="96" width="928" height="46" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
-        <text x="30" y="124" class="s-mono">bauplan-report</text>
-        <text x="320" y="118" class="s-tiny">schreibt .claude/bauplan/&lt;repo&gt;.STALE.md</text>
-        <text x="320" y="134" class="s-tiny f-dim">bauplan-report.sh:43</text>
-        <text x="700" y="124" class="s-tiny f-vite">ja, als Datei</text>
+        <line x1="40" y1="44" x2="920" y2="44" stroke="currentColor" stroke-opacity="0.2"></line>
+        <text x="40" y="62" class="s-tiny f-dim">Treffer für --mdm-media-col in assets/mdm-section-main-product.css</text>
 
-        <rect x="16" y="150" width="928" height="46" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
-        <text x="30" y="178" class="s-mono">bauplan-verify</text>
-        <text x="320" y="172" class="s-tiny">schreibt .claude/bauplan/BESTAND-WARNUNG.md</text>
-        <text x="320" y="188" class="s-tiny f-dim">bauplan-verify.sh:13</text>
-        <text x="700" y="178" class="s-tiny f-vite">ja, als Datei</text>
+        <rect x="40" y="74" width="170" height="32" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="52" y="95" class="s-name f-alert">themes/mdm</text>
+        <rect x="250" y="74" width="80" height="32" rx="2" fill="var(--alert)" fill-opacity="0.16" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="282" y="95" class="s-name f-alert">0</text>
+        <rect x="470" y="74" width="80" height="32" rx="2" fill="var(--web)" fill-opacity="0.16" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="502" y="95" class="s-name f-web">4</text>
+        <text x="680" y="95" class="s-mono f-alert">als abweichend gemeldet</text>
 
-        <rect x="16" y="204" width="928" height="46" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
-        <text x="30" y="232" class="s-mono f-alert">post-implement-harness-sync</text>
-        <text x="320" y="226" class="s-tiny">echo auf stdout, exit 0</text>
-        <text x="320" y="242" class="s-tiny f-dim">post-implement-harness-sync.sh:58 und :65</text>
-        <text x="700" y="232" class="s-tiny f-alert">nein — async, Ausgabe verworfen</text>
+        <rect x="40" y="114" width="170" height="32" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="52" y="135" class="s-name">themes/borek</text>
+        <rect x="250" y="114" width="80" height="32" rx="2" fill="var(--web)" fill-opacity="0.16" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="282" y="135" class="s-name f-web">4</text>
+        <rect x="470" y="114" width="80" height="32" rx="2" fill="var(--web)" fill-opacity="0.16" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="502" y="135" class="s-name f-web">4</text>
+        <text x="680" y="135" class="s-mono f-dim">deckungsgleich</text>
+
+        <rect x="40" y="154" width="170" height="32" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.45"></rect>
+        <text x="52" y="175" class="s-name">themes/imm</text>
+        <rect x="250" y="154" width="80" height="32" rx="2" fill="var(--web)" fill-opacity="0.16" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="282" y="175" class="s-name f-web">4</text>
+        <rect x="470" y="154" width="80" height="32" rx="2" fill="var(--web)" fill-opacity="0.16" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="502" y="175" class="s-name f-web">4</text>
+        <text x="680" y="175" class="s-mono f-dim">deckungsgleich</text>
+
+        <rect x="40" y="210" width="880" height="62" rx="2" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
+        <text x="54" y="232" class="s-name f-alert">Ursache im lokalen Repo</text>
+        <text x="54" y="252" class="s-mono f-dim">lokales main  Wurzel a6fbe2c  ·  origin/main  Wurzel 7dd3fa4f  ·  git merge-base  liefert nichts</text>
+        <text x="54" y="268" class="s-tiny f-dim">Der Arbeitsbaum steht auf einer Historie, die mit dem Remote keinen Vorfahren teilt.</text>
+
+        <g stroke="var(--alert)" stroke-width="1.3" fill="none" color="var(--alert)">
+          <path d="M 290 110 L 290 204" marker-end="url(#e6a3)"></path>
+        </g>
       </svg>
-      <figcaption><b>Der Unterschied ist der Ausgabeweg, nicht die Logik.</b> Die beiden
-        Bauplan-Hooks laufen genauso <code>async</code>, ihre Befunde landen aber in einer
-        Datei und überleben damit die Sitzung. Der Drift-Melder erzeugt sein Ergebnis
-        korrekt und wirft es weg. Deshalb blieb die Drift aus Etappe 1 unbemerkt, obwohl ein
-        Prüfer dafür bei jedem Sitzungsende lief. Die siebzehn Rückstände sind inzwischen
-        nachgetragen — der Ausgabeweg nicht.</figcaption>
+      <figcaption>Vor der Bewertung eines Drift-Berichts gilt: ein Treffer kann aus dem
+        lokalen Checkout stammen statt aus dem Code. <code>git -C themes/&lt;marke&gt;
+        status</code> meldet diesen Zustand nicht, weil der Arbeitsbaum zu seiner eigenen
+        Historie passt. Nachweisbar ist er über <code>git merge-base main
+        origin/main</code> — bleibt die Ausgabe leer, ist der lokale Branch unverbunden.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 04 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 04/04</span>
-      <h2>Grenzen eines Hooks</h2>
+      <span class="plate-no">Blatt 04/05</span>
+      <h2>Übertragungsarten</h2>
     </div>
-    <p class="lead">Ein Hook ist ein Shell-Skript mit einem Timeout. Er kann prüfen,
-      blockieren und schreiben — aber keine Seite bauen und kein Modell fragen. Genau
-      deshalb ist die Selbstaktualisierung der Blattsätze zweistufig gebaut.</p>
+    <p class="lead"><code>cmd_port</code> kennt seit dem 16. September 2026 zwei Arten. Ohne
+      <code>--as-patch</code> kopiert Zeile 381 die ganze Datei aus der Quelle in das Ziel.
+      Mit <code>--as-patch</code> bildet Zeile 321 einen Patch aus
+      <code>git diff &lt;sha&gt;^ &lt;sha&gt;</code> über die nicht-markenspezifischen Pfade
+      und wendet ihn in Zeile 366 an. Die zweite Art setzt <code>--commit</code> voraus; der
+      Abbruch dafür steht in Zeile 248–252.</p>
 
     <figure>
-      <svg viewBox="0 0 960 210" role="img" aria-label="Zweistufiger Weg: Der PostToolUse-Hook ordnet eine geänderte Datei den betroffenen Etappen zu und schreibt eine Zeile in ein Ledger. Der Stop-Hook verdichtet das Ledger zu einer Arbeitsliste. Das eigentliche Neubauen übernimmt später der Skill oder die CI.">
+      <svg viewBox="0 0 960 356" role="img" aria-label="Die Kopie ersetzt die Zieldatei vollständig und überschreibt abweichende Zielarbeit. Der Patch wendet nur die Hunks des Commits an und lässt den übrigen Inhalt der Zieldatei stehen.">
         <defs>
-          <marker id="h3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          <marker id="e6a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <rect x="16" y="60" width="210" height="76" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
-        <text x="30" y="46" class="s-lbl f-dim">im Hook möglich</text>
-        <text x="30" y="84" class="s-mono">bauplan-staleness</text>
-        <text x="30" y="102" class="s-tiny f-dim">PostToolUse, 15 s</text>
-        <text x="30" y="120" class="s-tiny">Datei → betroffene Etappen</text>
+        <text x="40" y="32" class="s-lbl f-dim">ohne --as-patch · Zeile 381</text>
+        <text x="510" y="32" class="s-lbl f-worker">mit --as-patch · Zeile 366</text>
+        <line x1="480" y1="16" x2="480" y2="340" stroke="currentColor" stroke-opacity="0.18"></line>
 
-        <line x1="226" y1="98" x2="266" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#h3b)"></line>
+        <text x="40" y="58" class="s-tiny f-dim">Quelle</text>
+        <rect x="40" y="66" width="120" height="120" rx="2" fill="var(--web)" fill-opacity="0.12" stroke="var(--web)" stroke-width="1.5"></rect>
+        <rect x="48" y="78" width="104" height="34" rx="1" fill="var(--worker)" fill-opacity="0.3" stroke="none"></rect>
+        <text x="58" y="100" class="s-tiny f-worker">neue Hunks</text>
+        <rect x="48" y="120" width="104" height="58" rx="1" fill="var(--web)" fill-opacity="0.25" stroke="none"></rect>
+        <text x="58" y="154" class="s-tiny f-dim">Quellarbeit</text>
 
-        <rect x="266" y="60" width="180" height="76" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
-        <text x="280" y="84" class="s-mono">.staleness.jsonl</text>
-        <text x="280" y="102" class="s-tiny f-dim">eine Zeile je Treffer</text>
-        <text x="280" y="120" class="s-tiny f-dim">überlebt die Sitzung</text>
+        <text x="270" y="58" class="s-tiny f-dim">Ziel vorher</text>
+        <rect x="270" y="66" width="120" height="120" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <rect x="278" y="120" width="104" height="58" rx="1" fill="var(--vite)" fill-opacity="0.3" stroke="none"></rect>
+        <text x="288" y="154" class="s-tiny f-vite">Zielarbeit</text>
 
-        <line x1="446" y1="98" x2="486" y2="98" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#h3b)"></line>
+        <text x="270" y="216" class="s-tiny f-dim">Ziel nachher</text>
+        <rect x="270" y="224" width="120" height="120" rx="2" fill="var(--web)" fill-opacity="0.12" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <rect x="278" y="236" width="104" height="34" rx="1" fill="var(--worker)" fill-opacity="0.3" stroke="none"></rect>
+        <text x="288" y="258" class="s-tiny f-worker">neue Hunks</text>
+        <rect x="278" y="278" width="104" height="58" rx="1" fill="var(--web)" fill-opacity="0.25" stroke="none"></rect>
+        <text x="288" y="312" class="s-tiny f-dim">Quellarbeit</text>
 
-        <rect x="486" y="60" width="180" height="76" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
-        <text x="500" y="84" class="s-mono">&lt;repo&gt;.STALE.md</text>
-        <text x="500" y="102" class="s-tiny f-dim">Stop-Hook verdichtet</text>
-        <text x="500" y="120" class="s-tiny f-dim">und leert das Ledger</text>
+        <g stroke="var(--alert)" stroke-width="1.4" fill="none" color="var(--alert)">
+          <path d="M 100 192 L 100 208 L 330 208 L 330 218" marker-end="url(#e6a4)"></path>
+        </g>
+        <text x="152" y="204" class="s-mono f-alert">cp — ersetzt die Datei</text>
+        <text x="270" y="204" class="s-tiny f-alert"> </text>
 
-        <line x1="666" y1="98" x2="706" y2="98" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="5 4" marker-end="url(#h3b)"></line>
-        <text x="686" y="86" text-anchor="middle" class="s-tiny f-alert">Bruch</text>
+        <text x="510" y="58" class="s-tiny f-dim">Patch aus dem Commit</text>
+        <rect x="510" y="66" width="120" height="120" rx="2" fill="none" stroke="var(--worker)" stroke-width="1.5" stroke-dasharray="4 3"></rect>
+        <rect x="518" y="78" width="104" height="34" rx="1" fill="var(--worker)" fill-opacity="0.3" stroke="none"></rect>
+        <text x="528" y="100" class="s-tiny f-worker">nur Hunks</text>
+        <text x="528" y="146" class="s-tiny f-dim">sha^ .. sha</text>
+        <text x="528" y="164" class="s-tiny f-dim">Zeile 321</text>
 
-        <rect x="706" y="48" width="238" height="100" rx="2" fill="var(--alert)" fill-opacity="0.06" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-        <text x="720" y="46" class="s-lbl f-alert">nur mit Modell</text>
-        <text x="720" y="72" class="s-tiny">/repo-bauplan --refresh</text>
-        <text x="720" y="90" class="s-tiny f-dim">oder der CI-Lauf</text>
-        <text x="720" y="112" class="s-tiny f-dim">Seiten bauen, Figuren zeichnen,</text>
-        <text x="720" y="128" class="s-tiny f-dim">Befunde formulieren</text>
-        <text x="720" y="144" class="s-tiny f-alert">läuft nie in einem Hook</text>
+        <text x="740" y="58" class="s-tiny f-dim">Ziel vorher</text>
+        <rect x="740" y="66" width="120" height="120" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <rect x="748" y="120" width="104" height="58" rx="1" fill="var(--vite)" fill-opacity="0.3" stroke="none"></rect>
+        <text x="758" y="154" class="s-tiny f-vite">Zielarbeit</text>
 
-        <rect x="16" y="164" width="928" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="32" y="185" class="s-tiny">Derselbe Bruch erklaert, warum es die CI braucht: ein Commit ohne Claude loest den PostToolUse-Hook nie aus. Die Zuordnungsregel ist deshalb in bin/bauplan_lib.py, nicht im Hook.</text>
+        <text x="740" y="216" class="s-tiny f-dim">Ziel nachher</text>
+        <rect x="740" y="224" width="120" height="120" rx="2" fill="none" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <rect x="748" y="236" width="104" height="34" rx="1" fill="var(--worker)" fill-opacity="0.3" stroke="none"></rect>
+        <text x="758" y="258" class="s-tiny f-worker">neue Hunks</text>
+        <rect x="748" y="278" width="104" height="58" rx="1" fill="var(--vite)" fill-opacity="0.3" stroke="none"></rect>
+        <text x="758" y="312" class="s-tiny f-vite">Zielarbeit bleibt</text>
+
+        <g stroke="var(--worker)" stroke-width="1.4" fill="none" color="var(--worker)">
+          <path d="M 570 192 L 570 208 L 800 208 L 800 218" marker-end="url(#e6a4)"></path>
+        </g>
+        <text x="614" y="204" class="s-mono f-worker">git apply — nur Hunks</text>
       </svg>
-      <figcaption><b>Die Trennung folgt aus dieser Grenze.</b> Der deterministische Teil —
-        welche Etappe betrifft diese Datei — liegt in einer Python-Datei, die Hook und CI
-        gemeinsam aufrufen. Nur der Teil, der Urteilsvermögen benötigt, hängt am
-        Sprachmodell. Lokal und in der CI gilt deshalb dasselbe als veraltet.</figcaption>
+      <figcaption>Maßgeblich für die Wahl ist der Zustand der Zieldatei, nicht die Größe der
+        Änderung: läuft die Quelle in derselben Datei voraus, entfernt die Kopie die
+        Zielarbeit. Am 16. September 2026 trennen <code>themes/mdm</code> und
+        <code>themes/borek</code> 40 von 685 gemeinsamen Dateien — für diese 40 ist
+        <code>--as-patch</code> die zutreffende Art.</figcaption>
     </figure>
+  </section>
+
+  <!-- ============ BLATT 05 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 05/05</span>
+      <h2>Abbruchpfade</h2>
+    </div>
+    <p class="lead"><code>cmd_port</code> umfasst 165 der 413 Zeilen und prüft an zwölf
+      Stellen ab: zehnmal mit <code>exit 1</code> vor der Ziel-Schleife, zweimal mit
+      <code>failed=1</code> je Ziel innerhalb der Schleife. Die Prüfung auf Anwendbarkeit
+      (Zeile 349–355) läuft vor dem Anlegen des Branches, damit ein Ziel ohne passenden
+      Patch unberührt bleibt.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 368" role="img" aria-label="Der port-Ablauf prüft nacheinander Argumente, Themes, Commit, Blockliste und Patch. Acht Abbruchstellen liegen vor der Ziel-Schleife, zwei Übersprungstellen innerhalb. Erst danach legt das Skript den Branch an und schreibt.">
+        <defs>
+          <marker id="e6a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="40" y="32" class="s-lbl f-dim">Ablauf</text>
+        <text x="620" y="32" class="s-lbl f-alert">Abbruch</text>
+
+        <rect x="40" y="46" width="330" height="28" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="52" y="65" class="s-mono">Argumente und Themes · 234–260</text>
+        <text x="620" y="65" class="s-mono f-alert">4 × exit 1</text>
+
+        <rect x="40" y="82" width="330" height="28" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="52" y="101" class="s-mono">--as-patch braucht --commit · 248</text>
+        <text x="620" y="101" class="s-mono f-alert">1 × exit 1</text>
+
+        <rect x="40" y="118" width="330" height="28" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="52" y="137" class="s-mono">Pfade aus dem Commit · 266–278</text>
+        <text x="620" y="137" class="s-mono f-alert">3 × exit 1</text>
+
+        <rect x="40" y="154" width="330" height="28" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-width="1.5"></rect>
+        <text x="52" y="173" class="s-mono f-vite">Blockliste · 282–290</text>
+        <text x="620" y="173" class="s-mono f-vite">10 Muster werden ausgelassen</text>
+
+        <rect x="40" y="190" width="330" height="28" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
+        <text x="52" y="209" class="s-mono f-worker">Patch bilden · 313–329</text>
+        <text x="620" y="209" class="s-mono f-alert">2 × exit 1</text>
+
+        <line x1="40" y1="234" x2="920" y2="234" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 3"></line>
+        <text x="40" y="252" class="s-lbl f-dim">je Ziel</text>
+
+        <rect x="40" y="262" width="330" height="28" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="52" y="281" class="s-mono">Arbeitsbaum muss sauber sein · 340</text>
+        <text x="620" y="281" class="s-mono f-alert">Ziel übersprungen</text>
+
+        <rect x="40" y="298" width="330" height="28" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="52" y="317" class="s-mono">git apply --check · 349</text>
+        <text x="620" y="317" class="s-mono f-alert">Ziel übersprungen</text>
+
+        <rect x="40" y="334" width="330" height="28" rx="2" fill="var(--worker)" fill-opacity="0.14" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="52" y="353" class="s-mono f-worker">Branch anlegen, schreiben · 357–386</text>
+        <text x="620" y="353" class="s-mono f-dim">kein Commit, kein Push</text>
+
+        <g stroke="currentColor" stroke-width="1.2" fill="none" color="currentColor" stroke-opacity="0.45">
+          <line x1="205" y1="78" x2="205" y2="78"></line>
+        </g>
+        <g stroke="var(--web)" stroke-width="1.3" fill="none" color="var(--web)" stroke-opacity="0.6">
+          <line x1="205" y1="76" x2="205" y2="80" marker-end="url(#e6a5)"></line>
+          <line x1="205" y1="112" x2="205" y2="116" marker-end="url(#e6a5)"></line>
+          <line x1="205" y1="148" x2="205" y2="152" marker-end="url(#e6a5)"></line>
+          <line x1="205" y1="184" x2="205" y2="188" marker-end="url(#e6a5)"></line>
+          <line x1="205" y1="220" x2="205" y2="228" marker-end="url(#e6a5)"></line>
+          <line x1="205" y1="292" x2="205" y2="296" marker-end="url(#e6a5)"></line>
+          <line x1="205" y1="328" x2="205" y2="332" marker-end="url(#e6a5)"></line>
+        </g>
+
+        <g stroke="var(--alert)" stroke-width="1.2" fill="none" color="var(--alert)" stroke-opacity="0.55">
+          <line x1="378" y1="60" x2="610" y2="60" marker-end="url(#e6a5)"></line>
+          <line x1="378" y1="96" x2="610" y2="96" marker-end="url(#e6a5)"></line>
+          <line x1="378" y1="132" x2="610" y2="132" marker-end="url(#e6a5)"></line>
+          <line x1="378" y1="204" x2="610" y2="204" marker-end="url(#e6a5)"></line>
+          <line x1="378" y1="276" x2="610" y2="276" marker-end="url(#e6a5)"></line>
+          <line x1="378" y1="312" x2="610" y2="312" marker-end="url(#e6a5)"></line>
+        </g>
+      </svg>
+      <figcaption>Für den Ablauf in mehreren Zielen gilt: die beiden Prüfungen innerhalb der
+        Schleife brechen nicht ab, sondern überspringen das betroffene Ziel und setzen
+        <code>failed=1</code>. Das Kommando endet mit Exit-Code 1, die übrigen Ziele erhalten
+        die Änderung trotzdem — der Exit-Code allein sagt nicht, welche Ziele geschrieben
+        wurden.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ ANHANG ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Anhang</span>
+      <h2>Prüfpunkte und Fundstellen</h2>
+    </div>
 
     <div class="checks">
       <div class="check">
         <span class="check-no">01</span>
         <div>
-          <h3>Der Drift-Melder wirft seinen Befund weg</h3>
-          <p><b>Beleg:</b> <code>post-implement-harness-sync.sh:58</code> schreibt mit
-             <code>echo</code> auf stdout und beendet sich mit <code>exit 0</code> (Zeile 65).
-             In <code>.claude/settings.json</code> ist der Hook mit <code>"async": true</code>
-             eingetragen — wie die drei anderen Stop-Hooks, die ihre Ergebnisse aber in
-             Dateien schreiben.</p>
-          <p><b>Konsequenz:</b> Die siebzehn erkannten Abweichungen blieben unsichtbar,
-             bis der Hook von Hand aufgerufen wurde. Sie sind nachgetragen, der Melder
-             steht auf null — aber jeder künftige Rückstand ist genauso unsichtbar.</p>
-          <p><b>Fix:</b> Befund nach <code>.claude/HARNESS-DRIFT.md</code> schreiben, wie
-             <code>bauplan-report.sh</code> es tut. Dann ist er beim nächsten Sitzungsstart
-             im Verzeichnis sichtbar.</p>
+          <h3>Der Drift-Bericht meldet einen veralteten Checkout als Abweichung</h3>
+          <p><code>bin/theme-sync.sh:142</code> bildet den Hash über
+            <code>git hash-object</code> aus der Platte. Am 16. September 2026 enthält
+            <code>themes/mdm/assets/mdm-section-main-product.css</code> im Arbeitsbaum null
+            Treffer für <code>--mdm-media-col</code>, auf <code>origin/main</code> vier. Borek
+            und IMM tragen den Wert in beiden Ständen.</p>
+          <p>Folge: <code>drift</code> gibt <code>borek=imm | mdm</code> aus, obwohl die drei
+            Remotes deckungsgleich sind. Ursache ist der lokale Branch <code>main</code> mit
+            dem Wurzel-Commit <code>a6fbe2c</code>, während <code>origin/main</code>
+            <code>7dd3fa4f</code> trägt. Der Fix besteht aus drei Schritten:
+            <code>git branch archive/hyper-import main</code>,
+            <code>git reset --hard origin/main</code>,
+            <code>git branch --set-upstream-to=origin/main main</code>.</p>
         </div>
       </div>
+
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Der Melder prüft gegen eine Datei, die verschwinden soll</h3>
-          <p><b>Beleg:</b> <code>post-implement-harness-sync.sh:11</code> setzt
-             <code>DATA_JSON="${CLAUDE_PROJECT_DIR}/harness-app/data.json"</code>. Zwölf der
-             siebzehn Meldungen betreffen diese Datei.</p>
-          <p><b>Konsequenz:</b> Wird <code>harness-app/</code> entfernt, steigt
-             <code>check_in_file</code> bei fehlender Datei still aus — der Melder prüft dann
-             nur noch die README. Das ist die richtige Richtung, aber die zwölf Meldungen
-             verschwinden, ohne bearbeitet worden zu sein.</p>
-          <p><b>Fix:</b> gegen <code>.claude/bauplan/*.manifest.json</code> und die generierte
-             Übersicht prüfen statt gegen eine handgepflegte Datenbank.</p>
+          <h3>Ein Abbruch je Ziel ist am Exit-Code nicht von einem Abbruch vor der Schleife zu unterscheiden</h3>
+          <p><code>bin/theme-sync.sh:343</code> und <code>:353</code> setzen
+            <code>failed=1</code> und überspringen das Ziel. <code>:394</code> gibt diesen
+            Wert als Exit-Code zurück — denselben Wert wie die zehn <code>exit 1</code>-Pfade
+            davor.</p>
+          <p>Folge: Ein Aufrufer, der nur den Exit-Code auswertet, kann nicht entscheiden, ob
+            kein Ziel oder nur ein Ziel geschrieben wurde. Die Unterscheidung steht
+            ausschließlich im Text auf <code>stdout</code>.</p>
         </div>
       </div>
+
       <div class="check">
         <span class="check-no">03</span>
         <div>
-          <h3>Der Hook läuft ohne <code>CLAUDE_PROJECT_DIR</code> nicht</h3>
-          <p><b>Beleg:</b> <code>post-implement-harness-sync.sh:7–11</code> setzt
-             <code>set -euo pipefail</code> und verwendet <code>${CLAUDE_PROJECT_DIR}</code>
-             ohne Standardwert. Die anderen Hooks schreiben durchgängig
-             <code>${CLAUDE_PROJECT_DIR:-$HOME/MDM}</code>.</p>
-          <p><b>Konsequenz:</b> In der Sitzung ist die Variable gesetzt, der Hook läuft. Von
-             Hand oder aus einem Cron-Kontext bricht er mit einer unklaren Meldung ab. Ein
-             Standardwert kostet nichts.</p>
+          <h3>Die Blockliste gilt für Pfade, nicht für Inhalte</h3>
+          <p><code>BRAND_PATTERNS</code> (<code>:50–61</code>) führt zehn Muster, darunter
+            <code>locales/*</code> und <code>templates/*</code>. <code>is_brand_path</code>
+            (<code>:63–70</code>) prüft den Pfad über <code>case</code>. Am 16. September 2026
+            überspringt <code>drift</code> damit 89 Dateien.</p>
+          <p>Folge: Eine Änderung, die in einer geschützten Datei steht und trotzdem für alle
+            Marken gilt — etwa ein neuer Übersetzungsschlüssel in <code>locales/de.json</code>
+            —, wandert nicht mit. <code>--allow-brand</code> hebt den Schutz für den ganzen
+            Lauf auf, nicht für einzelne Pfade.</p>
         </div>
       </div>
+
       <div class="check">
         <span class="check-no">04</span>
         <div>
-          <h3>Gute Nachricht: die Linter prüfen nur die geänderte Datei</h3>
-          <p><b>Beleg:</b> Alle drei <code>post-edit-*</code>-Hooks filtern auf den Pfad aus
-             der Hook-Nutzlast und laufen nur bei passender Endung — Theme Check bei
-             <code>theme/*.liquid</code> und <code>*.json</code>, RuboCop bei
-             <code>connector/*.rb</code>, PHPStan bei Middleware-<code>*.php</code>.</p>
-          <p><b>Konsequenz:</b> Eine Änderung im Connector löst keinen Theme Check aus. Bei
-             Timeouts von 60 bis 90 Sekunden ist das der Unterschied zwischen einem
-             brauchbaren und einem unerträglichen Arbeitsablauf.</p>
+          <h3>Das Skript prüft die Anwendbarkeit, nicht die Richtigkeit</h3>
+          <p><code>:349</code> führt <code>git apply --check</code> aus und entscheidet damit
+            über den Kontext der Hunks. Der Inhalt bleibt ungeprüft.</p>
+          <p>Folge: Ein Patch mit Layout-Zahlen aus dem Figma einer Marke — im Fall der
+            Produktgalerie das Verhältnis <code>605 : 1190</code> und die Deckelung bei
+            <code>1440px</code> — wird sauber angewandt und ist im Zielshop dennoch falsch.
+            Die visuelle Gegenprobe im Ziel-Theme bleibt Voraussetzung.</p>
+        </div>
+      </div>
+
+      <div class="check">
+        <span class="check-no">05</span>
+        <div>
+          <h3>Ohne Push und ohne PR endet die Übertragung im lokalen Repo</h3>
+          <p><code>:28–30</code> und die Akzeptanzkriterien in
+            <code>.claude/specs/harness/theme-sync.md</code> halten fest, dass das Skript
+            weder committet noch pusht. Im Harness existiert kein Aufruf von
+            <code>gh pr create</code>; der einzige GitHub-Workflow ist
+            <code>.github/workflows/bauplan-refresh.yml</code>.</p>
+          <p>Folge: Nach <code>port</code> liegt die Änderung als uncommittete Änderung auf
+            einem Branch <code>sync/&lt;quelle&gt;-&lt;datum&gt;</code> (<code>:332</code>).
+            Commit, Push und PR je Ziel-Theme sind Handarbeit. Das ist eine
+            Design-Entscheidung, kein Rückstand: eine inhaltlich unpassende Übertragung soll
+            keinen PR in einem fremden Shop auslösen.</p>
         </div>
       </div>
     </div>
+
+    <table>
+      <thead>
+        <tr><th>Aussage</th><th class="m">Fundstelle</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Zwei Dateiprüfungen entscheiden über den Bestand</td><td class="m">bin/theme-sync.sh:81–82</td></tr>
+        <tr><td>Nicht geklonte Marke gilt als übersprungen</td><td class="m">bin/theme-sync.sh:73–75</td></tr>
+        <tr><td>Drift vergleicht den Arbeitsbaum, nicht HEAD</td><td class="m">bin/theme-sync.sh:124, 142</td></tr>
+        <tr><td>7 Dateien mit Drift, 89 markenspezifisch, 11 nur in einem Theme</td><td class="m">bin/theme-sync.sh drift, 16. September 2026</td></tr>
+        <tr><td>685 gemeinsame Dateien mdm/borek, 645 identisch</td><td class="m">git ls-files je Theme, Inhaltsvergleich</td></tr>
+        <tr><td>Kopie ersetzt die Zieldatei</td><td class="m">bin/theme-sync.sh:381</td></tr>
+        <tr><td>Patch aus sha^ bis sha über gefilterte Pfade</td><td class="m">bin/theme-sync.sh:321</td></tr>
+        <tr><td>--as-patch ohne --commit bricht ab</td><td class="m">bin/theme-sync.sh:248–252</td></tr>
+        <tr><td>Trockenlauf vor dem Anlegen des Branches</td><td class="m">bin/theme-sync.sh:349–355</td></tr>
+        <tr><td>Zehn Abbrüche vor der Schleife, zwei Übersprünge darin</td><td class="m">bin/theme-sync.sh:234–329, 340, 349</td></tr>
+        <tr><td>Zehn Muster in der Blockliste</td><td class="m">bin/theme-sync.sh:50–61</td></tr>
+        <tr><td>Branch-Name sync/&lt;quelle&gt;-&lt;datum&gt;</td><td class="m">bin/theme-sync.sh:332</td></tr>
+        <tr><td>Kein Commit, kein Push, kein PR</td><td class="m">bin/theme-sync.sh:28–30, .claude/specs/harness/theme-sync.md</td></tr>
+        <tr><td>Lokales main in themes/mdm ohne merge-base zu origin/main</td><td class="m">git merge-base main origin/main — leer</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <footer>
-    <span>MDM Harness · Etappe 3 von 6</span>
-    <span>Als nächstes: <a href="etappe-04.html">Skills, Rules und Rechte</a> · <a href="https://claude.ai/code/artifact/d6c32482-5871-4969-8c8d-6f2c03709b17">Artefakt</a></span>
+    <span>MDM Harness · Etappe 6 von 6</span>
     <span>Design bauplan-v1</span>
+    <span>Ende des Blattsatzes — <a href="../index.html">Übersicht</a></span>
   </footer>
 
 </div>

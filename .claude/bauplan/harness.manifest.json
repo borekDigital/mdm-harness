@@ -4,8 +4,8 @@
   "tech": "Claude Code Steuerungsschicht — Agenten, Skills, Hooks, Rules",
   "root": ".",
   "design_system": "bauplan-v1",
-  "generated": "2026-09-10",
-  "last_seen_sha": "8bf59dc8a8d297da361cefcce21925a779995bfc",
+  "generated": "2026-09-16",
+  "last_seen_sha": "3ad20e4dea2c92b273693e8137621002636feaf9",
   "etappen": [
     {
       "nr": 1,
@@ -94,6 +94,26 @@
         "Die Laufzeit-Kanten aus Blatt 03 liegen in den Kind-Repos und sind von keiner sources-Regel gedeckt — veraltet dort etwas, meldet es niemand",
         "datalayer ist von keiner Rule, Spec oder Blattsatz gedeckt",
         "Die App-Proxy-Route connector/config/routes.rb:35-37 hat keinen Aufrufer in den drei Themes — ungenutzt oder von einem anderen Client aufgerufen, ohne laufende Instanz nicht entscheidbar"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 6,
+      "title": "Übertragung",
+      "url": "https://claude.ai/artifact/2MPRTbCy6CogTjP6moB8iS",
+      "favicon": "🧰",
+      "blaetter": 5,
+      "findings": 5,
+      "sources": [
+        "bin/theme-sync.sh",
+        ".claude/specs/harness/theme-sync.md",
+        "templates/repo-themes.md",
+        "CLAUDE.md",
+        ".github/workflows/**"
+      ],
+      "open_questions": [
+        "themes/mdm traegt lokal einen main-Branch ohne merge-base zu origin/main — bis zur Reparatur meldet drift eine Abweichung, die auf den Remotes nicht besteht",
+        "Der Exit-Code von port unterscheidet einen Abbruch vor der Schleife nicht von einem uebersprungenen Ziel"
       ],
       "closes": []
     }
