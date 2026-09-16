@@ -140,6 +140,25 @@ def manifest_root(manifest, repo):
     return (manifest or {}).get("root", repo)
 
 
+def repo_path(manifest, repo, project=None):
+    """Absoluter Pfad des Repos, das ein Blattsatz beschreibt.
+
+    `root: "."` heisst: der Workspace selbst ist der Gegenstand — so
+    dokumentiert sich die Harness. Jeder andere Wert ist workspace-relativ.
+
+    Diese Umrechnung gehoert hierher und nicht zu den Aufrufern. Solange jeder
+    Aufrufer sie selbst baute, war sie an zwei von vier Stellen falsch: sie
+    verband den Manifest-**Schluessel** mit dem Workspace statt die Wurzel.
+    Bei den vorhandenen Manifesten faellt das nicht auf, weil Schluessel und
+    Verzeichnis gleich heissen. Sobald beides auseinanderfaellt — `theme-mdm`
+    liegt unter `themes/mdm/` — sucht der Lauf am falschen Ort und meldet
+    "nicht geklont".
+    """
+    wurzel = manifest_root(manifest, repo)
+    basis = project_root(project)
+    return basis if wurzel in (".", "") else os.path.join(basis, wurzel)
+
+
 def split_repo_path(changed_abs, repo):
     """Absoluten Pfad in repo-relativ umrechnen, sofern er in diesem Repo liegt.
 

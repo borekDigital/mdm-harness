@@ -87,7 +87,7 @@ jobs:
               url."https://x-access-token:${GH_REPO_TOKEN}@github.com/".insteadOf \
               "git@github.com-borek:"
           else
-            echo "::warning::GH_REPO_TOKEN fehlt — theme, connector, datalayer werden uebersprungen"
+            echo "::warning::GH_REPO_TOKEN fehlt — GitHub-Repos werden uebersprungen"
           fi
           if [ -n "$GITLAB_TOKEN" ]; then
             git config --global \
@@ -117,7 +117,7 @@ jobs:
               m = re.match(r"^  ([A-Za-z0-9_-]+):\s*$", line)
               if m:
                   cur = m.group(1); repos[cur] = {}; continue
-              m = re.match(r'^    (remote|branch):\s*"?([^"\n]*)"?\s*$', line)
+              m = re.match(r'^    (remote|branch|path):\s*"?([^"\n]*)"?\s*$', line)
               if m and cur: repos[cur][m.group(1)] = m.group(2).strip()
 
           have = [d[:-len(".manifest.json")]
@@ -131,15 +131,21 @@ jobs:
                   zeilen.append("| `%s` | - | kein Remote in workspace.yaml |" % name)
                   continue
               branch = cfg.get("branch") or ""
+              # Ziel ist der Pfad aus workspace.yaml, nicht der Manifest-Schluessel.
+              # Beide sind nur zufaellig gleich: theme-mdm liegt unter themes/mdm/.
+              ziel = (cfg.get("path") or name).rstrip("/")
+              eltern = os.path.dirname(ziel)
+              if eltern:
+                  os.makedirs(eltern, exist_ok=True)
               args = ["git", "clone", "--quiet"]
               if branch:
                   args += ["--branch", branch]
-              rc = subprocess.run(args + [cfg["remote"], name]).returncode
+              rc = subprocess.run(args + [cfg["remote"], ziel]).returncode
               if rc != 0 and branch:
                   # Deklarierter Branch existiert nicht: Default des Remotes nehmen.
-                  rc = subprocess.run(["git", "clone", "--quiet", cfg["remote"], name]).returncode
+                  rc = subprocess.run(["git", "clone", "--quiet", cfg["remote"], ziel]).returncode
                   if rc == 0:
-                      ist = subprocess.run(["git", "-C", name, "rev-parse", "--abbrev-ref", "HEAD"],
+                      ist = subprocess.run(["git", "-C", ziel, "rev-parse", "--abbrev-ref", "HEAD"],
                                            capture_output=True, text=True).stdout.strip()
                       print("::warning::%s: workspace.yaml nennt %s, tatsaechlich ist %s"
                             % (name, branch, ist))
@@ -147,7 +153,7 @@ jobs:
                       geklont += 1
                       continue
               if rc == 0:
-                  sha = subprocess.run(["git", "-C", name, "rev-parse", "HEAD"],
+                  sha = subprocess.run(["git", "-C", ziel, "rev-parse", "HEAD"],
                                        capture_output=True, text=True).stdout.strip()
                   zeilen.append("| `%s` | %s | geklont, HEAD %s |" % (name, branch or "default", sha[:10]))
                   geklont += 1

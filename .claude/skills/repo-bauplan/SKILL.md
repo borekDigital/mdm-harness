@@ -129,6 +129,12 @@ Anhang           4–6 Beobachtungen, nummeriert, je mit Beleg und Konsequenz
 Footer           Etappe n von m, Ausblick auf die naechste
 ```
 
+Vor der Uebergabe laeuft `bin/bauplan-wording.py --repo <repo>`. Exit 3 heisst: der Satz
+ist nicht fertig. Das Werkzeug trennt zwei Klassen — **Verstoesse** sind mechanisch
+entscheidbar und muessen weg (Ueberschrift laenger als drei Woerter, Wortliste,
+Leseransprache, verbotener Bildunterschriften-Anfang); **zur Durchsicht** gemeldete Punkte
+sind Hinweise, ueber die der Autor entscheidet (Metaphern-Kandidaten, lange Saetze).
+
 Die Fusszeile wird **nicht von Hand verlinkt**. `bin/bauplan-nav.py` setzt aus dem
 Manifest: den Sprung auf die naechste Etappe (lokale Datei plus `Artefakt`-Link, sofern
 eine URL eingetragen ist), beim letzten Blatt stattdessen den Ruecksprung zur Uebersicht,
@@ -310,6 +316,7 @@ Historie im `mdm-harness`-Repo ist der Rueckweg (`git checkout HEAD -- docs/baup
 |---|---|
 | `bin/bauplan-index.py` | `docs/bauplan/index.html` neu erzeugen (Uebersicht mit Inhaltsverzeichnis) |
 | `bin/bauplan-nav.py` | Fusszeilen-Navigation aus dem Manifest setzen (idempotent, `--dry-run` zeigt nur) |
+| `bin/bauplan-wording.py` | Blattseiten gegen die Wortregeln pruefen (Exit 3 bei Verstoessen) |
 | `bin/bauplan-pdf.py <repo>` | Ganzen Satz als ein PDF — fuer Externe ohne Claude-Zugang |
 | `bin/bauplan-pdf.py <repo> --einzeln` | Ein PDF je Etappe |
 | `bin/bauplan-stale.py --repo <repo>` | Veraltete Etappen ermitteln (Exit 3, wenn welche) |

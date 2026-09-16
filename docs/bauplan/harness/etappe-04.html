@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Die Drift geht in beide Richtungen</h2>
+      <h2>Skills und README</h2>
     </div>
     <p class="lead">Ob ein Skill mit <code>/</code> aufgerufen werden kann, entscheidet
       allein <code>user_invocable: true</code> im Frontmatter. Die README listet sieben
@@ -485,7 +485,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Wo Rules greifen, und wo nicht</h2>
+      <h2>Geltung der Rules</h2>
     </div>
     <p class="lead">Rules werden nicht aufgerufen, sondern nach Pfad zugeschaltet. Fünf
       Dateien deklarieren zusammen vierzehn Pfadmuster. Die Bereiche ohne Treffer stehen in der zweiten Spalte.</p>
@@ -551,7 +551,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>17 Rechte erlaubt, 2 verboten</h2>
+      <h2>Rechte in settings.json</h2>
     </div>
     <p class="lead">Die <code>permissions</code>-Liste in <code>settings.json</code> ersetzt
       Rückfragen. Sie ist bewusst eng: dreizehn Bash-Muster, vier MCP-Werkzeuge, und alle
@@ -569,7 +569,7 @@
         </tbody>
       </table>
     </div>
-    <p class="lead">Bemerkenswert ist die Doppelung bei <code>settings_data.json</code>: die
+    <p class="lead">Bei <code>settings_data.json</code> besteht eine Doppelung: die
       Datei steht auf der <code>deny</code>-Liste <em>und</em> wird von
       <code>protect-merchant-files.sh:19</code> hart blockiert. Das ist keine Redundanz aus
       Versehen — die <code>deny</code>-Regel greift nur bei exakt diesem Pfad, der Hook
@@ -581,7 +581,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Spec-Driven: 17 Dateien, 7 Bereiche</h2>
+      <h2>Spec-Bestand</h2>
     </div>
     <p class="lead"><code>CLAUDE.md</code> schreibt vor, dass jede Änderung mit einer Spec
       beginnt. Der Bestand zeigt, wo das praktiziert wird und wo bisher nur das Verzeichnis
@@ -601,7 +601,7 @@
     </div>
     <p class="lead">Die Theme-Arbeit läuft also spec-getrieben, alles andere bisher nicht —
       obwohl <code>CLAUDE.md</code> es für <strong>jede</strong> Änderung fordert. Das ist
-      kein Widerspruch, den man wegdokumentieren sollte: entweder gilt die Regel für alle
+      ein Widerspruch, der nicht wegzudokumentieren ist: entweder gilt die Regel für alle
       Bereiche, oder sie gilt für das Theme.</p>
 
     <div class="checks">
@@ -615,7 +615,7 @@
              <code>SKILL.md</code> trägt <code>user_invocable: true</code>. Dies ist der
              einzige verbliebene Punkt der Doku-Drift — die übrigen sechzehn wurden am
              10. September 2026 nachgetragen.</p>
-          <p><b>Konsequenz:</b> Wer sie tippt, bekommt keinen Skill und keine Fehlermeldung,
+          <p><b>Konsequenz:</b> Der Aufruf liefert keinen Skill und keine Fehlermeldung,
              die das erklärt.</p>
         </div>
       </div>
@@ -630,8 +630,9 @@
           <p><b>Konsequenz:</b> Genau in dem Verzeichnis, in dem laut Konvention gearbeitet
              wird, greift die Konventionsdatei nicht. Im Haupt-Worktree, wo sie greift, soll
              nicht gearbeitet werden.</p>
-          <p><b>Fix:</b> Pfadmuster <code>connector-worktrees/*/app/**</code> und Geschwister
-             ergänzen. Dasselbe gilt für <code>connector/spec/**</code>, das trotz
+          <p><b>Fix:</b> Pfadmuster <code>connector-worktrees/*/app/**</code> und die
+             übrigen Verzeichnisse derselben Ebene ergänzen. Dasselbe gilt für
+             <code>connector/spec/**</code>, das trotz
              TDD-Pflicht in keinem Scope steht.</p>
         </div>
       </div>
@@ -644,8 +645,8 @@
              <code>.gitkeep</code>-Platzhalter.</p>
           <p><b>Konsequenz:</b> Für Connector- und Middleware-Features gibt es die geforderte
              Spec nicht. Entweder wird die Regel dort nicht angewandt, oder sie wird
-             angewandt, ohne dass ein Artefakt entsteht — beides sollte man wissen, bevor man
-             sich auf „Spec-Driven Development" beruft.</p>
+             angewandt, ohne dass ein Artefakt entsteht — beides gehört benannt, bevor der
+             Workspace sich auf „Spec-Driven Development" beruft.</p>
         </div>
       </div>
       <div class="check">

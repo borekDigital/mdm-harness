@@ -398,8 +398,8 @@
       <h1>Hooks</h1>
       <p>Die Hooks sind die einzige Schicht, die etwas <strong>verhindern</strong> kann. Drei
          laufen vor einem Werkzeugaufruf und dürfen ihn abbrechen, vier danach, vier am
-         Sitzungsende. Wer wissen will, was in diesem Workspace technisch unmöglich ist,
-         liest diese elf Dateien — nicht die README.</p>
+         Sitzungsende. Was in diesem Workspace technisch unmöglich ist, steht in diesen
+         elf Dateien, nicht in der README.</p>
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>11 Skripte · settings.json</dd></div>
@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Drei Ereignisse, drei Wirkungsarten</h2>
+      <h2>Ereignisse und Wirkung</h2>
     </div>
     <p class="lead">Der Zeitpunkt entscheidet über die Macht des Hooks. Vor dem Aufruf kann er
       ihn verhindern; danach nur noch kommentieren; am Sitzungsende schreibt er allenfalls
@@ -475,12 +475,12 @@
 
         <rect x="16" y="272" width="928" height="66" rx="2" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-opacity="0.5"></rect>
         <text x="32" y="292" class="s-tiny">Timeouts aus settings.json: 10 s für die Blockierer, 60 bis 90 s für die Linter, 15 s für die Zuordnung, 5 bis 20 s am Ende.</text>
-        <text x="32" y="310" class="s-tiny f-dim">Ein Linter, der länger braucht als sein Timeout, wird abgeschnitten — bei 90 s für Theme Check auf einem großen Theme durchaus erreichbar.</text>
+        <text x="32" y="310" class="s-tiny f-dim">Ein Linter, der länger braucht als sein Timeout, wird abgeschnitten — bei 90 s für Theme Check auf einem großen Theme erreichbar.</text>
         <text x="32" y="328" class="s-tiny f-dim">Alle drei Linter filtern deshalb auf die eine editierte Datei statt das ganze Repo zu prüfen.</text>
       </svg>
       <figcaption><b>Relevant beim Hinzufügen eines Hooks:</b> die Wirkungsart ist nicht
-        wählbar, sondern folgt aus dem Ereignis. Wer etwas verhindern will, braucht
-        <code>PreToolUse</code>. Wer am Sitzungsende etwas mitteilen will, braucht eine
+        wählbar, sondern folgt aus dem Ereignis. Verhindern verlangt
+        <code>PreToolUse</code>. Eine Mitteilung am Sitzungsende verlangt eine
         Datei — siehe Blatt 03.</figcaption>
     </figure>
   </section>
@@ -489,7 +489,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Was technisch unmöglich ist</h2>
+      <h2>Abbruchpfade</h2>
     </div>
     <p class="lead">Neun der siebzehn Abbruchpfade stecken in
       <code>git-safety.sh</code>. Sie sind die Liste der Dinge, die in diesem Workspace nicht
@@ -527,7 +527,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Der Drift-Melder läuft, und niemand sieht ihn</h2>
+      <h2>Drift-Meldung</h2>
     </div>
     <p class="lead"><code>post-implement-harness-sync.sh</code> prüft nach jeder Sitzung, ob
       alle Agenten, Skills, Hooks und Rules in <code>README.md</code> und
@@ -592,7 +592,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Was ein Hook nicht kann</h2>
+      <h2>Grenzen eines Hooks</h2>
     </div>
     <p class="lead">Ein Hook ist ein Shell-Skript mit einem Timeout. Er kann prüfen,
       blockieren und schreiben — aber keine Seite bauen und kein Modell fragen. Genau
@@ -638,7 +638,7 @@
         <text x="720" y="144" class="s-tiny f-alert">läuft nie in einem Hook</text>
 
         <rect x="16" y="164" width="928" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="32" y="185" class="s-tiny">Derselbe Bruch erklärt, warum es die CI braucht: wer ohne Claude committet, löst den PostToolUse-Hook nie aus. Die Zuordnungsregel ist deshalb in bin/bauplan_lib.py, nicht im Hook.</text>
+        <text x="32" y="185" class="s-tiny">Derselbe Bruch erklaert, warum es die CI braucht: ein Commit ohne Claude loest den PostToolUse-Hook nie aus. Die Zuordnungsregel ist deshalb in bin/bauplan_lib.py, nicht im Hook.</text>
       </svg>
       <figcaption><b>Die Trennung folgt aus dieser Grenze.</b> Der deterministische Teil —
         welche Etappe betrifft diese Datei — liegt in einer Python-Datei, die Hook und CI

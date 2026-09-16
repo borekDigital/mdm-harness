@@ -16,6 +16,9 @@ gehoert mit ins Bild — als gestrichelter Platzhalter, nicht als Luecke.
 Vertikale Abfolge, wenn die Ausfuehrungsreihenfolge der Leserichtung widerspricht. Der
 Rueckweg als gestrichelte Kurve mit rotierter Beschriftung.
 
+`Kette` ist hier Fachbegriff dieses Systems, keine Metapher — siehe die Ausnahmeliste in
+`design-system.md`, Abschnitt „Keine Metaphern, keine Wertungen".
+
 > Etappe 2, Blatt 02: `require` laeuft abwaerts, wirksam wird es aufwaerts — genau der
 > Punkt, an dem Leser von Rails-Configs stolpern.
 

@@ -14,6 +14,7 @@ TEMPLATES_DIR="${SCRIPT_DIR}/templates"
 OUTPUT="${SCRIPT_DIR}/CLAUDE.md"
 INDEX_SCRIPT="${SCRIPT_DIR}/bin/bauplan-index.py"
 NAV_SCRIPT="${SCRIPT_DIR}/bin/bauplan-nav.py"
+WORDING_SCRIPT="${SCRIPT_DIR}/bin/bauplan-wording.py"
 QUIET="${1:-}"
 
 # --- Hilfsfunktionen ---
@@ -201,6 +202,23 @@ update_index() {
   "$NAV_SCRIPT" >/dev/null 2>&1 || warn "bauplan-nav.py fehlgeschlagen"
 }
 
+# --- Wording der Blattseiten melden ---
+
+# Nicht blockierend: Prosa ist kein Linter-Gegenstand. Der Lauf meldet die
+# Summe; behoben wird sie beim Auffrischen einer Etappe, nicht hier.
+check_wording() {
+  [[ -x "$WORDING_SCRIPT" ]] || return 0
+  # Exit 3 heisst "Verstoesse gefunden", nicht "Lauf kaputt". Ohne das || true
+  # bricht die Zuweisung unter set -e mitsamt sync.sh ab.
+  local summe
+  summe=$("$WORDING_SCRIPT" --quiet 2>/dev/null | tail -1) || true
+  [[ -n "$summe" ]] || return 0
+  case "$summe" in
+    *" 0 Verstoesse"*) log "  → Wording: $summe" ;;
+    *) warn "Wording: $summe" ;;
+  esac
+}
+
 # --- Konsistenz pruefen ---
 
 check_consistency() {
@@ -292,6 +310,8 @@ main() {
   if check_consistency; then
     log "  → Alles konsistent"
   fi
+
+  check_wording
 
   # Erst jetzt stempeln — nach der Pruefung.
   if [[ -f "$LOCAL_YAML" ]]; then

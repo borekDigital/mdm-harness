@@ -421,12 +421,12 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Die Grenze verläuft durch die .gitignore</h2>
+      <h2>.gitignore als Grenze</h2>
     </div>
     <p class="lead">Dasselbe Verzeichnis ist zwei Dinge: das Harness-Repo und der
       Arbeitsplatz mit sechs fremden Repos darin. Getrennt werden sie ausschließlich durch
-      <code>.gitignore</code>. Wer diese Grenze nicht kennt, wundert sich, warum
-      <code>git status</code> im Workspace-Root nichts von seinen Theme-Änderungen weiß.</p>
+      <code>.gitignore</code>. <code>git status</code> im Workspace-Root meldet deshalb
+      keine Änderung an einem Theme.</p>
 
     <figure>
       <svg viewBox="0 0 960 372" role="img" aria-label="Das Verzeichnis MDM enthält links die versionierte Harness mit Steuerdateien, Skripten und Dokumentation, rechts die sechs geklonten Arbeits-Repos, die per gitignore ausgeschlossen sind. Jedes Arbeits-Repo hat seine eigene Git-Historie.">
@@ -492,7 +492,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>CLAUDE.md wird erzeugt, nicht geschrieben</h2>
+      <h2>Erzeugung der CLAUDE.md</h2>
     </div>
     <p class="lead">Die Datei, die jede Sitzung als Anweisung liest, ist ein Erzeugnis aus
       drei Quellen. <code>sync.sh</code> setzt sie zusammen; der Kopf trägt zwei Platzhalter,
@@ -577,12 +577,12 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Zwei Fehler im 7-Tage-Check, die sich maskieren</h2>
+      <h2>7-Tage-Check</h2>
     </div>
     <p class="lead"><code>sync.sh</code> soll warnen, wenn ein Repo länger als sieben Tage
       nicht synchronisiert wurde. Beobachtet wird das Gegenteil von Stille: die Warnung
       erscheint bei <strong>jedem</strong> Lauf für <strong>alle sechs</strong> Repos, mit
-      einer absurden Zahl.</p>
+      20706 Tagen.</p>
 
     <pre><code><span class="fp">./sync.sh — 10. September 2026</span>
   WARNUNG: theme: letzter Sync vor 20706 Tagen (&gt; 7 Tage)
@@ -660,7 +660,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Bestand kommt aus dem Manifest, nicht vom Dateisystem</h2>
+      <h2>Bestand und Manifest</h2>
     </div>
     <p class="lead">Die wichtigste Regel des Workspace steht als Kommentar in
       <code>workspace.yaml:4–6</code>: ein Repo, das dort steht, existiert. Ist es lokal
@@ -705,9 +705,9 @@
              <code>update_local_timestamps</code> (Zeile 269) vor
              <code>check_consistency</code> (Zeile 275) auf.</p>
           <p><b>Konsequenz:</b> Beobachtet wird eine Warnung für alle sechs Repos bei jedem
-             Lauf. Behebt man nur den ersten Fehler, kippt es ins Gegenteil: der Zeitstempel
-             ist dann vier Zeilen vorher auf jetzt gesetzt worden, <code>days_ago</code> ist
-             0 und die Warnung feuert nie.</p>
+             Lauf. Eine Korrektur allein des ersten Fehlers kippt es ins Gegenteil: der
+             Zeitstempel wurde vier Zeilen vorher auf jetzt gesetzt, <code>days_ago</code> ist
+             0, und die Warnung feuert nie.</p>
           <p><b>Fix:</b> <code>sed 's/^[^:]*: *//'</code> und den Aufruf von
              <code>update_local_timestamps</code> hinter <code>check_consistency</code>
              verschieben. Danach ist zu klären, was <code>last_sync</code> messen soll —
@@ -724,7 +724,7 @@
              <code>/mdm-template</code> und <code>/mdm-notes</code> als Slash-Befehle. Keine
              der vier <code>SKILL.md</code> trägt <code>user_invocable: true</code>; nur vier
              der acht Skills tun das.</p>
-          <p><b>Konsequenz:</b> Wer sie tippt, bekommt keinen Skill und keine Meldung, die
+          <p><b>Konsequenz:</b> Der Aufruf liefert keinen Skill und keine Meldung, die
              das erklärt.</p>
           <p><b>Fix:</b> Entweder <code>user_invocable: true</code> ergänzen oder die vier
              aus den Slash-Tabellen nehmen. Die Entscheidung ist inhaltlich — laut README

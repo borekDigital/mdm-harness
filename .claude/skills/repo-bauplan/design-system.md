@@ -67,7 +67,7 @@ die Grenze zwischen Prosa und Code sichtbar.
 - Kein `<script>`, `<style>` oder `<foreignObject>` im SVG.
 - Rotierte Beschriftung nur ueber `transform="rotate(-90 x y)"` und nur sparsam.
 
-## Titel
+## Titel und Ueberschriften
 
 Der Titel ist der **Name der Etappe**, nicht ihre Zusammenfassung. Ein bis drei Woerter.
 Keine Zahlen, kein Doppelpunkt, kein angehaengter Erklaerer.
@@ -86,6 +86,37 @@ Die Einordnung uebernimmt die Eyebrow-Zeile darueber:
 Etappennummer deshalb nicht wiederholen.
 
 Die Erklaerung gehoert in den `description`-Parameter beim Veroeffentlichen.
+
+### Dieselbe Regel gilt fuer die Blatt-Ueberschriften
+
+Ein bis drei Woerter, Substantivphrase, auch fuer jedes `<h2>` und fuer den Anhang. Die
+Ueberschrift benennt den **Gegenstand** des Blattes, nicht die Aussage darueber. Die
+Aussage steht im Anriss und in der Bildunterschrift — dort laesst sie sich belegen, und
+dort schadet es nicht, wenn sie lang wird.
+
+| Statt | Besser |
+|---|---|
+| „Die Gruppe sagt, wen man fragen muss" | `Gruppen und Plattformen` |
+| „Drei Wurzel-Commits, kein gemeinsamer Vorfahr" | `Historie und Deckung` |
+| „Der Knoten liegt ausserhalb des Workspace" | `Kopplung ueber SAP` |
+| „Der Drift-Melder laeuft, und niemand sieht ihn" | `Drift-Meldung` |
+| „Zwei Fehler im 7-Tage-Check, die sich maskieren" | `7-Tage-Check` |
+
+Kein finites Verb, keine Frage-Form (`Was ein Hook nicht kann`), keine Zahl. Die
+Begruendung ist dieselbe wie beim Etappentitel: Zahlen und Aussagen veralten, Namen nicht.
+Ein Blatt, dessen Ueberschrift eine These traegt, muss beim naechsten Befund umbenannt
+werden — und die Ueberschrift steht im Inhaltsverzeichnis, im PDF und in der Uebersicht.
+
+Der Anhang traegt durchgehend `Pruefpunkte und Fundstellen`. Ohne Zahl: „Drei
+Pruefpunkte" veraltet, sobald ein vierter dazukommt.
+
+Massstab: `docs/bauplan/harness/etappe-05.html`.
+
+### Die Eyebrow-Zeile wiederholt den Titel nicht
+
+`MDM Harness · Etappe 5 · Repos und Kopplung` ueber `<h1>Gesamtstruktur</h1>` — die
+Eyebrow traegt die Einordnung, der Titel den Namen. Wortgleich ist beides eine
+verschenkte Zeile.
 
 ## Beschreibung — traegt die Unterscheidung
 
@@ -140,23 +171,58 @@ gemischt und nicht abgeschwaecht.
 
 Nicht: „sollte vielleicht", „idealerweise", „am besten", „normalerweise".
 
+### Keine Leseransprache
+
+Der Blattsatz beschreibt das System, nicht die Lektuere. Verboten: `man`, `wer … der …`,
+`du`, `dein`, `unser`, `Sie`.
+
+| Statt | Besser |
+|---|---|
+| „Wer eine Aenderung plant, kann sie nicht zu Ende lesen." | „Der Ablauf ist im Workspace nicht vollstaendig lesbar." |
+| „Man erwartet, dass die Repos verdrahtet sind." | „Eine einzige direkte Kante verbindet zwei Repos." |
+| „Hier sieht man drei Prozesse." | „Lokal laufen drei Prozesse." |
+
+Ausnahme: `bedienung.html` darf den Imperativ verwenden — „Blattsatz mit
+`/repo-bauplan <repo>` erzeugen" —, aber keine Anrede.
+
 ### Wortliste — nicht verwenden
 
+Unscharfe Mengen und Bedingungen:
 `einfach` · `schnell` · `problemlos` · `normalerweise` · `in der Regel` · `etc.` · `usw.`
 · `gegebenenfalls` · `moeglichst` · `ein bisschen` · `einige` · `entsprechend` ·
 `wie gewohnt`
 
+Wertungen und Fuellwoerter:
+`bemerkenswert` · `erstaunlich` · `ueberraschend` · `absurd` · `elegant` · `durchaus` ·
+`eigentlich` · `quasi` · `relativ` · `ziemlich` · `leider`
+
 Diese Woerter ersetzen eine Zahl oder eine Bedingung durch ein Gefuehl. Wo eine konkrete
 Angabe existiert, steht die Angabe: `nach 30 Sekunden`, `ab 8 Zeichen`, `bei Exit-Code 2`.
+Wo keine existiert, steht das — „ohne laufende Instanz nicht entscheidbar" — und nicht
+eine Haltung dazu.
 
 ### Keine Metaphern, keine Wertungen
 
 Ein Cron ist ein Cron — kein Uhrwerk, kein Herzschlag, kein Taktgeber. Eine Queue ist eine
 Queue, kein Fliessband. „Die Verarbeitung dauert maximal 5 Sekunden" statt „Die
-Verarbeitung ist sehr schnell". Kein „elegant", „sauber", „unschoen".
+Verarbeitung ist sehr schnell".
+
+Verbotene Bilder ohne Fachbezug: `Herzschlag` · `Uhrwerk` · `Taktgeber` · `Fliessband` ·
+`Geschwister` · `Fremde` · `Nervensystem` · `Rueckgrat` · `Ader` · `Landkarte` ·
+`Werkstueck`.
+
+**Kein Verstoss ist etabliertes Fachvokabular**, auch wenn es bildlich klingt:
+`Kette` (Figurtyp 2 der Figuren-Grammatik) · `Baum`, `Wurzel`, `Zweig`, `Branch`,
+`Kopf`/`HEAD` (Git) · `Knoten` und `Kante` **im Graph-Zusammenhang** · `Blatt`,
+`Blattsatz` (dieses System selbst). Ein Pruefer, der diese Woerter meldet, meldet falsch.
+
+Zu `sauber`: als Wertung verboten („sauber geschriebener Code"). Als Zustand des
+Git-Arbeitsbaums ist es der Fachbegriff und bleibt — „das Ziel-Theme muss einen sauberen
+Arbeitsbaum haben". Dieselbe Unterscheidung gilt fuer `unsauber`.
 
 Auch keine erzaehlende Rahmung: nicht „Daraus folgt alles andere", nicht „Der wichtigste
-Punkt ist", nicht „Das ist die eigentliche Konstruktion". Die Aussage steht fuer sich.
+Punkt ist", nicht „Das ist die eigentliche Konstruktion", nicht „Es sieht aus wie …,
+tatsaechlich aber …". Die Aussage steht fuer sich.
 
 ### Begriffe konsistent halten
 
@@ -167,9 +233,19 @@ Protocol)`.
 
 ### Bildunterschrift
 
-Sie nennt die Konsequenz, nicht die Bedeutung. Zulaessige Anfaenge:
-„Relevant beim Erweitern: …", „Faellt SAP aus, …", „Bei einem Rueckstau gilt: …".
-Nicht: „Das Interessante daran ist", „Das zeigt, wie …".
+Sie nennt die Konsequenz, nicht die Bedeutung. Bewaehrte Anfaenge:
+„Relevant beim Erweitern: …", „Faellt SAP aus, …", „Bei einem Rueckstau gilt: …",
+„Fehlt der Zugang, …".
+
+**Diese Anfaenge sind Beispiele, keine abschliessende Liste.** Eine Bildunterschrift, die
+anders beginnt und trotzdem eine Konsequenz nennt, ist richtig. Pruefbar — und deshalb
+maschinell gemeldet — ist nur die Verbotsliste:
+
+`Das Interessante …` · `Das zeigt …` · `Das bedeutet …` · `Interessant ist …` ·
+`Auffaellig ist …` · `Hier sieht man …` · `Man sieht …` · `Zu sehen ist …` ·
+`Die Figur zeigt …` · `Dargestellt ist …`
+
+Sie beschreiben die Figur, statt sie auszuwerten. Der Leser hat die Figur bereits gesehen.
 
 ## Druckfassung
 

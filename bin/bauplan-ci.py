@@ -41,8 +41,7 @@ def stale_for(project, repo):
     manifest = lib.load_manifest(repo, project)
     if manifest is None:
         return None, "kein Manifest"
-    root = lib.manifest_root(manifest, repo)
-    repo_path = project if root == "." else os.path.join(project, root)
+    repo_path = lib.repo_path(manifest, repo, project)
     if not os.path.isdir(os.path.join(repo_path, ".git")):
         # Nicht geklont heisst uebersprungen, nicht abgeschafft.
         return None, "nicht geklont"
@@ -162,8 +161,8 @@ def main():
             # Etappen erneut als veraltet und die Auffrischung laeuft im Kreis.
             # Das ist eine Tatsache, keine Ermessensfrage: nicht dem Modell
             # ueberlassen, sondern hier setzen.
-            head = repo_head(project if lib.manifest_root(
-                lib.load_manifest(repo, project), repo) == "." else os.path.join(project, repo))
+            head = repo_head(lib.repo_path(
+                lib.load_manifest(repo, project), repo, project))
             if head:
                 manifest = lib.load_manifest(repo, project)
                 manifest["last_seen_sha"] = head
