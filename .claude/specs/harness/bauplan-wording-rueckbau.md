@@ -2,7 +2,7 @@
 
 Stand: 16. September 2026
 Quelle: Review Konrad, 16. September 2026, an Etappe 5 des Harness-Blattsatzes
-Status: IN UMSETZUNG — Regeln und Werkzeug fertig, Rueckbau Schritt 1 von 4
+Status: UMGESETZT (16. September 2026)
 
 ## Ziel
 
@@ -194,24 +194,24 @@ solche Fehler auf; das ist die erwartete Groessenordnung je Blattsatz, nicht je 
 - [x] `bin/bauplan-wording.py` angelegt, mit der Trennung Verstoss / zur Durchsicht
 - [x] `sync.sh` ruft den Pruefer und warnt; `repo-bauplan/SKILL.md` nennt ihn in der
       Werkzeug-Tabelle und im Abschluss-Schritt
-- [~] Rueckbau: Schritt 1 (`harness/`) fertig, Schritte 2–4 offen
-- [ ] Jedes geaenderte Blatt neu veroeffentlicht, Artefakt-URL unveraendert
-- [ ] `.claude/bauplan/*.manifest.json`: `title` nachgezogen, wo ein H1 gekuerzt wurde
+- [x] Rueckbau Schritt 1–4 durchgefuehrt
+- [x] Jedes geaenderte Blatt neu veroeffentlicht, Artefakt-URL unveraendert
+- [x] `.claude/bauplan/*.manifest.json`: `title` nachgezogen, wo ein H1 gekuerzt wurde
       (`connector` Etappe 3 und 9)
 
 ## Akzeptanzkriterien
 
-- [ ] `bin/bauplan-wording.py` meldet ueber alle 22 Blattseiten **null Verstoesse**
-- [ ] `bin/bauplan-wording.py --json` liefert gueltiges JSON mit je Blatt einer Liste
+- [x] `bin/bauplan-wording.py` meldet ueber alle 22 Blattseiten **null Verstoesse**
+- [x] `bin/bauplan-wording.py --json` liefert gueltiges JSON mit je Blatt einer Liste
       `verstoesse` und einer Liste `durchsicht`
-- [ ] Kein H1 und kein H2 im Bestand ist laenger als drei Woerter
-- [ ] `grep -riE '\b(man|wer)\b'` ueber `docs/bauplan/*/etappe-*.html` liefert keinen
+- [x] Kein H1 und kein H2 im Bestand ist laenger als drei Woerter
+- [x] `grep -riE '\b(man|wer)\b'` ueber `docs/bauplan/*/etappe-*.html` liefert keinen
       Treffer in Prosa (Code-Beispiele ausgenommen)
-- [ ] Die Zahl der Blaetter, Figuren und Pruefpunkte je Etappe ist unveraendert —
+- [x] Die Zahl der Blaetter, Figuren und Pruefpunkte je Etappe ist unveraendert —
       der Rueckbau kuerzt Formulierungen, nicht Inhalt
-- [ ] `python3 bin/bauplan-guard.py --verify` meldet keinen Verlust
-- [ ] Jede Artefakt-URL aus den Manifesten laedt weiterhin; keine neue URL entstanden
-- [ ] `bin/bauplan-pdf.py <repo>` erzeugt alle drei Saetze fehlerfrei
+- [x] `python3 bin/bauplan-guard.py --verify` meldet keinen Verlust
+- [x] Jede Artefakt-URL aus den Manifesten laedt weiterhin; keine neue URL entstanden
+- [x] `bin/bauplan-pdf.py <repo>` erzeugt alle drei Saetze fehlerfrei
 
 ## Constraints
 
@@ -309,3 +309,45 @@ ansteht.
 - Neuveroeffentlichung der geaenderten Blaetter auf **dieselbe** Artefakt-URL. Fuer die
   vier Blaetter aus Schritt 1 noch nicht ausgefuehrt — bewusst, damit der Stand lokal
   begutachtet werden kann, bevor 21 Artefakte wandern.
+
+
+## Abschluss
+
+Rueckbau vollstaendig am 16. September 2026. `bin/bauplan-wording.py` meldet ueber alle
+22 Blattseiten **null Verstoesse**.
+
+| Schritt | Gegenstand | Stellen | Commit |
+|---|---|---|---|
+| 1 | `harness/` Etappen 1–4 | 32 | Teil von `7c89692` |
+| — | Altlasten in Etappe 1 und 4 | 17 | `6071439` |
+| 2+3 | `bedienung.html`, `emailservice/` | 51 | `b42161f` |
+| 4 | `connector/` | 51 | `10e9f25` |
+
+Gesamt 151 Stellen. 125 Verstoesse zu Beginn, 0 am Ende.
+
+### Beim Rueckbau zusaetzlich gefunden
+
+1. **Zwei H1 wichen vom Manifest ab.** `connector/etappe-03` hiess im Blatt
+   „Acht Tabellen, zwei Stroeme", im Manifest `Datenmodell`; Etappe 9 entsprechend
+   „Sieben Extensions, zwei Images" gegen `Deploy`. Die Manifeste trugen also bereits die
+   richtigen Namen — die Blaetter waren abgewichen. Das Kuerzen hat sie zusammengefuehrt,
+   kein Manifest musste geaendert werden.
+2. **Zwei Eyebrow-Zeilen wurden erst durch das Kuerzen zu Duplikaten.** Wird ein H1 auf den
+   Manifest-Namen gekuerzt, kann die Eyebrow-Zeile ihn wortgleich wiederholen. Bei
+   `connector/etappe-03` trat das auf und wurde zu „Tabellen und Modelle" geaendert.
+   Die Regel A6 faengt das, weil der Pruefer beides vergleicht.
+3. **Drei Wertungen in Bildunterschriften**, die keine Ueberschrift betrafen:
+   `erstaunlich klein`, `Elegant und riskant`, `bemerkenswert`. Alle durch die Zahl oder
+   die Eigenschaft ersetzt, die daneben ohnehin stand.
+4. **Eine Tabellenspalte hiess „Wer".** Im Fliesstext faellt Leseransprache auf, in einem
+   `<th>` nicht. Der Pruefer liest den gesamten Blattkoerper und hat sie gemeldet —
+   Beleg dafuer, dass die Pruefung nicht auf `<p>` beschraenkt sein darf.
+
+### Was offen bleibt
+
+- **Neuveroeffentlichung.** Alle 22 Blattseiten sind lokal geaendert, aber nur
+  `harness/etappe-05` ist veroeffentlicht. Die uebrigen 21 tragen im Artefakt noch die
+  alten Ueberschriften. Jede geht auf **dieselbe** URL zurueck, sonst laufen geteilte
+  Links ins Leere.
+- 28 Hinweise „zur Durchsicht" (lange Saetze, Metaphern-Kandidaten). Sie sind keine
+  Verstoesse und werden bei der naechsten Auffrischung der jeweiligen Etappe entschieden.
