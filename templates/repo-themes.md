@@ -57,7 +57,8 @@ oder einen PR in den anderen Themes. Jede Uebertragung wird angestossen.
 
 # 2. Sehen, wo die Themes stehen
 bin/theme-sync.sh list
-bin/theme-sync.sh drift assets/          # optional: was laeuft auseinander?
+bin/theme-sync.sh drift assets/          # was laeuft auseinander?
+bin/theme-sync.sh settings page_width    # haben die Marken dieselbe Grundlage?
 
 # 3. Uebertragen — Modus nach Lage waehlen (siehe Tabelle)
 bin/theme-sync.sh port mdm borek,imm --commit <sha> --as-patch
@@ -69,6 +70,11 @@ git -C themes/borek push -u origin sync/mdm-<datum>
 
 # 5. PR je Ziel-Theme von Hand
 ```
+
+Schritt 2 gehoert dazu: `settings <schluessel>` vergleicht einen Wert aus
+`config/settings_data.json` ueber alle Themes. `page_width` ist in allen drei `1700`,
+`type_header_font` dagegen nicht — MDM fuehrt `ebgaramond_n5`, Borek und IMM
+`archivo_n7`. Eine CSS-Regel, die an der Hausschrift haengt, wirkt dort anders.
 
 #### Welcher Modus?
 
@@ -86,8 +92,22 @@ Der Normalfall ist `--as-patch`, weil MDM den beiden anderen vorauslaeuft. Ohne
 - Mit `--as-patch`: passt der Patch nicht, wird das Ziel uebersprungen, **bevor**
   der Branch angelegt wird. Ausweg: `git -C themes/<ziel> apply --3way --reject`.
 - Markenspezifische Pfade (`locales/`, `templates/`, `config/settings_*.json`,
-  `layout/`, `sections/*-group.json`) werden uebersprungen; `--allow-brand` erzwingt.
+  `layout/`, `sections/*-group.json`) werden uebersprungen. `--allow-brand` gibt
+  alle frei, `--allow-brand=<pfad>[,<pfad>]` nur die genannten — fuer den Fall,
+  dass ein einzelner Uebersetzungsschluessel fuer alle Marken gilt.
 - Das Skript committet nie und pusht nie.
+
+#### Exit-Codes von `port`
+
+| Code | Bedeutung |
+|---|---|
+| 0 | alle Ziele geschrieben |
+| 1 | Abbruch vor der Ziel-Schleife — kein Ziel beruehrt |
+| 2 | teilweise — mindestens ein Ziel geschrieben, mindestens eines uebersprungen |
+| 3 | kein Ziel geschrieben, alle uebersprungen |
+
+Code 2 und 3 unterscheiden sich fuer ein Skript, das `port` aufruft: bei 2 stehen
+Aenderungen in Arbeitsbaeumen, bei 3 nicht.
 
 #### Was das Skript nicht pruefen kann
 

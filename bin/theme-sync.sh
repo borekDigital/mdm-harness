@@ -9,6 +9,7 @@
 # Verwendung:
 #   theme-sync.sh list
 #   theme-sync.sh drift [pfad-praefix]
+#   theme-sync.sh settings <schluessel>
 #   theme-sync.sh port <quelle> <ziel[,ziel]> <pfad> [<pfad> ...]
 #   theme-sync.sh port <quelle> <ziel[,ziel]> --commit <sha> [--as-patch]
 #
@@ -25,9 +26,20 @@
 #                    in derselben Datei vorauslaeuft. Braucht --commit. Ein Ziel,
 #                    auf das der Patch nicht passt, wird uebersprungen.
 #
+# Markenspezifische Pfade bleiben liegen. --allow-brand hebt den Schutz fuer den
+# ganzen Lauf auf, --allow-brand=<pfad>[,<pfad>] nur fuer die genannten Pfade.
+#
+# Exit-Codes von port:
+#   0  alle Ziele geschrieben
+#   1  Abbruch vor der Ziel-Schleife — kein Ziel beruehrt
+#   2  teilweise — mindestens ein Ziel geschrieben, mindestens eines uebersprungen
+#   3  kein Ziel geschrieben, alle uebersprungen
+#
 # Das Skript committet nie und pusht nie. Es legt im Ziel einen Branch an und
 # laesst die Aenderung dort unveraendert stehen — pruefen und committen ist
-# Handarbeit.
+# Handarbeit. Ob eine Aenderung inhaltlich in die Zielmarke passt, prueft es
+# nicht: `settings <schluessel>` vergleicht Layout-Grundwerte, die visuelle
+# Gegenprobe im Ziel-Theme bleibt Voraussetzung.
 
 set -euo pipefail
 
@@ -65,6 +77,20 @@ is_brand_path() {
   for pattern in $BRAND_PATTERNS; do
     # shellcheck disable=SC2254
     case "$path" in $pattern) return 0 ;; esac
+  done
+  return 1
+}
+
+# Ist dieser markenspezifische Pfad ausdruecklich freigegeben?
+# ALLOW_BRAND_LIST leer  -> nichts freigegeben
+# ALLOW_BRAND_LIST "ALL" -> alles freigegeben (--allow-brand ohne Wert)
+# sonst                  -> nur die genannten Pfade
+is_allowed_brand_path() {
+  local path="$1" entry
+  [[ -n "$ALLOW_BRAND_LIST" ]] || return 1
+  [[ "$ALLOW_BRAND_LIST" != "ALL" ]] || return 0
+  for entry in ${ALLOW_BRAND_LIST//,/ }; do
+    [[ "$entry" != "$path" ]] || return 0
   done
   return 1
 }
@@ -227,6 +253,47 @@ AWK
   echo ""
 }
 
+# --- settings ----------------------------------------------------------------
+# Vergleicht einen Schluessel aus config/settings_data.json ueber alle Themes.
+# Layout-Grundwerte wie page_width entscheiden, ob eine uebertragene CSS-Regel
+# in der Zielmarke dieselbe Wirkung hat. Die Dateien beginnen mit einem
+# /* ... */-Kommentarblock und sind damit kein reines JSON.
+cmd_settings() {
+  local key="${1:-}"
+  [[ -n "$key" ]] || { echo -e "${RED}FEHLER:${RESET} Schluessel fehlt. Beispiel: theme-sync.sh settings page_width" >&2; exit 1; }
+
+  echo ""
+  echo -e "${BOLD}  settings_data.json · ${key}${RESET}"
+  echo ""
+
+  local t dir value
+  for t in $(discover_themes); do
+    dir="$(theme_dir "$t")"
+    value="$(THEME_KEY="$key" python3 - "${dir}/config/settings_data.json" <<'PYEOF'
+import json, os, re, sys
+try:
+    raw = open(sys.argv[1], encoding='utf-8').read()
+except OSError:
+    print('(Datei fehlt)'); sys.exit(0)
+raw = re.sub(r'/\*.*?\*/', '', raw, flags=re.S)
+try:
+    data = json.loads(raw)
+except ValueError as exc:
+    print('(kein JSON: %s)' % exc); sys.exit(0)
+current = data.get('current', {})
+if isinstance(current, str):
+    current = data.get('presets', {}).get(current, {})
+print(current.get(os.environ['THEME_KEY'], '(nicht gesetzt)'))
+PYEOF
+)"
+    printf "  %-8s %s\n" "$t" "$value"
+  done
+  echo ""
+  echo -e "${DIM}  Gleiche Werte heissen: eine uebertragene Layout-Regel wirkt in allen Marken gleich.${RESET}"
+  echo -e "${DIM}  Sie heissen nicht, dass die Regel fuer jede Marke gewollt ist.${RESET}"
+  echo ""
+}
+
 # --- port --------------------------------------------------------------------
 cmd_port() {
   local src="${1:-}" targets_raw="${2:-}"
@@ -234,10 +301,12 @@ cmd_port() {
   [[ -n "$src" && -n "$targets_raw" ]] || { usage; exit 1; }
   assert_theme "$src"
 
-  local allow_brand=false as_patch=false commit_sha="" paths=()
+  local as_patch=false commit_sha="" paths=()
+  ALLOW_BRAND_LIST=""
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --allow-brand) allow_brand=true; shift ;;
+      --allow-brand) ALLOW_BRAND_LIST="ALL"; shift ;;
+      --allow-brand=*) ALLOW_BRAND_LIST="${1#--allow-brand=}"; shift ;;
       --as-patch) as_patch=true; shift ;;
       --commit) commit_sha="${2:-}"; shift 2 ;;
       -*) echo -e "${RED}FEHLER:${RESET} Unbekannte Option $1" >&2; exit 1 ;;
@@ -280,7 +349,7 @@ cmd_port() {
   # Pfade pruefen: markenspezifisch? in der Quelle vorhanden?
   local usable=() skipped=() missing=() p
   for p in "${paths[@]}"; do
-    if is_brand_path "$p" && [[ "$allow_brand" == false ]]; then
+    if is_brand_path "$p" && ! is_allowed_brand_path "$p"; then
       skipped+=("$p"); continue
     fi
     if [[ ! -f "${src_dir}/${p}" ]]; then
@@ -295,7 +364,7 @@ cmd_port() {
   echo -e "${BOLD}  port: ${src} -> ${targets_raw}${RESET} ${DIM}(${mode_label})${RESET}"
   echo ""
   if [[ ${#skipped[@]} -gt 0 ]]; then
-    echo -e "  ${YELLOW}Markenspezifisch, nicht uebertragen${RESET} ${DIM}(--allow-brand erzwingt)${RESET}:"
+    echo -e "  ${YELLOW}Markenspezifisch, nicht uebertragen${RESET} ${DIM}(--allow-brand=<pfad> gibt einzeln frei)${RESET}:"
     for p in "${skipped[@]}"; do echo "    - $p"; done
     echo ""
   fi
@@ -330,7 +399,7 @@ cmd_port() {
 
   local branch
   branch="sync/${src}-$(date +%Y-%m-%d)"
-  local failed=0
+  local written=0 skipped_targets=0
 
   for t in $targets; do
     local dir prev
@@ -340,7 +409,7 @@ cmd_port() {
     if [[ -n "$(git -C "$dir" status --porcelain)" ]]; then
       echo -e "  ${RED}${t}: uebersprungen — Arbeitsbaum nicht sauber.${RESET}"
       echo -e "  ${DIM}    Erst committen oder stashen, dann erneut.${RESET}"
-      failed=1
+      skipped_targets=$((skipped_targets + 1))
       continue
     fi
 
@@ -350,7 +419,7 @@ cmd_port() {
       echo -e "  ${RED}${t}: uebersprungen — Patch passt nicht.${RESET}"
       echo -e "  ${DIM}    Der Kontext weicht ab. Von Hand uebertragen:${RESET}"
       echo -e "  ${DIM}    git -C themes/${t} apply --3way --reject <patch>${RESET}"
-      failed=1
+      skipped_targets=$((skipped_targets + 1))
       continue
     fi
 
@@ -384,27 +453,41 @@ cmd_port() {
       done
       echo -e "    ${DIM}${changed} geaendert, ${identical} bereits identisch — nicht committet.${RESET}"
     fi
+    written=$((written + 1))
   done
 
   echo ""
-  echo -e "  ${BOLD}Naechster Schritt${RESET} je Ziel-Theme:"
+  echo -e "  ${BOLD}Ergebnis${RESET}: ${written} Ziel(e) geschrieben, ${skipped_targets} uebersprungen."
+  echo -e "  ${BOLD}Naechster Schritt${RESET} je geschriebenem Ziel-Theme:"
   echo -e "    ${DIM}git -C themes/<ziel> diff        # pruefen${RESET}"
   echo -e "    ${DIM}git -C themes/<ziel> commit -am \"…\"${RESET}"
+  echo -e "    ${DIM}danach im Zielshop ansehen — die Anwendbarkeit sagt nichts ueber die Wirkung${RESET}"
   echo ""
-  return $failed
+
+  # 0 alles geschrieben · 2 teilweise · 3 nichts geschrieben, alles uebersprungen
+  if [[ "$skipped_targets" -eq 0 ]]; then
+    return 0
+  elif [[ "$written" -gt 0 ]]; then
+    return 2
+  else
+    return 3
+  fi
 }
 
 usage() {
-  sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
+  # Kopfkommentar bis zur ersten Leerzeile — kein fester Zeilenbereich, damit
+  # ein Nachtrag im Kopf die Hilfe nicht abschneidet.
+  awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"
 }
 
 main() {
   local cmd="${1:-}"
   shift || true
   case "$cmd" in
-    list)  cmd_list ;;
-    drift) cmd_drift "$@" ;;
-    port)  cmd_port "$@" ;;
+    list)     cmd_list ;;
+    drift)    cmd_drift "$@" ;;
+    settings) cmd_settings "$@" ;;
+    port)     cmd_port "$@" ;;
     ""|-h|--help|help) usage ;;
     *) echo -e "${RED}FEHLER:${RESET} Unbekanntes Kommando '$cmd'" >&2; usage >&2; exit 1 ;;
   esac

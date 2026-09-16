@@ -103,7 +103,7 @@
       "url": "https://claude.ai/artifact/2MPRTbCy6CogTjP6moB8iS",
       "favicon": "🧰",
       "blaetter": 5,
-      "findings": 5,
+      "findings": 6,
       "sources": [
         "bin/theme-sync.sh",
         ".claude/specs/harness/theme-sync.md",
@@ -112,10 +112,13 @@
         ".github/workflows/**"
       ],
       "open_questions": [
-        "themes/mdm traegt lokal einen main-Branch ohne merge-base zu origin/main — bis zur Reparatur meldet drift eine Abweichung, die auf den Remotes nicht besteht",
-        "Der Exit-Code von port unterscheidet einen Abbruch vor der Schleife nicht von einem uebersprungenen Ziel"
+        "bin/bauplan-stale.py vergleicht last_seen_sha gegen git HEAD und sieht uncommittete Arbeit nicht — eine Etappe zu uncommitteten Aenderungen muss von Hand aufgefrischt werden"
       ],
-      "closes": []
+      "closes": [
+        "Etappe 6, Pruefpunkt 01 — themes/mdm auf origin/main umgehaengt, archive/hyper-import sichert die alte Historie",
+        "Etappe 6, Pruefpunkt 02 — port liefert vier unterscheidbare Rueckgabewerte",
+        "Etappe 6, Pruefpunkt 03 — --allow-brand=<pfad> gibt einzelne Pfade frei"
+      ]
     }
   ]
 }

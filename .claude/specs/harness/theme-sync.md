@@ -1,6 +1,6 @@
 # Spec: Gleiche Aenderungen zwischen den Marken-Themes
 
-Stand: 16. September 2026 (Patch-Modus nachgetragen)
+Stand: 16. September 2026 (Patch-Modus, Exit-Codes, selektive Freigabe, settings)
 Status: UMGESETZT — `bin/theme-sync.sh`
 
 ## Ziel
@@ -60,9 +60,21 @@ die Marke MDM. Es wird beim Uebertragen **nicht** umbenannt.
 ```bash
 bin/theme-sync.sh list                      # Themes, Branch, sauber/unsauber
 bin/theme-sync.sh drift [pfad-praefix]      # was laeuft auseinander?
+bin/theme-sync.sh settings <schluessel>     # Grundwert je Marke vergleichen
 bin/theme-sync.sh port <quelle> <ziele> <pfade...>
 bin/theme-sync.sh port <quelle> <ziele> --commit <sha> [--as-patch]
 ```
+
+### settings
+
+Liest einen Schluessel aus `config/settings_data.json` je Theme und stellt die Werte
+nebeneinander. Die Dateien beginnen mit einem `/* ... */`-Kommentarblock und sind damit
+kein reines JSON; das Kommando schneidet ihn vor dem Parsen ab. `current` kann ein
+Preset-Name sein — dann wird das Preset aufgeloest.
+
+Zweck: der Teil des Uebertragungsrisikos, der maschinell entscheidbar ist. Gemessen am
+16. September 2026 traegt `page_width` in allen drei Marken `1700`, `type_header_font`
+dagegen `ebgaramond_n5` in MDM gegen `archivo_n7` in Borek und IMM.
 
 ### drift
 
@@ -93,6 +105,15 @@ Zwei Modi:
 Der Patch wird ueber `git diff <sha>^ <sha> -- <nicht-markenspezifische pfade>`
 gebildet, also greift die Blockliste auch hier.
 
+Exit-Codes:
+
+| Code | Bedeutung |
+|---|---|
+| 0 | alle Ziele geschrieben |
+| 1 | Abbruch vor der Ziel-Schleife — kein Ziel beruehrt |
+| 2 | teilweise — mindestens ein Ziel geschrieben, mindestens eines uebersprungen |
+| 3 | kein Ziel geschrieben, alle uebersprungen |
+
 Sicherungen:
 
 - Ziel mit unsauberem Arbeitsbaum wird uebersprungen, nicht ueberschrieben.
@@ -106,6 +127,11 @@ Sicherungen:
 
 Diese Dateien gehoeren der Marke, nicht der Codebasis. `port` ueberspringt sie
 und meldet das; `--allow-brand` uebertraegt sie bewusst:
+
+`--allow-brand` hebt den Schutz fuer den ganzen Lauf auf,
+`--allow-brand=<pfad>[,<pfad>]` nur fuer die genannten Pfade. Der selektive Fall deckt
+den Uebersetzungsschluessel ab, der fuer alle Marken gilt, ohne die ganze Datei
+freizugeben.
 
 ```
 config/settings_data.json      Live-Einstellungen des Theme-Editors
@@ -134,6 +160,14 @@ layout/*                       mdm-theme.liquid vs. borek-theme.liquid
       unberuehrt und das Kommando endet mit Exit 1
 - [x] `--as-patch` liefert byte-genau dasselbe Ergebnis wie ein manuelles
       `git apply` desselben Commits (gemessen an `2bc9365` gegen borek und imm)
+- [x] `port` liefert 0 bei vollstaendigem Lauf, 1 bei Abbruch vor der Schleife,
+      2 bei teilweisem und 3 bei vollstaendig uebersprungenem Lauf (alle vier gemessen)
+- [x] `--allow-brand=<pfad>` gibt genau diesen Pfad frei und laesst andere
+      markenspezifische Pfade gesperrt
+- [x] `settings <schluessel>` liest ueber den `/* */`-Kopf hinweg und loest
+      Preset-Namen auf
+- [x] `usage` liest den Kopfkommentar bis zur ersten Leerzeile statt eines festen
+      Zeilenbereichs
 
 ## Grenzen
 
@@ -149,7 +183,12 @@ layout/*                       mdm-theme.liquid vs. borek-theme.liquid
   PR in einem fremden Shop werden.
 - Das Skript prueft **syntaktische** Anwendbarkeit, nicht inhaltliche Richtigkeit.
   Hart verdrahtete Layout-Zahlen aus einem Marken-Figma laufen sauber durch und
-  sind im Zielshop trotzdem falsch. Visuelle Gegenprobe bleibt Pflicht.
+  sind im Zielshop trotzdem falsch. `settings <schluessel>` deckt den maschinell
+  entscheidbaren Teil ab; die visuelle Gegenprobe bleibt Pflicht.
+- `drift` vergleicht den Arbeitsbaum. Steht ein Theme auf einem veralteten oder
+  unverbundenen Branch, meldet der Bericht Abweichungen, die auf den Remotes nicht
+  bestehen, und verdeckt zugleich echte. Vor der Bewertung
+  `git -C themes/<marke> merge-base main origin/main` pruefen.
 - Der Drift-Bericht sagt, **dass** etwas auseinanderlaeuft, nicht **ob** das
   richtig ist. Manche Abweichung ist gewollt.
 
