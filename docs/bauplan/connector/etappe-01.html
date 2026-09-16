@@ -398,8 +398,8 @@
       <h1>Umfang</h1>
       <p>Die README packt sechs Aufgaben in einen Satz. Dahinter stecken aber nur zwei Rollen —
          Shopify-App und Integrations-Middleware — und ein Prinzip, das den halben Ordnerbaum
-         erklärt. Vier Blätter: was das Ding ist, was das Gemfile bedeutet, wer wann geladen wird,
-         und wie eine package.json zwei Ziel-Runtimes bedient.</p>
+         erklärt. Vier Blätter: was das Ding ist, was das Gemfile bedeutet, wann welche Gruppe
+         geladen wird, und wie eine package.json zwei Ziel-Runtimes bedient.</p>
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>README.md · docs/overview.md</dd></div>
@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Zwei Rollen in einer App</h2>
+      <h2>Zwei Rollen</h2>
     </div>
     <p class="lead">Die sechs Punkte aus <code>README.md:16–23</code> lassen sich sauber in zwei
       Hälften teilen. Links alles, was mit dem <strong>Shopify-Plattform-Vertrag</strong> zu tun
@@ -493,7 +493,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Vom Gemfile zur laufenden App</h2>
+      <h2>Gemfile und Lock</h2>
     </div>
     <p class="lead">Ein <strong>Gem</strong> ist ein Ruby-Paket von rubygems.org. Das
       <strong>Gemfile</strong> ist die Einkaufsliste — unscharf, mit Gruppen. Die
@@ -558,8 +558,8 @@
       </svg>
       <figcaption><b>Die Lock-Datei verhindert abweichende Gem-Versionen zwischen Arbeitsplätzen.</b>
         Sie ist eingecheckt, also erhalten alle Arbeitsplätze, die CI und der Docker-Build beim <code>bundle install</code> dieselben Versionen. Geschrieben wird sie <em>immer</em> von
-        Bundler, niemals von Hand — bei einem Merge-Konflikt löst man den im <code>Gemfile</code>
-        und lässt <code>bundle install</code> neu laufen.</figcaption>
+        Bundler, niemals von Hand — ein Merge-Konflikt wird im <code>Gemfile</code> gelöst,
+        danach läuft <code>bundle install</code> neu.</figcaption>
     </figure>
 
     <div class="tw">
@@ -582,7 +582,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Wer wird wann geladen</h2>
+      <h2>Gem-Gruppen</h2>
     </div>
     <p class="lead">Die <code>group</code>-Blöcke im Gemfile sortieren Gems danach, in welchem
       <strong>Rails-Environment</strong> sie geladen werden. Das npm-Gegenstück wären
@@ -638,7 +638,7 @@
         <rect x="24" y="278" width="896" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="472" y="300" text-anchor="middle" class="s-note">Quer dazu: require: false heißt „installieren ja, beim Start laden nein“ — richtig für Kommandozeilen-Werkzeuge wie rubocop und brakeman.</text>
       </svg>
-      <figcaption><b>Die Zeile, die man leicht überliest:</b> <code>dotenv-rails</code> steht in
+      <figcaption><b>Die leicht überlesene Zeile:</b> <code>dotenv-rails</code> steht in
         <code>:development, :test</code>. Das Gem liest die <code>.env</code> — also ist die
         <code>.env</code> ein reines Lokal-Konzept, und in Production kommen die Variablen vom
         Container. Und <code>graphiql-rails</code> nutzt die Inline-Schreibweise
@@ -650,9 +650,9 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Eine package.json, zwei Welten</h2>
+      <h2>package.json</h2>
     </div>
-    <p class="lead">Die <code>package.json</code> ist mit 41 Zeilen erstaunlich klein — Der Umfang zeigt: das Frontend ist ein kleiner Teil des Projekts. Dieselbe Datei versorgt
+    <p class="lead">Die <code>package.json</code> hat 41 Zeilen. Der Umfang zeigt: das Frontend ist ein kleiner Teil des Projekts. Dieselbe Datei versorgt
       <strong>zwei getrennte Ziel-Runtimes</strong>.</p>
 
     <figure>
@@ -715,12 +715,12 @@
         <text x="24" y="269" class="s-tiny f-dim">product-limit</text>
 
         <rect x="24" y="292" width="912" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="480" y="311" text-anchor="middle" class="s-note">Zwei Runtimes, zwei Frameworks: React für unser eigenes UI, Preact für alles, was in Shopifys Sandbox läuft.</text>
+        <text x="480" y="311" text-anchor="middle" class="s-note">Zwei Runtimes, zwei Frameworks: React für das eigene UI, Preact für alles, was in Shopifys Sandbox läuft.</text>
       </svg>
-      <figcaption><b>Preact statt React in den Extensions.</b> Extensions laufen nicht bei uns, sondern
-        in Shopifys Sandbox — dort zählt jedes Kilobyte, und Shopifys eigenes
-        <code>@shopify/ui-extensions</code> setzt darauf auf. Das Admin-UI dagegen liefert unser
-        Rails aus und darf groß sein. Der Kleber auf der Rails-Seite heißt
+      <figcaption><b>Preact statt React in den Extensions.</b> Extensions laufen nicht im eigenen
+        Betrieb, sondern in Shopifys Sandbox — dort zählt jedes Kilobyte, und Shopifys eigenes
+        <code>@shopify/ui-extensions</code> setzt darauf auf. Das Admin-UI dagegen liefert das
+        eigene Rails aus und darf groß sein. Der Kleber auf der Rails-Seite heißt
         <code>vite_rails</code>: Vite baut, schreibt ein Manifest, und Rails weiß dadurch, welche
         gebaute Datei es einbinden muss.</figcaption>
     </figure>
@@ -730,7 +730,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Drei Altlasten in der README</h2>
+      <h2>Prüfpunkte und Fundstellen</h2>
     </div>
     <p class="lead">Die README beschreibt an drei Stellen nicht diesen Code. Alle drei sind belegt — es sind Copy-Paste-Reste, keine Vermutungen.</p>
 

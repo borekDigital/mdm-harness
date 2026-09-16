@@ -505,7 +505,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/05</span>
-      <h2>Die Produkt-Pipeline — sieben Stufen</h2>
+      <h2>Die Produkt-Pipeline</h2>
     </div>
     <p class="lead">Das ist die längste Kette im Projekt. Sie erklärt die Zahl der kleinen Jobs. Ein Cron-Eintrag alle 15 Minuten löst sie aus, und jede Stufe stellt die
       nächste in die Warteschlange.</p>
@@ -716,7 +716,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/05</span>
-      <h2>Eine Zeile regelt alle Wiederholungen</h2>
+      <h2>Wiederholungen</h2>
     </div>
     <p class="lead"><code>ApplicationJob</code> hat genau <strong>eine</strong> aktive Zeile. Alles,
       was nicht darunter fällt, landet im Sidekiq-Standard — und ein dritter Teil der Fehler
@@ -791,7 +791,7 @@ end</pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 05/05</span>
-      <h2>Wie aus einem Job tausende werden</h2>
+      <h2>Verzweigung der Jobs</h2>
     </div>
     <p class="lead">Beide Nacht-Cron-Einträge sehen gleich aus, verzweigen aber auf verschiedenen
       Ebenen: der eine <strong>je Produkt</strong>, der andere <strong>je Variante</strong>. Bei
@@ -864,7 +864,7 @@ end</pre>
         Produkten, sondern <code>shop.products.includes(:product_variants).find_each</code> über
         alles. Bei einem Katalog mit mehreren tausend Münzvarianten entstehen um 23:00 ebenso viele <code>high</code>-Jobs auf einmal, abgearbeitet von zehn Threads. Das
         ist gewollt und harmlos, solange es bis zum nächsten Lauf durch ist — aber es ist die
-        Stelle, an der man bei Wachstum zuerst nachdenken muss.</figcaption>
+        Stelle, die bei Wachstum zuerst nachgerechnet gehört.</figcaption>
     </figure>
   </section>
 
@@ -872,7 +872,7 @@ end</pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Fünf Beobachtungen</h2>
+      <h2>Prüfpunkte und Fundstellen</h2>
     </div>
 
     <div class="checks">

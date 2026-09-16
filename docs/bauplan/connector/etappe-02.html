@@ -398,8 +398,8 @@
       <p class="tb-eyebrow">MDM Connector · Etappe 2 · Hochfahren und Prozesse</p>
       <h1>Prozesse</h1>
       <p>Eine laufende Instanz ist nicht ein Programm, sondern drei — und alle drei booten dieselbe
-         Rails-App. Sechs Blätter: was läuft, in welcher Reihenfolge es hochkommt, wer auf welchem
-         Port horcht, und in welchem Takt der SAP-Abgleich schlägt.</p>
+         Rails-App. Sechs Blätter: was läuft, in welcher Reihenfolge es hochkommt, welcher Prozess
+         auf welchem Port horcht, und in welchem Takt der SAP-Abgleich läuft.</p>
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Repo</dt><dd>connector/</dd></div>
@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/06</span>
-      <h2>Es sind drei Prozesse, nicht einer</h2>
+      <h2>Drei Prozesse</h2>
     </div>
     <p class="lead">Zwei Dateien schreiben vor, was läuft. Lokal startet <code>bin/dev</code> über
       <strong>foreman</strong> drei Prozesse in einem Terminal; auf dem Server bleiben zwei übrig,
@@ -536,7 +536,7 @@ release: bundle exec rake db:migrate</pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/06</span>
-      <h2>Der Boot-Pfad: vier Dateien in Kette</h2>
+      <h2>Der Boot-Pfad</h2>
     </div>
     <p class="lead">Aus „Prozess gestartet“ wird „Rails läuft“ über genau vier Dateien. Die
       <code>require</code>-Kette läuft nach unten, ausgeführt wird von unten nach oben zurück.
@@ -601,7 +601,7 @@ release: bundle exec rake db:migrate</pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/06</span>
-      <h2>Puma: ein Prozess, drei Threads</h2>
+      <h2>Puma-Parallelität</h2>
     </div>
     <p class="lead"><code>config/puma.rb</code> ist zu 90 % Kommentar; wirksam sind vier Zeilen.
       Puma kennt zwei Ebenen von Parallelität — <strong>Worker</strong> (eigene Prozesse) und
@@ -666,7 +666,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/06</span>
-      <h2>Zwei Wege hinein, ein Rails</h2>
+      <h2>Zwei Eingänge</h2>
     </div>
     <p class="lead">Im Dev gibt es zwei völlig verschiedene Eingänge. Der <strong>Entwickler-Zugang</strong> geht auf den
       Vite-Server; er liefert Assets selbst und reicht nur <code>/</code> und <code>/graphql</code>
@@ -737,8 +737,8 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
       </svg>
       <figcaption><b>Der Vite-Proxy legt lokal alles unter einen Origin.</b>
         Hot-Reload und Backend-Daten liegen damit unter derselben Adresse. Der zweite Weg ist
-        der, der auf dem Server allein übrig bleibt. Ganz rechts steckt die Kopplung, die man
-        leicht übersieht: <code>web</code> und <code>worker</code> tauschen sich <em>nur</em> über
+        der, der auf dem Server allein übrig bleibt. Ganz rechts steckt die leicht übersehene
+        Kopplung: <code>web</code> und <code>worker</code> tauschen sich <em>nur</em> über
         Redis aus — Rails legt einen Job ab, Sidekiq nimmt ihn irgendwann heraus.</figcaption>
     </figure>
 
@@ -746,7 +746,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
       <table>
         <caption>Ports im Dev-Setup</caption>
         <thead>
-          <tr><th class="m">Port</th><th>Wer</th><th>Festgelegt in</th></tr>
+          <tr><th class="m">Port</th><th>Prozess</th><th>Festgelegt in</th></tr>
         </thead>
         <tbody>
           <tr><td class="m">3000</td><td>Rails / Puma</td><td class="m">puma.rb:34 · Default</td></tr>
@@ -763,7 +763,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 05/06</span>
-      <h2>Der Herzschlag: vier Cron-Jobs</h2>
+      <h2>Vier Cron-Jobs</h2>
     </div>
     <p class="lead">Die Kernaussage dieser Etappe: <strong>der Connector ist im Kern ein Uhrwerk.</strong> Bestellungen kommen per Webhook
       herein, aber der Abgleich Richtung SAP läuft getaktet — und <code>config/sidekiq.yml</code>
@@ -866,10 +866,10 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 06/06</span>
-      <h2>Die Secrets sind die Inhaltsangabe</h2>
+      <h2>Secrets und Zuschnitt</h2>
     </div>
-    <p class="lead"><code>.env.template</code> gruppiert sich nach Fremdsystem — und dieselben Gruppen liegen als Ordner unter <code>app/services/</code>. Wer die
-      <code>.env</code> liest, kennt den Aufgabenzuschnitt der App.</p>
+    <p class="lead"><code>.env.template</code> gruppiert sich nach Fremdsystem — und dieselben Gruppen liegen als Ordner unter <code>app/services/</code>. Die
+      <code>.env</code> nennt damit den Aufgabenzuschnitt der App.</p>
 
     <figure>
       <svg viewBox="0 0 960 250" role="img" aria-label="Der Connector hat vier ausgehende Integrationen: Shopify und SAP in beide Richtungen, Credit-API und OpenIBAN nur ausgehend. Jede entspricht einem Präfix in der .env und einem Ordner unter app/services.">
@@ -929,7 +929,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Drei Prüfpunkte, nicht belegt</h2>
+      <h2>Prüfpunkte und Fundstellen</h2>
     </div>
     <p class="lead">Diese drei Punkte stehen so im Code, ihre Wirkung lässt sich aber ohne
       laufende Instanz nicht beweisen. Notiert als Vermutung, nicht als Befund.</p>
@@ -963,7 +963,7 @@ plugin :tmp_restart                                 <span class="fp"># Zeile 37<
           <h3>Fremde Tunnel-Hosts fest eingetragen</h3>
           <p><code>vite.config.ts:41</code> listet <code>allowedHosts</code> mit
             <code>latori-14.ngrok.io</code> und <code>latori-5.ngrok.io</code> — Tunnel-Namen der
-            vorherigen Agentur. Dein eigener ngrok-Host muss dort ergänzt werden, sonst blockt Vite
+            vorherigen Agentur. Der eigene ngrok-Host muss dort ergänzt werden, sonst blockt Vite
             ihn.</p>
         </div>
       </div>

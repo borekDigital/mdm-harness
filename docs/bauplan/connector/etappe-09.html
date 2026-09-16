@@ -395,7 +395,7 @@
   <div class="titleblock">
     <div class="tb-main">
       <p class="tb-eyebrow">MDM Connector · Etappe 9 · Bauen und Ausrollen</p>
-      <h1>Sieben Extensions,<br>zwei Images</h1>
+      <h1>Deploy</h1>
       <p>Ein Repository erzeugt drei Dinge, die getrennt ausgerollt werden: zwei Docker-Images
          für die eigene Infrastruktur und sieben Shopify-Extensions für Shopifys. Das Deploy-Skript hat 85 Zeilen, die GitHub-CI 21. Geprüft wird ausschließlich der
          Ruby-Stil.</p>
@@ -478,7 +478,7 @@
         <code>variant-metafield-payment-exclusion</code> und
         <code>no-eligible-methods-fallback</code>. Jeder Name benennt eine fachliche Regel, die
         sonst nirgends geschrieben steht — die Funktion selbst ist eine einzige
-        TypeScript-Datei. Wer wissen will, wann SEPA ausgeblendet wird, liest die
+        TypeScript-Datei. Wann SEPA ausgeblendet wird, steht in der
         Fixture-Liste.</figcaption>
     </figure>
   </section>
@@ -487,7 +487,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/05</span>
-      <h2>Zwei Images aus einer Codebase</h2>
+      <h2>Zwei Images</h2>
     </div>
     <p class="lead"><code>Dockerfile.web</code> und <code>Dockerfile.worker</code>
       unterscheiden sich in <strong>22 Zeilen</strong>. Der Unterschied ist genau einer:
@@ -537,7 +537,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/05</span>
-      <h2>Der Weg eines Deploys</h2>
+      <h2>Weg eines Deploys</h2>
     </div>
     <p class="lead">Ein Mensch startet <code>./deploy.sh --production</code> auf seinem Rechner.
       Von dort laufen sieben Schritte bis zu zwei GitLab-Pipelines. Das Skript ist der einzige
@@ -613,7 +613,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/05</span>
-      <h2>Was die CI prüft</h2>
+      <h2>Umfang der CI</h2>
     </div>
     <p class="lead">Die GitHub-CI hat 21 Zeilen, einen Job und einen wirksamen Schritt:
       <code>bin/rubocop</code>. Es gibt daneben ein zweites, ungenutztes CI-Gerüst aus dem
@@ -693,7 +693,7 @@
           <p>Zwei Fehler in einem Satz: Der Worker migriert nicht, und der Befehl heißt
             <code>db:prepare</code>, nicht <code>db:migrate</code>. Das Verhalten selbst ist
             richtig — nur eine Stelle soll das Schema wandern lassen. Falsch ist die
-            Beschreibung, und sie steht an der Stelle, an der man nachsieht.</p>
+            Beschreibung, und sie steht genau dort, wo nachgesehen wird.</p>
         </div>
       </div>
 
@@ -705,7 +705,7 @@
             definiert: <code>bin/setup --skip-server</code>. Der einzige Workflow
             (<code>.github/workflows/ci.yml</code>) ruft <code>bin/rubocop</code> direkt auf und
             erwähnt <code>bin/ci</code> nicht.</p>
-          <p>Folge: Wer <code>bin/ci</code> lokal ausführt, prüft nichts — er richtet das
+          <p>Folge: <code>bin/ci</code> lokal ausgeführt prüft nichts — es richtet das
             Projekt ein. Der Name legt das Gegenteil nahe. Die Datei stammt aus dem
             Rails-8-Generator, samt auskommentiertem Beispielblock.</p>
         </div>
@@ -769,8 +769,8 @@
             Präfix.</p>
           <p>Die übrige Datei ist genau — sie benennt sogar, dass web und worker ihren
             Zeitstempel getrennt erzeugen und deshalb um eine Sekunde auseinanderliegen können.
-            Die fehlende Präfix-Angabe trifft ausgerechnet den Fall, in dem man die Tags von
-            Hand sucht: die Rückrollung.</p>
+            Die fehlende Präfix-Angabe trifft ausgerechnet den Fall, in dem die Tags von
+            Hand gesucht werden: die Rückrollung.</p>
         </div>
       </div>
     </div>

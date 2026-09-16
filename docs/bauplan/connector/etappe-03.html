@@ -394,8 +394,8 @@
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Connector · Etappe 3 · Datenmodell</p>
-      <h1>Acht Tabellen,<br>zwei Ströme</h1>
+      <p class="tb-eyebrow">MDM Connector · Etappe 3 · Tabellen und Modelle</p>
+      <h1>Datenmodell</h1>
       <p>Das Schema ist klein und streng: acht Tabellen, neun Fremdschlüssel, ein einziger
          Mandantenschlüssel. Sieben Tabellen hängen an <code>shops</code>, eine nicht. Die
          Modelle enthalten fast keine Fachlogik — drei von ihnen schreiben jedoch bei jedem
@@ -422,7 +422,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/05</span>
-      <h2>Die acht Tabellen und ihre Verbindungen</h2>
+      <h2>Tabellen und Verbindungen</h2>
     </div>
     <p class="lead"><code>shops</code> ist die Wurzel. Von dort gehen zwei getrennte Stränge
       aus, die sich nirgends berühren: <strong>Produkte</strong> laufen aus SAP in den Shop,
@@ -523,7 +523,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/05</span>
-      <h2>Der Mandantenschlüssel und die eine Ausnahme</h2>
+      <h2>Mandantenschlüssel</h2>
     </div>
     <p class="lead">Sieben Tabellen tragen <code>shop_id</code>. Die achte nicht. Diese
       Ausnahme ist kein Versehen, aber sie hat eine Folge, die beim Lesen des Schemas nicht
@@ -583,7 +583,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/05</span>
-      <h2>Drei Modelle schreiben nach Shopify</h2>
+      <h2>Schreibende Modelle</h2>
     </div>
     <p class="lead">Die Modelle sind dünn: Assoziationen, Enums, zwei Scopes. Eine Ausnahme
       gibt es — <strong>drei <code>after_commit</code>-Hooks setzen Shopify-Metafelder</strong>.
@@ -649,7 +649,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/05</span>
-      <h2>Die Metafeld-Tabelle im Shop-Modell</h2>
+      <h2>Metafeld-Zuordnung</h2>
     </div>
     <p class="lead">Ein Drittel von <code>shop.rb</code> ist eine Konstante:
       <code>METAFIELD_DEFINITIONS_MAPPING</code> ordnet SAP-Attribute den Shopify-Metafeldern
@@ -711,7 +711,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 05/05</span>
-      <h2>Fünf Beobachtungen am Schema</h2>
+      <h2>Prüfpunkte und Fundstellen</h2>
     </div>
     <p class="lead">Alle fünf sind aus <code>db/schema.rb</code> und den Modelldateien belegt.
       Die Wirkung der dritten lässt sich ohne laufende Instanz nicht messen; sie ist als

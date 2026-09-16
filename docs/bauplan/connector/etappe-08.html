@@ -410,7 +410,7 @@
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-vite"></i>React <span>— unser Code</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>React <span>— eigener Code</span></span>
     <span class="legend-item"><i class="swatch sw-web"></i>Shopify <span>— Polaris und App Bridge</span></span>
     <span class="legend-item"><i class="swatch sw-worker"></i>Rails <span>— liefert aus, antwortet</span></span>
     <span class="legend-item"><i class="swatch sw-alert"></i>toter Code <span>— siehe Blatt 05</span></span>
@@ -420,7 +420,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/05</span>
-      <h2>Acht Provider, zwei Apollo-Clients</h2>
+      <h2>Provider und Clients</h2>
     </div>
     <p class="lead">Bevor die erste Seite rendert, liegen acht Kontext-Anbieter übereinander. Zwei
       davon sind Apollo-Clients — und der äußere wird vom inneren <strong>vollständig
@@ -488,7 +488,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/05</span>
-      <h2>Wie die SPA in die Seite kommt</h2>
+      <h2>Einstieg der SPA</h2>
     </div>
     <p class="lead">Vier Stationen von Rails bis React — und ein zweiter, unauffälliger Kanal: der
       <code>&lt;div id="shopify-app-init"&gt;</code> mit <code>data-</code>-Attributen. Ohne den
@@ -558,7 +558,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/05</span>
-      <h2>Routen entstehen aus Dateinamen</h2>
+      <h2>Routen aus Dateinamen</h2>
     </div>
     <p class="lead">Es gibt keine Routen-Datei mit Einträgen. <code>Routes.jsx</code> liest den
       Ordner <code>pages/</code> zur Bauzeit ein und rechnet aus jedem Dateipfad einen Router-Pfad
@@ -638,7 +638,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/05</span>
-      <h2>Der Weg einer Abfrage</h2>
+      <h2>Weg einer Abfrage</h2>
     </div>
     <p class="lead">Von <code>useQuery</code> bis zum privaten Schema sind es fünf Stationen. Die
       interessanteste ist die dritte: dort hängt <strong>App Bridge das Session-Token an</strong> —
@@ -705,7 +705,7 @@
         <rect x="24" y="288" width="912" height="34" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="480" y="310" text-anchor="middle" class="s-note">Alle Abfragen gehen an genau einen Endpunkt — es gibt im Frontend keinen einzigen REST-Aufruf.</text>
       </svg>
-      <figcaption><b>Zwei Dinge sind hier bemerkenswert.</b> Erstens: <code>ShopProvider</code>
+      <figcaption><b>Zwei Eigenschaften dieser Kette.</b> Erstens: <code>ShopProvider</code>
         fragt mit <code>fetchPolicy: 'no-cache'</code> ab und rendert <code>null</code>, solange
         keine Antwort da ist — die App zeigt also bis dahin eine leere Seite, ohne Ladeanzeige.
         Zweitens zeigt der <code>errorLink</code> rohe GraphQL-Fehlertexte als Toast. Praktisch
@@ -718,7 +718,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 05/05</span>
-      <h2>Was lebt und was nicht</h2>
+      <h2>Toter Code</h2>
     </div>
     <p class="lead">Von 1 991 Zeilen sind gut 250 nachweislich unerreichbar — plus eine Datei mit
       312 Zeilen, von der genau ein Export benutzt wird. Die Suche nach einem Export führt daher leicht in die falsche Datei.</p>
@@ -799,7 +799,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Sechs Beobachtungen</h2>
+      <h2>Prüfpunkte und Fundstellen</h2>
     </div>
 
     <div class="checks">
@@ -827,7 +827,7 @@
             Schlägt die <code>activeShop</code>-Abfrage fehl, wird
             <code>domain</code> auf <code>undefined</code> gesetzt — und weil die Abbruchbedingung
             in Zeile 41 auf <code>=== null</code> prüft, rendert die App weiter, nur ohne
-            Shop-Domain. Statt einer Fehlermeldung sieht man eine halb funktionierende
+            Shop-Domain. Statt einer Fehlermeldung erscheint eine halb funktionierende
             Oberfläche.</p>
         </div>
       </div>

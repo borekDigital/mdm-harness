@@ -394,7 +394,7 @@
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Connector · Etappe 7 · GraphQL</p>
+      <p class="tb-eyebrow">MDM Connector · Etappe 7 · Schemas und Resolver</p>
       <h1>GraphQL</h1>
       <p>Zwei GraphQL-Endpunkte, zwei Zielgruppen, zwei Wächter — und zusammen gerade sechs
          Operationen. Der Umfang ist absichtlich klein: das Schema deckt nur ab, was das Admin-UI
@@ -420,11 +420,11 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/05</span>
-      <h2>Zwei Schemas, zwei Vertrauensstufen</h2>
+      <h2>Zwei Schemas</h2>
     </div>
     <p class="lead">Nicht wegen unterschiedlicher Daten, sondern wegen unterschiedlicher
-      <strong>Vertrauensstufen</strong>. Das private Schema erreicht nur, wer eine
-      Shopify-Admin-Session hat. Das öffentliche erreicht jeder Kunde im Checkout — die Grenze muss
+      <strong>Vertrauensstufen</strong>. Das private Schema erreicht nur eine
+      Shopify-Admin-Session. Das öffentliche erreicht jeder Kunde im Checkout — die Grenze muss
       also im Schema selbst liegen.</p>
 
     <figure>
@@ -615,7 +615,7 @@
         Entscheidung dieses Schemas.</b> <code>SapOrderEventType</code> gibt
         <code>queryData</code> und <code>responseData</code> als undurchsichtiges JSON heraus, also
         genau das, was in der jsonb-Spalte steht. Für ein Log-Fenster im Admin-UI ist das richtig —
-        man will die rohe SAP-Antwort sehen. Der Preis: das Schema beschreibt diese Inhalte nicht,
+        gebraucht wird dort die rohe SAP-Antwort. Der Preis: das Schema beschreibt diese Inhalte nicht,
         das Frontend muss sie selbst deuten.</figcaption>
     </figure>
   </section>
@@ -624,11 +624,11 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/05</span>
-      <h2>Der einzige echte Resolver</h2>
+      <h2>Der orders-Resolver</h2>
     </div>
     <p class="lead">Vier der sechs Operationen sind Einzeiler. <code>orders</code> ist die Ausnahme
       — 56 Zeilen, mit <code>search_object</code>, sechs Filtern und einem
-      <strong>Nebeneffekt, den man in einer Query nicht erwartet</strong>.</p>
+      <strong>Nebeneffekt, der in einer Query nicht zu erwarten ist</strong>.</p>
 
     <figure>
       <svg viewBox="0 0 960 420" role="img" aria-label="Ablauf des orders-Resolvers: die Mandantengrenze über scope, dann apply_filter mit sechs Filtern, und ein Nebeneffekt, der bei Angabe einer shopifyId eine fehlende Bestellung erst per Shopify-Aufruf anlegt.">
@@ -786,7 +786,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Sechs Beobachtungen</h2>
+      <h2>Prüfpunkte und Fundstellen</h2>
     </div>
 
     <div class="checks">

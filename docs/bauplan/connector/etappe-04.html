@@ -397,9 +397,9 @@
       <p class="tb-eyebrow">MDM Connector · Etappe 4 · Routing und Einstiegspunkte</p>
       <h1>Eingang</h1>
       <p><code>config/routes.rb</code> hat nur 56 Zeilen, öffnet aber acht verschiedene Eingänge —
-         und jeder wird von einem anderen Verfahren bewacht. Fünf Blätter: wer klopfen darf, wie
-         die Controller-Hierarchie das durchsetzt, wie ein Webhook seinen Job findet, und wo die
-         Reihenfolge in der Routen-Datei wirklich zählt.</p>
+         und jeder wird von einem anderen Verfahren bewacht. Fünf Blätter: welcher Aufrufer
+         zugelassen ist, wie die Controller-Hierarchie das durchsetzt, wie ein Webhook seinen
+         Job findet, und wo die Reihenfolge in der Routen-Datei zählt.</p>
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>routes.rb · 11 Controller</dd></div>
@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/05</span>
-      <h2>Wer klopft, und wer aufmacht</h2>
+      <h2>Eingänge und Aufrufer</h2>
     </div>
     <p class="lead">Acht Eingänge, fünf verschiedene Aufrufer. Die dritte Spalte ist die
       wichtigste: <strong>sie sagt, worauf das Vertrauen beruht.</strong> Zwei Zeilen haben dort
@@ -429,7 +429,7 @@
 
     <figure>
       <svg viewBox="0 0 960 500" role="img" aria-label="Übersicht der acht Einstiegspunkte des Connectors mit Aufrufer, Route, Sicherungsverfahren und Ziel. Der Healthcheck und der Catch-All haben kein Sicherungsverfahren.">
-        <text x="24" y="44" class="s-lbl f-dim">Wer klopft</text>
+        <text x="24" y="44" class="s-lbl f-dim">Aufrufer</text>
         <text x="208" y="44" class="s-lbl f-dim">Route</text>
         <text x="472" y="44" class="s-lbl f-dim">Wächter</text>
         <text x="716" y="44" class="s-lbl f-dim">Ziel</text>
@@ -545,7 +545,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/05</span>
-      <h2>Die Vererbung setzt die Regeln durch</h2>
+      <h2>Vererbung der Regeln</h2>
     </div>
     <p class="lead">Kein Controller prüft selbst, ob er darf. Die Prüfung hängt an der
       <strong>Basisklasse</strong>, die er beerbt. Der Schutz eines Endpunkts steht nicht in der Action, sondern in der Basisklasse darüber.</p>
@@ -653,7 +653,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/05</span>
-      <h2>Wie ein Webhook seinen Job findet</h2>
+      <h2>Webhook zu Job</h2>
     </div>
     <p class="lead">Es gibt <strong>keine Zuordnungstabelle</strong>. Der Controller baut den
       Klassennamen zur Laufzeit aus dem Topic-Header zusammen — vier Ruby-Methoden hintereinander,
@@ -735,11 +735,11 @@ end                                              <span class="fp"># shopify/webh
         <text x="42" y="310" class="s-note">Kehrseite der Konvention: ein Topic ohne passende Job-Klasse wirft eine Ausnahme statt sie zu ignorieren.</text>
         <text x="42" y="328" class="s-tiny f-dim">Shopify bekommt dann 500 und wiederholt den Webhook — ein neu abonniertes Topic ohne Job erzeugt also eine Fehler-Schleife.</text>
       </svg>
-      <figcaption><b>Elegant und riskant zugleich.</b> Ein neues Topic zu unterstützen heißt: eine
+      <figcaption><b>Knapp und riskant zugleich.</b> Ein neues Topic zu unterstützen heißt: eine
         Datei mit dem richtigen Namen anlegen, fertig — kein Registry, kein Schalter. Genau
         deshalb ist das Abonnement in <code>shopify.app.toml</code> und die Datei in
-        <code>app/jobs/shopify/</code> ein Paar, das man nur gemeinsam ändern darf. Beachte auch,
-        dass der Job nur <code>shop_domain</code> und den geparsten Body bekommt — keine
+        <code>app/jobs/shopify/</code> ein Paar, das nur gemeinsam geändert werden darf. Der Job
+        bekommt zudem nur <code>shop_domain</code> und den geparsten Body — keine
         Objekte, weil er über Redis geschickt wird.</figcaption>
     </figure>
   </section>
@@ -748,7 +748,7 @@ end                                              <span class="fp"># shopify/webh
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/05</span>
-      <h2>Vier Wächter im Vergleich</h2>
+      <h2>Vier Wächter</h2>
     </div>
     <p class="lead">Drei der vier Verfahren kommen aus dem <code>shopify_app</code>-Gem und teilen
       dasselbe Geheimnis. Nur das vierte ist selbst gebaut — und nur dieses hat eine
@@ -837,7 +837,7 @@ end                                              <span class="fp"># shopify/webh
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 05/05</span>
-      <h2>Die Reihenfolge ist Programm</h2>
+      <h2>Routen-Reihenfolge</h2>
     </div>
     <p class="lead">Rails prüft die Routen <strong>von oben nach unten</strong> und nimmt die erste,
       die passt. In dieser Datei stehen zwei Einträge, die fast alles schlucken würden — und beide
@@ -916,7 +916,7 @@ end                                              <span class="fp"># shopify/webh
         <rect x="90" y="432" width="846" height="24" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="513" y="448" text-anchor="middle" class="s-note">Stünde Zeile 55 oben, wäre keine einzige andere Route erreichbar.</text>
       </svg>
-      <figcaption><b>Zwei Stellen, an denen man sich beim Erweitern verletzt.</b> Erstens:
+      <figcaption><b>Zwei Stellen, die beim Erweitern brechen.</b> Erstens:
         <code>mount ShopifyApp::Engine, at: '/'</code> bringt einen ganzen Satz eigener Routen mit,
         die nicht in dieser Datei stehen — eine neue Route mit gleichem Pfad muss <em>darüber</em>.
         Zweitens: der Catch-All in Zeile 55 nimmt <code>GET</code> <em>und</em> <code>POST</code>.
@@ -929,7 +929,7 @@ end                                              <span class="fp"># shopify/webh
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Anhang</span>
-      <h2>Sechs Beobachtungen</h2>
+      <h2>Prüfpunkte und Fundstellen</h2>
     </div>
     <p class="lead">Vier belegte Sicherheits- und Konsistenzpunkte, zwei veraltete Stellen in der
       Projektdokumentation.</p>
