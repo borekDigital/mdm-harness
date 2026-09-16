@@ -129,6 +129,17 @@ Anhang           4–6 Beobachtungen, nummeriert, je mit Beleg und Konsequenz
 Footer           Etappe n von m, Ausblick auf die naechste
 ```
 
+Die Fusszeile wird **nicht von Hand verlinkt**. `bin/bauplan-nav.py` setzt aus dem
+Manifest: den Sprung auf die naechste Etappe (lokale Datei plus `Artefakt`-Link, sofern
+eine URL eingetragen ist), beim letzten Blatt stattdessen den Ruecksprung zur Uebersicht,
+und die Gesamtzahl in `Etappe n von m`. Beim Schreiben genuegt die Fliesstext-Zeile — der
+Nachsatz bleibt erhalten, die Verlinkung kommt beim naechsten `./sync.sh` dazu:
+
+    Als naechstes: der Service-Layer - Action, API, Transformer
+
+Kommt eine Etappe hinzu, zeigt das Blatt davor danach automatisch auf sie, `von m` stimmt
+in allen Blaettern des Satzes wieder, und eine ueberholte Schlusszeile verschwindet.
+
 Die **Bildunterschrift ist nicht die Wiederholung der Figur.** Sie sagt, warum die Figur
 zaehlt — die Konsequenz fuer jemanden, der morgen in diesem Code arbeitet.
 
@@ -298,6 +309,7 @@ Historie im `mdm-harness`-Repo ist der Rueckweg (`git checkout HEAD -- docs/baup
 | Befehl | Wirkung |
 |---|---|
 | `bin/bauplan-index.py` | `docs/bauplan/index.html` neu erzeugen (Uebersicht mit Inhaltsverzeichnis) |
+| `bin/bauplan-nav.py` | Fusszeilen-Navigation aus dem Manifest setzen (idempotent, `--dry-run` zeigt nur) |
 | `bin/bauplan-pdf.py <repo>` | Ganzen Satz als ein PDF — fuer Externe ohne Claude-Zugang |
 | `bin/bauplan-pdf.py <repo> --einzeln` | Ein PDF je Etappe |
 | `bin/bauplan-stale.py --repo <repo>` | Veraltete Etappen ermitteln (Exit 3, wenn welche) |
@@ -305,7 +317,8 @@ Historie im `mdm-harness`-Repo ist der Rueckweg (`git checkout HEAD -- docs/baup
 | `bin/bauplan-import.py` | Veroeffentlichte Seite als Quelle zurueckholen |
 
 Nach jedem Lauf `bin/bauplan-index.py` aufrufen — die Uebersicht ist generiert, nicht
-handgepflegt.
+handgepflegt. `./sync.sh` ruft Index und Navigation gemeinsam auf; einzeln braucht man
+sie nur beim Arbeiten an einem Satz.
 
 ## Repo-spezifische Zuschnitte
 

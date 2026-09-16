@@ -76,6 +76,25 @@
       ],
       "open_questions": [],
       "closes": []
+    },
+    {
+      "nr": 5,
+      "title": "Gesamtstruktur",
+      "url": "https://claude.ai/artifact/LJPJrDJCLe1fYAZab3n2kv",
+      "favicon": "🧰",
+      "blaetter": 4,
+      "findings": 2,
+      "sources": [
+        "workspace.yaml",
+        "bin/theme-sync.sh",
+        "templates/repo-themes.md",
+        ".claude/specs/harness/theme-sync.md"
+      ],
+      "open_questions": [
+        "Die Laufzeit-Kanten aus Blatt 03 liegen in den Kind-Repos und sind von keiner sources-Regel gedeckt — veraltet dort etwas, meldet es niemand",
+        "datalayer ist von keiner Rule, Spec oder Blattsatz gedeckt"
+      ],
+      "closes": []
     }
   ]
 }

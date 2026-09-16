@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Deploy</title>
+<title>MDM Harness · Etappe 5 · Gesamtstruktur</title>
 <style>
   /* Schriften als data:-URI eingebettet, statische Einzelgewichte.
      Die Artifact-CSP blockiert externe Hosts; Chromes print-to-PDF
@@ -394,392 +394,422 @@
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Connector · Etappe 9 · Bauen und Ausrollen</p>
-      <h1>Sieben Extensions,<br>zwei Images</h1>
-      <p>Ein Repository erzeugt drei Dinge, die getrennt ausgerollt werden: zwei Docker-Images
-         für die eigene Infrastruktur und sieben Shopify-Extensions für Shopifys. Das Deploy-Skript hat 85 Zeilen, die GitHub-CI 21. Geprüft wird ausschließlich der
-         Ruby-Stil.</p>
+      <p class="tb-eyebrow">MDM Harness · Etappe 5 · Gesamtstruktur</p>
+      <h1>Gesamtstruktur</h1>
+      <p>Die vier vorigen Etappen erklären, wie sich die Steuerungsschicht verhält. Diese
+         erklärt, <strong>woraus der Workspace besteht</strong>: acht Arbeits-Repos auf zwei
+         Plattformen, drei davon Storefronts derselben Firma. Die Hälfte hängt an einem
+         System, das in keinem der acht liegt.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>deploy.sh · 2 Dockerfiles · ci.yml</dd></div>
-      <div class="tb-cell"><dt>Extensions</dt><dd>7 — 5 UI, 2 Functions</dd></div>
-      <div class="tb-cell"><dt>Images</dt><dd>2 — web, worker</dd></div>
-      <div class="tb-cell"><dt>CI-Schritte</dt><dd>1 — RuboCop</dd></div>
-      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>workspace.yaml · .claude/rules · .claude/bauplan</dd></div>
+      <div class="tb-cell"><dt>Repos</dt><dd>8 Arbeits-Repos · 2 Plattformen</dd></div>
+      <div class="tb-cell"><dt>Abdeckung</dt><dd>7 Rules · 2 Blattsätze · 1 Spec-Satz</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>eigene Infrastruktur <span>— Images, Registry, GitLab</span></span>
-    <span class="legend-item"><i class="swatch sw-vite"></i>Shopify <span>— Extensions, eigener Weg</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>geprüft <span>— hat Tests oder Lint</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>ungeprüft <span>— siehe Blatt 04</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Shopify-Gruppe <span>— GitHub, Storefront-nah</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Middleware-Gruppe <span>— GitLab, Team Middleware</span></span>
+    <span class="legend-item"><i class="swatch sw-vite"></i>Fremdsystem <span>— nicht im Workspace</span></span>
+    <span class="legend-item"><i class="swatch sw-alert"></i>Lücke <span>— ungedeckt oder unbelegt</span></span>
   </div>
 
   <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 01/05</span>
-      <h2>Die sieben Extensions</h2>
+      <span class="plate-no">Blatt 01/04</span>
+      <h2>Die Gruppe sagt, wen man fragen muss</h2>
     </div>
-    <p class="lead">Fünf UI-Extensions laufen im Checkout oder im Admin, zwei Functions laufen
-      in Shopifys WebAssembly-Umgebung. Der Unterschied entscheidet über Sprache, Testbarkeit
-      und Ausrollweg.</p>
-
-    <div class="tw">
-      <table>
-        <caption>Extensions nach Typ, Quelle und Prüfung</caption>
-        <thead>
-          <tr><th>Verzeichnis</th><th class="m">Typ</th><th class="m">src</th><th class="m">dist</th><th class="m">Tests</th><th>Aufgabe</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="m">credit-check</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Bonitätsprüfung im Checkout</td></tr>
-          <tr><td class="m">sepa-iban</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>IBAN-Eingabe und -Prüfung</td></tr>
-          <tr><td class="m">tax-information-display</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">2</td><td class="m">0</td><td>Steuerhinweis im Checkout</td></tr>
-          <tr><td class="m">order-credit-check-block</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Admin-Block zur Bonität</td></tr>
-          <tr><td class="m">order-sap-status-block</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Admin-Block zum SAP-Status</td></tr>
-          <tr><td class="m">payment-customization</td><td class="m">function</td><td class="m">3</td><td class="m">0</td><td class="m">14</td><td>Zahlarten ein- und ausblenden</td></tr>
-          <tr><td class="m">product-limit</td><td class="m">function</td><td class="m">3</td><td class="m">2</td><td class="m">5</td><td>Mengenbegrenzung je Kunde</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <p class="lead"><code>workspace.yaml</code> trägt je Repo ein Feld <code>group</code> mit
+      zwei Werten: <code>shopify</code> und <code>middleware</code>. Es sieht nach einer
+      Sortierhilfe fürs Setup-Menü aus. Tatsächlich fallen an dieser einen Linie drei
+      Trennungen zusammen — Plattform, Zuständigkeit und Zugang.</p>
 
     <figure>
-      <svg viewBox="0 0 960 300" role="img" aria-label="Vergleich der beiden Extension-Typen. UI-Extensions laufen im Browser des Kunden oder im Admin, sind in Preact geschrieben und haben keine Tests. Functions laufen als WebAssembly auf Shopifys Servern, sind in TypeScript oder Rust geschrieben und haben 19 Testdateien.">
-        <rect x="24" y="40" width="440" height="212" rx="3" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-width="1.5"></rect>
-        <text x="40" y="64" class="s-lbl f-vite">UI-Extensions — 5 Stück</text>
-        <text x="40" y="90" class="s-tiny">Laufen im Browser: im Checkout oder im Admin.</text>
-        <text x="40" y="112" class="s-tiny f-dim">Preact, weil Shopifys Sandbox jedes Kilobyte zählt</text>
-        <text x="40" y="128" class="s-tiny f-dim">(siehe Etappe 1).</text>
-        <text x="40" y="154" class="s-tiny">Je eine Datei <tspan class="s-mono">src/Checkout.jsx</tspan> — die gesamte</text>
-        <text x="40" y="170" class="s-tiny">Logik einer Extension steht in einer Datei.</text>
-        <text x="40" y="196" class="s-tiny">Übersetzungen: 2 bis 3 Sprachen je Extension</text>
-        <text x="40" y="212" class="s-tiny f-dim">de · en.default · teilweise fr</text>
-        <text x="40" y="238" class="s-tiny f-alert">Keine einzige Testdatei.</text>
+      <svg viewBox="0 0 960 408" role="img" aria-label="Acht Repos in zwei Gruppen. Die fünf Repos der Shopify-Gruppe liegen auf GitHub in der Organisation borekDigital, die drei der Middleware-Gruppe auf gitlab.mdm.de beim Team Middleware. Die Gruppengrenze ist gleichzeitig Plattform- und Teamgrenze.">
+        <text x="96" y="40" class="s-lbl f-dim">Repo</text>
+        <text x="268" y="40" class="s-lbl f-dim">Pfad</text>
+        <text x="452" y="40" class="s-lbl f-dim">Plattform</text>
+        <text x="646" y="40" class="s-lbl f-dim">Technik</text>
 
-        <rect x="496" y="40" width="440" height="212" rx="3" fill="var(--worker)" fill-opacity="0.07" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="512" y="64" class="s-lbl f-worker">Functions — 2 Stück</text>
-        <text x="512" y="90" class="s-tiny">Laufen als WebAssembly auf Shopifys Servern,</text>
-        <text x="512" y="106" class="s-tiny">nicht im Browser und nicht bei uns.</text>
-        <text x="512" y="132" class="s-tiny f-dim">Eingabe und Ausgabe sind fest umrissen: Shopify</text>
-        <text x="512" y="148" class="s-tiny f-dim">reicht einen Warenkorb herein, erwartet Operationen</text>
-        <text x="512" y="164" class="s-tiny f-dim">zurück. Genau das macht sie gut testbar.</text>
-        <text x="512" y="190" class="s-tiny">Je drei Quelldateien: Logik, GraphQL-Eingabe,</text>
-        <text x="512" y="206" class="s-tiny">generierte Typen.</text>
-        <text x="512" y="238" class="s-tiny f-worker">19 Testdateien — 14 und 5, als JSON-Fixtures.</text>
+        <!-- Gruppe shopify -->
+        <path d="M30 56 L22 56 L22 214 L30 214" fill="none" stroke="var(--web)" stroke-width="1.5" stroke-opacity="0.7"></path>
+        <text transform="rotate(-90 14 135)" x="14" y="135" text-anchor="middle" class="s-lbl f-web">group: shopify</text>
 
-        <rect x="24" y="268" width="912" height="24" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="480" y="284" text-anchor="middle" class="s-note">Die Prüfbarkeit folgt der Bauform: Was eine reine Abbildung von Eingabe auf Ausgabe ist, hat Tests. Was eine Oberfläche ist, hat keine.</text>
+        <rect x="88" y="52" width="848" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.35"></rect>
+        <text x="100" y="72" class="s-name">theme-mdm</text>
+        <text x="268" y="72" class="s-mono f-dim">themes/mdm/</text>
+        <text x="452" y="72" class="s-mono f-dim">GitHub</text>
+        <text x="646" y="72" class="s-tiny f-dim">Liquid · Hyper 1.3.3</text>
+
+        <rect x="88" y="86" width="848" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.35"></rect>
+        <text x="100" y="106" class="s-name">theme-borek</text>
+        <text x="268" y="106" class="s-mono f-dim">themes/borek/</text>
+        <text x="452" y="106" class="s-mono f-dim">GitHub</text>
+        <text x="646" y="106" class="s-tiny f-dim">Liquid · Hyper 1.3.3</text>
+
+        <rect x="88" y="120" width="848" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.35"></rect>
+        <text x="100" y="140" class="s-name">theme-imm</text>
+        <text x="268" y="140" class="s-mono f-dim">themes/imm/</text>
+        <text x="452" y="140" class="s-mono f-dim">GitHub</text>
+        <text x="646" y="140" class="s-tiny f-dim">Liquid · Hyper 1.3.3</text>
+
+        <rect x="88" y="154" width="848" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.35"></rect>
+        <text x="100" y="174" class="s-name">connector</text>
+        <text x="268" y="174" class="s-mono f-dim">connector/</text>
+        <text x="452" y="174" class="s-mono f-dim">GitHub</text>
+        <text x="646" y="174" class="s-tiny f-dim">Rails 8.1 · React 18 · Polaris</text>
+
+        <rect x="88" y="188" width="848" height="30" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.35"></rect>
+        <text x="100" y="208" class="s-name">datalayer</text>
+        <text x="268" y="208" class="s-mono f-dim">datalayer/</text>
+        <text x="452" y="208" class="s-mono f-dim">GitHub</text>
+        <text x="646" y="208" class="s-tiny f-dim">JavaScript</text>
+
+        <!-- Gruppe middleware -->
+        <path d="M30 226 L22 226 L22 316 L30 316" fill="none" stroke="var(--worker)" stroke-width="1.5" stroke-opacity="0.7"></path>
+        <text transform="rotate(-90 14 271)" x="14" y="271" text-anchor="middle" class="s-lbl f-worker">middleware</text>
+
+        <rect x="88" y="222" width="848" height="30" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="100" y="242" class="s-name">creditcheck</text>
+        <text x="268" y="242" class="s-mono f-dim">creditcheck/</text>
+        <text x="452" y="242" class="s-mono f-dim">gitlab.mdm.de</text>
+        <text x="646" y="242" class="s-tiny f-dim">PHP 7.4 · Symfony</text>
+
+        <rect x="88" y="256" width="848" height="30" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="100" y="276" class="s-name">emailservice</text>
+        <text x="268" y="276" class="s-mono f-dim">emailservice/</text>
+        <text x="452" y="276" class="s-mono f-dim">gitlab.mdm.de</text>
+        <text x="646" y="276" class="s-tiny f-dim">PHP 8.3 · Symfony 7.1</text>
+
+        <rect x="88" y="290" width="848" height="30" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.35"></rect>
+        <text x="100" y="310" class="s-name">payment-service</text>
+        <text x="268" y="310" class="s-mono f-dim">payment-service/</text>
+        <text x="452" y="310" class="s-mono f-dim">gitlab.mdm.de</text>
+        <text x="646" y="310" class="s-tiny f-dim">PHP 8.3 · Symfony 7.1 · Nuxt</text>
+
+        <line x1="88" y1="220" x2="936" y2="220" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 4"></line>
+
+        <rect x="88" y="336" width="848" height="56" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="104" y="358" class="s-tiny">Dieselbe Linie trennt drei Dinge: GitHub gegen gitlab.mdm.de, Storefront-Arbeit gegen Team Middleware (ecom-middleware@mdm.de),</text>
+        <text x="104" y="374" class="s-tiny">und zwei getrennte Zugangswege — ein GitHub-Zweitaccount mit SSH-Alias hier, ein GitLab-Zugang dort.</text>
+        <text x="104" y="386" class="s-tiny f-dim">Wer eines der acht Repos nicht klonen kann, scheitert deshalb immer gruppenweise, nie einzeln.</text>
       </svg>
-      <figcaption><b>Die Fixture-Namen sind die beste Beschreibung der Zahlarten-Regeln.</b>
-        <code>payment-customization/tests/fixtures/</code> enthält unter anderem
-        <code>hide-cod-over-limit</code>, <code>hide-sepa-on-openiban-outage</code>,
-        <code>international-credit-card-only</code>,
-        <code>variant-metafield-payment-exclusion</code> und
-        <code>no-eligible-methods-fallback</code>. Jeder Name benennt eine fachliche Regel, die
-        sonst nirgends geschrieben steht — die Funktion selbst ist eine einzige
-        TypeScript-Datei. Wer wissen will, wann SEPA ausgeblendet wird, liest die
-        Fixture-Liste.</figcaption>
+      <figcaption><b>Die Gruppe ist eine Zuständigkeitsangabe, keine Sortierung.</b>
+        Steht in <code>workspace.yaml</code> bei einem Repo <code>group: middleware</code>,
+        heißt das: anderes Team, andere Plattform, anderer Zugang. Ein fehlender
+        GitLab-Zugang lässt genau drei Repos fehlen — und <code>./setup.sh</code> meldet
+        das als drei einzelne Fehler, obwohl es eine Ursache ist.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 02/05</span>
-      <h2>Zwei Images aus einer Codebase</h2>
+      <span class="plate-no">Blatt 02/04</span>
+      <h2>Drei Themes, drei Wurzeln, keine gemeinsame Historie</h2>
     </div>
-    <p class="lead"><code>Dockerfile.web</code> und <code>Dockerfile.worker</code>
-      unterscheiden sich in <strong>22 Zeilen</strong>. Der Unterschied ist genau einer:
-      Das Worker-Image baut kein Frontend.</p>
+    <p class="lead">Die drei Storefronts sehen aus wie Geschwister — gleiche Dateinamen,
+      gleiches Basis-Theme, sogar dasselbe <code>mdm-</code>-Präfix in allen dreien. Git
+      sieht drei Fremde: <code>git merge-base</code> liefert für <strong>jedes</strong> Paar
+      nichts.</p>
 
     <figure>
-      <svg viewBox="0 0 960 372" role="img" aria-label="Vergleich der beiden Dockerfiles. Beide teilen Basis, Bundler-Schritt, Nutzer rails und denselben Entrypoint. Das Web-Image installiert zusaetzlich Node und npm, baut die Vite-Assets und praekompiliert. Das Worker-Image ueberspringt diese Schritte und startet Sidekiq.">
-        <rect x="24" y="40" width="912" height="72" rx="3" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
-        <text x="42" y="62" class="s-lbl f-dim">Gemeinsam</text>
-        <text x="42" y="84" class="s-tiny">Dieselbe Ruby-Basis · <tspan class="s-mono">bundle install</tspan> · Nutzer <tspan class="s-mono">rails:rails</tspan> statt root · derselbe Entrypoint</text>
-        <text x="42" y="102" class="s-mono f-dim">ENTRYPOINT ["/rails/bin/docker-entrypoint"]</text>
+      <svg viewBox="0 0 960 396" role="img" aria-label="Die drei Theme-Repos haben je einen eigenen Wurzel-Commit und keinen gemeinsamen Vorfahren. Gleichzeitig sind von 685 gemeinsamen Dateien 620 byte-identisch. Hohe Deckung bei leerer Historie bedeutet, dass Änderungen als Patch übertragen werden müssen, nicht als Merge.">
+        <defs>
+          <marker id="h5b2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
 
-        <rect x="24" y="132" width="440" height="176" rx="3" fill="var(--web)" fill-opacity="0.08" stroke="var(--web)" stroke-width="1.5"></rect>
-        <text x="40" y="156" class="s-lbl f-web">Dockerfile.web — 70 Zeilen</text>
-        <text x="40" y="182" class="s-tiny">zusätzlich installiert: <tspan class="s-mono">nodejs npm</tspan></text>
-        <text x="40" y="204" class="s-mono">COPY package.json package-lock.json</text>
-        <text x="40" y="222" class="s-mono">RUN npm ci</text>
-        <text x="40" y="240" class="s-mono">RUN npm run build</text>
-        <text x="40" y="258" class="s-mono">RUN SECRET_KEY_BASE_DUMMY=1 …assets:precompile</text>
-        <text x="40" y="282" class="s-mono f-web">EXPOSE 3000</text>
-        <text x="40" y="298" class="s-mono f-web">CMD ["./bin/rails", "server"]</text>
+        <text x="16" y="28" class="s-lbl f-dim">Historie — getrennt</text>
 
-        <rect x="496" y="132" width="440" height="176" rx="3" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="512" y="156" class="s-lbl f-worker">Dockerfile.worker — 60 Zeilen</text>
-        <text x="512" y="182" class="s-tiny">kein Node, kein npm — die vier Schritte links</text>
-        <text x="512" y="198" class="s-tiny">fehlen vollständig</text>
-        <text x="512" y="222" class="s-tiny f-dim">räumt zusätzlich den apt-Zwischenspeicher auf:</text>
-        <text x="512" y="238" class="s-mono f-dim">rm -rf /var/lib/apt/lists /var/cache/apt/archives</text>
-        <text x="512" y="262" class="s-tiny f-dim">— dieser Schritt fehlt im Web-Image</text>
-        <text x="512" y="298" class="s-mono f-worker">CMD ["bundle","exec","sidekiq","-C",…]</text>
+        <circle cx="120" cy="66" r="7" fill="var(--web)" fill-opacity="0.25" stroke="var(--web)" stroke-width="1.5"></circle>
+        <text x="138" y="62" class="s-name">mdm</text>
+        <text x="138" y="78" class="s-tiny f-dim">7dd3fa4f · 1599 Commits</text>
 
-        <rect x="24" y="328" width="912" height="36" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="42" y="348" class="s-tiny f-alert">Der Kommentar über dem Entrypoint des Workers sagt „Entrypoint runs db:migrate then starts the Sidekiq worker" (Dockerfile.worker:56).</text>
-        <text x="42" y="360" class="s-tiny f-alert">Der Entrypoint tut das nicht — siehe Anhang 01.</text>
+        <circle cx="400" cy="66" r="7" fill="var(--web)" fill-opacity="0.25" stroke="var(--web)" stroke-width="1.5"></circle>
+        <text x="418" y="62" class="s-name">borek</text>
+        <text x="418" y="78" class="s-tiny f-dim">229fe0a9 · 90 Commits</text>
+
+        <circle cx="680" cy="66" r="7" fill="var(--web)" fill-opacity="0.25" stroke="var(--web)" stroke-width="1.5"></circle>
+        <text x="698" y="62" class="s-name">imm</text>
+        <text x="698" y="78" class="s-tiny f-dim">73e8f435 · 65 Commits</text>
+
+        <line x1="120" y1="82" x2="120" y2="128" stroke="var(--web)" stroke-opacity="0.5"></line>
+        <line x1="400" y1="82" x2="400" y2="128" stroke="var(--web)" stroke-opacity="0.5"></line>
+        <line x1="680" y1="82" x2="680" y2="128" stroke="var(--web)" stroke-opacity="0.5"></line>
+
+        <rect x="16" y="132" width="920" height="40" rx="2" fill="none" stroke="var(--alert)" stroke-width="1.5" stroke-opacity="0.75" stroke-dasharray="6 4"></rect>
+        <text x="32" y="150" class="s-mono f-alert">git merge-base &lt;a&gt; &lt;b&gt;  →  leer, für alle drei Paare</text>
+        <text x="32" y="165" class="s-tiny f-dim">Kein gemeinsamer Vorfahr. Ein Merge bräuchte --allow-unrelated-histories und verschmölze zwei fremde Bäume.</text>
+
+        <text x="16" y="206" class="s-lbl f-dim">Dateien — fast deckungsgleich</text>
+
+        <text x="16" y="238" class="s-mono f-dim">mdm / borek</text>
+        <rect x="150" y="226" width="668" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <rect x="818" y="226" width="70" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="900" y="238" class="s-tiny f-dim">685</text>
+
+        <text x="16" y="266" class="s-mono f-dim">mdm / imm</text>
+        <rect x="150" y="254" width="665" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <rect x="815" y="254" width="73" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="900" y="266" class="s-tiny f-dim">685</text>
+
+        <text x="16" y="294" class="s-mono f-dim">borek / imm</text>
+        <rect x="150" y="282" width="698" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <rect x="848" y="282" width="41" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="900" y="294" class="s-tiny f-dim">687</text>
+
+        <text x="150" y="316" class="s-tiny f-worker">byte-identisch: 620 · 617 · 649</text>
+        <text x="700" y="316" class="s-tiny f-alert">abweichend: 65 · 68 · 38</text>
+
+        <rect x="16" y="336" width="920" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="32" y="356" class="s-tiny">Borek und IMM sind untereinander fast deckungsgleich; MDM läuft beiden voraus. Im Drift-Bericht steht deshalb fast durchgehend</text>
+        <text x="32" y="372" class="s-mono f-worker">borek=imm | mdm</text>
+        <text x="32" y="384" class="s-tiny f-dim">Der Übertragungsweg ist bin/theme-sync.sh: drift zeigt die Abweichung, port kopiert sie auf einen Branch im Ziel-Theme.</text>
       </svg>
-      <figcaption><b>Der Entrypoint entscheidet anhand der letzten beiden Argumente.</b>
-        <code>bin/docker-entrypoint:10</code> prüft, ob der Aufruf auf
-        <code>./bin/rails server</code> endet, und führt nur dann <code>db:prepare</code> aus.
-        Das Worker-Image startet mit <code>bundle exec sidekiq</code> — der Zweig greift also
-        nie. Beide Images teilen sich die Datei, verhalten sich aber verschieden, und das ist
-        beabsichtigt: Ein Schema soll von einer Stelle wandern, nicht von zweien
-        gleichzeitig.</figcaption>
+      <figcaption><b>Hohe Deckung bei leerer Historie heißt: Patch, nie Merge.</b>
+        Fünfzehn Dateien laufen tatsächlich auseinander — bei rund 690 gemeinsamen. Wer eine
+        Änderung in alle drei Shops bringen will, überträgt sie als Patch; markenspezifische
+        Pfade (<code>config/settings_data.json</code>, <code>locales/</code>,
+        <code>templates/</code>, <code>layout/</code>) bleiben dabei ausgespart.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 03 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 03/05</span>
-      <h2>Der Weg eines Deploys</h2>
+      <span class="plate-no">Blatt 03/04</span>
+      <h2>Der Knoten liegt außerhalb des Workspace</h2>
     </div>
-    <p class="lead">Ein Mensch startet <code>./deploy.sh --production</code> auf seinem Rechner.
-      Von dort laufen sieben Schritte bis zu zwei GitLab-Pipelines. Das Skript ist der einzige
-      Weg — es gibt keinen Auslöser aus der GitHub-CI.</p>
+    <p class="lead">Man erwartet, dass acht Repos eines Ökosystems untereinander verdrahtet
+      sind. Sie sind es fast nicht: <strong>eine</strong> direkte Kante verbindet zwei von
+      ihnen. Was sie verbindet, ist ein System, das der Workspace nicht enthält.</p>
 
     <figure>
-      <svg viewBox="0 0 960 448" role="img" aria-label="Sieben Schritte des Deploy-Skripts: Argument pruefen, .env laden, GitLab-Variablen pruefen, zwei Images mit Zeitstempel bauen, an der Registry anmelden, beide Images schieben, zwei GitLab-Pipelines ausloesen.">
+      <svg viewBox="0 0 960 372" role="img" aria-label="SAP steht in der Mitte als Fremdsystem, das in keinem der acht Repos liegt. Connector, creditcheck und emailservice sprechen mit SAP. Zwischen den Repos selbst gibt es nur eine direkte Kante, vom Connector zum creditcheck-Dienst. Payment-service hängt an Saferpay und nicht an SAP.">
         <defs>
-          <marker id="e9ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <marker id="h5c3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
           </marker>
         </defs>
 
-        <text x="24" y="34" class="s-lbl f-dim">Schritt</text>
-        <text x="150" y="34" class="s-lbl f-dim">Was geschieht</text>
-        <text x="660" y="34" class="s-lbl f-dim">Bricht ab, wenn</text>
+        <!-- Fremdsystem in der Mitte -->
+        <rect x="396" y="128" width="168" height="72" rx="3" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-width="1.5" stroke-dasharray="6 4"></rect>
+        <text x="480" y="158" text-anchor="middle" class="s-name f-vite">SAP</text>
+        <text x="480" y="176" text-anchor="middle" class="s-tiny f-dim">in keinem Repo,</text>
+        <text x="480" y="190" text-anchor="middle" class="s-tiny f-dim">in keinem Blattsatz</text>
 
-        <rect x="24" y="46" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="38" y="72" class="s-mono f-dim">1</text>
-        <text x="150" y="64" class="s-tiny">Genau ein Argument prüfen</text>
-        <text x="150" y="80" class="s-tiny f-dim">--staging → stage · --production → prod</text>
-        <text x="660" y="72" class="s-tiny f-alert">kein oder falsches Argument</text>
+        <!-- Links: Repos -->
+        <rect x="16" y="52" width="196" height="44" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.4"></rect>
+        <text x="30" y="72" class="s-name">connector</text>
+        <text x="30" y="88" class="s-tiny f-dim">sap/api/client.rb:6</text>
 
-        <rect x="24" y="94" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="38" y="120" class="s-mono f-dim">2</text>
-        <text x="150" y="112" class="s-tiny">.env laden und exportieren</text>
-        <text x="150" y="128" class="s-mono f-dim">set -a; source .env; set +a</text>
-        <text x="660" y="120" class="s-tiny f-alert">.env fehlt</text>
+        <rect x="16" y="150" width="196" height="44" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.4"></rect>
+        <text x="30" y="170" class="s-name">creditcheck</text>
+        <text x="30" y="186" class="s-tiny f-dim">composer: mdm-ecom/lib.sap</text>
 
-        <rect x="24" y="142" width="912" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="38" y="168" class="s-mono f-dim">3</text>
-        <text x="150" y="160" class="s-tiny">GITLAB_URL und GITLAB_TOKEN prüfen</text>
-        <text x="660" y="168" class="s-tiny f-alert">eine der beiden fehlt</text>
+        <rect x="16" y="248" width="196" height="44" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.4"></rect>
+        <text x="30" y="268" class="s-name">emailservice</text>
+        <text x="30" y="284" class="s-tiny f-dim">Controller/SapController.php</text>
 
-        <rect x="24" y="190" width="912" height="56" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="38" y="222" class="s-mono f-web">4</text>
-        <text x="150" y="210" class="s-tiny">Zwei Images bauen, Tag aus Zeitstempel</text>
-        <text x="150" y="228" class="s-mono f-dim">…/backend:prod-20260911143022</text>
-        <text x="150" y="242" class="s-mono f-dim">…/worker:prod-20260911143022</text>
-        <text x="660" y="214" class="s-tiny f-alert">docker build scheitert</text>
-        <text x="660" y="232" class="s-tiny f-alert">Tag ohne Commit-Bezug — Anhang 03</text>
+        <rect x="16" y="310" width="196" height="44" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.4"></rect>
+        <text x="30" y="330" class="s-name">payment-service</text>
+        <text x="30" y="346" class="s-tiny f-dim">kein SAP-Bezug</text>
 
-        <rect x="24" y="252" width="912" height="42" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="38" y="278" class="s-mono f-web">5</text>
-        <text x="150" y="270" class="s-tiny">An registry.mdm.de anmelden</text>
-        <text x="150" y="286" class="s-mono f-dim">docker login registry.mdm.de</text>
-        <text x="660" y="278" class="s-tiny f-alert">fragt nach Eingabe — kein Lauf ohne Mensch</text>
+        <!-- Kanten zu SAP -->
+        <path d="M212 74 C 320 74 330 140 394 150" fill="none" stroke="var(--web)" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#h5c3)"></path>
+        <text x="266" y="112" class="s-tiny f-web">liest und schreibt</text>
 
-        <rect x="24" y="300" width="912" height="42" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="38" y="326" class="s-mono f-web">6</text>
-        <text x="150" y="318" class="s-tiny">Beide Images in die Registry schieben</text>
-        <text x="660" y="326" class="s-tiny f-alert">docker push scheitert</text>
+        <path d="M212 172 L 394 168" fill="none" stroke="var(--worker)" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#h5c3)"></path>
+        <text x="266" y="162" class="s-tiny f-worker">fragt ab</text>
 
-        <rect x="24" y="348" width="912" height="56" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
-        <text x="38" y="380" class="s-mono f-worker">7</text>
-        <text x="150" y="368" class="s-tiny">Zwei GitLab-Pipelines auslösen, je eine für web und worker</text>
-        <text x="150" y="386" class="s-mono f-dim">curl --fail -F "variables[CONTAINER_TAG]=…" -F "variables[CONTAINER_NAME]=web|worker"</text>
-        <text x="150" y="400" class="s-tiny f-dim">ref=main · TARGET_ENVIRONMENT=stage|prod</text>
-        <text x="660" y="380" class="s-tiny f-alert">curl --fail bei HTTP-Fehler</text>
+        <path d="M394 190 C 330 202 320 268 214 268" fill="none" stroke="var(--worker)" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#h5c3)"></path>
+        <text x="266" y="246" class="s-tiny f-worker">stößt an</text>
 
-        <rect x="24" y="412" width="912" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="42" y="432" class="s-note">Ab Schritt 7 endet die Sichtbarkeit: Was GitLab mit dem Tag macht, steht in einem anderen Repository.</text>
+        <!-- Die einzige Repo-zu-Repo-Kante -->
+        <path d="M114 96 C 114 120 114 128 114 148" fill="none" stroke="var(--alert)" stroke-opacity="0.8" stroke-width="1.5" marker-end="url(#h5c3)"></path>
+        <text x="126" y="126" class="s-tiny f-alert">die einzige direkte Kante</text>
+
+        <!-- Rechts: weitere Fremdsysteme -->
+        <rect x="748" y="248" width="188" height="44" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.6" stroke-dasharray="6 4"></rect>
+        <text x="762" y="276" class="s-name f-vite">Emarsys</text>
+
+        <rect x="748" y="310" width="188" height="44" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.6" stroke-dasharray="6 4"></rect>
+        <text x="762" y="338" class="s-name f-vite">Saferpay</text>
+
+        <rect x="748" y="52" width="188" height="44" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.6" stroke-dasharray="6 4"></rect>
+        <text x="762" y="72" class="s-name f-vite">Shopify</text>
+        <text x="762" y="88" class="s-tiny f-dim">3 Stores · App-Proxy</text>
+
+        <path d="M212 270 L 746 270" fill="none" stroke="var(--worker)" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#h5c3)"></path>
+        <path d="M212 332 L 746 332" fill="none" stroke="var(--worker)" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#h5c3)"></path>
+        <path d="M212 62 L 746 62" fill="none" stroke="var(--web)" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#h5c3)"></path>
+        <text x="430" y="56" class="s-tiny f-dim">routes.rb:35–37 — App-Proxy-GraphQL</text>
+
+        <text x="16" y="28" class="s-lbl f-dim">Repos im Workspace</text>
+        <text x="748" y="28" class="s-lbl f-dim">Fremdsysteme</text>
       </svg>
-      <figcaption><b>Die Schritte 4 bis 7 sind nicht zusammen zurücknehmbar.</b> Scheitert
-        Schritt 7 für den Worker, nachdem er für das Web durchlief, liegt eine halbe
-        Auslieferung vor. <code>docs/deployment.md</code> behandelt genau diesen Fall unter
-        „Manual Rollback Guidance" und verlangt, den letzten funktionierenden Tag von Hand zu
-        finden. Wie schwer das ist, hängt an Anhang 03.</figcaption>
+      <figcaption><b>Sieben der acht Repos sind nur über Fremdsysteme gekoppelt.</b>
+        Wer eine Änderung am Bestellfluss plant, kann sie nicht im Workspace zu Ende lesen —
+        der entscheidende Teilnehmer, SAP, hat hier weder Code noch Blattsatz. Die drei
+        Themes tauchen in dieser Figur gar nicht auf: sie reden über den App-Proxy mit dem
+        Connector und sonst mit niemandem.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 04 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 04/05</span>
-      <h2>Was die CI prüft</h2>
+      <span class="plate-no">Blatt 04/04</span>
+      <h2>Ein Repo fällt durch jedes Raster</h2>
     </div>
-    <p class="lead">Die GitHub-CI hat 21 Zeilen, einen Job und einen wirksamen Schritt:
-      <code>bin/rubocop</code>. Es gibt daneben ein zweites, ungenutztes CI-Gerüst aus dem
-      Rails-Generator.</p>
+    <p class="lead">Die Harness deckt ihre Repos auf drei Arten ab: path-scoped Rules
+      erzwingen Konventionen, Specs halten Anforderungen fest, Blattsätze erklären den
+      Aufbau. Legt man die drei übereinander, bleibt genau eine Lücke.</p>
 
     <figure>
-      <svg viewBox="0 0 960 330" role="img" aria-label="Die CI-Lage. Links der aktive Workflow mit einem RuboCop-Schritt bei Pull Requests und Pushes auf main. Rechts das ungenutzte Geruest bin/ci und config/ci.rb, das nur bin/setup aufruft und von keinem Workflow gestartet wird. Unten die Uebersicht, was gar nicht geprueft wird.">
-        <rect x="24" y="40" width="440" height="150" rx="3" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="40" y="64" class="s-lbl f-worker">aktiv — .github/workflows/ci.yml</text>
-        <text x="40" y="90" class="s-tiny">Auslöser: <tspan class="s-mono">pull_request</tspan> und <tspan class="s-mono">push</tspan> auf <tspan class="s-mono">main</tspan></text>
-        <text x="40" y="114" class="s-tiny">Ein Job <tspan class="s-mono">lint</tspan>, drei Schritte:</text>
-        <text x="40" y="134" class="s-tiny f-dim">1. Checkout</text>
-        <text x="40" y="150" class="s-tiny f-dim">2. Ruby einrichten, Bundler zwischenspeichern</text>
-        <text x="40" y="166" class="s-tiny">3. <tspan class="s-mono">bin/rubocop -f github</tspan></text>
+      <svg viewBox="0 0 960 384" role="img" aria-label="Matrix aus acht Repos gegen drei Arten der Abdeckung. Sieben Repos sind von Rules gedeckt, nur theme-mdm hat Specs, nur connector und emailservice haben einen Blattsatz. Datalayer hat in allen drei Spalten eine leere Zelle.">
+        <text x="96" y="40" class="s-lbl f-dim">Repo</text>
+        <text x="418" y="40" class="s-lbl f-dim">Rules</text>
+        <text x="596" y="40" class="s-lbl f-dim">Specs</text>
+        <text x="782" y="40" class="s-lbl f-dim">Blattsatz</text>
 
-        <rect x="496" y="40" width="440" height="150" rx="3" fill="var(--alert)" fill-opacity="0.07" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-        <text x="512" y="64" class="s-lbl f-alert">ungenutzt — bin/ci und config/ci.rb</text>
-        <text x="512" y="90" class="s-tiny">Rails-8-Gerüst für lokale CI-Läufe.</text>
-        <text x="512" y="114" class="s-tiny"><tspan class="s-mono">config/ci.rb</tspan> enthält genau einen Schritt:</text>
-        <text x="512" y="134" class="s-mono f-dim">step 'Setup', 'bin/setup --skip-server'</text>
-        <text x="512" y="158" class="s-tiny f-alert">Kein Workflow ruft bin/ci auf — geprüft über</text>
-        <text x="512" y="174" class="s-tiny f-alert">den einzigen Workflow im Repository.</text>
+        <rect x="88" y="52" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
+        <text x="100" y="72" class="s-name">theme-mdm</text>
+        <rect x="412" y="58" width="96" height="18" rx="2" fill="var(--web)" fill-opacity="0.3" stroke="var(--web)" stroke-opacity="0.6"></rect>
+        <text x="518" y="72" class="s-tiny f-dim">3</text>
+        <rect x="590" y="58" width="96" height="18" rx="2" fill="var(--web)" fill-opacity="0.3" stroke="var(--web)" stroke-opacity="0.6"></rect>
+        <text x="696" y="72" class="s-tiny f-dim">6</text>
+        <rect x="776" y="58" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
 
-        <text x="24" y="222" class="s-lbl f-dim">Was keine Prüfung durchläuft</text>
+        <rect x="88" y="86" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
+        <text x="100" y="106" class="s-name">theme-borek</text>
+        <rect x="412" y="92" width="96" height="18" rx="2" fill="var(--web)" fill-opacity="0.3" stroke="var(--web)" stroke-opacity="0.6"></rect>
+        <text x="518" y="106" class="s-tiny f-dim">3</text>
+        <rect x="590" y="92" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <rect x="776" y="92" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
 
-        <rect x="24" y="234" width="220" height="76" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="38" y="256" class="s-tiny f-alert">Ruby-Verhalten</text>
-        <text x="38" y="274" class="s-tiny f-dim">RuboCop prüft Stil, nicht Funktion.</text>
-        <text x="38" y="290" class="s-tiny f-dim">Im Repository liegen keine Ruby-Tests;</text>
-        <text x="38" y="304" class="s-tiny f-dim">spec/ ist unversioniert im Aufbau.</text>
+        <rect x="88" y="120" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
+        <text x="100" y="140" class="s-name">theme-imm</text>
+        <rect x="412" y="126" width="96" height="18" rx="2" fill="var(--web)" fill-opacity="0.3" stroke="var(--web)" stroke-opacity="0.6"></rect>
+        <text x="518" y="140" class="s-tiny f-dim">3</text>
+        <rect x="590" y="126" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <rect x="776" y="126" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
 
-        <rect x="256" y="234" width="220" height="76" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="270" y="256" class="s-tiny f-alert">Das Frontend</text>
-        <text x="270" y="274" class="s-tiny f-dim">1 991 Zeilen React (Etappe 8).</text>
-        <text x="270" y="290" class="s-tiny f-dim">Kein ESLint-Lauf, keine Tests,</text>
-        <text x="270" y="304" class="s-tiny f-dim">kein Build-Schritt in der CI.</text>
+        <rect x="88" y="154" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
+        <text x="100" y="174" class="s-name">connector</text>
+        <rect x="412" y="160" width="96" height="18" rx="2" fill="var(--web)" fill-opacity="0.3" stroke="var(--web)" stroke-opacity="0.6"></rect>
+        <text x="518" y="174" class="s-tiny f-dim">1</text>
+        <rect x="590" y="160" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <rect x="776" y="160" width="96" height="18" rx="2" fill="var(--worker)" fill-opacity="0.3" stroke="var(--worker)" stroke-opacity="0.6"></rect>
+        <text x="882" y="174" class="s-tiny f-dim">9 Etappen</text>
 
-        <rect x="488" y="234" width="220" height="76" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="502" y="256" class="s-tiny f-alert">Die fünf UI-Extensions</text>
-        <text x="502" y="274" class="s-tiny f-dim">Laufen im Checkout des Kunden.</text>
-        <text x="502" y="290" class="s-tiny f-dim">Keine Testdatei, kein CI-Schritt.</text>
+        <rect x="88" y="188" width="848" height="30" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-width="1.5" stroke-opacity="0.6"></rect>
+        <text x="100" y="208" class="s-name f-alert">datalayer</text>
+        <rect x="412" y="194" width="96" height="18" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="4 3"></rect>
+        <rect x="590" y="194" width="96" height="18" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="4 3"></rect>
+        <rect x="776" y="194" width="96" height="18" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.6" stroke-dasharray="4 3"></rect>
 
-        <rect x="720" y="234" width="216" height="76" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
-        <text x="734" y="256" class="s-tiny f-worker">Die zwei Functions</text>
-        <text x="734" y="274" class="s-tiny f-dim">19 Fixture-Tests vorhanden —</text>
-        <text x="734" y="290" class="s-tiny f-dim">aber kein CI-Schritt führt sie aus.</text>
-        <text x="734" y="304" class="s-tiny f-dim">Sie laufen nur von Hand.</text>
+        <rect x="88" y="222" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
+        <text x="100" y="242" class="s-name">creditcheck</text>
+        <rect x="412" y="228" width="96" height="18" rx="2" fill="var(--worker)" fill-opacity="0.3" stroke="var(--worker)" stroke-opacity="0.6"></rect>
+        <text x="518" y="242" class="s-tiny f-dim">1</text>
+        <rect x="590" y="228" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <rect x="776" y="228" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+
+        <rect x="88" y="256" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
+        <text x="100" y="276" class="s-name">emailservice</text>
+        <rect x="412" y="262" width="96" height="18" rx="2" fill="var(--worker)" fill-opacity="0.3" stroke="var(--worker)" stroke-opacity="0.6"></rect>
+        <text x="518" y="276" class="s-tiny f-dim">1</text>
+        <rect x="590" y="262" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <rect x="776" y="262" width="96" height="18" rx="2" fill="var(--worker)" fill-opacity="0.3" stroke="var(--worker)" stroke-opacity="0.6"></rect>
+        <text x="882" y="276" class="s-tiny f-dim">7 Etappen</text>
+
+        <rect x="88" y="290" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
+        <text x="100" y="310" class="s-name">payment-service</text>
+        <rect x="412" y="296" width="96" height="18" rx="2" fill="var(--worker)" fill-opacity="0.3" stroke="var(--worker)" stroke-opacity="0.6"></rect>
+        <text x="518" y="310" class="s-tiny f-dim">1</text>
+        <rect x="590" y="296" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <rect x="776" y="296" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+
+        <rect x="88" y="336" width="848" height="40" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
+        <text x="104" y="356" class="s-tiny">Gestrichelte Zelle heißt: nicht vorhanden. Der dritte Blattsatz im Workspace beschreibt die Harness selbst und steht deshalb nicht in dieser Liste.</text>
+        <text x="104" y="370" class="s-tiny f-dim">Damit ist die Steuerungsschicht besser dokumentiert als sechs der acht Systeme, die sie steuert.</text>
       </svg>
-      <figcaption><b>Die einzige automatische Zusicherung im Repository ist der Ruby-Stil.</b>
-        Das ist eine bewusste Lage, kein Defekt — die Alternative wäre Testinfrastruktur, die
-        es hier bisher nicht gibt. Erwähnenswert ist die Lücke zwischen Vorhandensein und
-        Ausführung: Für die Functions <em>existieren</em> 19 Tests, aber kein Workflow startet
-        sie. Ein Fehler in der Zahlarten-Logik fällt dadurch erst im Checkout auf, obwohl der
-        Test dafür im Repository liegt.</figcaption>
+      <figcaption><b><code>datalayer</code> ist von nichts gedeckt.</b>
+        Keine Rule prüft dort Konventionen, keine Spec hält Anforderungen fest, kein
+        Blattsatz erklärt den Aufbau — und weil keine <code>sources</code>-Regel auf das
+        Verzeichnis zeigt, meldet auch der Veraltungs-Mechanismus nie etwas. Änderungen am
+        GTM-Datalayer laufen ohne jede Rückmeldung der Harness.</figcaption>
     </figure>
   </section>
 
   <!-- ============ ANHANG ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 05/05</span>
-      <h2>Sechs Beobachtungen</h2>
+      <span class="plate-no">Anhang</span>
+      <h2>Zwei Prüfpunkte und die Fundstellen</h2>
     </div>
-    <p class="lead">Alle sechs sind aus den gelesenen Dateien belegt. Befund 05 ist zusätzlich
-      durch Ausführen abgesichert.</p>
 
     <div class="checks">
       <div class="check">
         <span class="check-no">01</span>
         <div>
-          <h3>Der Worker-Kommentar beschreibt etwas, das nicht geschieht</h3>
-          <p>Belegt: <code>Dockerfile.worker:56</code> sagt „Entrypoint runs db:migrate then
-            starts the Sidekiq worker". <code>bin/docker-entrypoint:10</code> führt den
-            Datenbankschritt nur aus, wenn die letzten beiden Argumente
-            <code>./bin/rails</code> und <code>server</code> lauten. Der Worker startet mit
-            <code>bundle exec sidekiq</code> (<code>Zeile 60</code>).</p>
-          <p>Zwei Fehler in einem Satz: Der Worker migriert nicht, und der Befehl heißt
-            <code>db:prepare</code>, nicht <code>db:migrate</code>. Das Verhalten selbst ist
-            richtig — nur eine Stelle soll das Schema wandern lassen. Falsch ist die
-            Beschreibung, und sie steht an der Stelle, an der man nachsieht.</p>
+          <h3><code>datalayer</code> läuft ohne jede Abdeckung</h3>
+          <p>Als einziges der acht Repos steht es in keiner <code>paths</code>-Liste unter
+            <code>.claude/rules/</code>, hat keine Spec und keinen Blattsatz. Die anderen
+            sieben sind mindestens von einer Rule gedeckt.</p>
+          <p>Folge: Beim Bearbeiten greift kein PostToolUse-Hook, und der
+            Veraltungs-Mechanismus kennt das Verzeichnis nicht. Eine Rule wäre der
+            billigste Schritt — sie kostet eine Datei.</p>
         </div>
       </div>
-
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Ein zweites CI-Gerüst liegt ungenutzt im Repository</h3>
-          <p>Belegt: <code>bin/ci</code> lädt <code>config/ci.rb</code>, das genau einen Schritt
-            definiert: <code>bin/setup --skip-server</code>. Der einzige Workflow
-            (<code>.github/workflows/ci.yml</code>) ruft <code>bin/rubocop</code> direkt auf und
-            erwähnt <code>bin/ci</code> nicht.</p>
-          <p>Folge: Wer <code>bin/ci</code> lokal ausführt, prüft nichts — er richtet das
-            Projekt ein. Der Name legt das Gegenteil nahe. Die Datei stammt aus dem
-            Rails-8-Generator, samt auskommentiertem Beispielblock.</p>
-        </div>
-      </div>
-
-      <div class="check">
-        <span class="check-no">03</span>
-        <div>
-          <h3>Der Image-Tag trägt keinen Bezug zum Quelltext</h3>
-          <p>Belegt: <code>deploy.sh:40–44</code> baut den Tag ausschließlich aus
-            <code>date +%Y%m%d%H%M%S</code>. Das Skript enthält keinen Aufruf von
-            <code>git</code> — geprüft über die gesamte Datei.</p>
-          <p>Folge: Aus einem laufenden Image lässt sich nicht ableiten, welcher Commit darin
-            steckt. Für die Rückrollanweisung in <code>docs/deployment.md</code> („Identify the
-            last known good image tags") bedeutet das: Die Zuordnung von Tag zu Stand muss aus
-            einer Quelle außerhalb des Systems kommen. Ein zusätzliches
-            <code>-$(git rev-parse --short HEAD)</code> im Tag würde das schließen.</p>
-        </div>
-      </div>
-
-      <div class="check">
-        <span class="check-no">04</span>
-        <div>
-          <h3>Gebaute Dateien liegen im Repository</h3>
-          <p>Belegt: 16 Dateien unter <code>extensions/*/dist/</code> sind versioniert,
-            darunter <code>product-limit/dist/function.wasm</code> und mehrere
-            <code>.js.map</code>. <code>git check-ignore</code> meldet für
-            <code>extensions/credit-check/dist</code> keinen Treffer.</p>
-          <p>Folge: Jeder Build erzeugt einen Diff, auch ohne Quelltextänderung. Im Vergleich
-            der letzten 22 Commits stehen unter anderem
-            <code>tax-information-display/dist/tax-information-display.js</code> und
-            <code>product-limit/dist/function.wasm</code>. Ob das gewollt ist — etwa weil
-            Shopifys Ausrollweg die gebaute Datei erwartet — lässt sich aus dem Repository
-            nicht entscheiden.</p>
-        </div>
-      </div>
-
-      <div class="check">
-        <span class="check-no">05</span>
-        <div>
-          <h3>Die Argumentprüfung funktioniert trotz set -e</h3>
-          <p>Belegt durch Ausführen: <code>deploy.sh:2</code> setzt
-            <code>set -euo pipefail</code>, <code>Zeile 9</code> schreibt
-            <code>[[ $# -ne 1 ]] &amp;&amp; usage</code>. Diese Kombination bricht in vielen
-            Skripten ab, weil der fehlschlagende Test die Abbruchregel auslöst.</p>
-          <p>Ein Nachbau mit demselben Kopf und einem Argument läuft durch und endet mit
-            Rückgabewert 0. Bash nimmt Befehle links von <code>&amp;&amp;</code> von der
-            Abbruchregel aus. Der Befund ist damit <em>kein</em> Defekt — er steht hier, weil
-            die Stelle beim Lesen wie einer aussieht.</p>
-        </div>
-      </div>
-
-      <div class="check">
-        <span class="check-no">06</span>
-        <div>
-          <h3>Die Deploy-Doku nennt den prod-Präfix nicht</h3>
-          <p>Belegt: <code>docs/deployment.md</code> beschreibt die Tags unter „Docker Image
-            Tagging" als <code>backend:&lt;YYYYMMDDHHMMSS&gt;</code>.
-            <code>deploy.sh:40–41</code> setzt für die Produktion jedoch
-            <code>backend:prod-&lt;Zeitstempel&gt;</code>; nur die Staging-Tags haben kein
-            Präfix.</p>
-          <p>Die übrige Datei ist genau — sie benennt sogar, dass web und worker ihren
-            Zeitstempel getrennt erzeugen und deshalb um eine Sekunde auseinanderliegen können.
-            Die fehlende Präfix-Angabe trifft ausgerechnet den Fall, in dem man die Tags von
-            Hand sucht: die Rückrollung.</p>
+          <h3>Die Laufzeit-Kanten sind nicht überwachbar</h3>
+          <p>Die Fundstellen aus Blatt 03 liegen in den Kind-Repos
+            (<code>connector/</code>, <code>creditcheck/</code>, …). Der Harness-Blattsatz
+            hat <code>root: "."</code> und kann über <code>sources</code> nur Dateien des
+            Harness-Repos beobachten.</p>
+          <p>Ändert sich also die Kopplung — etwa, weil der Connector den
+            Creditcheck-Dienst nicht mehr direkt aufruft — veraltet dieses Blatt
+            <strong>still</strong>. Sein Stand steht deshalb im Text, nicht nur im
+            Manifest.</p>
         </div>
       </div>
     </div>
+
+    <table>
+      <thead>
+        <tr><th>Aussage</th><th class="m">Fundstelle</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Acht Repos, Gruppen und Plattformen</td><td class="m">workspace.yaml</td></tr>
+        <tr><td>Rules-Abdeckung je Repo</td><td class="m">.claude/rules/*.md, Feld paths</td></tr>
+        <tr><td>Blattsätze: connector, emailservice, harness</td><td class="m">.claude/bauplan/*.manifest.json</td></tr>
+        <tr><td>Specs nur für theme-mdm</td><td class="m">.claude/specs/themes/mdm/</td></tr>
+        <tr><td>Drei Wurzel-Commits, kein merge-base</td><td class="m">git merge-base je Paar — leer</td></tr>
+        <tr><td>685 / 620 gemeinsame und identische Dateien</td><td class="m">bin/theme-sync.sh drift</td></tr>
+        <tr><td>connector → SAP</td><td class="m">connector/app/services/sap/api/client.rb:6</td></tr>
+        <tr><td>connector → creditcheck</td><td class="m">connector/app/services/credit/api/client.rb:25</td></tr>
+        <tr><td>creditcheck → SAP</td><td class="m">creditcheck/www/composer.json:25</td></tr>
+        <tr><td>emailservice ← SAP</td><td class="m">emailservice/www/src/Controller/SapController.php</td></tr>
+        <tr><td>emailservice → Emarsys</td><td class="m">emailservice/www/src/Preparer/Emarsys/</td></tr>
+        <tr><td>payment-service → Saferpay</td><td class="m">payment-service/www/src/Handler/PaymentLink/</td></tr>
+        <tr><td>Theme → connector über App-Proxy</td><td class="m">connector/config/routes.rb:35–37</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <footer>
-    <span>MDM Connector · Etappe 9 · Bauen und Ausrollen</span>
-    <span>Quelle: deploy.sh · Dockerfile.web · Dockerfile.worker · ci.yml · 7 Extensions</span>
-    <span>Stand: 11. September 2026 · Commit 69455cd</span>
+    <span>MDM Harness · Etappe 5 von 5</span>
+    <span>Design bauplan-v1</span>
     <span>Ende des Blattsatzes — <a href="../index.html">Übersicht</a></span>
   </footer>
 

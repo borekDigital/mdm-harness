@@ -60,7 +60,13 @@ def main():
         changed = [line.strip() for line in sys.stdin if line.strip()]
         new_sha = None
     else:
-        repo_path = os.path.join(project, args.repo)
+        # Die Wurzel steht im Manifest. `root: "."` heisst: der Workspace selbst
+        # ist der Gegenstand — so dokumentiert sich die Harness. Ohne diese
+        # Aufloesung sucht der Lauf ~/MDM/harness/ und meldet "nicht geklont",
+        # obwohl das Repo direkt vor ihm liegt.
+        manifest_wurzel = lib.manifest_root(manifest, args.repo)
+        repo_path = project if manifest_wurzel in (".", "") \
+            else os.path.join(project, manifest_wurzel)
         if not os.path.isdir(os.path.join(repo_path, ".git")):
             print(json.dumps({"repo": args.repo, "error": "nicht geklont"}), file=sys.stderr)
             return 2

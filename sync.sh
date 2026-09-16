@@ -13,6 +13,7 @@ LOCAL_YAML="${SCRIPT_DIR}/.workspace.local.yaml"
 TEMPLATES_DIR="${SCRIPT_DIR}/templates"
 OUTPUT="${SCRIPT_DIR}/CLAUDE.md"
 INDEX_SCRIPT="${SCRIPT_DIR}/bin/bauplan-index.py"
+NAV_SCRIPT="${SCRIPT_DIR}/bin/bauplan-nav.py"
 QUIET="${1:-}"
 
 # --- Hilfsfunktionen ---
@@ -194,6 +195,10 @@ update_index() {
   local today
   today=$(date "+%-d. %B %Y" | sed 's/January/Januar/;s/February/Februar/;s/March/Maerz/;s/May/Mai/;s/June/Juni/;s/July/Juli/;s/October/Oktober/;s/December/Dezember/')
   "$INDEX_SCRIPT" --stand "$today" >/dev/null 2>&1 || warn "bauplan-index.py fehlgeschlagen"
+  # Fusszeilen-Navigation aus demselben Manifest nachziehen. Idempotent —
+  # kommt eine Etappe dazu, zeigt das Blatt davor danach auf sie.
+  [[ -x "$NAV_SCRIPT" ]] || return 0
+  "$NAV_SCRIPT" >/dev/null 2>&1 || warn "bauplan-nav.py fehlgeschlagen"
 }
 
 # --- Konsistenz pruefen ---
@@ -276,16 +281,21 @@ main() {
     log "  → docs/bauplan/index.html aktualisiert"
   fi
 
-  # Timestamps aktualisieren
-  if [[ -f "$LOCAL_YAML" ]]; then
-    update_local_timestamps
-  fi
+  # Reihenfolge ist bindend: erst pruefen, dann stempeln. Umgekehrt liest
+  # check_consistency den Zeitstempel, den derselbe Lauf gerade geschrieben hat
+  # — der 7-Tage-Check kann dann nie ausloesen. Siehe Blattsatz Harness,
+  # Etappe 1, Blatt 03 ("Zwei Fehler im 7-Tage-Check, die sich maskieren").
 
   # Konsistenz pruefen
   log ""
   log "  Konsistenz pruefen..."
   if check_consistency; then
     log "  → Alles konsistent"
+  fi
+
+  # Erst jetzt stempeln — nach der Pruefung.
+  if [[ -f "$LOCAL_YAML" ]]; then
+    update_local_timestamps
   fi
 
   log ""
