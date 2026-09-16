@@ -83,7 +83,7 @@
       "url": "https://claude.ai/artifact/LJPJrDJCLe1fYAZab3n2kv",
       "favicon": "🧰",
       "blaetter": 4,
-      "findings": 2,
+      "findings": 3,
       "sources": [
         "workspace.yaml",
         "bin/theme-sync.sh",
@@ -92,7 +92,8 @@
       ],
       "open_questions": [
         "Die Laufzeit-Kanten aus Blatt 03 liegen in den Kind-Repos und sind von keiner sources-Regel gedeckt — veraltet dort etwas, meldet es niemand",
-        "datalayer ist von keiner Rule, Spec oder Blattsatz gedeckt"
+        "datalayer ist von keiner Rule, Spec oder Blattsatz gedeckt",
+        "Die App-Proxy-Route connector/config/routes.rb:35-37 hat keinen Aufrufer in den drei Themes — ungenutzt oder von einem anderen Client aufgerufen, ohne laufende Instanz nicht entscheidbar"
       ],
       "closes": []
     }
