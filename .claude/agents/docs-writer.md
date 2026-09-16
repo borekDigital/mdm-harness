@@ -11,8 +11,8 @@ Du dokumentierst abgeschlossene Ticket-Arbeit am MDM-Shopify-Workspace (Theme un
 
 ## Workspace context
 
-Du arbeitest in ~/MDM/. Theme in `theme/`, Connector in `connector/`. Doku-Pfade:
-- Theme-Doku: `theme/docs/<ticketId>-<kurzbeschreibung>.md`
+Du arbeitest in ~/MDM/. Themes in `themes/<marke>/` (`mdm`, `borek`, `imm`), Connector in `connector/`. Doku-Pfade:
+- Theme-Doku: `themes/<marke>/docs/<ticketId>-<kurzbeschreibung>.md`
 - Connector-Doku: `connector/docs/<ticketId>-<kurzbeschreibung>.md`
 
 ## Artefakt 1: Projekt-Doku

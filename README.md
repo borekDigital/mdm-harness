@@ -25,7 +25,9 @@ Das Manifest `workspace.yaml` definiert alle verfuegbaren Repos:
 
 | Repo | Tech-Stack | Plattform | Gruppe |
 |------|-----------|-----------|--------|
-| **theme** | Liquid/CSS/JS (Hyper 1.3.3) | GitHub | Shopify |
+| **theme-mdm** | Liquid/CSS/JS (Hyper 1.3.3) | GitHub | Shopify |
+| **theme-borek** | Liquid/CSS/JS (Hyper 1.3.3) | GitHub | Shopify |
+| **theme-imm** | Liquid/CSS/JS (Hyper 1.3.3) | GitHub | Shopify |
 | **connector** | Rails 8.1 / React 18 / Polaris | GitHub | Shopify |
 | **datalayer** | JavaScript | GitHub | Shopify |
 | **creditcheck** | PHP 7.4 / Symfony | GitLab | Middleware |
@@ -56,7 +58,9 @@ MDM/
 ├── setup.sh                  Interaktives Setup-Script
 ├── sync.sh                   CLAUDE.md regenerieren + Konsistenz pruefen
 ├── CLAUDE.md                 Generiert (nicht manuell editieren)
-└── theme/, connector/, ...   Geklonte Arbeits-Repos (gitignored)
+├── themes/                   Marken-Themes: mdm/, borek/, imm/ (gitignored)
+├── bin/theme-sync.sh         Aenderungen zwischen den Themes bewegen
+└── connector/, ...           Weitere geklonte Arbeits-Repos (gitignored)
 ```
 
 ## Agenten

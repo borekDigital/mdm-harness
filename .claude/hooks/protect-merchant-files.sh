@@ -14,7 +14,7 @@ except Exception:
 
 # settings_data.json: hart blockieren (Theme-Editor-Hoheit)
 case "$FILE" in
-  */theme/config/settings_data.json)
+  */themes/*/config/settings_data.json)
     echo "BLOCKED: config/settings_data.json wird vom Theme-Editor verwaltet — lokale Änderungen würden beim Push Live-Einstellungen überschreiben." >&2
     exit 2 ;;
 esac
@@ -24,7 +24,7 @@ PARENT=$(basename "$(dirname "$FILE")")
 
 # AI-generierte Blöcke: nicht editieren (Shopify-generiert, Namen nicht änderbar)
 case "$FILE" in
-  */theme/blocks/ai_gen_block_*)
+  */themes/*/blocks/ai_gen_block_*)
     echo "BLOCKED: ai_gen_block_*-Dateien werden vom Shopify-Theme-Editor generiert — nicht hand-editieren." >&2
     exit 2 ;;
 esac

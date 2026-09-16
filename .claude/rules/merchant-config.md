@@ -1,7 +1,7 @@
 ---
 paths:
-  - "theme/config/**"
-  - "theme/locales/**"
+  - "themes/*/config/**"
+  - "themes/*/locales/**"
 ---
 # Merchant-verwaltete Dateien
 

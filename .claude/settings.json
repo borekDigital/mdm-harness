@@ -1,9 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd theme && shopify theme check*)",
-      "Bash(cd theme && shopify theme info*)",
-      "Bash(cd theme && shopify theme list*)",
+      "Bash(cd themes/* && shopify theme check*)",
+      "Bash(cd themes/* && shopify theme info*)",
+      "Bash(cd themes/* && shopify theme list*)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
@@ -20,8 +20,8 @@
       "mcp__shopify-dev-mcp__validate_theme_codeblocks"
     ],
     "deny": [
-      "Edit(theme/config/settings_data.json)",
-      "Write(theme/config/settings_data.json)"
+      "Edit(themes/*/config/settings_data.json)",
+      "Write(themes/*/config/settings_data.json)"
     ]
   },
   "enabledMcpjsonServers": [

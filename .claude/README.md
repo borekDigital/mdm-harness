@@ -7,7 +7,9 @@ Liegt in `.claude/` — keine KI-Spuren in versionierten Artefakten.
 
 ```
 ~/MDM/
-├── theme/                  Shopify Theme (Hyper 1.3.3, eigenes Git-Repo, GitHub)
+├── themes/mdm/             Shopify Theme MDM (Hyper 1.3.3, eigenes Git-Repo, GitHub)
+├── themes/borek/           Shopify Theme Borek (eigenes Git-Repo, GitHub)
+├── themes/imm/             Shopify Theme IMM (eigenes Git-Repo, GitHub)
 ├── connector/              Rails 8.1 Backend (eigenes Git-Repo, GitHub)
 ├── connector-worktrees/    Git-Worktrees fuer parallele Feature-Branches
 ├── datalayer/              GTM-Datalayer (eigenes Git-Repo, GitHub)
@@ -177,7 +179,7 @@ flowchart TD
 |---|---|---|---|---|
 | figma-extractor | sonnet | Figma MCP → design-spec.md | full-page, per-block | Tickets/ |
 | theme-planner | opus | Design → Hyper-Architektur | Block Map, Block Plan | Plan-Dateien |
-| liquid-implementer | inherit | Setzt freigegebene Block-Plaene um | — | theme/ |
+| liquid-implementer | inherit | Setzt freigegebene Block-Plaene um | — | themes/<marke>/ |
 | theme-reviewer | sonnet | QA: Konventionen, a11y, Performance, Visual Parity | — | **read-only** |
 
 ### Connector-Agenten
@@ -221,9 +223,9 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 
 | Rule | Pfad-Scope | Inhalt |
 |---|---|---|
-| liquid-conventions | theme/sections,snippets,blocks,layout | Liquid/Hyper-Konventionen |
-| templates-json | theme/templates | JSON-Template-Regeln |
-| merchant-config | theme/config,locales | Merchant-verwaltete Dateien |
+| liquid-conventions | themes/*/sections,snippets,blocks,layout | Liquid/Hyper-Konventionen |
+| templates-json | themes/*/templates | JSON-Template-Regeln |
+| merchant-config | themes/*/config,locales | Merchant-verwaltete Dateien |
 | connector-conventions | connector/app,config,db,lib | Rails/Shopify-App-Konventionen + TDD-Pflicht |
 | middleware-conventions | creditcheck,emailservice,payment-service | PHP/Symfony-Konventionen (3 Services) |
 
@@ -233,7 +235,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 |---|---|---|
 | git-safety.sh | PreToolUse (Bash) | Blockt: force-push, push main, reset --hard, clean -f, theme publish/delete, push --live, --theme-editor-sync |
 | protect-merchant-files.sh | PreToolUse (Edit/Write) | settings_data.json hart geblockt; FoxEcom-Kern + Namenskonvention → Rueckfrage |
-| post-edit-theme-check.sh | PostToolUse (Edit/Write) | Theme Check gefiltert auf editierte Datei (nur theme/*.liquid/json) |
+| post-edit-theme-check.sh | PostToolUse (Edit/Write) | Theme Check gefiltert auf editierte Datei; Theme-Verzeichnis aus dem Pfad hergeleitet (themes/<marke>/) |
 | post-edit-rubocop.sh | PostToolUse (Edit/Write) | RuboCop gefiltert auf editierte Datei (nur connector/*.rb) |
 | post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |

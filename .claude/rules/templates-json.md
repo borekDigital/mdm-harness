@@ -1,6 +1,6 @@
 ---
 paths:
-  - "theme/templates/**"
+  - "themes/*/templates/**"
 ---
 # JSON-Templates
 

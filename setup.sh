@@ -300,6 +300,8 @@ clone_repos() {
     fi
 
     echo -e "  ${CYAN}${repo_id}${RESET}: klone ${remote} ..."
+    # Pfade koennen verschachtelt sein (themes/<marke>/) — Elternverzeichnis anlegen.
+    mkdir -p "$(dirname "${full_path%/}")"
     if git clone --branch "${branch:-main}" "$remote" "$full_path" 2>&1 | sed 's/^/    /'; then
       echo -e "  ${GREEN}${repo_id}: erfolgreich geklont${RESET}"
     else
@@ -358,7 +360,7 @@ write_local_yaml() {
       if [[ -f "$LOCAL_YAML" ]]; then
         local existing_ts
         existing_ts=$(sed -n "/^  ${id}:$/,/^  [a-z]/p" "$LOCAL_YAML" \
-          | grep "cloned_at:" | sed 's/.*: *//' | tr -d '"' || true)
+          | grep "cloned_at:" | sed 's/^[^:]*: *//' | tr -d '"' || true)
         [[ -n "$existing_ts" ]] && cloned_at="$existing_ts"
       fi
       local branch

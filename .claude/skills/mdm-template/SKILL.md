@@ -12,7 +12,7 @@ Jeder Block wird anschliessend als eigener PR umgesetzt (via `/mdm-block`).
 ## Live-Kontext
 
 - Offene Tickets: !`ls ~/MDM/Tickets/In-progress/ 2>/dev/null || echo "keine"`
-- Git-Status Theme: !`git -C ~/MDM/theme status --short 2>/dev/null | head -5`
+- Themes: !`~/MDM/bin/theme-sync.sh list 2>/dev/null | tail -n +3`
 
 ## Inputs
 

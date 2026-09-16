@@ -8,10 +8,33 @@
 version: 1
 
 repos:
-  theme:
-    name: "Shopify Theme"
-    path: "theme/"
+  # Drei Marken-Themes, eine Codebasis-Familie. Sie teilen KEINE Git-Historie
+  # (drei getrennte Wurzel-Commits), aber rund 90 Prozent identische Dateien.
+  # Gleiche Aenderungen wandern deshalb per Patch: bin/theme-sync.sh
+  theme-mdm:
+    name: "Shopify Theme MDM"
+    path: "themes/mdm/"
     remote: "git@github.com-borek:borekDigital/shopifyFrontend_MDM.git"
+    platform: "github"
+    tech: "Liquid/CSS/JS (Hyper 1.3.3)"
+    group: "shopify"
+    default: true
+    branch: "main"
+
+  theme-borek:
+    name: "Shopify Theme Borek"
+    path: "themes/borek/"
+    remote: "git@github.com-borek:borekDigital/shopifyFrontend_Borek.git"
+    platform: "github"
+    tech: "Liquid/CSS/JS (Hyper 1.3.3)"
+    group: "shopify"
+    default: true
+    branch: "main"
+
+  theme-imm:
+    name: "Shopify Theme IMM"
+    path: "themes/imm/"
+    remote: "git@github.com-borek:borekDigital/shopifyFrontend_IMM.git"
     platform: "github"
     tech: "Liquid/CSS/JS (Hyper 1.3.3)"
     group: "shopify"

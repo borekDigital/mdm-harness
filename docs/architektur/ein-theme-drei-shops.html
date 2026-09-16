@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Ein Theme für drei Shops</title>
+<style>
+  @page { size: A4; margin: 14mm 13mm 12mm 13mm; }
+
+  :root {
+    --navy:    #002147;
+    --burgund: #82212E;
+    --gold:    #B8922A;
+    --sand:    #F6F3EE;
+    --ink:     #24211C;
+    --muted:   #6B665C;
+    --line:    #D8D2C6;
+    --green:   #2E6B4F;
+    --red:     #A8342A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    font-size: 9.1pt;
+    line-height: 1.4;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  h1 { font-size: 22pt; line-height: 1.12; margin: 0 0 3pt; color: var(--navy); letter-spacing: -0.4pt; }
+  h2 {
+    font-size: 12.2pt; color: var(--navy); margin: 0 0 6pt;
+    padding-bottom: 3pt; border-bottom: 1.5pt solid var(--navy);
+    letter-spacing: -0.2pt;
+  }
+  h3 { font-size: 10pt; color: var(--navy); margin: 10pt 0 4pt; }
+  h4 { font-size: 9.2pt; color: var(--burgund); margin: 8pt 0 2.5pt; }
+  p  { margin: 0 0 5.5pt; }
+  ul, ol { margin: 0 0 5.5pt; padding-left: 14pt; }
+  li { margin-bottom: 2pt; }
+  h2 + p, h3 + p { margin-top: 0; }
+
+  code, .mono {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 8.4pt;
+    background: var(--sand);
+    padding: 0.5pt 3pt;
+    border-radius: 2pt;
+  }
+
+  pre {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 7.6pt;
+    line-height: 1.38;
+    background: var(--sand);
+    border-left: 2.5pt solid var(--navy);
+    padding: 5.5pt 8pt;
+    margin: 0 0 7pt;
+    page-break-inside: avoid;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .cmt { color: var(--muted); }
+
+  section { page-break-after: always; }
+  section:last-of-type { page-break-after: auto; }
+  figure { margin: 0 0 8pt; page-break-inside: avoid; }
+  figcaption {
+    font-size: 7.6pt; color: var(--muted); margin-top: 2.5pt;
+    border-left: 2pt solid var(--gold);
+    padding-left: 5pt; line-height: 1.35;
+  }
+  svg { display: block; width: 100%; height: auto; }
+
+  /* --- Titelkopf --- */
+  .cover-head { border-bottom: 3pt solid var(--navy); padding-bottom: 7pt; margin-bottom: 10pt; }
+  .eyebrow {
+    font-size: 8pt; letter-spacing: 1.6pt; text-transform: uppercase;
+    color: var(--gold); font-weight: 700; margin-bottom: 5pt;
+  }
+  .subtitle { font-size: 11.5pt; color: var(--muted); margin: 0; }
+  .meta {
+    display: flex; gap: 22pt; margin-top: 9pt;
+    font-size: 8.2pt; color: var(--muted);
+  }
+  .meta b { color: var(--ink); font-weight: 600; display: block; font-size: 8.6pt; }
+
+  /* --- Kästen --- */
+  .box { padding: 7pt 9pt; margin: 0 0 7.5pt; border-radius: 3pt; page-break-inside: avoid; }
+  .box-q    { background: var(--sand); border-left: 3pt solid var(--navy); }
+  .box-warn { background: #FBF3F2; border-left: 3pt solid var(--red); }
+  .box-ok   { background: #F0F5F2; border-left: 3pt solid var(--green); }
+  .box-note { background: #FCF8EE; border-left: 3pt solid var(--gold); }
+  .box h4 { margin-top: 0; }
+  .box p:last-child, .box ul:last-child { margin-bottom: 0; }
+
+  /* --- Tabellen --- */
+  table { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 0 0 7.5pt; page-break-inside: avoid; }
+  th {
+    background: var(--navy); color: #fff; text-align: left;
+    padding: 4pt 6pt; font-weight: 600; font-size: 7.9pt;
+  }
+  td { padding: 3.6pt 6pt; border-bottom: 0.5pt solid var(--line); vertical-align: top; line-height: 1.33; }
+  tr:nth-child(even) td { background: #FAF8F4; }
+  td.mono-cell { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 7.8pt; }
+
+  /* --- Evidenzlabels --- */
+  .ev {
+    display: inline-block; font-size: 7.2pt; font-weight: 700;
+    padding: 0.5pt 4pt; border-radius: 2pt; vertical-align: 1pt;
+    letter-spacing: 0.3pt; white-space: nowrap;
+  }
+  .ev-proof { background: #E3EEE7; color: var(--green); }
+  .ev-guess { background: #FAF0DC; color: #8A6A16; }
+  .ev-open  { background: #F7E4E2; color: var(--red); }
+
+  sup.ref { font-size: 7pt; color: var(--burgund); font-weight: 700; }
+
+  .two-col { display: flex; gap: 11pt; }
+  .two-col > * { flex: 1; margin-bottom: 0; }
+
+  .step-list { counter-reset: step; list-style: none; padding-left: 0; }
+  .step-list li {
+    counter-increment: step; position: relative;
+    padding-left: 21pt; margin-bottom: 5pt; page-break-inside: avoid;
+  }
+  .step-list li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0.5pt;
+    width: 15pt; height: 15pt; border-radius: 50%;
+    background: var(--navy); color: #fff;
+    font-size: 8pt; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .src-list { list-style: none; padding-left: 0; font-size: 8.2pt; }
+  .src-list li {
+    padding-left: 24pt; position: relative; margin-bottom: 5pt;
+    page-break-inside: avoid;
+  }
+  .src-list .n {
+    position: absolute; left: 0; top: 0;
+    font-weight: 700; color: var(--burgund); font-size: 8pt;
+  }
+  .src-list a { color: var(--navy); text-decoration: none; word-break: break-all; font-size: 7.6pt; }
+  .src-list b { display: block; }
+
+  .footer-note {
+    margin-top: 14pt; padding-top: 7pt; border-top: 0.5pt solid var(--line);
+    font-size: 7.6pt; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================ SEITE 1 ============================ -->
+<section>
+  <div class="cover-head">
+    <div class="eyebrow">Architekturvorschlag &middot; Shopify Frontend</div>
+    <h1>Ein Theme für drei Shops</h1>
+    <p class="subtitle">MDM, Borek und IMM aus einer gemeinsamen Codebasis betreiben</p>
+    <div class="meta">
+      <div><b>Stand</b>14. September 2026</div>
+      <div><b>Betrifft</b>MDM (DE), Borek (DE), IMM (AT)</div>
+      <div><b>Status</b>Entwurf zur Diskussion</div>
+    </div>
+  </div>
+
+  <h2>1. Die Fragestellung</h2>
+
+  <div class="box box-q">
+    <p style="margin-bottom:5pt"><b>Wie können drei Shops dasselbe Theme nutzen und trotzdem
+    individuelle Anpassungen je Marke tragen — ohne manuelles Übertragen von Code zwischen Repos?</b></p>
+    <p style="font-size:8.6pt;color:var(--muted);margin:0">Aufgekommen im Team am 12. September 2026.
+    Vorgeschlagen wurde, IMM und MDM über den Markt (Shopify Markets) zu unterscheiden. Dieser Weg
+    deckt Borek nicht ab, da Borek und MDM beide im deutschen Markt liegen.</p>
+  </div>
+
+  <h3>Der heutige Zustand</h3>
+
+  <p>Drei eigenständige Theme-Repositories mit nahezu identischem Code. Borek und IMM unterscheiden
+  sich laut Team nur in Locales und Nuancen. Jede Änderung am Theme muss von Hand in die beiden
+  anderen Repos übertragen werden.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 250" role="img" aria-label="Ist-Zustand: drei getrennte Repositories mit manueller Übertragung">
+      <defs>
+        <marker id="arrRed" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 z" fill="#A8342A"/>
+        </marker>
+      </defs>
+
+      <!-- Repo MDM -->
+      <rect x="18" y="30" width="186" height="96" rx="5" fill="#fff" stroke="#002147" stroke-width="1.6"/>
+      <rect x="18" y="30" width="186" height="21" rx="5" fill="#002147"/>
+      <rect x="18" y="44" width="186" height="7" fill="#002147"/>
+      <text x="111" y="45" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Helvetica">Repo MDM</text>
+      <text x="30" y="70" font-size="9.5" fill="#24211C" font-family="Helvetica">sections/ · snippets/</text>
+      <text x="30" y="87" font-size="9.5" fill="#24211C" font-family="Helvetica">locales/de.json</text>
+      <text x="30" y="104" font-size="9.5" fill="#24211C" font-family="Helvetica">config/</text>
+      <text x="30" y="119" font-size="8.5" fill="#6B665C" font-family="Helvetica">Stand A</text>
+
+      <!-- Repo Borek -->
+      <rect x="267" y="30" width="186" height="96" rx="5" fill="#fff" stroke="#002147" stroke-width="1.6"/>
+      <rect x="267" y="30" width="186" height="21" rx="5" fill="#002147"/>
+      <rect x="267" y="44" width="186" height="7" fill="#002147"/>
+      <text x="360" y="45" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Helvetica">Repo Borek</text>
+      <text x="279" y="70" font-size="9.5" fill="#24211C" font-family="Helvetica">sections/ · snippets/</text>
+      <text x="279" y="87" font-size="9.5" fill="#24211C" font-family="Helvetica">locales/de.json</text>
+      <text x="279" y="104" font-size="9.5" fill="#24211C" font-family="Helvetica">config/</text>
+      <text x="279" y="119" font-size="8.5" fill="#6B665C" font-family="Helvetica">Stand A′ — driftet</text>
+
+      <!-- Repo IMM -->
+      <rect x="516" y="30" width="186" height="96" rx="5" fill="#fff" stroke="#002147" stroke-width="1.6"/>
+      <rect x="516" y="30" width="186" height="21" rx="5" fill="#002147"/>
+      <rect x="516" y="44" width="186" height="7" fill="#002147"/>
+      <text x="609" y="45" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Helvetica">Repo IMM</text>
+      <text x="528" y="70" font-size="9.5" fill="#24211C" font-family="Helvetica">sections/ · snippets/</text>
+      <text x="528" y="87" font-size="9.5" fill="#24211C" font-family="Helvetica">locales/de.json</text>
+      <text x="528" y="104" font-size="9.5" fill="#24211C" font-family="Helvetica">config/</text>
+      <text x="528" y="119" font-size="8.5" fill="#6B665C" font-family="Helvetica">Stand A″ — driftet</text>
+
+      <!-- Copy-Paste Pfeile -->
+      <path d="M206,78 L262,78" stroke="#A8342A" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrRed)"/>
+      <path d="M455,78 L511,78" stroke="#A8342A" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrRed)"/>
+      <text x="234" y="70" text-anchor="middle" font-size="8.5" font-weight="700" fill="#A8342A" font-family="Helvetica">copy</text>
+      <text x="234" y="95" text-anchor="middle" font-size="8.5" font-weight="700" fill="#A8342A" font-family="Helvetica">paste</text>
+      <text x="483" y="70" text-anchor="middle" font-size="8.5" font-weight="700" fill="#A8342A" font-family="Helvetica">copy</text>
+      <text x="483" y="95" text-anchor="middle" font-size="8.5" font-weight="700" fill="#A8342A" font-family="Helvetica">paste</text>
+
+      <!-- Problemleiste -->
+      <rect x="18" y="156" width="684" height="72" rx="4" fill="#FBF3F2" stroke="#A8342A" stroke-width="0.8"/>
+      <text x="32" y="175" font-size="10" font-weight="700" fill="#A8342A" font-family="Helvetica">Drei Folgeprobleme</text>
+
+      <circle cx="40" cy="194" r="7" fill="#A8342A"/>
+      <text x="40" y="197.5" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">1</text>
+      <text x="54" y="192" font-size="9" fill="#24211C" font-family="Helvetica">Jede Änderung dreimal</text>
+      <text x="54" y="205" font-size="9" fill="#24211C" font-family="Helvetica">von Hand übertragen</text>
+
+      <circle cx="270" cy="194" r="7" fill="#A8342A"/>
+      <text x="270" y="197.5" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">2</text>
+      <text x="284" y="192" font-size="9" fill="#24211C" font-family="Helvetica">Beim Übertragen rutschen</text>
+      <text x="284" y="205" font-size="9" fill="#24211C" font-family="Helvetica">fremde Locales mit</text>
+
+      <circle cx="500" cy="194" r="7" fill="#A8342A"/>
+      <text x="500" y="197.5" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">3</text>
+      <text x="514" y="192" font-size="9" fill="#24211C" font-family="Helvetica">Die Stände driften aus-</text>
+      <text x="514" y="205" font-size="9" fill="#24211C" font-family="Helvetica">einander, Fixes fehlen</text>
+    </svg>
+    <figcaption>Abbildung 1 — Ist-Zustand. Der gemeinsame Code existiert dreifach, ohne gemeinsame Quelle.</figcaption>
+  </figure>
+
+  <h3>Was das Dokument liefert</h3>
+  <p>Eine Zielarchitektur, in der der gemeinsame Code <b>einmal</b> existiert und die Unterschiede je
+  Marke an definierten Stellen liegen — getrennt nach Zuständigkeit: Was Entwicklung ändert, liegt im
+  Repository. Was Redaktion ändert, liegt im Shop.</p>
+
+  <div class="box box-note">
+    <h4>Lesehinweis zu den Belegen</h4>
+    <p>Jede Aussage ist gekennzeichnet: <span class="ev ev-proof">BELEGT</span> stützt sich auf die
+    verlinkte Shopify-Dokumentation oder auf gelesenen Code im Repository,
+    <span class="ev ev-guess">ANNAHME</span> ist plausibel, aber nicht bewiesen,
+    <span class="ev ev-open">OFFEN</span> muss vor der Umsetzung geprüft werden. Hochgestellte Ziffern
+    verweisen auf das Quellenverzeichnis auf der letzten Seite.</p>
+  </div>
+</section>
+
+<!-- ============================ SEITE 2 ============================ -->
+<section>
+  <h2>2. Befund: Warum der Markt-Ansatz hier nicht trägt</h2>
+
+  <p>Der Vorschlag aus dem Team ist technisch nicht aus der Luft gegriffen — Shopify unterstützt
+  marktspezifische Theme-Anpassungen tatsächlich. Er scheitert an einer anderen Stelle als zunächst
+  vermutet.</p>
+
+  <h3>Was Shopify Markets kann</h3>
+
+  <p><span class="ev ev-proof">BELEGT</span> Ein Theme kann pro Markt angepasst werden. Sobald
+  marktspezifische Anpassungen bestehen, legt Shopify die Datei <code>config/markets.json</code> an,
+  die die Vererbung der Anpassungen zwischen Märkten steuert.<sup class="ref">[4]</sup> Ein Markt ist
+  dabei eine <b>Käufergruppe innerhalb eines Stores</b>, definiert über Land, Standort oder Company
+  Location.<sup class="ref">[8][11]</sup> In Liquid ist der aktive Markt über
+  <code>localization.market</code> mit <code>handle</code>, <code>id</code> und
+  <code>metafields</code> abrufbar.<sup class="ref">[9]</sup></p>
+
+  <h3>Warum das die Aufgabe nicht löst</h3>
+
+  <figure>
+    <svg viewBox="0 0 720 268" role="img" aria-label="Vergleich: Märkte innerhalb eines Stores gegenüber drei getrennten Stores">
+      <!-- Linke Seite -->
+      <rect x="12" y="14" width="336" height="240" rx="5" fill="#F0F5F2" stroke="#2E6B4F" stroke-width="1.2"/>
+      <text x="28" y="36" font-size="10.5" font-weight="700" fill="#2E6B4F" font-family="Helvetica">Wofür Märkte gemacht sind</text>
+      <text x="28" y="51" font-size="8.5" fill="#6B665C" font-family="Helvetica">Ein Store, mehrere Kaufkontexte</text>
+
+      <rect x="34" y="64" width="292" height="128" rx="4" fill="#fff" stroke="#2E6B4F" stroke-width="1.2"/>
+      <text x="180" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#002147" font-family="Helvetica">EIN Store</text>
+      <line x1="48" y1="90" x2="312" y2="90" stroke="#D8D2C6" stroke-width="0.8"/>
+
+      <rect x="48" y="100" width="82" height="46" rx="3" fill="#F0F5F2" stroke="#2E6B4F" stroke-width="0.8"/>
+      <text x="89" y="118" text-anchor="middle" font-size="9" font-weight="700" fill="#2E6B4F" font-family="Helvetica">Markt DE</text>
+      <text x="89" y="132" text-anchor="middle" font-size="7.5" fill="#6B665C" font-family="Helvetica">EUR · 19 %</text>
+
+      <rect x="139" y="100" width="82" height="46" rx="3" fill="#F0F5F2" stroke="#2E6B4F" stroke-width="0.8"/>
+      <text x="180" y="118" text-anchor="middle" font-size="9" font-weight="700" fill="#2E6B4F" font-family="Helvetica">Markt AT</text>
+      <text x="180" y="132" text-anchor="middle" font-size="7.5" fill="#6B665C" font-family="Helvetica">EUR · 20 %</text>
+
+      <rect x="230" y="100" width="82" height="46" rx="3" fill="#F0F5F2" stroke="#2E6B4F" stroke-width="0.8"/>
+      <text x="271" y="118" text-anchor="middle" font-size="9" font-weight="700" fill="#2E6B4F" font-family="Helvetica">Markt CH</text>
+      <text x="271" y="132" text-anchor="middle" font-size="7.5" fill="#6B665C" font-family="Helvetica">CHF</text>
+
+      <text x="48" y="166" font-size="8.5" fill="#24211C" font-family="Helvetica">Ein Katalog · ein Checkout · eine Marke</text>
+      <text x="48" y="180" font-size="8.5" fill="#24211C" font-family="Helvetica">Unterschied = Währung, Steuer, Sprache</text>
+
+      <rect x="34" y="204" width="292" height="36" rx="3" fill="#fff" stroke="#2E6B4F" stroke-width="0.8"/>
+      <text x="46" y="219" font-size="8.5" font-weight="700" fill="#2E6B4F" font-family="Helvetica">Bei uns zutreffend für:</text>
+      <text x="46" y="232" font-size="8.5" fill="#24211C" font-family="Helvetica">AT-Besonderheiten innerhalb von IMM</text>
+
+      <!-- Rechte Seite -->
+      <rect x="372" y="14" width="336" height="240" rx="5" fill="#FBF3F2" stroke="#A8342A" stroke-width="1.2"/>
+      <text x="388" y="36" font-size="10.5" font-weight="700" fill="#A8342A" font-family="Helvetica">Was wir tatsächlich haben</text>
+      <text x="388" y="51" font-size="8.5" fill="#6B665C" font-family="Helvetica">Drei Stores, drei Marken</text>
+
+      <rect x="392" y="64" width="92" height="128" rx="4" fill="#fff" stroke="#002147" stroke-width="1.2"/>
+      <text x="438" y="84" text-anchor="middle" font-size="9.5" font-weight="700" fill="#002147" font-family="Helvetica">MDM</text>
+      <text x="438" y="98" text-anchor="middle" font-size="7.5" fill="#6B665C" font-family="Helvetica">DE</text>
+      <line x1="402" y1="106" x2="474" y2="106" stroke="#D8D2C6" stroke-width="0.8"/>
+      <text x="438" y="121" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Katalog</text>
+      <text x="438" y="135" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Checkout</text>
+      <text x="438" y="149" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Kunden</text>
+      <text x="438" y="163" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Domain</text>
+      <text x="438" y="180" text-anchor="middle" font-size="7.5" font-weight="700" fill="#002147" font-family="Helvetica">eig. Theme</text>
+
+      <rect x="494" y="64" width="92" height="128" rx="4" fill="#fff" stroke="#002147" stroke-width="1.2"/>
+      <text x="540" y="84" text-anchor="middle" font-size="9.5" font-weight="700" fill="#002147" font-family="Helvetica">Borek</text>
+      <text x="540" y="98" text-anchor="middle" font-size="7.5" fill="#6B665C" font-family="Helvetica">DE</text>
+      <line x1="504" y1="106" x2="576" y2="106" stroke="#D8D2C6" stroke-width="0.8"/>
+      <text x="540" y="121" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Katalog</text>
+      <text x="540" y="135" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Checkout</text>
+      <text x="540" y="149" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Kunden</text>
+      <text x="540" y="163" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Domain</text>
+      <text x="540" y="180" text-anchor="middle" font-size="7.5" font-weight="700" fill="#002147" font-family="Helvetica">eig. Theme</text>
+
+      <rect x="596" y="64" width="92" height="128" rx="4" fill="#fff" stroke="#002147" stroke-width="1.2"/>
+      <text x="642" y="84" text-anchor="middle" font-size="9.5" font-weight="700" fill="#002147" font-family="Helvetica">IMM</text>
+      <text x="642" y="98" text-anchor="middle" font-size="7.5" fill="#6B665C" font-family="Helvetica">AT</text>
+      <line x1="606" y1="106" x2="678" y2="106" stroke="#D8D2C6" stroke-width="0.8"/>
+      <text x="642" y="121" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Katalog</text>
+      <text x="642" y="135" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Checkout</text>
+      <text x="642" y="149" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Kunden</text>
+      <text x="642" y="163" text-anchor="middle" font-size="7.5" fill="#24211C" font-family="Helvetica">eig. Domain</text>
+      <text x="642" y="180" text-anchor="middle" font-size="7.5" font-weight="700" fill="#002147" font-family="Helvetica">eig. Theme</text>
+
+      <rect x="392" y="204" width="296" height="36" rx="3" fill="#fff" stroke="#A8342A" stroke-width="0.8"/>
+      <text x="404" y="219" font-size="8.5" font-weight="700" fill="#A8342A" font-family="Helvetica">Märkte greifen hier nicht:</text>
+      <text x="404" y="232" font-size="8.5" fill="#24211C" font-family="Helvetica">Marken sind keine Käufergruppen eines Stores</text>
+    </svg>
+    <figcaption>Abbildung 2 — Ein Markt trennt Kaufkontexte innerhalb eines Stores. Marken über Store-Grenzen hinweg trennt er nicht.</figcaption>
+  </figure>
+
+  <p><span class="ev ev-proof">BELEGT</span> Die drei Shops sind eigenständige Stores — im
+  Datalayer-Repository als „alle 3 Mandanten Shops“ geführt. Damit greift die Markt-Logik nicht:
+  Marktspezifische Theme-Anpassungen wirken <b>innerhalb</b> eines Stores. Über drei Stores hinweg
+  gibt es keinen gemeinsamen Markt-Raum, in dem sie sich unterscheiden ließen.</p>
+
+  <div class="box box-warn">
+    <h4>Der Einwand aus dem Team trifft zu — aus zwei Gründen</h4>
+    <p style="margin-bottom:4pt"><b>Erstens</b>, wie im Team benannt: Borek und MDM liegen beide im
+    deutschen Markt. Selbst innerhalb eines Stores wäre der Markt kein Unterscheidungsmerkmal
+    zwischen ihnen.</p>
+    <p><b>Zweitens</b>, und schwerwiegender: Bei drei getrennten Stores ist die Frage „welche Marke?“
+    bereits durch den Store beantwortet. Ein Markt-Merkmal wäre nicht nur unzureichend, sondern
+    überflüssig.</p>
+  </div>
+
+  <div class="box box-ok">
+    <h4>Wo Märkte trotzdem richtig sind</h4>
+    <p>Für länderspezifische Unterschiede <b>innerhalb</b> eines Shops — österreichische
+    Umsatzsteuer, Versandoptionen oder Zahlarten im IMM-Store. Das ist ein eigenes Thema und steht
+    dieser Architektur nicht im Weg. <span class="ev ev-proof">BELEGT</span><sup class="ref">[11][14]</sup></p>
+  </div>
+</section>
+
+<!-- ============================ SEITE 3 ============================ -->
+<section>
+  <h2>3. Zielarchitektur: Ein Code-Stand, drei Store-Zweige</h2>
+
+  <p>Der Vorschlag beruht auf einer Trennung, die Shopify selbst vorgibt: Theme-Code gehört ins
+  Repository, Konfiguration und Texte gehören in den Shop. Beide Seiten haben getrennte Besitzer und
+  getrennte Änderungswege.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 300" role="img" aria-label="Zielarchitektur: main-Branch mit drei Store-Branches">
+      <defs>
+        <marker id="arrNavy" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 z" fill="#002147"/>
+        </marker>
+        <marker id="arrGold" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 z" fill="#B8922A"/>
+        </marker>
+      </defs>
+
+      <!-- main -->
+      <rect x="14" y="18" width="692" height="58" rx="5" fill="#002147"/>
+      <text x="30" y="42" font-size="11.5" font-weight="700" fill="#fff" font-family="Helvetica">main — gemeinsamer Code</text>
+      <text x="30" y="59" font-size="8.8" fill="#B8CADD" font-family="Helvetica">sections/ · snippets/ · assets/ · layout/ · templates/ · locales/ (markenneutrale Basis)</text>
+      <rect x="556" y="30" width="136" height="34" rx="3" fill="#B8922A"/>
+      <text x="624" y="45" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">Single Source</text>
+      <text x="624" y="57" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">of Truth</text>
+
+      <!-- Merge-Pfeile nach unten -->
+      <path d="M128,76 L128,104" stroke="#002147" stroke-width="1.8" marker-end="url(#arrNavy)"/>
+      <path d="M360,76 L360,104" stroke="#002147" stroke-width="1.8" marker-end="url(#arrNavy)"/>
+      <path d="M592,76 L592,104" stroke="#002147" stroke-width="1.8" marker-end="url(#arrNavy)"/>
+      <text x="136" y="95" font-size="8" fill="#002147" font-family="Helvetica">merge</text>
+      <text x="368" y="95" font-size="8" fill="#002147" font-family="Helvetica">merge</text>
+      <text x="600" y="95" font-size="8" fill="#002147" font-family="Helvetica">merge</text>
+
+      <!-- Store-Branches -->
+      <rect x="14" y="108" width="228" height="88" rx="5" fill="#fff" stroke="#002147" stroke-width="1.4"/>
+      <rect x="14" y="108" width="228" height="20" rx="5" fill="#4A6580"/>
+      <rect x="14" y="121" width="228" height="7" fill="#4A6580"/>
+      <text x="128" y="122" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff" font-family="Helvetica">store/mdm</text>
+      <text x="26" y="145" font-size="8.3" fill="#24211C" font-family="Helvetica">config/settings_data.json</text>
+      <text x="26" y="160" font-size="8.3" fill="#24211C" font-family="Helvetica">locales/de.json (Overrides)</text>
+      <text x="26" y="175" font-size="8.3" fill="#24211C" font-family="Helvetica">templates/page.*.json</text>
+      <text x="26" y="189" font-size="7.8" font-style="italic" fill="#6B665C" font-family="Helvetica">nur Shop-eigene Dateien</text>
+
+      <rect x="246" y="108" width="228" height="88" rx="5" fill="#fff" stroke="#002147" stroke-width="1.4"/>
+      <rect x="246" y="108" width="228" height="20" rx="5" fill="#4A6580"/>
+      <rect x="246" y="121" width="228" height="7" fill="#4A6580"/>
+      <text x="360" y="122" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff" font-family="Helvetica">store/borek</text>
+      <text x="258" y="145" font-size="8.3" fill="#24211C" font-family="Helvetica">config/settings_data.json</text>
+      <text x="258" y="160" font-size="8.3" fill="#24211C" font-family="Helvetica">locales/de.json (Overrides)</text>
+      <text x="258" y="175" font-size="8.3" fill="#24211C" font-family="Helvetica">templates/page.*.json</text>
+      <text x="258" y="189" font-size="7.8" font-style="italic" fill="#6B665C" font-family="Helvetica">nur Shop-eigene Dateien</text>
+
+      <rect x="478" y="108" width="228" height="88" rx="5" fill="#fff" stroke="#002147" stroke-width="1.4"/>
+      <rect x="478" y="108" width="228" height="20" rx="5" fill="#4A6580"/>
+      <rect x="478" y="121" width="228" height="7" fill="#4A6580"/>
+      <text x="592" y="122" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff" font-family="Helvetica">store/imm</text>
+      <text x="490" y="145" font-size="8.3" fill="#24211C" font-family="Helvetica">config/settings_data.json</text>
+      <text x="490" y="160" font-size="8.3" fill="#24211C" font-family="Helvetica">locales/de-AT.json</text>
+      <text x="490" y="175" font-size="8.3" fill="#24211C" font-family="Helvetica">templates/page.*.json</text>
+      <text x="490" y="189" font-size="7.8" font-style="italic" fill="#6B665C" font-family="Helvetica">nur Shop-eigene Dateien</text>
+
+      <!-- Pfeile zu Stores -->
+      <path d="M128,196 L128,224" stroke="#B8922A" stroke-width="1.8" marker-end="url(#arrGold)"/>
+      <path d="M360,196 L360,224" stroke="#B8922A" stroke-width="1.8" marker-end="url(#arrGold)"/>
+      <path d="M592,196 L592,224" stroke="#B8922A" stroke-width="1.8" marker-end="url(#arrGold)"/>
+
+      <!-- Shopify Stores -->
+      <rect x="14" y="228" width="228" height="54" rx="5" fill="#F6F3EE" stroke="#B8922A" stroke-width="1.4"/>
+      <text x="128" y="248" text-anchor="middle" font-size="10" font-weight="700" fill="#82212E" font-family="Helvetica">Shopify Store MDM</text>
+      <text x="128" y="265" text-anchor="middle" font-size="8.2" fill="#6B665C" font-family="Helvetica">Theme-Editor · Sprachen-Editor</text>
+
+      <rect x="246" y="228" width="228" height="54" rx="5" fill="#F6F3EE" stroke="#B8922A" stroke-width="1.4"/>
+      <text x="360" y="248" text-anchor="middle" font-size="10" font-weight="700" fill="#82212E" font-family="Helvetica">Shopify Store Borek</text>
+      <text x="360" y="265" text-anchor="middle" font-size="8.2" fill="#6B665C" font-family="Helvetica">Theme-Editor · Sprachen-Editor</text>
+
+      <rect x="478" y="228" width="228" height="54" rx="5" fill="#F6F3EE" stroke="#B8922A" stroke-width="1.4"/>
+      <text x="592" y="248" text-anchor="middle" font-size="10" font-weight="700" fill="#82212E" font-family="Helvetica">Shopify Store IMM</text>
+      <text x="592" y="265" text-anchor="middle" font-size="8.2" fill="#6B665C" font-family="Helvetica">Theme-Editor · Sprachen-Editor</text>
+    </svg>
+    <figcaption>Abbildung 3 — Ein Repository, ein gemeinsamer <code>main</code>, drei dauerhafte Store-Zweige. Jede Feature-Änderung entsteht einmal auf <code>main</code> und wird in die drei Zweige gemergt.</figcaption>
+  </figure>
+
+  <h3>Warum drei Zweige statt eines Branches für alle</h3>
+
+  <p><span class="ev ev-proof">BELEGT</span> Die Shopify-GitHub-Integration arbeitet
+  <b>bidirektional</b>: „Files are updated in GitHub whenever changes are made to a connected theme.
+  This can&nbsp;t be disabled.“<sup class="ref">[7]</sup> Änderungen im Theme-Editor, Code-Editor oder
+  Sprachen-Editor werden von Shopify automatisch als Commit ins verbundene Repository
+  zurückgeschrieben — sichtbar als <code>shopify[bot]</code>.</p>
+
+  <p>Hingen alle drei Stores am selben Branch, würden sie gegenseitig ihre
+  <code>settings_data.json</code> und Locale-Werte überschreiben. Jeder Store braucht deshalb seinen
+  eigenen Zweig als Rückschreibziel. <span class="ev ev-proof">BELEGT</span> Die Dokumentation
+  betont die Eins-zu-eins-Beziehung zwischen Theme und Branch.<sup class="ref">[7]</sup></p>
+
+  <div class="box box-note">
+    <h4>Merge-Richtung ist strikt einseitig</h4>
+    <p><code>main → store/*</code> trägt Features in die Shops. Der Rückweg <code>store/* → main</code>
+    findet <b>nicht</b> statt — dort liegen ausschließlich shopeigene Werte, die in den anderen beiden
+    Shops falsch wären. Genau diese Einbahnstraße beseitigt das heutige Risiko, beim Übertragen
+    fremde Locales mitzunehmen.</p>
+  </div>
+</section>
+
+<!-- ============================ SEITE 4 ============================ -->
+<section>
+  <h2>4. Wem gehört welche Datei</h2>
+
+  <p>Die Architektur steht und fällt mit einer klaren Zuordnung. Shopify trennt dafür bereits sauber
+  zwischen Code und Konfiguration.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 212" role="img" aria-label="Schichtenmodell der Unterscheidungsebenen">
+      <!-- Schicht 1 -->
+      <rect x="14" y="14" width="692" height="42" rx="4" fill="#002147"/>
+      <text x="30" y="32" font-size="10" font-weight="700" fill="#fff" font-family="Helvetica">Schicht 1 — Gemeinsamer Code</text>
+      <text x="30" y="47" font-size="8.5" fill="#B8CADD" font-family="Helvetica">Sections, Snippets, Layout, Assets, Templates · identisch in allen drei Shops · lebt auf main</text>
+      <rect x="560" y="22" width="132" height="26" rx="3" fill="#fff" opacity="0.16"/>
+      <text x="626" y="39" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">Entwicklung</text>
+
+      <!-- Schicht 2 -->
+      <rect x="14" y="62" width="692" height="42" rx="4" fill="#82212E"/>
+      <text x="30" y="80" font-size="10" font-weight="700" fill="#fff" font-family="Helvetica">Schicht 2 — Branding über Theme-Einstellungen</text>
+      <text x="30" y="95" font-size="8.5" fill="#F0D5D8" font-family="Helvetica">Farbschemata, Logo, Schriften, Radien in config/settings_data.json · je Store eigenständig</text>
+      <rect x="560" y="70" width="132" height="26" rx="3" fill="#fff" opacity="0.16"/>
+      <text x="626" y="87" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">Redaktion im Shop</text>
+
+      <!-- Schicht 3 -->
+      <rect x="14" y="110" width="692" height="42" rx="4" fill="#B8922A"/>
+      <text x="30" y="128" font-size="10" font-weight="700" fill="#fff" font-family="Helvetica">Schicht 3 — Texte über Locales</text>
+      <text x="30" y="143" font-size="8.5" fill="#F7EEDA" font-family="Helvetica">Neutrale Basis auf main · Markenbegriffe interpoliert · Abweichungen im Sprachen-Editor</text>
+      <rect x="560" y="118" width="132" height="26" rx="3" fill="#fff" opacity="0.2"/>
+      <text x="626" y="135" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">gemischt</text>
+
+      <!-- Schicht 4 -->
+      <rect x="14" y="158" width="692" height="42" rx="4" fill="#4A6580"/>
+      <text x="30" y="176" font-size="10" font-weight="700" fill="#fff" font-family="Helvetica">Schicht 4 — Strukturunterschiede über settings.brand</text>
+      <text x="30" y="191" font-size="8.5" fill="#D5DEE6" font-family="Helvetica">Nur wo ein Block existiert oder fehlt · ein Select-Setting · gekapselt in einem Snippet</text>
+      <rect x="560" y="166" width="132" height="26" rx="3" fill="#fff" opacity="0.16"/>
+      <text x="626" y="183" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Helvetica">Entwicklung</text>
+    </svg>
+    <figcaption>Abbildung 4 — Vier Schichten. Je weiter unten, desto seltener soll die Schicht gebraucht werden. Schicht 4 ist die Ausnahme, nicht die Regel.</figcaption>
+  </figure>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:31%">Datei / Bereich</th>
+        <th style="width:16%">Zweig</th>
+        <th style="width:20%">Ändert wer</th>
+        <th style="width:33%">Begründung</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono-cell">sections/ snippets/<br>layout/ assets/</td>
+        <td><b>main</b></td>
+        <td>Entwicklung</td>
+        <td>Gemeinsamer Code, keine Markenlogik enthalten</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">config/settings_schema.json</td>
+        <td><b>main</b></td>
+        <td>Entwicklung</td>
+        <td>Definiert, welche Einstellungen es gibt — für alle gleich<sup class="ref">[3]</sup></td>
+      </tr>
+      <tr>
+        <td class="mono-cell">config/settings_data.json</td>
+        <td>store/*</td>
+        <td>Redaktion im Theme-Editor</td>
+        <td>Enthält die Werte je Shop. Wird bei jeder Editor-Änderung neu geschrieben<sup class="ref">[3]</sup></td>
+      </tr>
+      <tr>
+        <td class="mono-cell">locales/en.default.json<br>locales/de.json</td>
+        <td><b>main</b></td>
+        <td>Entwicklung</td>
+        <td>Markenneutrale Basistexte, Markenname interpoliert</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">locales/de-AT.json</td>
+        <td><b>main</b></td>
+        <td>Entwicklung</td>
+        <td>Österreichische Sprachvariante, im IMM-Store aktiviert<sup class="ref">[1]</sup></td>
+      </tr>
+      <tr>
+        <td class="mono-cell">Sprachen-Editor-Overrides</td>
+        <td>store/*</td>
+        <td>Redaktion im Shop</td>
+        <td>Shopeigene Wortwahl, ohne Code-Änderung<sup class="ref">[2][12]</sup></td>
+      </tr>
+      <tr>
+        <td class="mono-cell">templates/*.json (geteilt)</td>
+        <td><b>main</b></td>
+        <td>Entwicklung</td>
+        <td>Produkt-, Kategorie- und Systemseiten mit gleicher Struktur</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">templates/page.&lt;slug&gt;.json</td>
+        <td>store/*</td>
+        <td>Redaktion im Theme-Editor</td>
+        <td>Landingpages sind je Shop verschieden</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">config/markets.json</td>
+        <td>store/*</td>
+        <td>Shopify automatisch</td>
+        <td>Entsteht nur bei marktspezifischen Anpassungen, z.&nbsp;B. in IMM<sup class="ref">[4]</sup></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box box-warn">
+    <h4>Konfliktschutz beim Merge ist Pflicht</h4>
+    <p style="margin-bottom:4pt">Beim Merge von <code>main</code> in einen Store-Zweig würden die
+    shopeigenen Dateien kollidieren. Der Schutz dagegen gehört in jede
+    <code>store/*</code>-Branch als <code>.gitattributes</code>:</p>
+<pre><code>config/settings_data.json  merge=ours
+templates/page.*.json      merge=ours
+<span class="cmt"># einmalig je Arbeitskopie einrichten:</span>
+<span class="cmt"># git config merge.ours.driver true</span></code></pre>
+    <p style="margin-bottom:0"><span class="ev ev-open">OFFEN</span> Der <code>ours</code>-Treiber
+    muss in jeder Arbeitskopie und im CI konfiguriert sein — sonst greift die Angabe stillschweigend
+    nicht. Das ist vor dem ersten Merge zu verifizieren.</p>
+  </div>
+</section>
+
+<!-- ============================ SEITE 5 ============================ -->
+<section>
+  <h2>5. Das Locale-Thema im Detail</h2>
+
+  <p>Die Befürchtung aus dem Team — beim Übertragen rutschen unerwünschte Locales mit — ist der
+  eigentliche Kern. Sie löst sich, wenn Texte nach ihrer Natur getrennt werden statt nach Datei.</p>
+
+  <h3>Drei Klassen von Texten</h3>
+
+  <figure>
+    <svg viewBox="0 0 720 250" role="img" aria-label="Entscheidungsbaum für Locale-Texte">
+      <defs>
+        <marker id="arrGrey" markerWidth="8" markerHeight="8" refX="7" refY="2.6" orient="auto">
+          <path d="M0,0 L7,2.6 L0,5.2 z" fill="#6B665C"/>
+        </marker>
+      </defs>
+
+      <!-- Start -->
+      <rect x="252" y="12" width="216" height="34" rx="17" fill="#002147"/>
+      <text x="360" y="27" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff" font-family="Helvetica">Ein Text im Theme</text>
+      <text x="360" y="39" text-anchor="middle" font-size="8" fill="#B8CADD" font-family="Helvetica">Wohin gehört er?</text>
+
+      <!-- Frage 1 -->
+      <path d="M360,46 L360,66" stroke="#6B665C" stroke-width="1.3" marker-end="url(#arrGrey)"/>
+      <rect x="222" y="70" width="276" height="30" rx="4" fill="#F6F3EE" stroke="#002147" stroke-width="1.1"/>
+      <text x="360" y="89" text-anchor="middle" font-size="9" font-weight="600" fill="#002147" font-family="Helvetica">Enthält er einen Markennamen?</text>
+
+      <!-- Nein-Zweig links -->
+      <path d="M222,85 L130,85 L130,140" stroke="#6B665C" stroke-width="1.3" fill="none" marker-end="url(#arrGrey)"/>
+      <text x="166" y="80" font-size="8" font-weight="700" fill="#2E6B4F" font-family="Helvetica">nein</text>
+
+      <rect x="14" y="144" width="232" height="88" rx="4" fill="#F0F5F2" stroke="#2E6B4F" stroke-width="1.2"/>
+      <text x="130" y="164" text-anchor="middle" font-size="9.5" font-weight="700" fill="#2E6B4F" font-family="Helvetica">Klasse A — Struktur</text>
+      <line x1="28" y1="171" x2="232" y2="171" stroke="#C5D8CC" stroke-width="0.8"/>
+      <text x="28" y="186" font-size="8.2" fill="#24211C" font-family="Helvetica">„In den Warenkorb“, „Suche“</text>
+      <text x="28" y="200" font-size="8.2" font-weight="700" fill="#2E6B4F" font-family="Helvetica">→ locales/de.json auf main</text>
+      <text x="28" y="216" font-size="7.8" fill="#6B665C" font-family="Helvetica">Einmal gepflegt, gilt für alle drei.</text>
+      <text x="28" y="227" font-size="7.8" fill="#6B665C" font-family="Helvetica">Der Regelfall.</text>
+
+      <!-- Ja-Zweig -->
+      <path d="M498,85 L590,85 L590,104" stroke="#6B665C" stroke-width="1.3" fill="none" marker-end="url(#arrGrey)"/>
+      <text x="536" y="80" font-size="8" font-weight="700" fill="#82212E" font-family="Helvetica">ja</text>
+
+      <rect x="474" y="108" width="232" height="30" rx="4" fill="#F6F3EE" stroke="#002147" stroke-width="1.1"/>
+      <text x="590" y="121" text-anchor="middle" font-size="8.5" font-weight="600" fill="#002147" font-family="Helvetica">Reicht der reine Shopname,</text>
+      <text x="590" y="132" text-anchor="middle" font-size="8.5" font-weight="600" fill="#002147" font-family="Helvetica">oder weicht die Formulierung ab?</text>
+
+      <!-- Klasse B -->
+      <path d="M474,123 L400,123 L400,144" stroke="#6B665C" stroke-width="1.3" fill="none" marker-end="url(#arrGrey)"/>
+      <rect x="256" y="148" width="204" height="84" rx="4" fill="#FCF8EE" stroke="#B8922A" stroke-width="1.2"/>
+      <text x="358" y="167" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8A6A16" font-family="Helvetica">Klasse B — Name</text>
+      <line x1="268" y1="174" x2="448" y2="174" stroke="#E8DCC0" stroke-width="0.8"/>
+      <text x="268" y="189" font-size="8.2" fill="#24211C" font-family="Helvetica">„Willkommen bei MDM“</text>
+      <text x="268" y="203" font-size="8.2" font-weight="700" fill="#8A6A16" font-family="Helvetica">→ interpolieren mit shop.name</text>
+      <text x="268" y="218" font-size="7.8" fill="#6B665C" font-family="Helvetica">Bleibt auf main, löst sich</text>
+      <text x="268" y="229" font-size="7.8" fill="#6B665C" font-family="Helvetica">im Shop automatisch auf.</text>
+
+      <!-- Klasse C -->
+      <path d="M660,138 L660,144" stroke="#6B665C" stroke-width="1.3" marker-end="url(#arrGrey)"/>
+      <rect x="474" y="148" width="232" height="84" rx="4" fill="#FBF3F2" stroke="#82212E" stroke-width="1.2"/>
+      <text x="590" y="167" text-anchor="middle" font-size="9.5" font-weight="700" fill="#82212E" font-family="Helvetica">Klasse C — Wortwahl</text>
+      <line x1="488" y1="174" x2="692" y2="174" stroke="#EED5D7" stroke-width="0.8"/>
+      <text x="488" y="189" font-size="8.2" fill="#24211C" font-family="Helvetica">Eigene Tonalität, AT-Begriffe</text>
+      <text x="488" y="203" font-size="8.2" font-weight="700" fill="#82212E" font-family="Helvetica">→ Sprachen-Editor im Shop</text>
+      <text x="488" y="218" font-size="7.8" fill="#6B665C" font-family="Helvetica">Kein Code. Landet im</text>
+      <text x="488" y="229" font-size="7.8" fill="#6B665C" font-family="Helvetica">store/*-Zweig, nie auf main.</text>
+    </svg>
+    <figcaption>Abbildung 5 — Entscheidungsbaum. Je weiter links ein Text landet, desto weniger Pflegeaufwand entsteht.</figcaption>
+  </figure>
+
+  <h3>Klasse B in der Praxis</h3>
+
+  <p><span class="ev ev-proof">BELEGT</span> Locale-Strings unterstützen Interpolation, also Variablen
+  im Text.<sup class="ref">[2]</sup> Der Markenname muss deshalb nirgends fest verdrahtet
+  werden:</p>
+
+<pre><code><span class="cmt">// locales/de.json — einmal auf main, gilt für alle drei Shops</span>
+{ "general": { "greeting": "Willkommen bei {{ shop }}" } }
+
+<span class="cmt">// im Liquid</span>
+{{ 'general.greeting' | t: shop: shop.name }}
+
+<span class="cmt">// Ergebnis je Store — ohne jede Fallunterscheidung</span>
+MDM   → Willkommen bei MDM Münzhandelsgesellschaft
+Borek → Willkommen bei Borek
+IMM   → Willkommen bei IMM</code></pre>
+
+  <p><span class="ev ev-proof">BELEGT</span> <code>shop.name</code> ist in jedem Store verfügbar und
+  liefert dessen eigenen Namen.<sup class="ref">[10]</sup></p>
+
+  <h3>Klasse C: der Sprachen-Editor als Ventil</h3>
+
+  <p><span class="ev ev-proof">BELEGT</span> Storefront-Locale-Dateien sind für Händler über den
+  Shopify-Sprachen-Editor zugänglich und dort überschreibbar.<sup class="ref">[2][12]</sup> Ergänzend
+  führt die Admin-API Theme-Locale-Inhalte als übersetzbare Ressource
+  <code>ONLINE_STORE_THEME_LOCALE_CONTENT</code> — Abweichungen sind also auch automatisiert
+  pflegbar.<sup class="ref">[13]</sup></p>
+
+  <div class="box box-ok">
+    <h4>Österreich bekommt eine eigene Sprachdatei statt eines eigenen Repos</h4>
+    <p><span class="ev ev-proof">BELEGT</span> Locale-Dateien folgen IETF-Sprachtags, regionale
+    Varianten sind vorgesehen: <code>de.json</code> für Deutschland,
+    <code>de-AT.json</code> für Österreich.<sup class="ref">[1]</sup> Beide Dateien liegen
+    nebeneinander auf <code>main</code> und kollidieren nicht. Der IMM-Store aktiviert Deutsch
+    (Österreich), MDM und Borek bleiben auf Deutsch. Damit sind die AT-Nuancen im geteilten Repository
+    abgebildet — ohne Fork, ohne Copy-Paste.</p>
+  </div>
+
+  <div class="box box-note">
+    <h4>Eine Grenze, die einzuhalten ist</h4>
+    <p><span class="ev ev-proof">BELEGT</span> Eine Locale-Datei fasst maximal 3400 Übersetzungen,
+    ein Wert höchstens 1000 Zeichen.<sup class="ref">[1]</sup> Bei drei Marken in einer gemeinsamen
+    Basis ist das reichlich — solange die Datei nicht zum Ablageort für markenspezifische Varianten
+    wird. Genau davor schützt Klasse C.</p>
+  </div>
+</section>
+
+<!-- ============================ SEITE 6 ============================ -->
+<section>
+  <h2>6. Zwei Wege, den Code in drei Shops zu verteilen</h2>
+
+  <figure>
+    <svg viewBox="0 0 720 168" role="img" aria-label="Vergleich GitHub-Integration und CLI-Push">
+      <defs>
+        <marker id="arrBi" markerWidth="8" markerHeight="8" refX="7" refY="2.6" orient="auto">
+          <path d="M0,0 L7,2.6 L0,5.2 z" fill="#82212E"/>
+        </marker>
+        <marker id="arrBiS" markerWidth="8" markerHeight="8" refX="7" refY="2.6" orient="auto-start-reverse">
+          <path d="M0,0 L7,2.6 L0,5.2 z" fill="#82212E"/>
+        </marker>
+        <marker id="arrUni" markerWidth="8" markerHeight="8" refX="7" refY="2.6" orient="auto">
+          <path d="M0,0 L7,2.6 L0,5.2 z" fill="#2E6B4F"/>
+        </marker>
+      </defs>
+
+      <!-- Variante A -->
+      <rect x="14" y="12" width="336" height="146" rx="5" fill="#fff" stroke="#82212E" stroke-width="1.4"/>
+      <rect x="14" y="12" width="336" height="24" rx="5" fill="#82212E"/>
+      <rect x="14" y="28" width="336" height="8" fill="#82212E"/>
+      <text x="182" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="Helvetica">A — GitHub-Integration</text>
+
+      <rect x="36" y="52" width="104" height="38" rx="3" fill="#F6F3EE" stroke="#002147" stroke-width="1"/>
+      <text x="88" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#002147" font-family="Helvetica">store/mdm</text>
+
+      <path d="M148,64 L214,64" stroke="#82212E" stroke-width="1.6" marker-end="url(#arrBi)"/>
+      <path d="M214,78 L148,78" stroke="#82212E" stroke-width="1.6" marker-end="url(#arrBi)"/>
+
+      <rect x="222" y="52" width="104" height="38" rx="3" fill="#F6F3EE" stroke="#002147" stroke-width="1"/>
+      <text x="274" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#002147" font-family="Helvetica">Store MDM</text>
+
+      <text x="182" y="106" text-anchor="middle" font-size="8.5" font-weight="700" fill="#82212E" font-family="Helvetica">bidirektional, nicht abschaltbar</text>
+      <text x="30" y="123" font-size="8" fill="#24211C" font-family="Helvetica">+ Editor-Änderungen sind versioniert</text>
+      <text x="30" y="136" font-size="8" fill="#24211C" font-family="Helvetica">+ kein manueller Deploy nötig</text>
+      <text x="30" y="149" font-size="8" fill="#A8342A" font-family="Helvetica">− shopify[bot]-Commits im Zweig</text>
+
+      <!-- Variante B -->
+      <rect x="370" y="12" width="336" height="146" rx="5" fill="#fff" stroke="#2E6B4F" stroke-width="1.4"/>
+      <rect x="370" y="12" width="336" height="24" rx="5" fill="#2E6B4F"/>
+      <rect x="370" y="28" width="336" height="8" fill="#2E6B4F"/>
+      <text x="538" y="29" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="Helvetica">B — CLI-Push mit Environments</text>
+
+      <rect x="392" y="52" width="104" height="38" rx="3" fill="#F6F3EE" stroke="#002147" stroke-width="1"/>
+      <text x="444" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#002147" font-family="Helvetica">main</text>
+
+      <path d="M504,71 L570,71" stroke="#2E6B4F" stroke-width="1.6" marker-end="url(#arrUni)"/>
+
+      <rect x="578" y="52" width="104" height="38" rx="3" fill="#F6F3EE" stroke="#002147" stroke-width="1"/>
+      <text x="630" y="70" text-anchor="middle" font-size="9" font-weight="700" fill="#002147" font-family="Helvetica">3 Stores</text>
+      <text x="630" y="82" text-anchor="middle" font-size="7.5" fill="#6B665C" font-family="Helvetica">ein Befehl</text>
+
+      <text x="538" y="106" text-anchor="middle" font-size="8.5" font-weight="700" fill="#2E6B4F" font-family="Helvetica">einseitig, kontrolliert</text>
+      <text x="386" y="123" font-size="8" fill="#24211C" font-family="Helvetica">+ kein Rückschreiben, klare Richtung</text>
+      <text x="386" y="136" font-size="8" fill="#24211C" font-family="Helvetica">+ ignore schützt Shop-Dateien</text>
+      <text x="386" y="149" font-size="8" fill="#A8342A" font-family="Helvetica">− Editor-Änderungen unversioniert</text>
+    </svg>
+    <figcaption>Abbildung 6 — Beide Wege sind tragfähig und lassen sich kombinieren: Variante A für den laufenden Betrieb, Variante B für gezielte Rollouts.</figcaption>
+  </figure>
+
+  <p><span class="ev ev-proof">BELEGT</span> Für Variante B stellt die Shopify CLI Environments
+  bereit — mehrere Ziel-Stores in einer Datei <code>shopify.theme.toml</code>, adressierbar über
+  <code>--environment</code>, auch mehrere gleichzeitig.<sup class="ref">[6]</sup></p>
+
+<pre><code><span class="cmt"># shopify.theme.toml im Theme-Wurzelverzeichnis</span>
+[environments.mdm]
+store  = "mdm-muenze"
+theme  = "188378612093"
+ignore = ["config/settings_data.json", "templates/page.*.json"]
+
+[environments.borek]
+store  = "&lt;borek-handle&gt;"
+theme  = "&lt;theme-id&gt;"
+ignore = ["config/settings_data.json", "templates/page.*.json"]
+
+[environments.imm]
+store  = "&lt;imm-handle&gt;"
+theme  = "&lt;theme-id&gt;"
+ignore = ["config/settings_data.json", "templates/page.*.json"]
+
+<span class="cmt"># Rollout in alle drei mit einem Befehl</span>
+shopify theme push --environment mdm --environment borek --environment imm</code></pre>
+
+  <div class="box box-warn">
+    <p style="margin:0"><b>Das <code>ignore</code> ist nicht optional.</b> Ohne diesen Eintrag
+    überschreibt jeder Push die Live-Einstellungen des Zielshops — also genau das Branding, das dort
+    gepflegt wurde.</p>
+  </div>
+
+  <div class="box box-ok">
+    <h4>Empfehlung</h4>
+    <p>Variante A für den laufenden Betrieb, weil sie die Arbeit der Redaktion im Theme-Editor
+    unverändert lässt und automatisch versioniert. Variante B ergänzend für geplante Rollouts, wenn
+    ein Feature kontrolliert in alle drei Shops gehen soll.</p>
+  </div>
+</section>
+
+<!-- ============================ SEITE 7 ============================ -->
+<section>
+  <h2>7. Migrationspfad</h2>
+
+  <p>Die Reihenfolge ist bewusst so gewählt, dass der Erkenntnisgewinn vor dem Risiko kommt: Erst
+  wissen, wie groß die Differenz wirklich ist — dann den kleinsten Shop umstellen — dann MDM.</p>
+
+  <ol class="step-list">
+    <li><b>Differenz erheben.</b> Die drei Repos gegeneinander diffen und jede Abweichung einer der
+    vier Schichten zuordnen. Ergebnis ist die Arbeitsliste — und erst sie zeigt den wahren Aufwand.
+    <span class="ev ev-open">OFFEN</span></li>
+
+    <li><b>Gemeinsame Basis bestimmen.</b> Der Stand mit dem größten gemeinsamen Nenner wird
+    <code>main</code>. Nach Teamauskunft liegen Borek und IMM nahezu gleichauf, MDM trägt die
+    <code>mdm-</code>Sections. <span class="ev ev-guess">ANNAHME</span> Die MDM-Basis ist der
+    geeignete Ausgangspunkt.</li>
+
+    <li><b>Markenbegriffe aus den Locales lösen.</b> Alle Treffer auf Markennamen in
+    <code>locales/*.json</code> suchen und nach Klasse A, B oder C einsortieren. Das ist der
+    inhaltlich aufwendigste Schritt — und der, der das Copy-Paste-Problem dauerhaft beendet.</li>
+
+    <li><b>Store-Zweige anlegen</b> und je Zweig <code>.gitattributes</code> mit dem
+    Konfliktschutz hinterlegen.</li>
+
+    <li><b>Einen Shop pilotieren.</b> Borek oder IMM zuerst — nicht MDM. Der Pilot zeigt die
+    Reibungspunkte, bevor der umsatzstärkste Shop betroffen ist.</li>
+
+    <li><b>Übrige Shops nachziehen</b> und die alten Repositories archivieren, nicht löschen.</li>
+  </ol>
+
+  <div class="box box-note">
+    <h4>Was vor der Umsetzung zu klären ist</h4>
+    <ul style="margin-bottom:0">
+      <li><span class="ev ev-open">OFFEN</span> Laufen Borek und IMM auf derselben Theme-Basis
+      (Hyper 1.3.3)? Falls nicht, ist der erste Schritt eine Migration, kein Zusammenführen.</li>
+      <li><span class="ev ev-open">OFFEN</span> Sind die drei Stores bereits per GitHub-Integration
+      verbunden, und mit welchem Branch? Eine getrennte Verbindung lässt sich nicht wieder an
+      denselben Branch anschließen.<sup class="ref">[7]</sup></li>
+      <li><span class="ev ev-open">OFFEN</span> Wie viele Landingpages je Shop existieren — davon
+      hängt ab, ob <code>templates/page.*.json</code> praktikabel je Zweig geführt werden kann.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ SEITE 8 ============================ -->
+<section>
+  <h2>8. Zusammenfassung</h2>
+
+  <table>
+    <thead>
+      <tr><th style="width:27%">Frage</th><th style="width:73%">Antwort</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Lassen sich die Shops über den Markt unterscheiden?</b></td>
+        <td>Nein. Märkte trennen Käufergruppen innerhalb <i>eines</i> Stores. Bei drei getrennten
+        Stores ist die Marke bereits durch den Store bestimmt. Der Einwand des Teams zu Borek
+        trifft zusätzlich zu. <span class="ev ev-proof">BELEGT</span></td>
+      </tr>
+      <tr>
+        <td><b>Gibt es eine Store-Konfiguration?</b></td>
+        <td>Ja, zwei: <code>config/settings_data.json</code> trägt die Werte je Shop, und
+        <code>shopify.theme.toml</code> beschreibt die Ziel-Stores für den Rollout.
+        <span class="ev ev-proof">BELEGT</span></td>
+      </tr>
+      <tr>
+        <td><b>Wie enden die Copy-Paste-Runden?</b></td>
+        <td>Ein Repository mit einem <code>main</code> als gemeinsamer Quelle und drei
+        Store-Zweigen als Rückschreibziel. Features fließen nur in eine Richtung.</td>
+      </tr>
+      <tr>
+        <td><b>Wie werden Locales sicher?</b></td>
+        <td>Texte nach Natur trennen: neutrale Basis auf <code>main</code>, Markennamen über
+        <code>shop.name</code> interpoliert, abweichende Wortwahl im Sprachen-Editor des jeweiligen
+        Shops. <span class="ev ev-proof">BELEGT</span></td>
+      </tr>
+      <tr>
+        <td><b>Und Österreich?</b></td>
+        <td>Eigene Sprachdatei <code>de-AT.json</code> neben <code>de.json</code> im selben
+        Repository. Kein Fork nötig. <span class="ev ev-proof">BELEGT</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box box-ok">
+    <h4>Kern des Vorschlags in einem Satz</h4>
+    <p>Der gemeinsame Code existiert genau einmal, und jede markenspezifische Abweichung bekommt
+    einen definierten Ort — bevorzugt im Shop, wo die Redaktion sie ohne Entwicklung ändern kann.</p>
+  </div>
+
+  <h2 style="margin-top:14pt">9. Quellen</h2>
+
+  <p style="font-size:8.2pt;color:var(--muted)">Sämtliche Quellen sind offizielle Shopify-Dokumentation,
+  abgerufen am 14. September 2026.</p>
+
+  <ul class="src-list">
+    <li><span class="n">[1]</span><b>Locales — Theme-Architektur</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/architecture/locales">shopify.dev/docs/storefronts/themes/architecture/locales</a></li>
+    <li><span class="n">[2]</span><b>Storefront locale files</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/architecture/locales/storefront-locale-files">shopify.dev/docs/storefronts/themes/architecture/locales/storefront-locale-files</a></li>
+    <li><span class="n">[3]</span><b>settings_data.json</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/architecture/config/settings-data-json">shopify.dev/docs/storefronts/themes/architecture/config/settings-data-json</a></li>
+    <li><span class="n">[4]</span><b>markets.json — marktspezifische Theme-Anpassungen</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/architecture/config/markets-json">shopify.dev/docs/storefronts/themes/architecture/config/markets-json</a></li>
+    <li><span class="n">[5]</span><b>Config — Übersicht der Konfigurationsdateien</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/architecture/config">shopify.dev/docs/storefronts/themes/architecture/config</a></li>
+    <li><span class="n">[6]</span><b>Theme environments for Shopify CLI</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/tools/cli/environments">shopify.dev/docs/storefronts/themes/tools/cli/environments</a></li>
+    <li><span class="n">[7]</span><b>Shopify GitHub integration for themes</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/tools/github">shopify.dev/docs/storefronts/themes/tools/github</a></li>
+    <li><span class="n">[8]</span><b>Liquid-Objekt <code>market</code></b>
+      <a href="https://shopify.dev/docs/api/liquid/objects/market">shopify.dev/docs/api/liquid/objects/market</a></li>
+    <li><span class="n">[9]</span><b>Liquid-Objekt <code>localization</code></b>
+      <a href="https://shopify.dev/docs/api/liquid/objects/localization">shopify.dev/docs/api/liquid/objects/localization</a></li>
+    <li><span class="n">[10]</span><b>Liquid-Objekt <code>shop</code></b>
+      <a href="https://shopify.dev/docs/api/liquid/objects/shop">shopify.dev/docs/api/liquid/objects/shop</a></li>
+    <li><span class="n">[11]</span><b>About Shopify Markets</b>
+      <a href="https://shopify.dev/docs/apps/build/markets">shopify.dev/docs/apps/build/markets</a></li>
+    <li><span class="n">[12]</span><b>Shopify Help Center — Translating themes</b>
+      <a href="https://help.shopify.com/en/manual/online-store/themes/customizing-themes/language/translate-theme">help.shopify.com/en/manual/online-store/themes/customizing-themes/language/translate-theme</a></li>
+    <li><span class="n">[13]</span><b>Admin GraphQL — TranslatableResourceType</b>
+      <a href="https://shopify.dev/docs/api/admin-graphql/2026-07/enums/TranslatableResourceType">shopify.dev/docs/api/admin-graphql/2026-07/enums/TranslatableResourceType</a></li>
+    <li><span class="n">[14]</span><b>Shopify Markets für Themes</b>
+      <a href="https://shopify.dev/docs/storefronts/themes/markets">shopify.dev/docs/storefronts/themes/markets</a></li>
+  </ul>
+
+  <div class="footer-note">
+    Interne Belege aus dem Workspace: <code>datalayer/README.md</code> (drei Mandanten-Shops),
+    <code>theme/config/settings_data.json</code> (fünf Farbschemata),
+    <code>theme/layout/mdm-theme.liquid</code> (Shop-Metafields im Einsatz),
+    <code>.claude/rules/merchant-config.md</code> (Zuständigkeit für <code>settings_data.json</code>).
+  </div>
+</section>
+
+</body>
+</html>

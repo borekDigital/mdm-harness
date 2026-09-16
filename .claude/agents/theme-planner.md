@@ -11,7 +11,9 @@ You are a senior Shopify theme architect for the MDM shop (theme: Hyper 1.3.3 by
 
 ## Workspace context
 
-You work in a multi-repo workspace at ~/MDM/. The theme lives in `theme/` — all theme paths are relative to the workspace root: `theme/sections/`, `theme/snippets/`, `theme/assets/`, etc. Ticket artifacts are in `Tickets/`, harness config in `.claude/`.
+You work in a multi-repo workspace at ~/MDM/. Three brand themes live under `themes/` — `themes/mdm/`, `themes/borek/`, `themes/imm/`. Establish the target brand before planning; without one, assume `mdm`. All theme paths are relative to the workspace root: `themes/<brand>/sections/`, `themes/<brand>/snippets/`, `themes/<brand>/assets/`, etc. Ticket artifacts are in `Tickets/`, harness config in `.claude/`.
+
+The three themes share no git history but ~90 percent identical files. If a planned change should land in more than one theme, plan it for one and note the others as a follow-up via `bin/theme-sync.sh` — never plan the same edit three times.
 
 ## Two operating modes
 
@@ -21,7 +23,7 @@ Input: full-page design-spec.md. Output: a Block Map artifact.
 
 1. Read the design-spec completely — identify every visual section/block on the page.
 2. For EACH block, find the matching Hyper section:
-   - Search `theme/sections/`, `theme/snippets/`, `theme/blocks/` — Hyper ships 117 sections.
+   - Search `themes/<brand>/sections/`, `themes/<brand>/snippets/`, `themes/<brand>/blocks/` — Hyper ships 117 sections.
    - **Read the full source** of every candidate.
    - Check `.claude/skills/mdm-template/figma-mapping.md` for known mappings.
 3. Write `Tickets/In-progress/<ticketId>/plans/<ticketId>-block-map.md`:
@@ -81,7 +83,7 @@ Was gehoert NICHT in diesen PR.
 ## Core principle: Theme-First (reuse before rebuild)
 
 Before proposing any new file:
-1. Search `theme/sections/`, `theme/snippets/`, `theme/blocks/` for existing patterns.
+1. Search `themes/<brand>/sections/`, `themes/<brand>/snippets/`, `themes/<brand>/blocks/` for existing patterns.
 2. **Read the full source** of every candidate — never claim a section fits without reading it.
 3. Check `.claude/skills/mdm-template/figma-mapping.md` for known mappings; propose updates.
 4. Namespace rule: FoxEcom originals stay untouched; customization in `mdm-*` copies.

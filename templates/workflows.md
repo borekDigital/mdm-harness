@@ -8,12 +8,15 @@ und Akzeptanzkriterien definiert — BEVOR Code geschrieben wird.
 3. **Implementieren** — Code wird gegen die Spec gebaut
 4. **Validieren** — Akzeptanzkriterien pruefen
 
-Konventionen: `.claude/specs/README.md`. Theme-Specs: `.claude/specs/theme/`.
+Konventionen: `.claude/specs/README.md`. Theme-Specs: `.claude/specs/themes/` (gemeinsam) und `.claude/specs/themes/<marke>/`.
 Connector-Specs: `.claude/specs/connector/`.
 Middleware-Specs: `.claude/specs/creditcheck/`, `.claude/specs/emailservice/`, `.claude/specs/payment-service/`.
 Datalayer-Specs: `.claude/specs/datalayer/`.
 
 ## Workflow — Theme
+
+Gilt fuer alle drei Marken-Themes. Das Ziel-Theme (`themes/mdm/`, `themes/borek/`,
+`themes/imm/`) wird zu Beginn festgelegt; ohne Angabe ist `themes/mdm/` gemeint.
 
 Template-Arbeit: `/mdm-template` mit festen Phasen:
 Spec → Extraktion (figma-extractor) → Plan (theme-planner) → **Freigabe** →
@@ -22,7 +25,7 @@ Doku (docs-writer) → Uebergabe. Systemuebersicht: `.claude/README.md`
 
 Grundprinzip: **Theme-First** — bestehende Hyper-Sections ueberschreiben, nicht neu bauen.
 So wenig wie moeglich neu entwickeln, so viel wie noetig.
-Mapping und Konventionen: `.claude/specs/theme/_conventions.md`.
+Mapping und Konventionen: `.claude/specs/themes/_conventions.md`.
 
 ## Workflow — Connector
 

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PLP Card — Back to the Nexvo Default</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#002147; --ink:#1E1C17; --stone:#55504A;
+    --sand:#D6CAB3; --sand-light:#F5F0E6; --rule:#DDD6C8;
+    --go:#2E7D5B; --cut:#B03A2E; --warn:#9A6B1F;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--ink); background:#fff;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-size:11pt; line-height:1.55; }
+  .doc { max-width:190mm; margin:0 auto; padding:0 0 12mm; }
+
+  .titleblock { border-bottom:2px solid var(--navy); padding-bottom:10px; margin-bottom:24px; }
+  .eyebrow { font-size:8.5pt; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--stone); font-weight:600; margin:0 0 6px; }
+  h1 { font-family:"EB Garamond",Georgia,serif; font-weight:600; font-size:25pt;
+    line-height:1.15; margin:0 0 6px; color:var(--navy); }
+  .subtitle { margin:0; color:var(--stone); font-size:10.5pt; }
+  .meta { margin:10px 0 0; font-size:9pt; color:var(--stone); }
+  .meta span + span::before { content:"·"; margin:0 .55em; color:var(--sand); }
+
+  h2 { font-family:"EB Garamond",Georgia,serif; font-weight:600; font-size:15.5pt;
+    color:var(--navy); margin:28px 0 10px; padding-bottom:4px;
+    border-bottom:1px solid var(--rule); break-after:avoid-page; }
+  h3 { font-size:10.5pt; font-weight:600; margin:16px 0 6px; break-after:avoid-page; }
+  p { margin:0 0 10px; }
+  ul { margin:0 0 10px; padding-left:18px; }
+  li { margin-bottom:4px; }
+  .lede { font-size:12pt; line-height:1.5; color:var(--stone); margin-bottom:16px; }
+
+  table { width:100%; border-collapse:collapse; margin:0 0 14px; font-size:9.5pt;
+    break-inside:avoid-page; }
+  th,td { text-align:left; vertical-align:top; padding:6px 9px; border-bottom:1px solid var(--rule); }
+  th { background:var(--sand-light); font-weight:600; color:var(--navy);
+    border-bottom:1px solid var(--sand); }
+  .tag { display:inline-block; font-size:8pt; font-weight:600; padding:1px 6px;
+    border-radius:2px; white-space:nowrap; }
+  .t-keep { background:#E3F0E9; color:#1E5E43; }
+  .t-back { background:#FBEAE7; color:#8C2D22; }
+  .t-open { background:#E6EDF6; color:var(--navy); }
+
+  figure { margin:16px 0 20px; break-inside:avoid-page; }
+  figure svg { width:100%; height:auto; display:block; }
+  figcaption { font-size:8.5pt; color:var(--stone); margin-top:8px; line-height:1.45; }
+
+  .callout { border-left:3px solid var(--warn); background:#FBF7EF; padding:12px 14px;
+    margin:14px 0; break-inside:avoid-page; }
+  .callout h3 { margin-top:0; color:var(--warn); }
+  .callout p:last-child { margin-bottom:0; }
+  .quote { border-left:3px solid var(--sand); padding:2px 0 2px 14px; margin:12px 0;
+    color:var(--stone); font-style:italic; }
+
+  ol.asks { padding-left:0; list-style:none; counter-reset:ask; margin:0; }
+  ol.asks li { counter-increment:ask; position:relative; padding:0 0 13px 34px; margin:0;
+    break-inside:avoid-page; }
+  ol.asks li::before { content:"C" counter(ask); position:absolute; left:0; top:1px;
+    min-width:24px; height:20px; padding:0 4px; border-radius:10px; background:var(--navy);
+    color:#fff; font-size:8pt; font-weight:600; display:flex; align-items:center;
+    justify-content:center; }
+  ol.asks li b { display:block; font-weight:600; }
+  ol.asks li span { color:var(--stone); font-size:10pt; }
+
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:8.6pt;
+    background:#F4F2ED; padding:.1em .35em; border-radius:2px; }
+
+  footer { margin-top:30px; padding-top:10px; border-top:1px solid var(--rule);
+    font-size:8.5pt; color:var(--stone); break-inside:avoid-page; }
+
+  @page { size:A4; margin:16mm 12mm; }
+  html { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+<div class="titleblock">
+  <p class="eyebrow">Working document for our PLP session</p>
+  <h1>PLP Card — Back to the Nexvo Default</h1>
+  <p class="subtitle">What Latori overrode, what we keep, and what we need to decide together</p>
+  <p class="meta"><span>15 September 2026</span><span>Prepared for the 13:00 session</span><span>Konrad Thiemann</span></p>
+</div>
+
+<p class="lede">You were right. I went through the code after our call, and the product card on
+the collection page is not an override of the Nexvo card — it is a complete rebuild that
+happens to look similar. Not one Nexvo feature survives in it. This document lists every
+deviation so we can work through them point by point.</p>
+
+<h2>1. What I found</h2>
+
+<p>The file <code>snippets/mdm-card-product.liquid</code> was created on 29 July 2026 with the
+commit message “duplicate mdm snippets”. It was then edited away from the original until
+nothing of the original logic was left. Here is the full inventory:</p>
+
+<table>
+  <thead><tr><th style="width:52%">Nexvo feature</th><th style="width:24%">Original card</th><th style="width:24%">PLP card today</th></tr></thead>
+  <tbody>
+    <tr><td>Second image on hover (coin reverse)</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Quick-view button</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Quick-add / cart button</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Compare checkbox</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Badges (sold out, sale)</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Flash sale</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Colour swatches</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Price rendered by the shared price component</td><td>yes</td><td>own markup</td></tr>
+    <tr><td>Title line limit setting</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Content alignment setting</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Image ratio setting</td><td>yes</td><td>hardcoded to 240/190</td></tr>
+    <tr><td>Card style / colour scheme setting</td><td>yes</td><td><b>gone</b></td></tr>
+    <tr><td>Zoom animation on the image</td><td>yes</td><td><b>gone</b></td></tr>
+  </tbody>
+</table>
+
+<h2>2. Why the theme editor does nothing</h2>
+
+<p>This is the part that matters most for you. The settings are still there and still switched
+on — the card simply never reads them.</p>
+
+<figure>
+<svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Diagram showing theme settings disconnected from the rendered card">
+  <defs>
+    <marker id="arw" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#2E7D5B"/>
+    </marker>
+  </defs>
+
+  <text x="8" y="14" font-family="Inter,sans-serif" font-size="10.5" font-weight="600" fill="#002147">Theme editor settings</text>
+  <text x="8" y="28" font-family="Inter,sans-serif" font-size="9" fill="#55504A">switched on, saved, live</text>
+
+  <text x="430" y="14" font-family="Inter,sans-serif" font-size="10.5" font-weight="600" fill="#002147">What renders</text>
+  <text x="430" y="28" font-family="Inter,sans-serif" font-size="9" fill="#55504A">the PLP card</text>
+
+  <!-- settings rows -->
+  <g font-family="Inter,sans-serif" font-size="9.5" fill="#1E1C17">
+    <rect x="8" y="42" width="215" height="24" fill="#F5F0E6" stroke="#DDD6C8"/>
+    <text x="17" y="58">Show second image on hover</text>
+    <text x="196" y="58" font-weight="600" fill="#2E7D5B">ON</text>
+
+    <rect x="8" y="72" width="215" height="24" fill="#F5F0E6" stroke="#DDD6C8"/>
+    <text x="17" y="88">Quick-view button</text>
+    <text x="196" y="88" font-weight="600" fill="#2E7D5B">ON</text>
+
+    <rect x="8" y="102" width="215" height="24" fill="#F5F0E6" stroke="#DDD6C8"/>
+    <text x="17" y="118">Image ratio</text>
+    <text x="172" y="118" font-weight="600" fill="#55504A">adapt</text>
+
+    <rect x="8" y="132" width="215" height="24" fill="#F5F0E6" stroke="#DDD6C8"/>
+    <text x="17" y="148">Title line limit</text>
+    <text x="180" y="148" font-weight="600" fill="#55504A">none</text>
+
+    <rect x="8" y="162" width="215" height="24" fill="#F5F0E6" stroke="#DDD6C8"/>
+    <text x="17" y="178">Content alignment</text>
+    <text x="188" y="178" font-weight="600" fill="#55504A">left</text>
+
+    <rect x="8" y="192" width="215" height="24" fill="#F5F0E6" stroke="#DDD6C8"/>
+    <text x="17" y="208">Card style</text>
+    <text x="184" y="208" font-weight="600" fill="#55504A">card</text>
+
+    <rect x="8" y="222" width="215" height="24" fill="#F5F0E6" stroke="#DDD6C8"/>
+    <text x="17" y="238">Badges, flash sale, swatches</text>
+    <text x="196" y="238" font-weight="600" fill="#2E7D5B">ON</text>
+  </g>
+
+  <!-- severed connections -->
+  <g stroke="#B03A2E" stroke-width="1.4" stroke-dasharray="5 4">
+    <line x1="228" y1="54"  x2="286" y2="54"/>
+    <line x1="228" y1="84"  x2="286" y2="84"/>
+    <line x1="228" y1="114" x2="286" y2="114"/>
+    <line x1="228" y1="144" x2="286" y2="144"/>
+    <line x1="228" y1="174" x2="286" y2="174"/>
+    <line x1="228" y1="204" x2="286" y2="204"/>
+    <line x1="228" y1="234" x2="286" y2="234"/>
+  </g>
+  <g stroke="#B03A2E" stroke-width="2">
+    <g><line x1="292" y1="48" x2="304" y2="60"/><line x1="304" y1="48" x2="292" y2="60"/></g>
+    <g><line x1="292" y1="78" x2="304" y2="90"/><line x1="304" y1="78" x2="292" y2="90"/></g>
+    <g><line x1="292" y1="108" x2="304" y2="120"/><line x1="304" y1="108" x2="292" y2="120"/></g>
+    <g><line x1="292" y1="138" x2="304" y2="150"/><line x1="304" y1="138" x2="292" y2="150"/></g>
+    <g><line x1="292" y1="168" x2="304" y2="180"/><line x1="304" y1="168" x2="292" y2="180"/></g>
+    <g><line x1="292" y1="198" x2="304" y2="210"/><line x1="304" y1="198" x2="292" y2="210"/></g>
+    <g><line x1="292" y1="228" x2="304" y2="240"/><line x1="304" y1="228" x2="292" y2="240"/></g>
+  </g>
+  <text x="264" y="268" text-anchor="middle" font-family="Inter,sans-serif" font-size="9.5"
+        font-weight="600" fill="#B03A2E">the card never reads them</text>
+
+  <!-- the card -->
+  <rect x="418" y="42" width="164" height="204" fill="#FFFFFF" stroke="#D6CAB3" stroke-width="1.5"/>
+  <rect x="419" y="43" width="162" height="116" fill="#F5F0E6"/>
+  <circle cx="486" cy="101" r="36" fill="#FBF8F1" stroke="#C9B896" stroke-width="1.6"/>
+  <circle cx="486" cy="101" r="25" fill="#E3CE96" stroke="#C7A94F" stroke-width="1.2"/>
+  <circle cx="486" cy="101" r="14" fill="#D6BC74"/>
+  <circle cx="556" cy="83" r="11" fill="#D8CCB6" stroke="#9FB0C4" stroke-width="1"/>
+  <circle cx="556" cy="108" r="11" fill="#D8CCB6" stroke="#9FB0C4" stroke-width="1"/>
+  <rect x="432" y="173" width="130" height="7" rx="2" fill="#3E3A32"/>
+  <rect x="432" y="185" width="96" height="7" rx="2" fill="#3E3A32"/>
+  <rect x="432" y="203" width="48" height="11" rx="2" fill="#1E1C17"/>
+  <rect x="432" y="223" width="76" height="5" rx="2" fill="#9A958C"/>
+
+  <!-- hardcoded arrow -->
+  <path d="M418 296 L418 282" stroke="#2E7D5B" stroke-width="1.6" marker-end="url(#arw)" fill="none"/>
+  <rect x="330" y="296" width="252" height="34" fill="#E3F0E9" stroke="#2E7D5B" stroke-width="1"/>
+  <text x="340" y="311" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#1E5E43">Hardcoded in the copy</text>
+  <text x="340" y="324" font-family="Inter,sans-serif" font-size="8.5" fill="#1E5E43">image ratio, German labels, thumbnails, badge text</text>
+</svg>
+<figcaption>Every setting on the left is active in the theme editor and has no effect on the
+collection page. The only values that reach the card are the ones written directly into
+Latori’s copy — which is exactly why changing a setting appears to do nothing.</figcaption>
+</figure>
+
+<div class="callout">
+  <h3>One collision to resolve before we restore the hover</h3>
+  <p>Nexvo uses the <strong>second product image</strong> for the hover reverse — the effect you
+  said should stay. Latori uses <strong>the same images</strong> (images 2 to 4) for the round
+  “Weitere Ausgaben” thumbnails.</p>
+  <p>So if we switch the hover back on and leave the thumbnails as they are, the second image
+  will appear twice: once as the hover reverse, once as the first thumbnail. We need to decide
+  which one wins — see C2.</p>
+</div>
+
+<h2>3. Point-by-point classification</h2>
+
+<p>Every deviation I found, sorted into three buckets.
+<span class="tag t-keep">KEEP</span> is what you confirmed we ordered.
+<span class="tag t-back">RESTORE</span> goes back to the Nexvo default.
+<span class="tag t-open">DECIDE</span> needs the two of us.</p>
+
+<table>
+  <thead><tr><th style="width:16%">Bucket</th><th>Item</th></tr></thead>
+  <tbody>
+    <tr><td><span class="tag t-keep">KEEP</span></td><td>“inkl. gesetzl. MwSt.” line — does not exist in Nexvo</td></tr>
+    <tr><td><span class="tag t-keep">KEEP</span></td><td>30-day lowest price line (EU Omnibus) — does not exist in Nexvo</td></tr>
+    <tr><td><span class="tag t-keep">KEEP</span></td><td>Spacing between title, product text and price</td></tr>
+    <tr><td><span class="tag t-keep">KEEP</span></td><td>Brand typography and brand colours on the card</td></tr>
+    <tr><td><span class="tag t-keep">KEEP</span></td><td>Tile lift and shadow on hover</td></tr>
+    <tr><td><span class="tag t-back">RESTORE</span></td><td>Second image on hover — the coin reverse</td></tr>
+    <tr><td><span class="tag t-back">RESTORE</span></td><td>Image ratio driven by the setting instead of hardcoded</td></tr>
+    <tr><td><span class="tag t-back">RESTORE</span></td><td>Title line limit, content alignment, card style settings</td></tr>
+    <tr><td><span class="tag t-back">RESTORE</span></td><td>Badges and flash sale via the Nexvo components</td></tr>
+    <tr><td><span class="tag t-back">RESTORE</span></td><td>Price rendered by the shared price component</td></tr>
+    <tr><td><span class="tag t-back">RESTORE</span></td><td>Quick-view, quick-add and compare wired back to their settings</td></tr>
+    <tr><td><span class="tag t-back">RESTORE</span></td><td>German text moved out of the code into the translation files</td></tr>
+    <tr><td><span class="tag t-open">DECIDE</span></td><td>C1 – Whole tile clickable</td></tr>
+    <tr><td><span class="tag t-open">DECIDE</span></td><td>C2 – “Weitere Ausgaben” thumbnails and the image collision</td></tr>
+    <tr><td><span class="tag t-open">DECIDE</span></td><td>C3 – “KOLLEKTION · Classic / Flatrate / Set” badge</td></tr>
+    <tr><td><span class="tag t-open">DECIDE</span></td><td>C4 – Two different implementations of the 30-day price</td></tr>
+    <tr><td><span class="tag t-open">DECIDE</span></td><td>C5 – How far the restore should go</td></tr>
+  </tbody>
+</table>
+
+<h2>4. The five decisions — our agenda</h2>
+
+<ol class="asks">
+  <li><b>Whole tile clickable</b>
+      <span>This was the request I started from before our call, so I want to put it to you
+      honestly: <strong>it is not a Nexvo default.</strong> The original card also has only an
+      image link and a title link. Making the whole tile clickable would be a deliberate
+      addition on top of the default, not a restoration of it — which sits awkwardly next to
+      “we don’t want to override anything here”. My suggestion: restore the default first, then
+      look at the card again and decide whether it still needs it.</span></li>
+  <li><b>The “Weitere Ausgaben” thumbnails</b>
+      <span>You said they are presentation only, with no function. Two questions. Do we take
+      their links off and leave them decorative, or remove them altogether? And once the hover
+      reverse is back, which of the two shows the second image — see the box above.</span></li>
+  <li><b>The “KOLLEKTION · Classic / Flatrate / Set” badge</b>
+      <span>Latori invented this; it is not on the list of things we ordered and the labels are
+      written straight into the code. Keep it, drop it, or rebuild it properly from product
+      data?</span></li>
+  <li><b>Two implementations of the 30-day price</b>
+      <span>The collection card reads the metafield directly; the compact card used elsewhere
+      uses a shared component. Same legal line, two mechanisms. Which one is the right one?</span></li>
+  <li><b>How far does the restore go?</b>
+      <span>Restoring the default brings back quick-view, quick-add and the compare checkbox.
+      That is a visible change to the collection page. Confirm you want them, or we switch the
+      individual ones off through the settings — which is the clean way, because then it stays
+      visible in the editor rather than buried in code.</span></li>
+</ol>
+
+<h2>5. How we avoid overwriting each other</h2>
+
+<p>You work in the theme editor, I work in the code and open pull requests. Worth knowing:
+the store and the repository are synced in both directions, so <strong>your theme editor
+changes do arrive in the code repository</strong> as automatic commits — there are three from
+7 September in the history already. They mostly touch the settings file.</p>
+
+<p>That is good news: it means we are not on separate islands. It also means I need to pull
+your changes before I push mine. If we both touch the same thing, we look at it together and
+pick one, exactly as we said.</p>
+
+<div class="quote">“But if you override everything, then we won’t know later what has to be
+removed.” — that is the principle this whole document is built on. Anything we change from
+here should go through a setting. Code only where no setting exists, and written down when it
+happens.</div>
+
+<h2>6. What I will have ready for 13:00</h2>
+
+<ul>
+  <li>This inventory, open on screen, so we can walk the list top to bottom.</li>
+  <li>The current card and the untouched Nexvo card side by side, so you can see what the
+      default actually looks like before we decide what to keep.</li>
+  <li>A branch ready to take the changes, so nothing goes near the live shop until you have
+      seen it.</li>
+</ul>
+
+<footer>
+  MDM coin shop · Shopify theme (Hyper 1.3.3) · Specification <code>plp-card-nexvo-default</code> ·
+  Based on our call of 15 September 2026, 07:14 · German source of record:
+  <code>.claude/specs/theme/plp-card-nexvo-default.md</code>
+</footer>
+
+</div>
+</body>
+</html>

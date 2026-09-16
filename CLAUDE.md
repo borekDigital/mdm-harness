@@ -2,15 +2,17 @@
 
 ## Zweck
 
-Zentraler Workspace fuer das MDM-Oekosystem: Shopify (Theme, Backend-Connector, Datalayer)
-und Middleware-Services (Creditcheck, Emailservice, Payment-Service).
-Sechs eigenstaendige Git-Repos, eine gemeinsame KI-Steuerungsschicht (Harness).
+Zentraler Workspace fuer das MDM-Oekosystem: Shopify (drei Marken-Themes, Backend-Connector,
+Datalayer) und Middleware-Services (Creditcheck, Emailservice, Payment-Service).
+Eigenstaendige Git-Repos, eine gemeinsame KI-Steuerungsschicht (Harness).
 
 ## Workspace-Struktur
 
 ```
 ~/MDM/                        Workspace-Root (Harness-Repo)
-├── theme/                    Shopify Theme
+├── themes/mdm/               Shopify Theme MDM
+├── themes/borek/             Shopify Theme Borek
+├── themes/imm/               Shopify Theme IMM
 ├── connector/                Shopify Connector
 ├── datalayer/                GTM Datalayer
 ├── creditcheck/              Creditcheck + CustomerInfo
@@ -22,20 +24,23 @@ Sechs eigenstaendige Git-Repos, eine gemeinsame KI-Steuerungsschicht (Harness).
 └── CLAUDE.md                 diese Datei (generiert durch sync.sh)
 ```
 
-Alle Theme-Pfade relativ zum Workspace-Root tragen das Praefix `theme/`
-(z. B. `theme/sections/`, `theme/locales/`). Connector-Pfade analog `connector/`.
-Middleware-Pfade analog `creditcheck/`, `emailservice/`, `payment-service/`.
+Theme-Pfade tragen relativ zum Workspace-Root das Praefix `themes/<marke>/`
+(z. B. `themes/mdm/sections/`, `themes/borek/locales/`) — `mdm`, `borek`, `imm`.
+Connector-Pfade analog `connector/`. Middleware-Pfade analog `creditcheck/`,
+`emailservice/`, `payment-service/`.
 
 ## Repos und Git
 
-Sechs unabhaengige Git-Repos auf zwei Plattformen:
+8 unabhaengige Git-Repos auf zwei Plattformen:
 
 **Shopify-Repos** — GitHub via SSH-Alias `github.com-borek`
 (Key `~/.ssh/id_ed25519_borek`, GitHub-Account `Konrad-Thiemann`, Org `borekDigital`):
 
 | Repo | Pfad | Remote |
 |---|---|---|
-| Shopify Theme | `theme/` | `git@github.com-borek:borekDigital/shopifyFrontend_MDM.git` |
+| Shopify Theme MDM | `themes/mdm/` | `git@github.com-borek:borekDigital/shopifyFrontend_MDM.git` |
+| Shopify Theme Borek | `themes/borek/` | `git@github.com-borek:borekDigital/shopifyFrontend_Borek.git` |
+| Shopify Theme IMM | `themes/imm/` | `git@github.com-borek:borekDigital/shopifyFrontend_IMM.git` |
 | Shopify Connector | `connector/` | `git@github.com-borek:borekDigital/shopifyConnector.git` |
 | GTM Datalayer | `datalayer/` | `git@github.com-borek:borekDigital/shopifyDatalayer.git` |
 
@@ -48,26 +53,64 @@ Zugang zu gitlab.mdm.de erforderlich fuer diese Repos.
 | Emailservice | `emailservice/` | `git@gitlab.mdm.de:middleware/emailservice.git` |
 | Payment-Service | `payment-service/` | `git@gitlab.mdm.de:middleware/payment-service.git` |
 
-## Theme (theme/)
+## Themes (themes/)
 
-Shopify-Theme des MDM-Muenzshops (Store-Handle `mdm-muenze`). Basis: kommerzielles
-Theme Hyper v1.3.3 von FoxEcom (Online Store 2.0, Doku: docs.foxecom.com/hyper-theme).
+Drei Shopify-Themes, ein Aufbau — je Marke ein eigenes Repo unter `themes/`:
 
-### Befehle (ausfuehren in `theme/`)
+| Marke | Pfad | Store-Handle |
+|---|---|---|
+| MDM | `themes/mdm/` | `mdm-muenze` |
+| Borek | `themes/borek/` | — |
+| IMM | `themes/imm/` | — |
 
-- `shopify theme check --fail-level error` — Linter (Baseline: 9 Errors + 20 Warnings in Altlasten)
+Basis aller drei: kommerzielles Theme Hyper v1.3.3 von FoxEcom
+(Online Store 2.0, Doku: docs.foxecom.com/hyper-theme).
+
+Die drei Repos teilen **keine** Git-Historie (drei getrennte Wurzel-Commits), aber
+rund 90 Prozent identische Dateien. MDM ist der aktive Zweig und laeuft den beiden
+anderen voraus; Borek und IMM sind untereinander nahezu deckungsgleich.
+Perspektivisch sollen alle drei Shops auf **einem** Theme laufen — bis dahin gilt
+der Patch-Weg unten.
+
+### Befehle (ausfuehren im jeweiligen Theme-Verzeichnis)
+
+- `shopify theme check --fail-level error` — Linter (Baseline MDM: 9 Errors + 20 Warnings in Altlasten)
 - `shopify theme dev --store mdm-muenze` — Dev-Server mit Hot-Reload
 - `shopify theme pull --store mdm-muenze --theme <id>` — Stand vom Store holen
 - `shopify theme push --unpublished --store mdm-muenze` — Upload als unveroeffent. Theme
 - Kein `--theme-editor-sync` (CLI-Bug, community.shopify.dev/t/28292 — Hook blockiert)
 
+Der Store-Handle gehoert zur Marke — `--store mdm-muenze` gilt nur fuer `themes/mdm/`.
+
 ### Namensraum
 
+- Das Praefix `mdm-` ist die **Haus-Konvention aller drei Themes**, nicht die Marke MDM.
+  Auch `themes/borek/` und `themes/imm/` fuehren `mdm-breadcrumbs.liquid`,
+  `mdm-card-product.liquid` usw.
 - FoxEcom-Kerndateien NIEMALS direkt bearbeiten. Jede Section, die in einem
-  MDM-Template referenziert wird, MUSS als `mdm-`-Kopie existieren (update-sicher).
+  Template referenziert wird, MUSS als `mdm-`-Kopie existieren (update-sicher).
 - Templates: `product.mdm.json`, `collection.mdm.json`; Landingpages `page.<slug>.json`.
 - Locales: `en.default.json` (Default) + `de.json` (Shop-Sprache) — paarig pflegen.
+- Markenspezifisch und nie zwischen Themes uebertragen: `config/settings_data.json`,
+  `config/settings_schema.json`, `locales/`, `templates/`, `sections/*-group.json`,
+  `layout/` (MDM hat `mdm-theme.liquid`, Borek `borek-theme.liquid`).
 - Bereichs-Details: `.claude/rules/`
+
+### Gleiche Aenderung in mehrere Themes (bin/theme-sync.sh)
+
+Weil keine gemeinsame Historie existiert, wandert eine Aenderung als **Patch**,
+nicht als Merge:
+
+```bash
+bin/theme-sync.sh drift                       # was laeuft auseinander?
+bin/theme-sync.sh drift sections/             # nur ein Bereich
+bin/theme-sync.sh port mdm borek,imm sections/mdm-card-product.liquid
+bin/theme-sync.sh port mdm borek --commit <sha>
+```
+
+`port` legt im Ziel-Theme einen Branch `sync/<quelle>-<datum>` an und wendet den
+Patch an — ohne zu committen und ohne zu pushen. Markenspezifische Pfade sind
+blockiert. Pruefen, committen und PR macht Konrad.
 
 ## Connector (connector/)
 
@@ -186,12 +229,15 @@ und Akzeptanzkriterien definiert — BEVOR Code geschrieben wird.
 3. **Implementieren** — Code wird gegen die Spec gebaut
 4. **Validieren** — Akzeptanzkriterien pruefen
 
-Konventionen: `.claude/specs/README.md`. Theme-Specs: `.claude/specs/theme/`.
+Konventionen: `.claude/specs/README.md`. Theme-Specs: `.claude/specs/themes/` (gemeinsam) und `.claude/specs/themes/<marke>/`.
 Connector-Specs: `.claude/specs/connector/`.
 Middleware-Specs: `.claude/specs/creditcheck/`, `.claude/specs/emailservice/`, `.claude/specs/payment-service/`.
 Datalayer-Specs: `.claude/specs/datalayer/`.
 
 ## Workflow — Theme
+
+Gilt fuer alle drei Marken-Themes. Das Ziel-Theme (`themes/mdm/`, `themes/borek/`,
+`themes/imm/`) wird zu Beginn festgelegt; ohne Angabe ist `themes/mdm/` gemeint.
 
 Template-Arbeit: `/mdm-template` mit festen Phasen:
 Spec → Extraktion (figma-extractor) → Plan (theme-planner) → **Freigabe** →
@@ -200,7 +246,7 @@ Doku (docs-writer) → Uebergabe. Systemuebersicht: `.claude/README.md`
 
 Grundprinzip: **Theme-First** — bestehende Hyper-Sections ueberschreiben, nicht neu bauen.
 So wenig wie moeglich neu entwickeln, so viel wie noetig.
-Mapping und Konventionen: `.claude/specs/theme/_conventions.md`.
+Mapping und Konventionen: `.claude/specs/themes/_conventions.md`.
 
 ## Workflow — Connector
 

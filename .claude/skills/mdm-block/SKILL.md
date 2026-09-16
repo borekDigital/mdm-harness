@@ -1,7 +1,7 @@
 ---
 name: mdm-block
 description: "Per-Block-Workflow fuer einzelne Theme-Section-Overrides: ein Block = ein Branch = ein PR. Grundprinzip Theme-First — bestehende Hyper-Sections ueberschreiben, nicht neu bauen. Nutzen bei: Breadcrumbs anpassen, Multicolumn-Kacheln, Collapsible-Tabs, einzelne Section-Aenderung, /mdm-block <block-name> <ticket-id>."
-argument-hint: "[block-name] [ticket-id]"
+argument-hint: "[block-name] [ticket-id] [marke]"
 ---
 
 # /mdm-block — Einzelner Block-Override
@@ -12,12 +12,14 @@ Grundprinzip: bestehende Hyper-Sections ueberschreiben/erweitern, nicht neu baue
 ## Live-Kontext
 
 - Offene Tickets: !`ls ~/MDM/Tickets/In-progress/ 2>/dev/null || echo "keine"`
-- Git-Status Theme: !`git -C ~/MDM/theme status --short 2>/dev/null | head -5`
+- Themes: !`~/MDM/bin/theme-sync.sh list 2>/dev/null | tail -n +3`
 
 ## Inputs
 
 - `blockName` (Pflicht) — z. B. breadcrumbs, multicolumn, collapsible-tabs, rich-text
 - `ticketId` (Pflicht — bei Fehlen Konrad fragen)
+- `marke` (optional) — `mdm` (Vorgabe), `borek` oder `imm`. Bestimmt das Ziel-Theme
+  `themes/<marke>/`. Ein Block = ein Theme; fuer die anderen Marken siehe Phase 4.
 - `figmaNodeId` (optional) — wenn der Block aus Figma extrahiert werden muss
 
 ## Output Contract (jede Phase meldet an Konrad)
@@ -31,7 +33,8 @@ Grundprinzip: bestehende Hyper-Sections ueberschreiben/erweitern, nicht neu baue
 ### Phase 0 — Kontext lesen
 
 1. `Tickets/In-progress/<ticketId>/` pruefen — design-spec.md vorhanden?
-2. Bestehende `mdm-*`-Kopie der Hyper-Section lesen (z. B. `mdm-breadcrumbs.liquid`).
+2. Bestehende `mdm-*`-Kopie der Hyper-Section in `themes/<marke>/sections/` lesen
+   (z. B. `mdm-breadcrumbs.liquid` — das Praefix `mdm-` gilt in allen drei Themes).
    Falls keine Kopie existiert: Hyper-Original lesen, `mdm-*`-Kopie wird in Phase 2 erstellt.
 3. `figma-mapping.md` konsultieren — gibt es bereits ein verifiziertes Mapping fuer diesen Block?
 4. Falls `figmaNodeId` uebergeben und kein passender Abschnitt in der design-spec:
@@ -65,7 +68,12 @@ Aenderungswuensche → zurueck zu Phase 1.
 
 ### Phase 3 — Uebergabe
 
-1. Zusammenfassung: was entstand, wie testen (`shopify theme dev --store mdm-muenze`).
+1. Zusammenfassung: was entstand, wie testen (`shopify theme dev --store mdm-muenze`,
+   ausgefuehrt in `themes/<marke>/`).
+2. Pruefen, ob der Block auch in den anderen Marken-Themes faellig ist:
+   `bin/theme-sync.sh drift sections/`. Falls ja, Konrad den Befehl nennen
+   (`bin/theme-sync.sh port <marke> <ziele> <pfade>`) — **nicht** selbst ausfuehren
+   und den Block nie ein zweites Mal von Hand bauen.
 2. Commit-Message als Plain-Text-Codeblock — Konrad erstellt Branch + PR selbst.
 3. Nach Konrads Abnahme: Block als erledigt im Ticket markieren.
 

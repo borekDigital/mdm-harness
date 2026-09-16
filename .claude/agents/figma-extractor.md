@@ -41,7 +41,7 @@ Output: append a new section to the existing design-spec.md, or create a block-s
 
 ## Workspace context
 
-You work in ~/MDM/. Theme in `theme/`, tickets in `Tickets/`. All theme paths carry the `theme/` prefix.
+You work in ~/MDM/. Themes in `themes/<brand>/` (`mdm`, `borek`, `imm`; default `mdm`), tickets in `Tickets/`. All theme paths carry the `themes/<brand>/` prefix.
 
 ## Breakpoint coverage (mandatory for full-page mode)
 

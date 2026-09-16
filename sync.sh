@@ -90,7 +90,9 @@ generate_repo_table() {
   local table=""
 
   # Shopify-Repos
-  table+='Sechs unabhaengige Git-Repos auf zwei Plattformen:\n'
+  local repo_count
+  repo_count=$(get_repo_ids | wc -l | tr -d ' ')
+  table+="${repo_count} unabhaengige Git-Repos auf zwei Plattformen:\\n"
   table+='\n'
   table+='**Shopify-Repos** — GitHub via SSH-Alias `github.com-borek`\n'
   table+='(Key `~/.ssh/id_ed25519_borek`, GitHub-Account `Konrad-Thiemann`, Org `borekDigital`):\n'
@@ -148,15 +150,25 @@ generate_claude_md() {
   header="${header/\{\{REPO_TABLE\}\}/$repo_table}"
   content+="${header}"
 
-  # Repo-Sections
-  local repo_order="theme connector datalayer creditcheck emailservice payment-service"
+  # Repo-Sections. "themes" ist kein Repo-Schluessel, sondern der gemeinsame
+  # Abschnitt der drei Marken-Themes (theme-mdm, theme-borek, theme-imm): sie
+  # unterscheiden sich in der Marke, nicht in den Konventionen.
+  local repo_order="themes connector datalayer creditcheck emailservice payment-service"
   for repo_id in $repo_order; do
     local tmpl="${TEMPLATES_DIR}/repo-${repo_id}.md"
     [[ -f "$tmpl" ]] || continue
 
     content+=$'\n'
 
-    if ! is_installed "$repo_id"; then
+    if [[ "$repo_id" == "themes" ]]; then
+      while IFS= read -r theme_id; do
+        [[ "$theme_id" == theme-* ]] || continue
+        is_installed "$theme_id" && continue
+        local name
+        name="$(yaml_get "$theme_id" "name")"
+        content+=$'\n'"> **Hinweis:** ${name} ist nicht lokal installiert. \`./setup.sh --add\` zum Nachinstallieren."$'\n'
+      done < <(get_repo_ids)
+    elif ! is_installed "$repo_id"; then
       local name
       name="$(yaml_get "$repo_id" "name")"
       content+=$'\n'"> **Hinweis:** ${name} ist nicht lokal installiert. \`./setup.sh --add\` zum Nachinstallieren."$'\n'
@@ -205,7 +217,7 @@ check_consistency() {
       is_installed "$repo_id" || continue
       local last_sync
       last_sync=$(sed -n "/^  ${repo_id}:$/,/^  [a-z]/p" "$LOCAL_YAML" \
-        | grep "last_sync:" | sed 's/.*: *//' | tr -d '"' || true)
+        | grep "last_sync:" | sed 's/^[^:]*: *//' | tr -d '"' || true)
       if [[ -n "$last_sync" ]]; then
         local sync_epoch
         sync_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$last_sync" +%s 2>/dev/null || echo 0)

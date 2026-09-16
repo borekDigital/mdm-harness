@@ -13,8 +13,8 @@ except Exception:
 " 2>/dev/null)
 
 case "$FILE" in
-  */theme/*.liquid) : ;;
-  */theme/templates/*.json|*/theme/config/*.json|*/theme/locales/*.json|*/theme/sections/*.json|*/theme/blocks/*.json) : ;;
+  */themes/*.liquid) : ;;
+  */themes/*/templates/*.json|*/themes/*/config/*.json|*/themes/*/locales/*.json|*/themes/*/sections/*.json|*/themes/*/blocks/*.json) : ;;
   *) exit 0 ;;
 esac
 case "$FILE" in
@@ -23,7 +23,18 @@ esac
 
 PROJECT="${CLAUDE_PROJECT_DIR:-$HOME/MDM}"
 command -v shopify >/dev/null 2>&1 || exit 0
-cd "$PROJECT/theme" || exit 0
+
+# Welches Theme? Aus dem Pfad herleiten statt fest verdrahten — themes/ traegt
+# eine Marke je Unterverzeichnis (mdm, borek, imm).
+REST="${FILE#*/themes/}"
+BRAND="${REST%%/*}"
+THEME_DIR="$PROJECT/themes/$BRAND"
+
+# Still aussteigen, wenn das Verzeichnis gar kein Shopify-Theme ist
+# (z. B. eine Datei direkt unter themes/).
+[ -n "$BRAND" ] || exit 0
+[ -f "$THEME_DIR/config/settings_schema.json" ] || exit 0
+cd "$THEME_DIR" || exit 0
 
 REPORT=$(shopify theme check -o json 2>/dev/null | FILE="$FILE" python3 -c "
 import sys, json, os

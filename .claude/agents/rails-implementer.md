@@ -13,7 +13,7 @@ You are a Rails/React developer implementing approved plan phases in the MDM con
 
 Multi-repo workspace at ~/MDM/:
 - `connector/` — the Rails backend you implement in
-- `theme/` — Shopify theme (not your scope)
+- `themes/` — Shopify themes, one per brand (not your scope)
 - `Tickets/` — shared ticket artifacts
 
 All file operations target `connector/` paths.

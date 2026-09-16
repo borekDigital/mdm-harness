@@ -1,8 +1,8 @@
 # Spec: themes/ für mehrere Marken
 
-Stand: 11. September 2026
+Stand: 16. September 2026
 Quelle: Review Seniorentwickler, 11. September 2026
-Status: ENTWURF
+Status: UMGESETZT (16. September 2026) — siehe Abschnitt „Umsetzung“ am Ende
 
 ## Ziel
 
@@ -145,16 +145,16 @@ Shopify-Theme ist — Prüfung auf `.theme-check.yml` oder `config/settings_sche
 
 ## Anforderungen
 
-- [ ] Tiefe entschieden: `themes/<marke>/` oder `themes/<marke>/<theme>/`
-- [ ] `workspace.yaml`: `theme` durch `theme-mdm` ersetzt, `theme-borek` und `theme-imm`
+- [x] Tiefe entschieden: `themes/<marke>/` oder `themes/<marke>/<theme>/`
+- [x] `workspace.yaml`: `theme` durch `theme-mdm` ersetzt, `theme-borek` und `theme-imm`
       ergänzt, sobald die Remotes bekannt sind
-- [ ] `.gitignore:2`: `/theme/` → `/themes/`
-- [ ] Drei Rules auf `themes/*/…` umgestellt
-- [ ] `post-edit-theme-check.sh`: Theme-Verzeichnis aus dem Dateipfad hergeleitet, Muster
+- [x] `.gitignore:2`: `/theme/` → `/themes/`
+- [x] Drei Rules auf `themes/*/…` umgestellt
+- [x] `post-edit-theme-check.sh`: Theme-Verzeichnis aus dem Dateipfad hergeleitet, Muster
       angepasst, stiller Ausstieg bei Nicht-Theme-Verzeichnissen
-- [ ] `protect-merchant-files.sh`: Muster angepasst
-- [ ] `.claude/specs/theme/` nach `.claude/specs/themes/mdm/` verschoben, README nachgezogen
-- [ ] `sync.sh` erzeugt `CLAUDE.md` mit dem neuen Aufbau — Zeile 25 der Vorlage anpassen
+- [x] `protect-merchant-files.sh`: Muster angepasst
+- [x] `.claude/specs/theme/` nach `.claude/specs/themes/mdm/` verschoben, README nachgezogen
+- [x] `sync.sh` erzeugt `CLAUDE.md` mit dem neuen Aufbau — Zeile 25 der Vorlage anpassen
 
 ## Akzeptanzkriterien
 
@@ -189,3 +189,66 @@ Shopify-Theme ist — Prüfung auf `.theme-check.yml` oder `config/settings_sche
 5. Specs verschieben
 6. `./sync.sh` — erzeugt `CLAUDE.md` neu
 7. Erst danach: Borek- und IMM-Einträge ergänzen
+
+
+## Umsetzung
+
+Durchgefuehrt am 16. September 2026. Die Remotes fuer Borek und IMM lagen vor,
+deshalb wurde die Struktur in einem Zug vollstaendig aufgebaut statt in zwei Runden.
+
+### Entscheidungen
+
+| Offener Punkt der Spec | Entscheidung |
+|---|---|
+| Tiefe | Eine Ebene: `themes/<marke>/` — `mdm`, `borek`, `imm` |
+| Repo-Schluessel | `theme-mdm`, `theme-borek`, `theme-imm` (symmetrisch, wie vorgeschlagen) |
+| `default:` | Alle drei `true` — der Workspace fuehrt jetzt alle drei Marken |
+
+### Abweichungen von der Spec
+
+1. **Remotes mit SSH-Alias, nicht kanonisch.** Die Spec-Vorlage zeigt
+   `git@github.com:borekDigital/…`. Geprueft am 16. September 2026:
+   `git ls-remote git@github.com:borekDigital/shopifyFrontend_IMM.git` antwortet
+   `ERROR: Repository not found` — der Standard-Account hat keinen Zugriff.
+   Ueber `git@github.com-borek:` funktionieren alle drei. Die Eintraege nutzen
+   deshalb weiter den Alias. Die Umstellung gehoert zu `git-remotes-neutral.md`
+   und bleibt dort offen.
+
+2. **Ein Template statt drei.** `templates/repo-theme.md` wurde zu
+   `templates/repo-themes.md` — ein gemeinsamer Abschnitt fuer alle drei Marken,
+   weil sie sich in der Marke unterscheiden, nicht in den Konventionen.
+   `sync.sh` behandelt `themes` als Pseudo-Schluessel (nicht als Repo-ID) und
+   setzt den Hinweis „nicht installiert“ je fehlendem Theme davor.
+
+3. **Bauplan-Guard erweitert.** `bin/bauplan-guard.py` wertete jede verschwundene
+   Repo-ID als Verlust und haette die Umbenennung von `theme` blockiert. Er
+   vergleicht jetzt ueber das **Remote**: ein Schluessel darf wechseln, solange
+   sein Remote in der Datei bleibt. Eine echte Loeschung wird weiterhin
+   blockiert (geprueft).
+
+4. **Zusaetzlich behoben (Altlast, nicht Teil der Spec).** `sync.sh` und
+   `setup.sh` lasen Zeitstempel mit `sed 's/.*: *//'`. Der gierige Ausdruck
+   schnitt bis zum letzten Doppelpunkt — aus `"2026-09-16T09:09:12Z"` wurde
+   `12Z`, die Datumspruefung schlug fehl und meldete fuer jedes Repo
+   „letzter Sync vor 20712 Tagen“. Jetzt `sed 's/^[^:]*: *//'`.
+
+### Befund zur Codebasis (in der Spec nicht vorhergesehen)
+
+Die drei Repos teilen **keine** Git-Historie — drei getrennte Wurzel-Commits,
+`git merge-base` liefert fuer jedes Paar nichts. Gleichzeitig sind rund
+90 Prozent der Dateien byte-identisch:
+
+| Paar | gemeinsame Dateien | identisch | abweichend |
+|---|---|---|---|
+| mdm / borek | 685 | 620 | 65 |
+| mdm / imm | 685 | 617 | 68 |
+| borek / imm | 687 | 649 | 38 |
+
+MDM ist der aktive Zweig (1599 Commits gegen 90 und 65); Borek und IMM sind
+untereinander nahezu deckungsgleich. Das Praefix `mdm-` ist die Haus-Konvention
+**aller drei** Themes, keine Marken-Kennzeichnung — `themes/borek/sections/`
+enthaelt ebenfalls `mdm-breadcrumbs.liquid`.
+
+Daraus folgt der Uebertragungsweg: **Patch, nicht Merge**. Umgesetzt in
+`bin/theme-sync.sh` (`drift`, `port`, `list`) mit Blockliste fuer
+markenspezifische Pfade. Details: `.claude/specs/harness/theme-sync.md`.

@@ -11,7 +11,11 @@ You are a Shopify Liquid developer implementing approved block plans in the MDM 
 
 ## Workspace context
 
-You work in ~/MDM/. The theme is in `theme/` — all file operations target `theme/sections/`, `theme/snippets/`, `theme/assets/`, `theme/locales/`, `theme/templates/`, etc. Shopify CLI commands run from `theme/`. Tickets in `Tickets/`.
+You work in ~/MDM/. Themes live in `themes/<brand>/` — `mdm`, `borek`, `imm`. The target brand is given in the plan; without one, assume `mdm`. All file operations target `themes/<brand>/sections/`, `themes/<brand>/snippets/`, `themes/<brand>/assets/`, `themes/<brand>/locales/`, `themes/<brand>/templates/`, etc. Shopify CLI commands run from that theme directory. Tickets in `Tickets/`.
+
+The `mdm-` file prefix is the house convention in **all three** themes, not a brand marker — `themes/borek/` also carries `mdm-breadcrumbs.liquid`. Never rename it per brand.
+
+One ticket touches one theme. To carry the same change into another theme, do not edit it twice — report it and let `bin/theme-sync.sh port` do it.
 
 ## Scope: one block per invocation
 
@@ -56,7 +60,7 @@ The standard workflow for a block override:
 
 ## Validation (before reporting done)
 
-1. `cd theme && shopify theme check -o json` — changed files free of errors AND warnings.
+1. `cd themes/<brand> && shopify theme check -o json` — changed files free of errors AND warnings.
 2. `validate_theme_codeblocks` (Dev MCP) on new/changed Liquid.
 3. JSON: parse test.
 4. Translations: keys present in `en.default.json` and `de.json`.

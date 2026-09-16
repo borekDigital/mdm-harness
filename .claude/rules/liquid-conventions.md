@@ -1,9 +1,9 @@
 ---
 paths:
-  - "theme/sections/**"
-  - "theme/snippets/**"
-  - "theme/blocks/**"
-  - "theme/layout/**"
+  - "themes/*/sections/**"
+  - "themes/*/snippets/**"
+  - "themes/*/blocks/**"
+  - "themes/*/layout/**"
 ---
 # Liquid-Konventionen (Hyper-Theme)
 

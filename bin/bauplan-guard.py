@@ -44,10 +44,14 @@ def etappen_nrs(raw):
         return None
 
 
-def repo_keys(raw):
-    """Repo-Schluessel aus workspace.yaml, ohne YAML-Abhaengigkeit.
-    Die Datei ist flach genug, dass die Einrueckung als Grammatik reicht."""
-    keys, in_repos = set(), False
+def repo_entries(raw):
+    """Repos aus workspace.yaml als {schluessel: remote}, ohne YAML-Abhaengigkeit.
+    Die Datei ist flach genug, dass die Einrueckung als Grammatik reicht.
+
+    Das Remote wird mitgelesen, weil erst es ein Repo identifiziert. Der
+    Schluessel ist nur ein Name und darf sich aendern (`theme` -> `theme-mdm`);
+    das Remote bleibt. Siehe check_write."""
+    entries, in_repos, current = {}, False, None
     for line in raw.splitlines():
         if re.match(r"^repos:\s*$", line):
             in_repos = True
@@ -57,8 +61,18 @@ def repo_keys(raw):
                 break
             m = re.match(r"^  ([A-Za-z0-9_-]+):\s*$", line)
             if m:
-                keys.add(m.group(1))
-    return keys
+                current = m.group(1)
+                entries.setdefault(current, None)
+                continue
+            m = re.match(r"^    remote:\s*\"?([^\"]+)\"?\s*$", line)
+            if m and current:
+                entries[current] = m.group(1).strip()
+    return entries
+
+
+def repo_keys(raw):
+    """Nur die Schluessel — fuer Aufrufer, die das Remote nicht brauchen."""
+    return set(repo_entries(raw))
 
 
 def check_write(project, target, new_content):
@@ -85,8 +99,16 @@ def check_write(project, target, new_content):
     if os.path.basename(rel) == "workspace.yaml":
         if os.path.isfile(target):
             with open(target, encoding="utf-8") as fh:
-                old = repo_keys(fh.read())
-            lost = sorted(old - repo_keys(new_content))
+                old = repo_entries(fh.read())
+            new = repo_entries(new_content)
+            new_remotes = {r for r in new.values() if r}
+            # Ein Schluessel darf verschwinden, solange sein Remote bleibt — das
+            # ist eine Umbenennung, kein Verlust. Weg ist ein Repo erst, wenn
+            # auch sein Remote nirgends mehr steht.
+            lost = sorted(
+                key for key, remote in old.items()
+                if key not in new and (remote is None or remote not in new_remotes)
+            )
             if lost:
                 violations.append(
                     "Repos %s wuerden aus workspace.yaml verschwinden. Ein nicht "
