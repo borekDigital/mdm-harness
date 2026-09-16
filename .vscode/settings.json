@@ -1,0 +1,10 @@
+{
+  // Kind-Repos liegen teils auf Ebene 2 (themes/<marke>/) -> Scan-Tiefe erhoehen
+  "git.autoRepositoryDetection": true,
+  "git.repositoryScanMaxDepth": 2,
+  "git.repositoryScanIgnoredFolders": [
+    "node_modules",
+    "vendor",
+    "connector-worktrees"
+  ]
+}
