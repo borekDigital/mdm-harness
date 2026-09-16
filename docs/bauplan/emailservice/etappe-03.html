@@ -515,7 +515,7 @@ routing:
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Der Weg einer Mail — vier Stationen</h2>
+      <h2>Stationen einer Mail</h2>
     </div>
     <p class="lead">Zwischen dem SAP-Aufruf und der Mail bei Emarsys liegen vier Stationen und
       drei Warteschlangen. Nur die erste läuft im Request; die Antwort an SAP geht raus, sobald
@@ -592,7 +592,7 @@ routing:
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Eine auskommentierte Zeile trennt 1 500 Zeilen ab</h2>
+      <h2>Abgeschalteter SAP-Pfad</h2>
     </div>
     <p class="lead">Der README nennt zwei Kernaufgaben: die Anfrage <em>mit Kundendaten aus SAP
       anreichern</em> und <em>E-Mails an Kunden mit Werbesperre herausfiltern</em>. Beide
@@ -681,7 +681,7 @@ routing:
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Kundendaten kommen jetzt von Emarsys</h2>
+      <h2>Herkunft der Kundendaten</h2>
     </div>
     <p class="lead">Ohne den SAP-Pfad ist der Dienst nicht datenlos — er bezieht die
       Kontaktdaten aus der Gegenrichtung. <code>EmarsysEventHandler</code> fragt sie bei
@@ -695,7 +695,7 @@ if (is_array($emarsysContactData) &amp;&amp; array_key_exists(0, $emarsysContact
 }</code></pre>
 
     <p class="lead">Die dokumentierte und die tatsächliche Datenquelle unterscheiden sich also
-      — mit Folgen für die Frage, wer die Werbesperre auswertet. Im Code tut es niemand;
+      — mit Folgen für die Auswertung der Werbesperre. Im Code findet sie nicht statt;
       ob Emarsys eine eigene Unterdrückungsliste führt, ist von hier aus nicht feststellbar.</p>
 
     <div class="checks">
@@ -744,7 +744,7 @@ if (is_array($emarsysContactData) &amp;&amp; array_key_exists(0, $emarsysContact
              danach verwerfen.</p>
           <p><b>Konsequenz:</b> Eine Mail, deren Emarsys-Aufruf dreimal scheitert, ist
              verloren und nicht nachstellbar — es gibt keine Datenbank und keine
-             Fehlerwarteschlange, aus der man sie erneut anstoßen könnte. Bei gesetzter
+             Fehlerwarteschlange, aus der sie erneut anzustoßen wäre. Bei gesetzter
              <code>maintenance.flag</code> trifft das jede Nachricht im Retry-Fenster.</p>
           <p><b>Fix:</b> einen vierten Transport <code>failed</code> anlegen und als
              <code>failure_transport</code> eintragen. Danach steht
@@ -764,8 +764,8 @@ if (is_array($emarsysContactData) &amp;&amp; array_key_exists(0, $emarsysContact
           <p><b>Konsequenz:</b> <code>DoNotSendStamp</code> und
              <code>EnrichedMailDataStamp</code> gehören zum abgetrennten Pfad aus Blatt 03 —
              sie sind die Marker, mit denen ein gefilterter oder angereicherter Datensatz
-             durch die Kette getragen würde. Wer den Pfad reaktiviert, braucht sie; wer den
-             Code aufräumt, darf sie nicht mit dem Rest wegwerfen.</p>
+             durch die Kette getragen würde. Eine Reaktivierung des Pfads braucht sie; ein
+             Aufräumen des Codes darf sie nicht mit dem Rest wegwerfen.</p>
         </div>
       </div>
     </div>

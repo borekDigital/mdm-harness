@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Ein Endpunkt, zwei Fremdsysteme</h2>
+      <h2>Außengrenze</h2>
     </div>
     <p class="lead">Die Außengrenze ist schmal. Genau eine Route nimmt Nutzdaten an
       (<code>POST /sap</code>), zwei weitere dienen dem Betrieb. Nach außen sprechen zwei
@@ -490,8 +490,8 @@
         <code>SystemMailService::handleMailRequest</code> stellt die Nachricht ein und baut die
         Antwort aus dem <em>Request</em>-Objekt, nicht aus einem Ergebnis
         (<code>www/src/Services/Mailing/Sap/SystemMailService.php:60–68</code>). SAP erfährt
-        also, dass die Anforderung angenommen wurde — nicht, ob die Mail rausging. Wer einem
-        Fehler nachgeht, findet ihn nur im Log und in den Metriken, nie in der
+        also, dass die Anforderung angenommen wurde — nicht, ob die Mail rausging. Ein Fehler
+        ist nur im Log und in den Metriken zu finden, nie in der
         SAP-Antwort.</figcaption>
     </figure>
   </section>
@@ -500,11 +500,11 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Wo die 11 012 Zeilen liegen</h2>
+      <h2>Verteilung des Codes</h2>
     </div>
     <p class="lead">Zwei Drittel des Codes stecken in der Emarsys-Anbindung, nicht in der
-      Warteschlangen-Mechanik. Das ist die brauchbarste Orientierung für den Einstieg: wer
-      etwas am Mailversand ändert, arbeitet fast immer unter
+      Warteschlangen-Mechanik. Das ist die brauchbarste Orientierung für den Einstieg: eine
+      Änderung am Mailversand liegt fast immer unter
       <code>Services/Emarsys/</code>.</p>
 
     <figure>
@@ -558,7 +558,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Doctrine ist da, aber nicht angeschlossen</h2>
+      <h2>Doctrine</h2>
     </div>
     <p class="lead"><code>composer.json</code> verlangt <code>doctrine/orm ^3.2</code>. In
       <code>bundles.php</code> steht kein <code>DoctrineBundle</code>, unter
@@ -612,8 +612,8 @@
         <code>doctrine/orm</code> lässt sich entfernen, ohne Code zu ändern —
         <code>ArrayCollection</code> kommt aus dem separat geforderten
         <code>doctrine/collections</code>. Wichtiger als die eingesparte Paketgröße ist die
-        Erwartung, die der Eintrag weckt: wer „Doctrine ORM" im Abhängigkeitsbaum sieht, sucht
-        eine Datenbank, die es nicht gibt. Die Workspace-Dokumentation
+        Erwartung, die der Eintrag weckt: „Doctrine ORM" im Abhängigkeitsbaum lässt eine
+        Datenbank vermuten, die es nicht gibt. Die Workspace-Dokumentation
         (<code>~/MDM/CLAUDE.md</code>) führt „Doctrine ORM" ebenfalls als Teil des
         Tech-Stacks — auch dort gehört der Eintrag gestrichen.</figcaption>
     </figure>
@@ -623,7 +623,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>17 Ereignistypen, 2 gebaute Pfade</h2>
+      <h2>Ereignistypen</h2>
     </div>
     <p class="lead"><code>EventType</code> zählt 17 SAP-Ereignisse auf. Verarbeiten kann der
       Dienst zwei davon, denn nur für zwei existieren Handler, Preparer, Mapper und
@@ -689,8 +689,8 @@
              <code>allow_failure: true</code> (<code>.gitlab-ci.yml:49–67</code>).</p>
           <p><b>Geklärt in Etappe 7:</b> Die Testsuite läuft, nur in der anderen Pipeline.
              <code>Jenkinsfile:85</code> führt die Stufe <code>Execute phpunit</code> aus.
-             Der Dienst ist also getestet — wer das anhand der <code>.gitlab-ci.yml</code>
-             beurteilt, kommt zum falschen Schluss.</p>
+             Der Dienst ist also getestet. Eine Beurteilung allein anhand der
+             <code>.gitlab-ci.yml</code> führt zum falschen Schluss.</p>
         </div>
       </div>
       <div class="check">

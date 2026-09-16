@@ -422,7 +422,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Ein Muster, zehnmal angewandt</h2>
+      <h2>Das Registry-Muster</h2>
     </div>
     <p class="lead">Symfony böte für diesen Zweck getaggte Dienste an — eine Klasse bekommt
       ein Tag, der Container sammelt alle Träger ein. Hier wird stattdessen jeder Eintrag
@@ -490,7 +490,7 @@ App\Services\Emarsys\Templating\Placeholder\PlaceholderService:
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Sieben Listen auf dem Weg einer Mail</h2>
+      <h2>Listen je Mailtyp</h2>
     </div>
     <p class="lead">Von den zehn Registries sind sieben <strong>je Mailtyp</strong> besetzt.
       Eine Nachricht wird auf ihrem Weg durch die drei Warteschlangen siebenmal durch eine
@@ -525,7 +525,7 @@ App\Services\Emarsys\Templating\Placeholder\PlaceholderService:
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Jede Liste hat ihre eigene Ausnahme</h2>
+      <h2>Ausnahmen je Registry</h2>
     </div>
     <p class="lead">Findet eine Suche nichts, wirft jede Registry eine eigene Ausnahmeklasse
       mit eigener Meldung. Das ist die brauchbarste Eigenschaft des Musters: die Meldung
@@ -562,8 +562,8 @@ App\Services\Emarsys\Templating\Placeholder\PlaceholderService:
       <figcaption><b>Relevant bei der Fehlersuche:</b> der Name der Ausnahme lokalisiert den
         fehlenden Eintrag genauer als jeder Stacktrace. <code>PlaceholderException</code>
         heißt, dass Handler, Preparer und Mapper vorhanden sind und nur der Platzhalter
-        fehlt — also Position sechs von sieben in der Kette aus Blatt 02. Wer einen neuen
-        Mailtyp einbaut, arbeitet sich an diesen Ausnahmen entlang nach vorn.</figcaption>
+        fehlt — also Position sechs von sieben in der Kette aus Blatt 02. Ein neuer
+        Mailtyp lässt sich an diesen Ausnahmen entlang nach vorn einbauen.</figcaption>
     </figure>
   </section>
 
@@ -571,10 +571,10 @@ App\Services\Emarsys\Templating\Placeholder\PlaceholderService:
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Was ein dritter Mailtyp kostet</h2>
+      <h2>Kosten eines Mailtyps</h2>
     </div>
     <p class="lead">Die Frage ist praktisch: der Dienst kennt siebzehn SAP-Ereignistypen und
-      verarbeitet zwei (Etappe 1, Blatt 04). Wer einen dritten aufnimmt, zahlt Folgendes.</p>
+      verarbeitet zwei (Etappe 1, Blatt 04). Die Aufnahme eines dritten kostet Folgendes.</p>
 
     <figure>
       <svg viewBox="0 0 960 252" role="img" aria-label="Aufstellung der Kosten eines neuen Mailtyps: elf neue Klassen verteilt auf Nachrichten, Handler, Preparer und Emarsys-Bausteine, dazu sieben Eintraege in services.yaml und ein Eintrag im MailMappings-Block je Mandant.">
@@ -663,7 +663,7 @@ App\Services\Emarsys\Templating\Placeholder\PlaceholderService:
           <p><b>Beleg:</b> Alle zehn Registries folgen derselben Form — leeres Array,
              <code>addX</code>-Methode, lineare Suche, eigene Ausnahme. Keine Abweichung, kein
              Sonderfall.</p>
-          <p><b>Konsequenz:</b> Wer eine Registry verstanden hat, versteht alle zehn. Das
+          <p><b>Konsequenz:</b> Eine verstandene Registry erklärt alle zehn. Das
              verkürzt den Einstieg. Der oben vorgeschlagene Vollständigkeitstest wird dadurch
              überhaupt erst schreibbar, weil alle zehn Registries dieselbe Schnittstelle
              anbieten.</p>

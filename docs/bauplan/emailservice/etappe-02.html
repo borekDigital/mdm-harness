@@ -421,11 +421,11 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Zwei Compose-Welten, dieselben sechs Dienste</h2>
+      <h2>Compose-Dateien</h2>
     </div>
-    <p class="lead">Wer den Dienst lokal startet, benutzt
+    <p class="lead">Der lokale Start benutzt
       <code>docker-compose.yml</code> plus <code>docker-compose.override.yml</code> — so steht es
-      in <code>.env:2</code> als <code>COMPOSE_FILE</code>. Wer ihn deployt, benutzt
+      in <code>.env:2</code> als <code>COMPOSE_FILE</code>. Das Ausrollen benutzt
       <code>docker/docker-compose.prod.yml</code>, ausgewählt von der Pipeline
       (<code>.gitlab-ci.yml:112</code>). Der Unterschied liegt in der Ausführungsumgebung.</p>
 
@@ -509,7 +509,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Ein Image, drei Rollen</h2>
+      <h2>Image und Rollen</h2>
     </div>
     <p class="lead">Die drei Worker-Container sind identisch. Sie unterscheiden sich in genau
       einer Umgebungsvariablen, und <code>consume.sh</code> macht daraus das Kommando.</p>
@@ -562,7 +562,7 @@ exec /usr/local/bin/php "bin/console" "messenger:consume" "${QUEUE_NAME}" ${WORK
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Jeder Worker endet nach einer Stunde</h2>
+      <h2>Worker-Lebenszyklus</h2>
     </div>
     <p class="lead"><code>--time-limit=3600</code> lässt den Prozess planmäßig aussteigen,
       Supervisor startet ihn neu. Das ist die üblichste Absicherung gegen Speicherlecks in
@@ -613,10 +613,10 @@ exec /usr/local/bin/php "bin/console" "messenger:consume" "${QUEUE_NAME}" ${WORK
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Wo die Zugangskontrolle sitzt</h2>
+      <h2>Zugangskontrolle</h2>
     </div>
-    <p class="lead">Die Frage „wer darf <code>POST /sap</code> aufrufen" hat drei mögliche
-      Antwortorte. Zwei davon sind leer.</p>
+    <p class="lead">Die Zugangskontrolle für <code>POST /sap</code> hat drei mögliche
+      Orte. Zwei davon sind leer.</p>
 
     <div class="tw">
       <table>
@@ -630,8 +630,8 @@ exec /usr/local/bin/php "bin/console" "messenger:consume" "${QUEUE_NAME}" ${WORK
       </table>
     </div>
     <p class="lead">Das ist eine tragfähige Anordnung, solange der Dienst ausschließlich über
-      Traefik erreichbar ist. Sie hat aber eine Folge, die man wissen muss: <strong>wer im
-      Overlay-Netz steht, spricht ungeprüft mit nginx.</strong> Im Swarm hängt nginx an
+      Traefik erreichbar ist. Sie hat aber eine Folge: <strong>jeder Dienst im
+      Overlay-Netz spricht ungeprüft mit nginx.</strong> Im Swarm hängt nginx an
       <code>traefik_prod</code> und <code>emailservice</code>, php-fpm nur an
       <code>emailservice</code> — ein anderer Dienst im selben Overlay umgeht die Basic Auth
       also vollständig.</p>

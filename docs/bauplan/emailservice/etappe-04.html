@@ -396,7 +396,7 @@
     <div class="tb-main">
       <p class="tb-eyebrow">MDM Emailservice · Etappe 4 · Eingang und Messung</p>
       <h1>Eingang</h1>
-      <p>Die Außengrenze ist schmal, aber sie tut zwei Dinge, die man kennen muss: sie
+      <p>Die Außengrenze ist schmal, aber sie tut zwei Dinge: sie
          <strong>repariert die SAP-Nutzlast per Zeichenkettenersatz</strong>, bevor sie sie
          parst, und sie ist die einzige Stelle, an der überhaupt etwas gemessen wird. Elf
          Prometheus-Zähler sind die komplette Sicht auf den Verlauf einer Mail.</p>
@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Vier Routen, drei Controller</h2>
+      <h2>Routen und Controller</h2>
     </div>
     <p class="lead">Geroutet wird über Attribute direkt an den Methoden
       (<code>config/routes.yaml</code> zeigt nur auf <code>src/Controller/</code>). Es gibt
@@ -450,7 +450,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Die Nutzlast wird vor dem Parsen repariert</h2>
+      <h2>Reparatur der Nutzlast</h2>
     </div>
     <p class="lead">SAP liefert JSON, das nicht immer JSON ist. Der Controller behebt das
       mit zwei Zeichenkettenersetzungen, bevor irgendein Parser es sieht.</p>
@@ -503,10 +503,10 @@ $mailRequest = $systemMailService-&gt;handleMailRequest($content);</code></pre>
       </svg>
       <figcaption><b>Relevant bei einem unerklärlichen Deserialisierungsfehler:</b> der Text,
         den <code>RequestHandlerService</code> sieht, ist nicht der Text, den SAP geschickt
-        hat. Wer einen Fehlerfall nachstellt, muss beide Ersetzungen mit anwenden — sonst
-        sucht er im falschen Dokument. Dass die Reparatur nötig ist, ist selbst der Befund:
-        sauberer wäre, das SAP-seitige Format zu korrigieren, statt es hier zu
-        überschreiben.</figcaption>
+        hat. Das Nachstellen eines Fehlerfalls verlangt beide Ersetzungen — sonst wird im
+        falschen Dokument gesucht. Dass die Reparatur nötig ist, ist selbst der Befund:
+        die Korrektur gehört auf die SAP-Seite, nicht in diesen
+        Controller.</figcaption>
     </figure>
   </section>
 
@@ -514,7 +514,7 @@ $mailRequest = $systemMailService-&gt;handleMailRequest($content);</code></pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Elf Zähler sind die ganze Beobachtbarkeit</h2>
+      <h2>Beobachtbarkeit</h2>
     </div>
     <p class="lead">Der Dienst hält keinen Zustand (Etappe 1). Was mit einer Mail passiert
       ist, lässt sich deshalb nur aus zwei Quellen rekonstruieren: dem Log und diesen elf
@@ -554,7 +554,7 @@ $mailRequest = $systemMailService-&gt;handleMailRequest($content);</code></pre>
 
         <text x="16" y="302" class="s-tiny f-dim">Dazu healthcheck. Alle elf tragen dieselben fünf Beschriftungen: method, endpoint, status_code, message, event_id.</text>
       </svg>
-      <figcaption><b>So liest man einen Rückstau:</b> die Differenz eines Paares nennt die
+      <figcaption><b>Relevant beim Lesen eines Rückstaus:</b> die Differenz eines Paares nennt die
         Zahl der Nachrichten, die diese Station betreten und nicht verlassen haben. Wächst
         <code>process_enrichment</code> stärker als <code>processed_enrichment</code>,
         stauen sich die Nachrichten in dieser Station. Für den Erfolgsfall genügt der Vergleich von
@@ -572,7 +572,7 @@ $mailRequest = $systemMailService-&gt;handleMailRequest($content);</code></pre>
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Fehler werden übersetzt, nicht durchgereicht</h2>
+      <h2>Fehlerübersetzung</h2>
     </div>
     <p class="lead">Ein <code>ExceptionListener</code> hängt am
       <code>kernel.exception</code>-Ereignis und wandelt Ausnahmen in JSON-Antworten um —

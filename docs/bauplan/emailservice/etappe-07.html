@@ -398,8 +398,8 @@
       <h1>Deploy</h1>
       <p>Der Dienst hat <strong>zwei Pipelines nebeneinander</strong>. GitLab CI baut die
          Images und rollt auf Docker Swarm aus. Jenkins führt die Tests aus — in
-         fünfzehn Stufen, darunter die einzige PHPUnit-Ausführung im ganzen Projekt. Wer nur
-         die <code>.gitlab-ci.yml</code> liest, hält den Dienst für ungetestet.</p>
+         fünfzehn Stufen, darunter die einzige PHPUnit-Ausführung im ganzen Projekt. Die
+         <code>.gitlab-ci.yml</code> allein lässt den Dienst ungetestet erscheinen.</p>
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>.gitlab-ci.yml · Jenkinsfile · 3 Dockerfiles</dd></div>
@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/04</span>
-      <h2>Zwei Pipelines, geteilte Zuständigkeit</h2>
+      <h2>Zwei Pipelines</h2>
     </div>
     <p class="lead">Beide Systeme laufen auf demselben Repository, tun aber Verschiedenes.
       Die Aufteilung steht nirgends dokumentiert — sie ergibt sich erst aus dem Vergleich der
@@ -468,8 +468,8 @@
         <code>.gitlab-ci.yml</code> allein gelesen, wirkt der Dienst ungetestet: vier
         Analysewerkzeuge, alle nicht blockierend, kein PHPUnit. Tatsächlich laufen die
         103 Testdateien mit ihren 8 336 Zeilen in Jenkins — zusammen mit einem
-        Sicherheitsaudit und Ende-zu-Ende-Tests, die GitLab CI beide nicht kennt. Wer die
-        Testabdeckung beurteilen will, muss das <code>Jenkinsfile</code> lesen.</figcaption>
+        Sicherheitsaudit und Ende-zu-Ende-Tests, die GitLab CI beide nicht kennt. Die
+        Testabdeckung ist nur aus dem <code>Jenkinsfile</code> zu beurteilen.</figcaption>
     </figure>
   </section>
 
@@ -477,7 +477,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/04</span>
-      <h2>Drei Images aus zwei Dockerfiles</h2>
+      <h2>Images und Dockerfiles</h2>
     </div>
     <p class="lead">Gebaut werden drei Images, aber nur zwei Dockerfiles sind beteiligt —
       <code>conf/php-fpm/Dockerfile</code> und <code>conf/queues/Dockerfile</code> sind
@@ -538,7 +538,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 03/04</span>
-      <h2>Zwei Umgebungen, ein Branch-Modell</h2>
+      <h2>Umgebungen und Branches</h2>
     </div>
     <p class="lead">Der Weg in den Betrieb hängt allein am Branch. Es gibt keine manuelle
       Freigabe zwischen Build und Rollout.</p>
@@ -560,8 +560,8 @@
       <code>dn04</code> ist kein Failover-Fall, sondern ein Stillstand, bis der Knoten
       zurückkommt.</p>
     <p class="lead">Die Images tragen als Tag den Commit-Kurz-SHA
-      (<code>${CI_COMMIT_SHORT_SHA}</code>). Eine Rückrollung ist damit möglich, solange man
-      den vorherigen SHA kennt — ein <code>latest</code>-Tag, das auf die vorherige Version
+      (<code>${CI_COMMIT_SHORT_SHA}</code>). Eine Rückrollung ist damit möglich, solange
+      der vorherige SHA bekannt ist — ein <code>latest</code>-Tag, das auf die vorherige Version
       zeigt, gibt es nicht.</p>
   </section>
 
@@ -569,7 +569,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 04/04</span>
-      <h2>Was keine der beiden Pipelines prüft</h2>
+      <h2>Lücken der Pipelines</h2>
     </div>
     <p class="lead">Zusammengenommen decken die zwei Systeme viel ab. Drei Dinge fallen
       trotzdem durch — alle drei sind Funde aus früheren Etappen.</p>
@@ -584,8 +584,8 @@
              solchen Job.</p>
           <p><b>Konsequenz:</b> Etappe 1, Prüfpunkt 03 stellte fest, dass die
              GitLab-Pipeline PHPUnit nicht ausführt. Das stimmt, führt aber in die Irre: die
-             Testsuite läuft, nur eben in Jenkins. Wer den Dienst bewertet, muss beide
-             Dateien lesen.</p>
+             Testsuite läuft, nur eben in Jenkins. Eine Bewertung des Dienstes verlangt beide
+             Dateien.</p>
           <p><b>Offen bleibt:</b> Welches System bei einem Push tatsächlich zuerst oder
              überhaupt anläuft, ist aus dem Repo nicht erkennbar — das entscheidet die
              Jenkins-Konfiguration ausserhalb dieses Repositories.</p>

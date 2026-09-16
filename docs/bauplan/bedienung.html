@@ -394,7 +394,7 @@
 
   <div class="titleblock">
     <div class="tb-main">
-      <p class="tb-eyebrow">MDM Workspace · Bedienung</p>
+      <p class="tb-eyebrow">MDM Workspace · Zugänge und Befehle</p>
       <h1>Bedienung</h1>
       <p>Die Architektur-Dokumentation besteht aus HTML-Dateien im Repository
          <code>mdm-harness</code>. Es läuft kein Dienst und kein Server. Diese Seite
@@ -421,7 +421,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 01/05</span>
-      <h2>Drei Zugänge zur selben Quelle</h2>
+      <h2>Zugänge zur Quelle</h2>
     </div>
     <p class="lead">Jede Etappe liegt als eine HTML-Datei im Repository. Aus dieser Datei
       entstehen zwei weitere Darstellungen. Die drei Zugänge unterscheiden sich darin, welche
@@ -474,7 +474,7 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 02/05</span>
-      <h2>Vier Befehle für den Alltag</h2>
+      <h2>Befehle im Alltag</h2>
     </div>
     <p class="lead">Hooks und CI rufen die übrigen Skripte in <code>bin/</code> selbst auf.
       Der Benutzer ruft diese vier Befehle auf. Alle Befehle laufen im Workspace-Root
@@ -744,8 +744,8 @@
         <div>
           <h3>Ein nicht geklontes Repository ist übersprungen</h3>
           <p>Der Bestand richtet sich nach <code>workspace.yaml</code>. Er richtet sich nicht
-             danach, welche Verzeichnisse lokal vorhanden sind. Wer nur ein Repository
-             geklont hat, sieht in der Übersicht weiterhin alle sechs. Die fehlenden
+             danach, welche Verzeichnisse lokal vorhanden sind. Ein Workspace mit nur einem
+             geklonten Repository zeigt in der Übersicht weiterhin alle acht. Die fehlenden
              erscheinen als offener Posten.</p>
           <p>Diese Regel ist der Grund für den Guard: Eine Sitzung darf aus einem unvollständig
              geklonten Workspace nicht schließen, die übrigen Repositorys existierten nicht.</p>
