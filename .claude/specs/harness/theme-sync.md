@@ -1,6 +1,6 @@
 # Spec: Gleiche Aenderungen zwischen den Marken-Themes
 
-Stand: 16. September 2026
+Stand: 16. September 2026 (Patch-Modus nachgetragen)
 Status: UMGESETZT — `bin/theme-sync.sh`
 
 ## Ziel
@@ -61,7 +61,7 @@ die Marke MDM. Es wird beim Uebertragen **nicht** umbenannt.
 bin/theme-sync.sh list                      # Themes, Branch, sauber/unsauber
 bin/theme-sync.sh drift [pfad-praefix]      # was laeuft auseinander?
 bin/theme-sync.sh port <quelle> <ziele> <pfade...>
-bin/theme-sync.sh port <quelle> <ziele> --commit <sha>
+bin/theme-sync.sh port <quelle> <ziele> --commit <sha> [--as-patch]
 ```
 
 ### drift
@@ -79,8 +79,19 @@ gezaehlt, aber nicht gelistet — sie sind kein Drift, sondern Absicht.
 
 ### port
 
-Legt im Ziel-Theme den Branch `sync/<quelle>-<datum>` an und kopiert die Dateien
+Legt im Ziel-Theme den Branch `sync/<quelle>-<datum>` an und bringt die Aenderung
 hinein. **Kein Commit, kein Push.** Pruefen und committen bleibt Handarbeit.
+
+Zwei Modi:
+
+| Modus | Wirkung | Wann |
+|---|---|---|
+| ohne `--as-patch` | kopiert ganze Dateien | Quelle und Ziel sind in der Datei sonst identisch |
+| mit `--as-patch` | wendet nur die Hunks des Commits an | die Quelle laeuft in derselben Datei voraus |
+
+`--as-patch` setzt `--commit <sha>` voraus — ein Patch braucht einen Vorher-Stand.
+Der Patch wird ueber `git diff <sha>^ <sha> -- <nicht-markenspezifische pfade>`
+gebildet, also greift die Blockliste auch hier.
 
 Sicherungen:
 
@@ -117,15 +128,28 @@ layout/*                       mdm-theme.liquid vs. borek-theme.liquid
 - [x] `port --commit <sha>` leitet die Pfade aus dem Commit ab
 - [x] `port` committet nicht und pusht nicht
 - [x] Ein nicht geklontes Theme wird still uebersprungen, nicht als Fehler
+- [x] `--as-patch` ohne `--commit` wird mit Begruendung abgelehnt
+- [x] `--as-patch` prueft je Ziel mit `git apply --check`, **bevor** der Branch
+      angelegt wird — ein Ziel, auf das der Patch nicht passt, bleibt voellig
+      unberuehrt und das Kommando endet mit Exit 1
+- [x] `--as-patch` liefert byte-genau dasselbe Ergebnis wie ein manuelles
+      `git apply` desselben Commits (gemessen an `2bc9365` gegen borek und imm)
 
 ## Grenzen
 
-- `port` uebertraegt **ganze Dateien**, nicht einzelne Hunks. Wenn Quelle und
-  Ziel in derselben Datei unterschiedliche gewollte Staende haben, ist das der
-  falsche Weg — dann von Hand patchen.
-- `--commit` nimmt den **aktuellen** Stand der im Commit beruehrten Dateien,
-  nicht den Stand zum Zeitpunkt des Commits. Fuer einen alten Commit auf einem
-  seither weitergelaufenen Zweig ist das nicht dasselbe.
+- Ohne `--as-patch` uebertraegt `port` **ganze Dateien**, nicht einzelne Hunks.
+  Bei divergierenden Staenden ueberschreibt das Zielarbeit — dann `--as-patch`
+  verwenden. (Behoben am 16. September 2026; vorher war Handarbeit noetig.)
+- `--commit` ohne `--as-patch` nimmt den **aktuellen** Stand der im Commit
+  beruehrten Dateien, nicht den Stand zum Zeitpunkt des Commits. Fuer einen alten
+  Commit auf einem seither weitergelaufenen Zweig ist das nicht dasselbe.
+  `--as-patch` hat dieses Problem nicht — es liest `<sha>^..<sha>`.
+- **Keine Automatik.** Kein Commit, kein Push, kein PR im Ziel-Theme. Bewusst so:
+  eine Uebertragung, die inhaltlich nicht passt, soll nicht von selbst zu einem
+  PR in einem fremden Shop werden.
+- Das Skript prueft **syntaktische** Anwendbarkeit, nicht inhaltliche Richtigkeit.
+  Hart verdrahtete Layout-Zahlen aus einem Marken-Figma laufen sauber durch und
+  sind im Zielshop trotzdem falsch. Visuelle Gegenprobe bleibt Pflicht.
 - Der Drift-Bericht sagt, **dass** etwas auseinanderlaeuft, nicht **ob** das
   richtig ist. Manche Abweichung ist gewollt.
 

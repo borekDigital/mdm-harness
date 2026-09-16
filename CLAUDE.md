@@ -98,19 +98,63 @@ Der Store-Handle gehoert zur Marke — `--store mdm-muenze` gilt nur fuer `theme
 
 ### Gleiche Aenderung in mehrere Themes (bin/theme-sync.sh)
 
-Weil keine gemeinsame Historie existiert, wandert eine Aenderung als **Patch**,
-nicht als Merge:
+Die drei Themes teilen keine Git-Historie, deshalb scheidet `git merge` aus. Eine
+Aenderung wandert von Arbeitsbaum zu Arbeitsbaum.
+
+**Es gibt keine Automatik.** Nichts erzeugt von selbst einen Commit, einen Push
+oder einen PR in den anderen Themes. Jede Uebertragung wird angestossen.
+
+#### Ablauf
 
 ```bash
-bin/theme-sync.sh drift                       # was laeuft auseinander?
-bin/theme-sync.sh drift sections/             # nur ein Bereich
-bin/theme-sync.sh port mdm borek,imm sections/mdm-card-product.liquid
-bin/theme-sync.sh port mdm borek --commit <sha>
+# 1. Im Quell-Theme fertig: committet und gemergt.
+#    Der Commit-SHA aus dem Quell-Theme ist der Schluessel.
+
+# 2. Sehen, wo die Themes stehen
+bin/theme-sync.sh list
+bin/theme-sync.sh drift assets/          # optional: was laeuft auseinander?
+
+# 3. Uebertragen — Modus nach Lage waehlen (siehe Tabelle)
+bin/theme-sync.sh port mdm borek,imm --commit <sha> --as-patch
+
+# 4. Je Ziel-Theme pruefen und committen
+git -C themes/borek diff
+git -C themes/borek commit -am "…"       # gleiche Message wie in der Quelle
+git -C themes/borek push -u origin sync/mdm-<datum>
+
+# 5. PR je Ziel-Theme von Hand
 ```
 
-`port` legt im Ziel-Theme einen Branch `sync/<quelle>-<datum>` an und wendet den
-Patch an — ohne zu committen und ohne zu pushen. Markenspezifische Pfade sind
-blockiert. Pruefen, committen und PR macht Konrad.
+#### Welcher Modus?
+
+| Lage | Kommando | Wirkung |
+|---|---|---|
+| Datei in Quelle und Ziel sonst identisch | `port <q> <ziele> <pfad>` | kopiert die ganze Datei |
+| Quelle laeuft in derselben Datei voraus | `port <q> <ziele> --commit <sha> --as-patch` | wendet nur die Hunks des Commits an |
+
+Der Normalfall ist `--as-patch`, weil MDM den beiden anderen vorauslaeuft. Ohne
+`--as-patch` wuerde die Ganzdatei-Kopie die abweichende Zielarbeit ueberschreiben.
+
+#### Sicherungen
+
+- Ziel mit unsauberem Arbeitsbaum wird uebersprungen, nicht ueberschrieben.
+- Mit `--as-patch`: passt der Patch nicht, wird das Ziel uebersprungen, **bevor**
+  der Branch angelegt wird. Ausweg: `git -C themes/<ziel> apply --3way --reject`.
+- Markenspezifische Pfade (`locales/`, `templates/`, `config/settings_*.json`,
+  `layout/`, `sections/*-group.json`) werden uebersprungen; `--allow-brand` erzwingt.
+- Das Skript committet nie und pusht nie.
+
+#### Was das Skript nicht pruefen kann
+
+Ob die Aenderung **inhaltlich** in die andere Marke passt. Hart verdrahtete
+Layout-Zahlen aus einem Marken-Figma (Spaltenbreiten, Verhaeltnisse, Breakpoints)
+laufen sauber durch den Patch und sind im Zielshop trotzdem falsch. Nach jeder
+Uebertragung im Ziel-Theme visuell gegenpruefen:
+
+```bash
+cd themes/<ziel> && shopify theme check --output json   # JSON parsen, nicht Exit-Code
+cd themes/<ziel> && shopify theme dev --store <handle>
+```
 
 ## Connector (connector/)
 

@@ -10,12 +10,20 @@
 #   theme-sync.sh list
 #   theme-sync.sh drift [pfad-praefix]
 #   theme-sync.sh port <quelle> <ziel[,ziel]> <pfad> [<pfad> ...]
-#   theme-sync.sh port <quelle> <ziel[,ziel]> --commit <sha>
+#   theme-sync.sh port <quelle> <ziel[,ziel]> --commit <sha> [--as-patch]
 #
 # Beispiele:
 #   theme-sync.sh drift sections/
 #   theme-sync.sh port mdm borek,imm sections/mdm-card-product.liquid
 #   theme-sync.sh port mdm borek --commit 49f6f62
+#   theme-sync.sh port mdm borek,imm --commit 2bc9365 --as-patch
+#
+# Zwei Uebertragungsarten:
+#   ohne --as-patch  ganze Datei kopieren. Richtig, wenn Quelle und Ziel sonst
+#                    identisch sind. Ueberschreibt abweichende Zielarbeit.
+#   mit  --as-patch  nur die Hunks des Commits anwenden. Richtig, wenn die Quelle
+#                    in derselben Datei vorauslaeuft. Braucht --commit. Ein Ziel,
+#                    auf das der Patch nicht passt, wird uebersprungen.
 #
 # Das Skript committet nie und pusht nie. Es legt im Ziel einen Branch an und
 # laesst die Aenderung dort unveraendert stehen — pruefen und committen ist
@@ -226,15 +234,22 @@ cmd_port() {
   [[ -n "$src" && -n "$targets_raw" ]] || { usage; exit 1; }
   assert_theme "$src"
 
-  local allow_brand=false commit_sha="" paths=()
+  local allow_brand=false as_patch=false commit_sha="" paths=()
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --allow-brand) allow_brand=true; shift ;;
+      --as-patch) as_patch=true; shift ;;
       --commit) commit_sha="${2:-}"; shift 2 ;;
       -*) echo -e "${RED}FEHLER:${RESET} Unbekannte Option $1" >&2; exit 1 ;;
       *) paths+=("$1"); shift ;;
     esac
   done
+
+  if [[ "$as_patch" == true && -z "$commit_sha" ]]; then
+    echo -e "${RED}FEHLER:${RESET} --as-patch braucht --commit <sha> als Grundlage." >&2
+    echo -e "${DIM}  Ein Patch braucht einen Vorher-Stand; einzelne Pfade liefern den nicht.${RESET}" >&2
+    exit 1
+  fi
 
   local targets
   targets="$(echo "$targets_raw" | tr ',' ' ')"
@@ -275,7 +290,9 @@ cmd_port() {
   done
 
   echo ""
-  echo -e "${BOLD}  port: ${src} -> ${targets_raw}${RESET}"
+  local mode_label="ganze Dateien"
+  [[ "$as_patch" == true ]] && mode_label="Patch aus ${commit_sha}"
+  echo -e "${BOLD}  port: ${src} -> ${targets_raw}${RESET} ${DIM}(${mode_label})${RESET}"
   echo ""
   if [[ ${#skipped[@]} -gt 0 ]]; then
     echo -e "  ${YELLOW}Markenspezifisch, nicht uebertragen${RESET} ${DIM}(--allow-brand erzwingt)${RESET}:"
@@ -291,6 +308,24 @@ cmd_port() {
     echo -e "  ${RED}Nichts zu uebertragen.${RESET}"
     echo ""
     exit 1
+  fi
+
+  # Patch aus dem Commit erzeugen — nur ueber die nicht-markenspezifischen Pfade.
+  local patch_file=""
+  if [[ "$as_patch" == true ]]; then
+    if ! git -C "$src_dir" rev-parse --verify "${commit_sha}^^{commit}" >/dev/null 2>&1; then
+      echo -e "${RED}FEHLER:${RESET} $commit_sha hat keinen Vorgaenger (Wurzel-Commit) — kein Patch ableitbar." >&2
+      exit 1
+    fi
+    patch_file="${TMP}/port.patch"
+    git -C "$src_dir" diff "${commit_sha}^" "$commit_sha" -- "${usable[@]}" > "$patch_file"
+    if [[ ! -s "$patch_file" ]]; then
+      echo -e "  ${RED}Patch ist leer — nach dem Filtern bleibt nichts uebrig.${RESET}"
+      echo ""
+      exit 1
+    fi
+    echo -e "  ${DIM}Patch aus ${commit_sha}: $(command grep -c '^@@' "$patch_file") Hunk(s) ueber ${#usable[@]} Datei(en).${RESET}"
+    echo ""
   fi
 
   local branch
@@ -309,6 +344,16 @@ cmd_port() {
       continue
     fi
 
+    # Erst pruefen, dann den Branch anlegen. Sonst bliebe ein Ziel, auf das der
+    # Patch nicht passt, auf einem leeren sync-Branch stehen.
+    if [[ "$as_patch" == true ]] && ! git -C "$dir" apply --check "$patch_file" 2>/dev/null; then
+      echo -e "  ${RED}${t}: uebersprungen — Patch passt nicht.${RESET}"
+      echo -e "  ${DIM}    Der Kontext weicht ab. Von Hand uebertragen:${RESET}"
+      echo -e "  ${DIM}    git -C themes/${t} apply --3way --reject <patch>${RESET}"
+      failed=1
+      continue
+    fi
+
     if git -C "$dir" rev-parse --verify "$branch" >/dev/null 2>&1; then
       git -C "$dir" checkout "$branch" >/dev/null 2>&1
       echo -e "  ${CYAN}${t}${RESET}: Branch ${branch} ${DIM}(bestand bereits, vorher: ${prev})${RESET}"
@@ -317,18 +362,28 @@ cmd_port() {
       echo -e "  ${CYAN}${t}${RESET}: Branch ${branch} ${DIM}(neu, vorher: ${prev})${RESET}"
     fi
 
-    local changed=0 identical=0
-    for p in "${usable[@]}"; do
-      mkdir -p "$(dirname "${dir}/${p}")"
-      if [[ -f "${dir}/${p}" ]] && cmp -s "${src_dir}/${p}" "${dir}/${p}"; then
-        identical=$((identical + 1))
-        continue
-      fi
-      cp "${src_dir}/${p}" "${dir}/${p}"
-      echo -e "    ${GREEN}+${RESET} $p"
-      changed=$((changed + 1))
-    done
-    echo -e "    ${DIM}${changed} geaendert, ${identical} bereits identisch — nicht committet.${RESET}"
+    if [[ "$as_patch" == true ]]; then
+      git -C "$dir" apply "$patch_file"
+      local touched
+      touched="$(git -C "$dir" diff --name-only | wc -l | tr -d ' ')"
+      while IFS= read -r p; do
+        [[ -n "$p" ]] && echo -e "    ${GREEN}~${RESET} $p"
+      done < <(git -C "$dir" diff --name-only)
+      echo -e "    ${DIM}${touched} Datei(en) gepatcht — nicht committet.${RESET}"
+    else
+      local changed=0 identical=0
+      for p in "${usable[@]}"; do
+        mkdir -p "$(dirname "${dir}/${p}")"
+        if [[ -f "${dir}/${p}" ]] && cmp -s "${src_dir}/${p}" "${dir}/${p}"; then
+          identical=$((identical + 1))
+          continue
+        fi
+        cp "${src_dir}/${p}" "${dir}/${p}"
+        echo -e "    ${GREEN}+${RESET} $p"
+        changed=$((changed + 1))
+      done
+      echo -e "    ${DIM}${changed} geaendert, ${identical} bereits identisch — nicht committet.${RESET}"
+    fi
   done
 
   echo ""
@@ -340,7 +395,7 @@ cmd_port() {
 }
 
 usage() {
-  sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 main() {
