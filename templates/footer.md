@@ -5,6 +5,42 @@
   Scope nie eine Ticket-ID. Konrad committet selbst — Claude liefert die Message.
 - Keine KI-Hinweise in Commits, Doku oder Code-Kommentaren.
 
+## Ticket-Kommentare (Jira)
+
+Kommentare werden von Fachabteilungen gelesen, nicht nur von Entwicklern.
+Sie sind zum Scannen gebaut, nicht zum Lesen.
+
+### Aufbau
+
+- **Kernaussage im ersten Satz** — Status oder Ergebnis, nicht die Vorgeschichte.
+  Kernentitaeten, Statuswechsel und kritische Kennzahlen fett.
+- Abschnitte mit `###`, Listen als Bullets.
+- **Bullets** beginnen mit dem fett gesetzten Namen des Elements, danach hoechstens
+  ein kurzer Satz.
+- **Nummerierte Listen nur fuer Abfolgen** — alles andere sind Bullets.
+- Aktiv formulieren, kurze Saetze.
+
+### Inhalt
+
+- Sachlich, neutral, loesungsorientiert. Keine Ich-Perspektive.
+- Nur Fakten aus Ticket und Umsetzung — nichts hinzuerfinden.
+- Nicht wiederholen, was im Ticketverlauf bereits steht.
+- Begleitet der Kommentar einen Workflow-Wechsel: alten und neuen Status nennen.
+
+### Abschluss
+
+- Endet mit einer **fett markierten Handlungsaufforderung** an eine benannte Rolle,
+  sofern eine Aktion noetig ist.
+- `@`-Mention der zustaendigen Person, wenn eine Antwort erwartet wird.
+  Technisch: ADF-`mention`-Node mit der `accountId` (`contentFormat: "adf"`).
+  In Markdown geschriebene Mentions werden nicht verlinkt und benachrichtigen niemanden.
+- Verwandte Ticket-IDs im Fliesstext nennen (`GRIFFIN-123`) — Jira verlinkt sie selbst.
+
+### Nie
+
+- Wall of Text, Begruessung, Verabschiedung.
+- Emojis in technischen Tickets oder Bug-Tickets.
+
 ## Test-Driven Development (TDD)
 
 TDD ist Pflicht fuer alle Code-Aenderungen in diesem Workspace. Reihenfolge:
