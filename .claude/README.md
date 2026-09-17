@@ -215,6 +215,9 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 - **middleware-feature** — End-to-End-Workflow fuer creditcheck/emailservice/payment-service (TDD + Plan → Gate → Implement → Review)
 - **figma-to-liquid** — Extraktions-Konventionen (Tool-Reihenfolge, Token-Mapping)
 - **mdm-notes** — Apple-Notes-Pflege (fester Notiz-Satz, Safe-Append-Protokoll)
+- **theme-port** — Aenderung von einem Marken-Theme in die anderen uebertragen
+  (`bin/theme-sync.sh`: Modus-Wahl, Sicherungen, Exit-Codes, Nachkontrolle)
+- **jira-comment** — Schreibkonventionen fuer Jira-Ticket-Kommentare (Aufbau, ADF-Mentions)
 - **setup** — Interaktives Setup: Repos klonen, lokale Umgebung einrichten
 - **repo-bauplan** — Architektur-Blattsatz fuer ein Repo: nummerierte Etappen als
   Artifact-Seiten, HTML-Quelle unter `docs/bauplan/`, jede Aussage mit `Datei:Zeile` belegt
@@ -226,8 +229,8 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | liquid-conventions | themes/*/sections,snippets,blocks,layout | Liquid/Hyper-Konventionen |
 | templates-json | themes/*/templates | JSON-Template-Regeln |
 | merchant-config | themes/*/config,locales | Merchant-verwaltete Dateien |
-| connector-conventions | connector/app,config,db,lib | Rails/Shopify-App-Konventionen + TDD-Pflicht |
-| middleware-conventions | creditcheck,emailservice,payment-service | PHP/Symfony-Konventionen (3 Services) |
+| connector-conventions | connector + connector-worktrees/*: app,config,db,lib,spec | Rails/Shopify-App-Konventionen + TDD-Pflicht |
+| middleware-conventions | creditcheck,emailservice,payment-service | PHP/Symfony-Konventionen (3 Services) + TDD-Pflicht |
 
 ## Hooks (`.claude/hooks/`)
 

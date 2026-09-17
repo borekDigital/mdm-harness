@@ -56,80 +56,25 @@ dir_exists() {
   [[ -d "${SCRIPT_DIR}/${path}" ]]
 }
 
-# --- Workspace-Baum generieren ---
-
-generate_tree() {
-  local tree=""
-  tree+='```\n'
-  tree+='~/MDM/                        Workspace-Root (Harness-Repo)\n'
-
-  while IFS= read -r repo_id; do
-    local name path
-    name="$(yaml_get "$repo_id" "name")"
-    path="$(yaml_get "$repo_id" "path")"
-    local marker=""
-    if ! is_installed "$repo_id"; then
-      marker=" (nicht installiert)"
-    fi
-    # Padding fuer Alignment
-    local padded
-    padded=$(printf "%-25s" "${path}")
-    tree+="├── ${padded} ${name}${marker}\n"
-  done < <(get_repo_ids)
-
-  tree+='├── Tickets/                  Ticket-Artefakte (planuebergreifend)\n'
-  tree+='├── .claude/                  Harness: Agenten, Skills, Hooks, Rules\n'
-  tree+='├── .mcp.json                 MCP-Server\n'
-  tree+='└── CLAUDE.md                 diese Datei (generiert durch sync.sh)\n'
-  tree+='```'
-
-  echo -e "$tree"
-}
-
 # --- Repo-Tabelle generieren ---
 
+# Eine kompakte Tabelle statt Baum + zwei Plattform-Tabellen. Pfade, Stack und
+# Branch stehen im Manifest; die Remote-URLs nicht mehr — die stehen in der
+# .git/config des jeweiligen Repos und muessen nicht in jede Session geladen
+# werden. Nicht geklonte Repos werden markiert, nicht weggelassen (Guard-Semantik).
 generate_repo_table() {
   local table=""
-
-  # Shopify-Repos
-  local repo_count
-  repo_count=$(get_repo_ids | wc -l | tr -d ' ')
-  table+="${repo_count} unabhaengige Git-Repos auf zwei Plattformen:\\n"
-  table+='\n'
-  table+='**Shopify-Repos** — GitHub via SSH-Alias `github.com-borek`\n'
-  table+='(Key `~/.ssh/id_ed25519_borek`, GitHub-Account `Konrad-Thiemann`, Org `borekDigital`):\n'
-  table+='\n'
-  table+='| Repo | Pfad | Remote |\n'
-  table+='|---|---|---|\n'
+  table+='| Repo | Pfad | Stack | Branch |\n'
+  table+='|---|---|---|---|\n'
 
   while IFS= read -r repo_id; do
-    local group
-    group="$(yaml_get "$repo_id" "group")"
-    [[ "$group" == "shopify" ]] || continue
-    local name path remote
+    local name path tech branch marker=""
     name="$(yaml_get "$repo_id" "name")"
     path="$(yaml_get "$repo_id" "path")"
-    remote="$(yaml_get "$repo_id" "remote")"
-    table+="| ${name} | \`${path}\` | \`${remote}\` |\n"
-  done < <(get_repo_ids)
-
-  # Middleware-Repos
-  table+='\n'
-  table+='**Middleware-Repos** — GitLab (gitlab.mdm.de).\n'
-  table+='Zugang zu gitlab.mdm.de erforderlich fuer diese Repos.\n'
-  table+='\n'
-  table+='| Repo | Pfad | Remote |\n'
-  table+='|---|---|---|\n'
-
-  while IFS= read -r repo_id; do
-    local group
-    group="$(yaml_get "$repo_id" "group")"
-    [[ "$group" == "middleware" ]] || continue
-    local name path remote
-    name="$(yaml_get "$repo_id" "name")"
-    path="$(yaml_get "$repo_id" "path")"
-    remote="$(yaml_get "$repo_id" "remote")"
-    table+="| ${name} | \`${path}\` | \`${remote}\` |\n"
+    tech="$(yaml_get "$repo_id" "tech")"
+    branch="$(yaml_get "$repo_id" "branch")"
+    is_installed "$repo_id" || marker=" _(nicht installiert)_"
+    table+="| ${name}${marker} | \`${path}\` | ${tech} | \`${branch}\` |\n"
   done < <(get_repo_ids)
 
   echo -e "$table"
@@ -143,38 +88,21 @@ generate_claude_md() {
   # Header mit dynamischen Platzhaltern
   local header
   header="$(cat "${TEMPLATES_DIR}/header.md")"
-  local tree
-  tree="$(generate_tree)"
   local repo_table
   repo_table="$(generate_repo_table)"
 
-  header="${header/\{\{WORKSPACE_TREE\}\}/$tree}"
   header="${header/\{\{REPO_TABLE\}\}/$repo_table}"
   content+="${header}"
 
   # Repo-Sections. "themes" ist kein Repo-Schluessel, sondern der gemeinsame
   # Abschnitt der drei Marken-Themes (theme-mdm, theme-borek, theme-imm): sie
   # unterscheiden sich in der Marke, nicht in den Konventionen.
-  local repo_order="themes connector datalayer creditcheck emailservice payment-service"
+  local repo_order="themes connector datalayer middleware"
   for repo_id in $repo_order; do
     local tmpl="${TEMPLATES_DIR}/repo-${repo_id}.md"
     [[ -f "$tmpl" ]] || continue
 
     content+=$'\n'
-
-    if [[ "$repo_id" == "themes" ]]; then
-      while IFS= read -r theme_id; do
-        [[ "$theme_id" == theme-* ]] || continue
-        is_installed "$theme_id" && continue
-        local name
-        name="$(yaml_get "$theme_id" "name")"
-        content+=$'\n'"> **Hinweis:** ${name} ist nicht lokal installiert. \`./setup.sh --add\` zum Nachinstallieren."$'\n'
-      done < <(get_repo_ids)
-    elif ! is_installed "$repo_id"; then
-      local name
-      name="$(yaml_get "$repo_id" "name")"
-      content+=$'\n'"> **Hinweis:** ${name} ist nicht lokal installiert. \`./setup.sh --add\` zum Nachinstallieren."$'\n'
-    fi
 
     content+=$'\n'"$(cat "$tmpl")"
   done

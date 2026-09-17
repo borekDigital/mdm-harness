@@ -36,6 +36,10 @@ paths:
 - Tests Backend: `www/tests/`, PHPUnit. Tests Frontend: `client/`, Jest.
 
 ## Allgemeine Regeln
+- **TDD-Pflicht:** Jede Aenderung beginnt mit einem fehlschlagenden Test (Red → Green → Refactor).
+  Kein Feature-Code ohne Test, kein Bugfix ohne Regression-Test. Test und Feature-Code in
+  denselben Commit. Validierung: `docker compose exec app bin/phpunit` muss gruen sein,
+  dazu `phpstan`/`phpcs` wo konfiguriert (emailservice, payment-service).
 - PHP-Version beachten: creditcheck = 7.4 (kein `match`, keine Enums, keine Attributes), Rest = 8.3.
 - Bestehende Patterns im jeweiligen Repo lesen, bevor neue Code-Strukturen eingefuehrt werden.
 - Symfony-Services via DI (services.yaml), kein Service-Locator-Anti-Pattern.

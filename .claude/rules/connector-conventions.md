@@ -4,6 +4,12 @@ paths:
   - "connector/config/**"
   - "connector/db/**"
   - "connector/lib/**"
+  - "connector/spec/**"
+  - "connector-worktrees/*/app/**"
+  - "connector-worktrees/*/config/**"
+  - "connector-worktrees/*/db/**"
+  - "connector-worktrees/*/lib/**"
+  - "connector-worktrees/*/spec/**"
 ---
 # Connector-Konventionen (Rails 8.1 / Shopify-App)
 

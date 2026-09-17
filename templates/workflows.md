@@ -1,46 +1,28 @@
 ## Spec-Driven Development
 
-Jede Aenderung beginnt mit einer **Spec-Datei** (`.claude/specs/`), die Anforderungen
-und Akzeptanzkriterien definiert — BEVOR Code geschrieben wird.
-
-1. **Spec schreiben** — Anforderungen definieren (was, nicht wie)
-2. **Spec reviewen** — Konrad gibt Freigabe
-3. **Implementieren** — Code wird gegen die Spec gebaut
-4. **Validieren** — Akzeptanzkriterien pruefen
-
-Konventionen: `.claude/specs/README.md`. Theme-Specs: `.claude/specs/themes/` (gemeinsam) und `.claude/specs/themes/<marke>/`.
-Connector-Specs: `.claude/specs/connector/`.
-Middleware-Specs: `.claude/specs/creditcheck/`, `.claude/specs/emailservice/`, `.claude/specs/payment-service/`.
-Datalayer-Specs: `.claude/specs/datalayer/`.
+Jede Aenderung beginnt mit einer **Spec** unter `.claude/specs/` (Anforderungen und
+Akzeptanzkriterien, *was* — nicht *wie*), dann Freigabe durch Konrad, dann Implementierung
+gegen die Spec, dann Validierung der Akzeptanzkriterien.
+Ablage und Konventionen: `.claude/specs/README.md`.
 
 ## Workflow — Theme
 
-Gilt fuer alle drei Marken-Themes. Das Ziel-Theme (`themes/mdm/`, `themes/borek/`,
-`themes/imm/`) wird zu Beginn festgelegt; ohne Angabe ist `themes/mdm/` gemeint.
+Gilt fuer alle drei Marken-Themes; ohne Angabe ist `themes/mdm/` gemeint.
 
-Template-Arbeit: `/mdm-template` mit festen Phasen:
-Spec → Extraktion (figma-extractor) → Plan (theme-planner) → **Freigabe** →
-Implementierung (liquid-implementer) → Review (theme-reviewer + security-reviewer) →
-Doku (docs-writer) → Uebergabe. Systemuebersicht: `.claude/README.md`
+Grundprinzip **Theme-First**: bestehende Hyper-Sections ueberschreiben statt neu bauen —
+so wenig Neuentwicklung wie moeglich. Mapping: `.claude/specs/themes/_conventions.md`.
 
-Grundprinzip: **Theme-First** — bestehende Hyper-Sections ueberschreiben, nicht neu bauen.
-So wenig wie moeglich neu entwickeln, so viel wie noetig.
-Mapping und Konventionen: `.claude/specs/themes/_conventions.md`.
+- Ganze Seite aus Figma → Skill `/mdm-template` (zerlegt in eine Block Map)
+- Einzelner Block → Skill `/mdm-block` (ein Block = ein Branch = ein PR)
 
-## Workflow — Connector
+## Workflow — Connector und Middleware
 
-Feature-Arbeit in eigenem Git-Worktree (siehe Git Worktree):
-Worktree anlegen → rails-planner → **Freigabe** → rails-implementer (TDD: Red→Green→Refactor) →
-rails-reviewer + security-reviewer → Doku (docs-writer) → Uebergabe → Worktree aufraeumen.
-
-## Notizen (Apple Notes)
-
-Fester Notiz-Satz, Praefix `MDM Shopify ::`. Konventionen: Skill `/mdm-notes`.
-Ablage im Notes-Ordner `Shopify` mit Unterordnern `Tagebuch` und `Tickets`.
-Update = Vollersetzung. Kein Markdown, kein `&`, Body-Zeile 1 = Titel.
+Feature-Arbeit im eigenen Worktree: Plan → **Freigabe** → Implementierung (TDD) →
+Review-Paar (fachlicher Reviewer + security-reviewer) → Doku → Uebergabe.
+Skills: `/connector-feature`, `/middleware-feature`.
 
 ## Shopify Dev MCP
 
-Zu Beginn einer Liquid-Session `learn_shopify_api` aufrufen; Doku ueber
-`search_docs_chunks`; vor Abschluss `validate_theme` laufen lassen.
+Zu Beginn einer Liquid-Session `learn_shopify_api` aufrufen, Doku ueber
+`search_docs_chunks`, vor Abschluss `validate_theme` laufen lassen.
 Shopify parst Liquid strikt (seit 13.01.2026).

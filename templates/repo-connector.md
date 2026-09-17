@@ -1,27 +1,18 @@
 ## Connector (connector/)
 
-Rails 8.1 + React 18/Polaris Backend. Bidirektionaler Shopify↔SAP-Sync
-(mdm-muenze/mdm-staging), Sidekiq-Worker, GraphQL (privat + public/App-Proxy),
-REST-API v1, 5 Shopify-Extensions.
+Rails-Backend mit React/Polaris-Frontend. Bidirektionaler Shopify↔SAP-Sync
+(`mdm-muenze`/`mdm-staging`), Sidekiq-Worker, GraphQL (privates Schema fuer den
+embedded Admin, oeffentliches fuer den App-Proxy), REST-API v1, fuenf Shopify-Extensions.
 
-### Tech-Stack
+### Befehle (in `connector/`)
 
-- Ruby 4.0.2, Rails 8.1.3, PostgreSQL, Sidekiq + sidekiq-scheduler, Redis
-- Frontend: React 18 + Vite 6 + Apollo Client + Polaris 13
-- Extensions: credit-check, sepa-iban (Checkout UI), payment-customization (Function),
-  order-credit-check-block, order-sap-status-block (Admin Blocks)
-- RuboCop mit Shopify-Preset; Brakeman fuer Security-Analyse
-- Deploy: Docker (web + worker) → registry.mdm.de → GitLab-Pipeline (`deploy.sh`)
-
-### Befehle (ausfuehren in `connector/`)
-
-- `bundle exec rubocop` — Linter
-- `bundle exec brakeman` — Security-Scan
 - `bin/dev` — Dev-Server (Rails + Sidekiq + Vite)
-- `./deploy.sh --staging` / `./deploy.sh --production` — Deploy
+- `bundle exec rspec` / `rubocop` / `brakeman` — Tests, Linter, Security-Scan
+- `./deploy.sh --staging` / `--production` — Deploy (Docker → registry.mdm.de → GitLab)
 
 ### Secrets
 
-Nur in `.env` (nie committen). Template: `.env.template`.
-Keys: SHOPIFY_API_KEY/SECRET, SAP_API_URL/USERNAME/PASSWORD, CREDIT_API_*, OPENIBAN_API_*,
-GITLAB_URL/TOKEN, ROLLBAR_ACCESS_TOKEN, SIDEKIQ_USERNAME/PASSWORD.
+Nur in `.env`, nie committen. Template: `.env.template` listet alle benoetigten Keys
+(Shopify, SAP, Credit-API, OpenIBAN, GitLab, Rollbar, Sidekiq).
+
+Konventionen: `.claude/rules/connector-conventions.md`

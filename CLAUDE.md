@@ -1,61 +1,34 @@
 # MDM Workspace
 
-## Zweck
+Zentraler Workspace fuer das MDM-Oekosystem: drei Shopify-Marken-Themes, Connector,
+Datalayer und drei Middleware-Services — acht eigenstaendige Git-Repos unter einer
+gemeinsamen KI-Steuerungsschicht. `~/MDM/` ist selbst ein Repo (`mdm-harness`), die
+Kind-Repos sind darin gitignored.
 
-Zentraler Workspace fuer das MDM-Oekosystem: Shopify (drei Marken-Themes, Backend-Connector,
-Datalayer) und Middleware-Services (Creditcheck, Emailservice, Payment-Service).
-Eigenstaendige Git-Repos, eine gemeinsame KI-Steuerungsschicht (Harness).
+Diese Datei wird von `sync.sh` aus `templates/` erzeugt — **Aenderungen dort, nicht hier.**
 
-## Workspace-Struktur
+## Repos
 
-```
-~/MDM/                        Workspace-Root (Harness-Repo)
-├── themes/mdm/               Shopify Theme MDM
-├── themes/borek/             Shopify Theme Borek
-├── themes/imm/               Shopify Theme IMM
-├── connector/                Shopify Connector
-├── datalayer/                GTM Datalayer
-├── creditcheck/              Creditcheck + CustomerInfo
-├── emailservice/             Emailservice
-├── payment-service/          Payment-Service
-├── Tickets/                  Ticket-Artefakte (planuebergreifend)
-├── .claude/                  Harness: Agenten, Skills, Hooks, Rules
-├── .mcp.json                 MCP-Server
-└── CLAUDE.md                 diese Datei (generiert durch sync.sh)
-```
+| Repo | Pfad | Stack | Branch |
+|---|---|---|---|
+| Shopify Theme MDM | `themes/mdm/` | Liquid/CSS/JS (Hyper 1.3.3) | `main` |
+| Shopify Theme Borek | `themes/borek/` | Liquid/CSS/JS (Hyper 1.3.3) | `main` |
+| Shopify Theme IMM | `themes/imm/` | Liquid/CSS/JS (Hyper 1.3.3) | `main` |
+| Shopify Connector | `connector/` | Rails 8.1 / React 18 / Polaris | `main` |
+| GTM Datalayer | `datalayer/` | JavaScript | `main` |
+| Creditcheck + CustomerInfo | `creditcheck/` | PHP 7.4 / Symfony | `master` |
+| Emailservice | `emailservice/` | PHP 8.3 / Symfony 7.1 | `master` |
+| Payment-Service | `payment-service/` | PHP 8.3 / Symfony 7.1 / Nuxt | `master` |
 
-Theme-Pfade tragen relativ zum Workspace-Root das Praefix `themes/<marke>/`
-(z. B. `themes/mdm/sections/`, `themes/borek/locales/`) — `mdm`, `borek`, `imm`.
-Connector-Pfade analog `connector/`. Middleware-Pfade analog `creditcheck/`,
-`emailservice/`, `payment-service/`.
-
-## Repos und Git
-
-8 unabhaengige Git-Repos auf zwei Plattformen:
-
-**Shopify-Repos** — GitHub via SSH-Alias `github.com-borek`
-(Key `~/.ssh/id_ed25519_borek`, GitHub-Account `Konrad-Thiemann`, Org `borekDigital`):
-
-| Repo | Pfad | Remote |
-|---|---|---|
-| Shopify Theme MDM | `themes/mdm/` | `git@github.com-borek:borekDigital/shopifyFrontend_MDM.git` |
-| Shopify Theme Borek | `themes/borek/` | `git@github.com-borek:borekDigital/shopifyFrontend_Borek.git` |
-| Shopify Theme IMM | `themes/imm/` | `git@github.com-borek:borekDigital/shopifyFrontend_IMM.git` |
-| Shopify Connector | `connector/` | `git@github.com-borek:borekDigital/shopifyConnector.git` |
-| GTM Datalayer | `datalayer/` | `git@github.com-borek:borekDigital/shopifyDatalayer.git` |
-
-**Middleware-Repos** — GitLab (gitlab.mdm.de).
-Zugang zu gitlab.mdm.de erforderlich fuer diese Repos.
-
-| Repo | Pfad | Remote |
-|---|---|---|
-| Creditcheck + CustomerInfo | `creditcheck/` | `git@gitlab.mdm.de:middleware/creditcheck.git` |
-| Emailservice | `emailservice/` | `git@gitlab.mdm.de:middleware/emailservice.git` |
-| Payment-Service | `payment-service/` | `git@gitlab.mdm.de:middleware/payment-service.git` |
+Zugriff auf die GitHub-Repos **nur** ueber den SSH-Alias `github.com-borek`
+(Zweit-Account `Konrad-Thiemann`, Key `~/.ssh/id_ed25519_borek`) — kanonisches
+`git@github.com:` schlaegt bei der Org `borekDigital` fehl. Middleware liegt auf
+`gitlab.mdm.de` (Standard-Key) und folgt `master` statt `main`.
 
 ## Themes (themes/)
 
-Drei Shopify-Themes, ein Aufbau — je Marke ein eigenes Repo unter `themes/`:
+Drei Marken-Themes, ein Aufbau. Basis aller drei: kommerzielles Theme **Hyper v1.3.3**
+von FoxEcom (Online Store 2.0, Doku: docs.foxecom.com/hyper-theme).
 
 | Marke | Pfad | Store-Handle |
 |---|---|---|
@@ -63,21 +36,16 @@ Drei Shopify-Themes, ein Aufbau — je Marke ein eigenes Repo unter `themes/`:
 | Borek | `themes/borek/` | — |
 | IMM | `themes/imm/` | — |
 
-Basis aller drei: kommerzielles Theme Hyper v1.3.3 von FoxEcom
-(Online Store 2.0, Doku: docs.foxecom.com/hyper-theme).
+Die drei Repos teilen **keine** Git-Historie, aber rund 90 Prozent identische Dateien.
+MDM ist der aktive Zweig und laeuft den beiden anderen voraus; Borek und IMM sind
+untereinander nahezu deckungsgleich. Perspektivisch sollen alle drei Shops auf **einem**
+Theme laufen. Uebertragung zwischen den Marken: Skill `/theme-port`.
 
-Die drei Repos teilen **keine** Git-Historie (drei getrennte Wurzel-Commits), aber
-rund 90 Prozent identische Dateien. MDM ist der aktive Zweig und laeuft den beiden
-anderen voraus; Borek und IMM sind untereinander nahezu deckungsgleich.
-Perspektivisch sollen alle drei Shops auf **einem** Theme laufen — bis dahin gilt
-der Patch-Weg unten.
+### Befehle (im jeweiligen Theme-Verzeichnis, nicht im Workspace-Root)
 
-### Befehle (ausfuehren im jeweiligen Theme-Verzeichnis)
-
-- `shopify theme check --fail-level error` — Linter (Baseline MDM: 9 Errors + 20 Warnings in Altlasten)
+- `shopify theme check --fail-level error` — Linter
 - `shopify theme dev --store mdm-muenze` — Dev-Server mit Hot-Reload
-- `shopify theme pull --store mdm-muenze --theme <id>` — Stand vom Store holen
-- `shopify theme push --unpublished --store mdm-muenze` — Upload als unveroeffent. Theme
+- Upload nur als unveroeffentlichtes Theme (`--unpublished`), nie aufs Live-Theme
 - Kein `--theme-editor-sync` (CLI-Bug, community.shopify.dev/t/28292 — Hook blockiert)
 
 Der Store-Handle gehoert zur Marke — `--store mdm-muenze` gilt nur fuer `themes/mdm/`.
@@ -85,360 +53,122 @@ Der Store-Handle gehoert zur Marke — `--store mdm-muenze` gilt nur fuer `theme
 ### Namensraum
 
 - Das Praefix `mdm-` ist die **Haus-Konvention aller drei Themes**, nicht die Marke MDM.
-  Auch `themes/borek/` und `themes/imm/` fuehren `mdm-breadcrumbs.liquid`,
-  `mdm-card-product.liquid` usw.
-- FoxEcom-Kerndateien NIEMALS direkt bearbeiten. Jede Section, die in einem
-  Template referenziert wird, MUSS als `mdm-`-Kopie existieren (update-sicher).
-- Templates: `product.mdm.json`, `collection.mdm.json`; Landingpages `page.<slug>.json`.
-- Locales: `en.default.json` (Default) + `de.json` (Shop-Sprache) — paarig pflegen.
-- Markenspezifisch und nie zwischen Themes uebertragen: `config/settings_data.json`,
+  Auch `themes/borek/` und `themes/imm/` fuehren `mdm-breadcrumbs.liquid` usw.
+- FoxEcom-Kerndateien NIEMALS direkt bearbeiten. Jede Section, die in einem Template
+  referenziert wird, MUSS als `mdm-`-Kopie existieren (update-sicher).
+- Markenspezifisch, nie zwischen Themes uebertragen: `config/settings_data.json`,
   `config/settings_schema.json`, `locales/`, `templates/`, `sections/*-group.json`,
-  `layout/` (MDM hat `mdm-theme.liquid`, Borek `borek-theme.liquid`).
-- Bereichs-Details: `.claude/rules/`
-
-### Gleiche Aenderung in mehrere Themes (bin/theme-sync.sh)
-
-Die drei Themes teilen keine Git-Historie, deshalb scheidet `git merge` aus. Eine
-Aenderung wandert von Arbeitsbaum zu Arbeitsbaum.
-
-**Es gibt keine Automatik.** Nichts erzeugt von selbst einen Commit, einen Push
-oder einen PR in den anderen Themes. Jede Uebertragung wird angestossen.
-
-#### Ablauf
-
-```bash
-# 1. Im Quell-Theme fertig: committet und gemergt.
-#    Der Commit-SHA aus dem Quell-Theme ist der Schluessel.
-
-# 2. Sehen, wo die Themes stehen
-bin/theme-sync.sh list
-bin/theme-sync.sh drift assets/          # was laeuft auseinander?
-bin/theme-sync.sh settings page_width    # haben die Marken dieselbe Grundlage?
-
-# 3. Uebertragen — Modus nach Lage waehlen (siehe Tabelle)
-bin/theme-sync.sh port mdm borek,imm --commit <sha> --as-patch
-
-# 4. Je Ziel-Theme pruefen und committen
-git -C themes/borek diff
-git -C themes/borek commit -am "…"       # gleiche Message wie in der Quelle
-git -C themes/borek push -u origin sync/mdm-<datum>
-
-# 5. PR je Ziel-Theme von Hand
-```
-
-Schritt 2 gehoert dazu: `settings <schluessel>` vergleicht einen Wert aus
-`config/settings_data.json` ueber alle Themes. `page_width` ist in allen drei `1700`,
-`type_header_font` dagegen nicht — MDM fuehrt `ebgaramond_n5`, Borek und IMM
-`archivo_n7`. Eine CSS-Regel, die an der Hausschrift haengt, wirkt dort anders.
-
-#### Welcher Modus?
-
-| Lage | Kommando | Wirkung |
-|---|---|---|
-| Datei in Quelle und Ziel sonst identisch | `port <q> <ziele> <pfad>` | kopiert die ganze Datei |
-| Quelle laeuft in derselben Datei voraus | `port <q> <ziele> --commit <sha> --as-patch` | wendet nur die Hunks des Commits an |
-
-Der Normalfall ist `--as-patch`, weil MDM den beiden anderen vorauslaeuft. Ohne
-`--as-patch` wuerde die Ganzdatei-Kopie die abweichende Zielarbeit ueberschreiben.
-
-#### Sicherungen
-
-- Ziel mit unsauberem Arbeitsbaum wird uebersprungen, nicht ueberschrieben.
-- Mit `--as-patch`: passt der Patch nicht, wird das Ziel uebersprungen, **bevor**
-  der Branch angelegt wird. Ausweg: `git -C themes/<ziel> apply --3way --reject`.
-- Markenspezifische Pfade (`locales/`, `templates/`, `config/settings_*.json`,
-  `layout/`, `sections/*-group.json`) werden uebersprungen. `--allow-brand` gibt
-  alle frei, `--allow-brand=<pfad>[,<pfad>]` nur die genannten — fuer den Fall,
-  dass ein einzelner Uebersetzungsschluessel fuer alle Marken gilt.
-- Das Skript committet nie und pusht nie.
-
-#### Exit-Codes von `port`
-
-| Code | Bedeutung |
-|---|---|
-| 0 | alle Ziele geschrieben |
-| 1 | Abbruch vor der Ziel-Schleife — kein Ziel beruehrt |
-| 2 | teilweise — mindestens ein Ziel geschrieben, mindestens eines uebersprungen |
-| 3 | kein Ziel geschrieben, alle uebersprungen |
-
-Code 2 und 3 unterscheiden sich fuer ein Skript, das `port` aufruft: bei 2 stehen
-Aenderungen in Arbeitsbaeumen, bei 3 nicht.
-
-#### Was das Skript nicht pruefen kann
-
-Ob die Aenderung **inhaltlich** in die andere Marke passt. Hart verdrahtete
-Layout-Zahlen aus einem Marken-Figma (Spaltenbreiten, Verhaeltnisse, Breakpoints)
-laufen sauber durch den Patch und sind im Zielshop trotzdem falsch. Nach jeder
-Uebertragung im Ziel-Theme visuell gegenpruefen:
-
-```bash
-cd themes/<ziel> && shopify theme check --output json   # JSON parsen, nicht Exit-Code
-cd themes/<ziel> && shopify theme dev --store <handle>
-```
+  `layout/`.
+- Details je Bereich: `.claude/rules/` (liquid-, templates-json-, merchant-config-)
 
 ## Connector (connector/)
 
-Rails 8.1 + React 18/Polaris Backend. Bidirektionaler Shopify↔SAP-Sync
-(mdm-muenze/mdm-staging), Sidekiq-Worker, GraphQL (privat + public/App-Proxy),
-REST-API v1, 5 Shopify-Extensions.
+Rails-Backend mit React/Polaris-Frontend. Bidirektionaler Shopify↔SAP-Sync
+(`mdm-muenze`/`mdm-staging`), Sidekiq-Worker, GraphQL (privates Schema fuer den
+embedded Admin, oeffentliches fuer den App-Proxy), REST-API v1, fuenf Shopify-Extensions.
 
-### Tech-Stack
+### Befehle (in `connector/`)
 
-- Ruby 4.0.2, Rails 8.1.3, PostgreSQL, Sidekiq + sidekiq-scheduler, Redis
-- Frontend: React 18 + Vite 6 + Apollo Client + Polaris 13
-- Extensions: credit-check, sepa-iban (Checkout UI), payment-customization (Function),
-  order-credit-check-block, order-sap-status-block (Admin Blocks)
-- RuboCop mit Shopify-Preset; Brakeman fuer Security-Analyse
-- Deploy: Docker (web + worker) → registry.mdm.de → GitLab-Pipeline (`deploy.sh`)
-
-### Befehle (ausfuehren in `connector/`)
-
-- `bundle exec rubocop` — Linter
-- `bundle exec brakeman` — Security-Scan
 - `bin/dev` — Dev-Server (Rails + Sidekiq + Vite)
-- `./deploy.sh --staging` / `./deploy.sh --production` — Deploy
+- `bundle exec rspec` / `rubocop` / `brakeman` — Tests, Linter, Security-Scan
+- `./deploy.sh --staging` / `--production` — Deploy (Docker → registry.mdm.de → GitLab)
 
 ### Secrets
 
-Nur in `.env` (nie committen). Template: `.env.template`.
-Keys: SHOPIFY_API_KEY/SECRET, SAP_API_URL/USERNAME/PASSWORD, CREDIT_API_*, OPENIBAN_API_*,
-GITLAB_URL/TOKEN, ROLLBAR_ACCESS_TOKEN, SIDEKIQ_USERNAME/PASSWORD.
+Nur in `.env`, nie committen. Template: `.env.template` listet alle benoetigten Keys
+(Shopify, SAP, Credit-API, OpenIBAN, GitLab, Rollbar, Sidekiq).
+
+Konventionen: `.claude/rules/connector-conventions.md`
 
 ## Datalayer (datalayer/)
 
 GTM-Datalayer fuer 3 Mandanten-Shops. Enthaelt Consent-Manager-Integration,
 GTM-Pixel-Logik und Uebergabe-Dokumentation.
 
-## Creditcheck (creditcheck/)
+## Middleware (creditcheck/, emailservice/, payment-service/)
 
-PHP/Symfony-Microservice (PHP 7.4). Zwei Services in einem Repo:
-- **Creditcheck** — Bonitaetspruefung von Kunden
-- **CustomerInformation** — Kundendaten aus SAP abrufen
+Drei PHP/Symfony-Services auf GitLab, Ansprechpartner Team Middleware
+(ecom-middleware@mdm.de). Alle Docker-basiert, VuePress-Doku unter `<repo>/docs/`.
 
-### Tech-Stack
+| Service | Aufgabe | Besonderheit |
+|---|---|---|
+| `creditcheck/` | Bonitaetspruefung + CustomerInformation | zwei Services in einem Repo, Trennung geplant |
+| `emailservice/` | E-Mail-Versand via Emarsys | AMQP/Messenger, SAP-Anreicherung, Opt-out-Filter |
+| `payment-service/` | Zahlungsabwicklung via Saferpay | Monorepo mit Nuxt-Frontend in `client/` |
 
-- PHP 7.4, Symfony (aeltere Version), Docker, Redis
-- SAP-Integration via `mdm-ecom/lib.sap`
-- CI/CD: GitLab CI + Jenkins, VuePress-Doku
-- Team: Middleware (ecom-middleware@mdm.de)
+- Dev: `docker compose up -d` — Tests: `docker compose exec app bin/phpunit`
+- ⚠️ `creditcheck` laeuft auf **PHP 7.4**: kein `match`, keine Enums, keine Attributes.
+  Die beiden anderen auf PHP 8.3 / Symfony 7.1.
+- Secrets in `.env` (Root und `www/`) — nie committen.
 
-### Befehle (ausfuehren in `creditcheck/`)
-
-- `docker compose up -d` — Dev-Umgebung starten
-- `docker compose exec app bin/phpunit` — Tests ausfuehren
-- Doku: `docs/`
-
-### Secrets
-
-`.env` im Root und `www/.env` — nie committen.
-
-## Emailservice (emailservice/)
-
-PHP/Symfony-Microservice (PHP 8.3, Symfony 7.1) fuer E-Mail-Versand via Emarsys.
-Empfaengt Anfragen vom SAP-System, reichert sie mit Kundendaten an und filtert
-E-Mails bei Opt-out.
-
-### Tech-Stack
-
-- PHP 8.3, Symfony 7.1, Docker, AMQP/Messenger, Doctrine ORM
-- Emarsys-Integration, SAP-Anbindung
-- PHPStan + PHPCS fuer statische Analyse
-- CI/CD: GitLab CI + Jenkins, VuePress-Doku
-- Team: Middleware (ecom-middleware@mdm.de)
-
-### Befehle (ausfuehren in `emailservice/`)
-
-- `docker compose up -d` — Dev-Umgebung starten
-- `docker compose exec app bin/phpunit` — Tests ausfuehren
-- `docker compose exec app vendor/bin/phpstan analyse` — Statische Analyse
-- `docker compose exec app vendor/bin/phpcs` — Code-Style
-- Doku: `docs/`
-
-### Secrets
-
-`.env` im Root und `www/.env` — nie committen.
-
-## Payment-Service (payment-service/)
-
-Monorepo: PHP/Symfony-Backend (PHP 8.3, Symfony 7.1) + Nuxt-Frontend.
-Zahlungsabwicklung ueber Saferpay. Historisch von Docker Compose ueber k8s
-zu Docker Swarm migriert.
-
-### Tech-Stack
-
-- Backend: PHP 8.3, Symfony 7.1, Doctrine ORM, Saferpay JSON API
-- Frontend: Nuxt (Vue.js), Jest fuer Unit-Tests
-- Docker (nginx + php + nuxt), Migrations
-- CI/CD: GitLab CI + Jenkins, VuePress-Doku
-- Team: Middleware (ecom-middleware@mdm.de)
-
-### Befehle (ausfuehren in `payment-service/`)
-
-- `docker compose up -d` — Dev-Umgebung starten
-- `docker compose exec app bin/phpunit` — Backend-Tests
-- `cd client && yarn test:unit` — Frontend-Tests
-- Doku: `docs/`
-
-### Secrets
-
-`.env` im Root und `www/.env` — nie committen.
+Konventionen und Details je Service: `.claude/rules/middleware-conventions.md`
 
 ## Spec-Driven Development
 
-Jede Aenderung beginnt mit einer **Spec-Datei** (`.claude/specs/`), die Anforderungen
-und Akzeptanzkriterien definiert — BEVOR Code geschrieben wird.
-
-1. **Spec schreiben** — Anforderungen definieren (was, nicht wie)
-2. **Spec reviewen** — Konrad gibt Freigabe
-3. **Implementieren** — Code wird gegen die Spec gebaut
-4. **Validieren** — Akzeptanzkriterien pruefen
-
-Konventionen: `.claude/specs/README.md`. Theme-Specs: `.claude/specs/themes/` (gemeinsam) und `.claude/specs/themes/<marke>/`.
-Connector-Specs: `.claude/specs/connector/`.
-Middleware-Specs: `.claude/specs/creditcheck/`, `.claude/specs/emailservice/`, `.claude/specs/payment-service/`.
-Datalayer-Specs: `.claude/specs/datalayer/`.
+Jede Aenderung beginnt mit einer **Spec** unter `.claude/specs/` (Anforderungen und
+Akzeptanzkriterien, *was* — nicht *wie*), dann Freigabe durch Konrad, dann Implementierung
+gegen die Spec, dann Validierung der Akzeptanzkriterien.
+Ablage und Konventionen: `.claude/specs/README.md`.
 
 ## Workflow — Theme
 
-Gilt fuer alle drei Marken-Themes. Das Ziel-Theme (`themes/mdm/`, `themes/borek/`,
-`themes/imm/`) wird zu Beginn festgelegt; ohne Angabe ist `themes/mdm/` gemeint.
+Gilt fuer alle drei Marken-Themes; ohne Angabe ist `themes/mdm/` gemeint.
 
-Template-Arbeit: `/mdm-template` mit festen Phasen:
-Spec → Extraktion (figma-extractor) → Plan (theme-planner) → **Freigabe** →
-Implementierung (liquid-implementer) → Review (theme-reviewer + security-reviewer) →
-Doku (docs-writer) → Uebergabe. Systemuebersicht: `.claude/README.md`
+Grundprinzip **Theme-First**: bestehende Hyper-Sections ueberschreiben statt neu bauen —
+so wenig Neuentwicklung wie moeglich. Mapping: `.claude/specs/themes/_conventions.md`.
 
-Grundprinzip: **Theme-First** — bestehende Hyper-Sections ueberschreiben, nicht neu bauen.
-So wenig wie moeglich neu entwickeln, so viel wie noetig.
-Mapping und Konventionen: `.claude/specs/themes/_conventions.md`.
+- Ganze Seite aus Figma → Skill `/mdm-template` (zerlegt in eine Block Map)
+- Einzelner Block → Skill `/mdm-block` (ein Block = ein Branch = ein PR)
 
-## Workflow — Connector
+## Workflow — Connector und Middleware
 
-Feature-Arbeit in eigenem Git-Worktree (siehe Git Worktree):
-Worktree anlegen → rails-planner → **Freigabe** → rails-implementer (TDD: Red→Green→Refactor) →
-rails-reviewer + security-reviewer → Doku (docs-writer) → Uebergabe → Worktree aufraeumen.
-
-## Notizen (Apple Notes)
-
-Fester Notiz-Satz, Praefix `MDM Shopify ::`. Konventionen: Skill `/mdm-notes`.
-Ablage im Notes-Ordner `Shopify` mit Unterordnern `Tagebuch` und `Tickets`.
-Update = Vollersetzung. Kein Markdown, kein `&`, Body-Zeile 1 = Titel.
+Feature-Arbeit im eigenen Worktree: Plan → **Freigabe** → Implementierung (TDD) →
+Review-Paar (fachlicher Reviewer + security-reviewer) → Doku → Uebergabe.
+Skills: `/connector-feature`, `/middleware-feature`.
 
 ## Shopify Dev MCP
 
-Zu Beginn einer Liquid-Session `learn_shopify_api` aufrufen; Doku ueber
-`search_docs_chunks`; vor Abschluss `validate_theme` laufen lassen.
+Zu Beginn einer Liquid-Session `learn_shopify_api` aufrufen, Doku ueber
+`search_docs_chunks`, vor Abschluss `validate_theme` laufen lassen.
 Shopify parst Liquid strikt (seit 13.01.2026).
 
-## Sprache und Commits
+## Test-Driven Development
 
-- Dokumentation und Artefakte: Deutsch, Datumsformat 21. August 2026.
-- Commit-Messages: Englisch, Conventional Commits, 50/72, imperativ, kleingeschrieben.
-  Scope nie eine Ticket-ID. Konrad committet selbst — Claude liefert die Message.
-- Keine KI-Hinweise in Commits, Doku oder Code-Kommentaren.
+TDD ist Pflicht fuer alle Code-Aenderungen: **Red → Green → Refactor.** Kein Feature-Code
+ohne vorherigen Test, kein Bugfix ohne Regression-Test. Test und Feature-Code gehoeren in
+denselben Commit. Vor jedem Commit muss die Suite gruen sein.
 
-## Ticket-Kommentare (Jira)
+| Bereich | Framework | Kommando |
+|---|---|---|
+| Connector | RSpec + FactoryBot, WebMock/VCR | `bundle exec rspec` |
+| Middleware | PHPUnit | `docker compose exec app bin/phpunit` |
+| Theme | keins — Liquid hat kein Unit-Test-Framework | `shopify theme check` + Smoke-Test |
 
-Kommentare werden von Fachabteilungen gelesen, nicht nur von Entwicklern.
-Sie sind zum Scannen gebaut, nicht zum Lesen.
-
-### Aufbau
-
-- **Kernaussage im ersten Satz** — Status oder Ergebnis, nicht die Vorgeschichte.
-  Kernentitaeten, Statuswechsel und kritische Kennzahlen fett.
-- Abschnitte mit `###`, Listen als Bullets.
-- **Bullets** beginnen mit dem fett gesetzten Namen des Elements, danach hoechstens
-  ein kurzer Satz.
-- **Nummerierte Listen nur fuer Abfolgen** — alles andere sind Bullets.
-- Aktiv formulieren, kurze Saetze.
-
-### Inhalt
-
-- Sachlich, neutral, loesungsorientiert. Keine Ich-Perspektive.
-- Nur Fakten aus Ticket und Umsetzung — nichts hinzuerfinden.
-- Nicht wiederholen, was im Ticketverlauf bereits steht.
-- Begleitet der Kommentar einen Workflow-Wechsel: alten und neuen Status nennen.
-
-### Abschluss
-
-- Endet mit einer **fett markierten Handlungsaufforderung** an eine benannte Rolle,
-  sofern eine Aktion noetig ist.
-- `@`-Mention der zustaendigen Person, wenn eine Antwort erwartet wird.
-  Technisch: ADF-`mention`-Node mit der `accountId` (`contentFormat: "adf"`).
-  In Markdown geschriebene Mentions werden nicht verlinkt und benachrichtigen niemanden.
-- Verwandte Ticket-IDs im Fliesstext nennen (`GRIFFIN-123`) — Jira verlinkt sie selbst.
-
-### Nie
-
-- Wall of Text, Begruessung, Verabschiedung.
-- Emojis in technischen Tickets oder Bug-Tickets.
-
-## Test-Driven Development (TDD)
-
-TDD ist Pflicht fuer alle Code-Aenderungen in diesem Workspace. Reihenfolge:
-
-1. **Red** — Test schreiben, der das gewuenschte Verhalten beschreibt. Test muss fehlschlagen.
-2. **Green** — Minimalen Code schreiben, damit der Test besteht.
-3. **Refactor** — Code aufraeumen, Tests muessen weiterhin bestehen.
-
-### Connector (Rails)
-
-- Framework: RSpec (wird beim ersten Feature eingerichtet, falls noch nicht vorhanden)
-- Tests unter `connector/spec/`
-- Factories mit FactoryBot, Fakes mit WebMock/VCR fuer externe APIs (SAP, Shopify, OpenIBAN)
-- `bundle exec rspec` — Test-Suite ausfuehren
-- Vor jedem Commit muessen alle Tests gruen sein
-
-### Theme (Liquid)
-
-- Kein Unit-Test-Framework (Shopify-Liquid hat keins). Stattdessen:
-  - `shopify theme check` als statische Analyse
-  - Manueller Smoke-Test via `shopify theme dev`
-
-### Middleware (PHP/Symfony)
-
-- Framework: PHPUnit (in allen drei Repos vorhanden)
-- Tests unter `<repo>/www/tests/`
-- `docker compose exec app bin/phpunit` — Test-Suite ausfuehren
-- Statische Analyse: PHPStan (emailservice, payment-service), PHPCS (emailservice)
-- Vor jedem Commit muessen alle Tests gruen sein
-
-### Regeln
-
-- Kein Feature-Code ohne vorherigen Test.
-- Bei Bugfixes: erst Regression-Test, dann Fix.
-- Test-Dateien gehoeren zum gleichen Commit wie der Feature-Code.
-- CI-Mindestanforderung Connector: `bundle exec rspec` + `bundle exec rubocop` + `bundle exec brakeman`.
-- CI-Mindestanforderung Middleware: `bin/phpunit` (+ `phpstan` / `phpcs` wo vorhanden).
+Details je Stack: `.claude/rules/`
 
 ## Git Worktree
 
-Fuer parallele Feature-Arbeit nutzen wir `git worktree`. Jedes Feature bekommt
-einen eigenen Worktree, sodass mehrere Branches gleichzeitig ausgecheckt sein koennen.
+Parallele Feature-Arbeit laeuft in eigenen Worktrees unter `connector-worktrees/<branch>/`
+(Workspace-Root-Ebene, gitignored) — nicht innerhalb von `connector/`. Der Haupt-Worktree
+`connector/` bleibt immer auf `main`. Jeder Worktree braucht seine eigene `.env` (aus
+`.env.template`). Nach dem Merge: Worktree entfernen und Branch loeschen.
 
-### Konvention
-
-```
-connector/                    Haupt-Worktree (main)
-connector-worktrees/          Worktree-Verzeichnis (gitignored)
-├── <branch-name>/            Ein Worktree pro Feature-Branch
+```bash
+cd connector && git worktree add ../connector-worktrees/<branch> -b <branch>
 ```
 
-### Befehle
+## Sprache und Commits
 
-- `cd connector && git worktree add ../connector-worktrees/<branch> -b <branch>` — Neuer Worktree
-- `cd connector && git worktree list` — Alle Worktrees anzeigen
-- `cd connector && git worktree remove ../connector-worktrees/<branch>` — Worktree entfernen
+Deutsch fuer Doku und Artefakte, Englisch fuer Commits (Conventional Commits, 50/72,
+imperativ, kleingeschrieben). **Der Scope ist nie eine Ticket-ID.** Weitere Vorgaben
+stehen in der globalen `~/.claude/CLAUDE.md` und gelten hier unveraendert.
 
-### Regeln
+## Konventionen anderswo
 
-- Worktrees leben unter `connector-worktrees/` (Workspace-Root-Ebene), nicht innerhalb von `connector/`.
-- Nach Merge: Worktree entfernen und Branch loeschen.
-- Haupt-Worktree (`connector/`) bleibt immer auf `main`.
-- Jeder Worktree hat seine eigene `.env` (aus `.env.template` kopieren).
-
-## Analyse-Qualitaet
-
-1. Alle betroffenen Dateien lesen, bevor Empfehlungen gegeben werden
-2. Aussagen kategorisieren: Belegt / Vermutung / Unbekannt
-3. Korrekturen offen kommunizieren
+| Thema | Ort |
+|---|---|
+| Jira-Ticket-Kommentare | Skill `/jira-comment` |
+| Aenderung in mehrere Themes portieren | Skill `/theme-port` |
+| Apple-Notes-Pflege | Skill `/mdm-notes` |
+| Bereichs-Konventionen (Liquid, Rails, Symfony) | `.claude/rules/` |
+| Systemuebersicht Agenten/Skills/Hooks | `.claude/README.md` |
