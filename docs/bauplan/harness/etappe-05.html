@@ -551,27 +551,27 @@
         <text x="16" y="206" class="s-lbl f-dim">Dateien — fast deckungsgleich</text>
 
         <text x="16" y="238" class="s-mono f-dim">mdm / borek</text>
-        <rect x="150" y="226" width="668" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <rect x="818" y="226" width="70" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
-        <text x="900" y="238" class="s-tiny f-dim">685</text>
+        <rect x="150" y="226" width="666" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <rect x="816" y="226" width="72" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="900" y="238" class="s-tiny f-dim">684</text>
 
         <text x="16" y="266" class="s-mono f-dim">mdm / imm</text>
-        <rect x="150" y="254" width="665" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <rect x="815" y="254" width="73" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
-        <text x="900" y="266" class="s-tiny f-dim">685</text>
+        <rect x="150" y="254" width="660" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <rect x="810" y="254" width="78" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="900" y="266" class="s-tiny f-dim">684</text>
 
         <text x="16" y="294" class="s-mono f-dim">borek / imm</text>
-        <rect x="150" y="282" width="698" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
-        <rect x="848" y="282" width="41" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <rect x="150" y="282" width="697" height="16" rx="2" fill="var(--worker)" fill-opacity="0.22" stroke="var(--worker)" stroke-opacity="0.45"></rect>
+        <rect x="847" y="282" width="41" height="16" rx="2" fill="var(--alert)" fill-opacity="0.18" stroke="var(--alert)" stroke-opacity="0.5"></rect>
         <text x="900" y="294" class="s-tiny f-dim">687</text>
 
-        <text x="150" y="316" class="s-tiny f-worker">byte-identisch: 620 · 617 · 649</text>
-        <text x="700" y="316" class="s-tiny f-alert">abweichend: 65 · 68 · 38</text>
+        <text x="150" y="316" class="s-tiny f-worker">byte-identisch: 617 · 612 · 649</text>
+        <text x="700" y="316" class="s-tiny f-alert">abweichend: 67 · 72 · 38</text>
 
         <rect x="16" y="336" width="920" height="52" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="32" y="356" class="s-tiny">bin/theme-sync.sh drift meldet je Datei, welche Themes uebereinstimmen. In 13 der 15 abweichenden Dateien lautet die Meldung</text>
+        <text x="32" y="356" class="s-tiny">bin/theme-sync.sh drift meldet je Datei, welche Themes uebereinstimmen. In 16 der 19 abweichenden Dateien lautet die Meldung</text>
         <text x="32" y="372" class="s-mono f-worker">borek=imm | mdm</text>
-        <text x="32" y="384" class="s-tiny f-dim">Borek und IMM weichen in 38 Dateien voneinander ab, MDM von Borek in 65 und von IMM in 68.</text>
+        <text x="32" y="384" class="s-tiny f-dim">Borek und IMM weichen in 38 Dateien voneinander ab, MDM von Borek in 67 und von IMM in 72.</text>
       </svg>
       <figcaption><b>Relevant beim Übertragen einer Änderung: <code>git merge</code> ist hier
         nicht anwendbar.</b> Der Befehl verlangt ohne gemeinsamen Vorfahren
@@ -580,7 +580,10 @@
         Branch im Ziel-Theme und lässt sechs markenspezifische Pfade aus:
         <code>config/settings_data.json</code>, <code>config/settings_schema.json</code>,
         <code>locales/</code>, <code>templates/</code>,
-        <code>sections/*-group.json</code>, <code>layout/</code>.</figcaption>
+        <code>sections/*-group.json</code>, <code>layout/</code>.
+        Die Zahlen oben gelten je Arbeitsbaum, nicht je Remote: <code>drift</code> vergleicht
+        die ausgecheckten Staende. Gemessen am 17. September 2026 mit mdm auf
+        <code>chore/exclude-temp-dir</code>, borek und imm auf <code>main</code>.</figcaption>
     </figure>
   </section>
 
@@ -817,7 +820,7 @@
         <tr><td>Blattsätze: connector, emailservice, harness</td><td class="m">.claude/bauplan/*.manifest.json</td></tr>
         <tr><td>Specs nur für theme-mdm</td><td class="m">.claude/specs/themes/mdm/</td></tr>
         <tr><td>Drei Wurzel-Commits, kein merge-base</td><td class="m">git merge-base je Paar — leer</td></tr>
-        <tr><td>685 / 620 gemeinsame und identische Dateien</td><td class="m">bin/theme-sync.sh drift</td></tr>
+        <tr><td>684 / 617 gemeinsame und identische Dateien (mdm/borek)</td><td class="m">bin/theme-sync.sh drift</td></tr>
         <tr><td>connector → SAP</td><td class="m">connector/app/services/sap/api/client.rb:6</td></tr>
         <tr><td>connector → creditcheck</td><td class="m">connector/app/services/credit/api/client.rb:25</td></tr>
         <tr><td>creditcheck → SAP</td><td class="m">creditcheck/www/composer.json:25</td></tr>

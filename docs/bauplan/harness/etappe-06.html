@@ -407,7 +407,7 @@
       <div class="tb-cell"><dt>Zeilen</dt><dd>496 · 4 Kommandos</dd></div>
       <div class="tb-cell"><dt>Gemessen</dt><dd>19 Dateien mit Drift · 89 markenspezifisch</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>17. September 2026</dd></div>
     </dl>
   </div>
 
@@ -485,7 +485,7 @@
         </g>
 
         <text x="40" y="238" class="s-note f-dim">Die Reihenfolge ist bindend: fehlt das Verzeichnis <tspan class="s-mono">.git</tspan>, prüft die Schleife Zeile 82 nicht mehr.</text>
-        <text x="40" y="256" class="s-note f-dim">Gemessen am 16. September 2026: drei geklonte Marken, 691 bis 714 versionierte Dateien je Theme.</text>
+        <text x="40" y="256" class="s-note f-dim">Gemessen am 17. September 2026: drei geklonte Marken, 691 bis 722 versionierte Dateien je Theme.</text>
       </svg>
       <figcaption>Relevant beim Aufsetzen einer vierten Marke: ein Klon ohne
         <code>config/settings_schema.json</code> erscheint weder in <code>list</code> noch in
@@ -550,7 +550,7 @@
         </g>
 
         <line x1="40" y1="178" x2="920" y2="178" stroke="currentColor" stroke-opacity="0.2"></line>
-        <text x="40" y="200" class="s-lbl f-dim">Ausgabe am 16. September 2026</text>
+        <text x="40" y="200" class="s-lbl f-dim">Ausgabe am 17. September 2026</text>
 
         <rect x="40" y="212" width="600" height="24" rx="2" fill="var(--worker)" fill-opacity="0.08" stroke="var(--worker)" stroke-opacity="0.35"></rect>
         <text x="52" y="229" class="s-mono">assets/theme.css</text>
@@ -566,7 +566,7 @@
 
         <text x="672" y="229" class="s-mono f-dim">19 Dateien mit Drift</text>
         <text x="672" y="257" class="s-mono f-vite">89 markenspezifisch</text>
-        <text x="672" y="285" class="s-mono f-dim">38 nur in einem Theme</text>
+        <text x="672" y="285" class="s-mono f-dim">46 nur in einem Theme</text>
 
         <text x="40" y="316" class="s-note f-dim">Drei Gruppen bedeuten drei verschiedene Stände. Zwei der 19 Dateien stehen so.</text>
       </svg>
@@ -728,9 +728,12 @@
       </svg>
       <figcaption>Maßgeblich für die Wahl ist der Zustand der Zieldatei, nicht die Größe der
         Änderung: läuft die Quelle in derselben Datei voraus, entfernt die Kopie die
-        Zielarbeit. Am 16. September 2026 trennen <code>themes/mdm</code> und
-        <code>themes/borek</code> 40 von 685 gemeinsamen Dateien — für diese 40 ist
-        <code>--as-patch</code> die zutreffende Art.</figcaption>
+        Zielarbeit. Am 17. September 2026 trennen <code>themes/mdm</code> und
+        <code>themes/borek</code> 18 von 684 gemeinsamen Dateien, sobald die
+        markenspezifischen Pfade ausgenommen sind — für diese 18 ist
+        <code>--as-patch</code> die zutreffende Art. Die Zahl deckt sich mit
+        <code>drift</code>: 16 Dateien melden <code>borek=imm | mdm</code>, zwei
+        weitere drei getrennte Stände.</figcaption>
     </figure>
   </section>
 

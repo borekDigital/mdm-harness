@@ -402,8 +402,8 @@
          entscheidet über einen <strong>einzelnen Werkzeugaufruf</strong>.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>8 SKILL.md · 5 Rules · settings.json</dd></div>
-      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 067 gesamt</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>10 SKILL.md · 5 Rules · settings.json</dd></div>
+      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 230 gesamt</dd></div>
       <div class="tb-cell"><dt>Rechte</dt><dd>17 erlaubt · 2 verboten</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
@@ -424,12 +424,12 @@
       <h2>Skills und README</h2>
     </div>
     <p class="lead">Ob ein Skill mit <code>/</code> aufgerufen werden kann, entscheidet
-      allein <code>user_invocable: true</code> im Frontmatter. Die README listet sieben
-      Slash-Befehle — vier davon gibt es nicht, und der einzige mit über 300 Zeilen fehlt
-      dort ganz.</p>
+      allein <code>user_invocable: true</code> im Frontmatter. Sechs der zehn Skills tragen
+      es nicht, werden aber als Slash-Befehl geschrieben — seit dem 17. September 2026 zwei
+      mehr als zuvor.</p>
 
     <figure>
-      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von acht Skills. Vier sind aufrufbar: connector-feature, middleware-feature, repo-bauplan und setup. Vier weitere stehen in der README mit Slash-Aufruf, tragen aber kein user_invocable und sind daher nicht aufrufbar.">
+      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von zehn Skills. Vier sind aufrufbar: connector-feature, middleware-feature, repo-bauplan und setup. Sechs weitere werden als Slash-Befehl geschrieben, tragen aber kein user_invocable und sind daher nicht aufrufbar.">
         <text x="16" y="28" class="s-lbl f-dim">Skill</text>
         <text x="440" y="28" text-anchor="middle" class="s-lbl f-dim">Frontmatter</text>
         <text x="640" y="28" text-anchor="middle" class="s-lbl f-dim">README</text>
@@ -458,14 +458,14 @@
 
         <rect x="16" y="168" width="928" height="34" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
         <text x="30" y="190" class="s-mono f-alert">repo-bauplan</text>
-        <text x="230" y="190" class="s-tiny f-dim">343 Zeilen — der größte</text>
+        <text x="230" y="190" class="s-tiny f-dim">363 Zeilen — der größte</text>
         <text x="440" y="190" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
         <text x="640" y="190" text-anchor="middle" class="s-tiny f-worker">nachgetragen</text>
         <text x="830" y="190" class="s-tiny f-worker">aufrufbar, dokumentiert</text>
 
         <rect x="16" y="210" width="928" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-        <text x="30" y="230" class="s-mono f-alert">mdm-template · mdm-block · figma-to-liquid · mdm-notes</text>
-        <text x="230" y="250" class="s-tiny f-dim">120 · 90 · 105 · 78 Zeilen</text>
+        <text x="30" y="230" class="s-mono f-alert">mdm-template · mdm-block · figma-to-liquid · mdm-notes · theme-port · jira-comment</text>
+        <text x="30" y="250" class="s-tiny f-dim">120 · 98 · 105 · 78 · 93 · 42 Zeilen — theme-port und jira-comment kamen am 17. September 2026 dazu</text>
         <text x="440" y="240" text-anchor="middle" class="s-tiny f-alert">kein user_invocable</text>
         <text x="640" y="240" text-anchor="middle" class="s-tiny">als /befehl gelistet</text>
         <text x="830" y="240" class="s-tiny f-alert">nicht aufrufbar</text>
@@ -474,7 +474,7 @@
       </svg>
       <figcaption><b>Eine Entscheidung bleibt offen.</b>
         <code>repo-bauplan</code> ist am 10. September 2026 in beide READMEs nachgetragen
-        worden. Bei den vier übrigen ist zu entscheiden, ob sie von Hand aufrufbar sein
+        worden. Bei den sechs übrigen ist zu entscheiden, ob sie von Hand aufrufbar sein
         <em>sollen</em> — dann
         <code>user_invocable: true</code> ergänzen — oder ob sie interne Bausteine bleiben,
         dann gehören sie in der README nicht in die Slash-Tabelle.</figcaption>
@@ -488,11 +488,11 @@
       <h2>Geltung der Rules</h2>
     </div>
     <p class="lead">Rules werden nicht aufgerufen, sondern nach Pfad zugeschaltet. Fünf
-      Dateien deklarieren zusammen vierzehn Pfadmuster. Die Bereiche ohne Treffer stehen in der zweiten Spalte.</p>
+      Dateien deklarieren zusammen zwanzig Pfadmuster. Die Bereiche ohne Treffer stehen in der zweiten Spalte.</p>
 
     <figure>
-      <svg viewBox="0 0 960 322" role="img" aria-label="Pfad-Abdeckung der fünf Rules. Theme ist durch drei Rules abgedeckt, Connector app config db lib durch eine, die drei Middleware-Repos durch eine gemeinsame. Nicht abgedeckt sind connector-worktrees, connector spec, datalayer und die Harness selbst.">
-        <text x="16" y="28" class="s-lbl f-vite">abgedeckt — 14 Pfadmuster</text>
+      <svg viewBox="0 0 960 322" role="img" aria-label="Pfad-Abdeckung der fünf Rules. Theme ist durch drei Rules abgedeckt, Connector samt Worktrees und Tests durch eine, die drei Middleware-Repos durch eine gemeinsame. Nicht abgedeckt bleiben datalayer und die Harness selbst.">
+        <text x="16" y="28" class="s-lbl f-vite">abgedeckt — 20 Pfadmuster</text>
         <text x="540" y="28" class="s-lbl f-alert">nicht abgedeckt</text>
 
         <rect x="16" y="42" width="500" height="264" rx="3" fill="var(--vite)" fill-opacity="0.06" stroke="var(--vite)" stroke-width="1.5"></rect>
@@ -510,40 +510,37 @@
         <text x="490" y="158" text-anchor="end" class="s-tiny f-dim">20 Zeilen</text>
 
         <text x="30" y="204" class="s-mono">connector-conventions</text>
-        <text x="44" y="222" class="s-tiny f-dim">connector/app · config · db · lib</text>
-        <text x="490" y="204" text-anchor="end" class="s-tiny f-dim">27 Zeilen</text>
+        <text x="44" y="222" class="s-tiny f-dim">connector + connector-worktrees/* : app · config · db · lib · spec</text>
+        <text x="490" y="204" text-anchor="end" class="s-tiny f-dim">33 Zeilen</text>
 
         <text x="30" y="250" class="s-mono">middleware-conventions</text>
         <text x="44" y="268" class="s-tiny f-dim">creditcheck · emailservice · payment-service</text>
-        <text x="490" y="250" text-anchor="end" class="s-tiny f-dim">43 Zeilen</text>
+        <text x="490" y="250" text-anchor="end" class="s-tiny f-dim">47 Zeilen</text>
 
         <text x="30" y="294" class="s-tiny f-dim">Theme trägt 3 Rules und 7 Muster — dort sitzen die meisten Fallstricke.</text>
 
         <rect x="540" y="42" width="404" height="264" rx="3" fill="var(--alert)" fill-opacity="0.06" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
 
         <rect x="556" y="58" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="570" y="78" class="s-mono f-alert">connector-worktrees/**</text>
-        <text x="570" y="96" class="s-tiny f-dim">wo laut Konvention jede Feature-Arbeit stattfindet</text>
+        <text x="570" y="78" class="s-mono f-alert">datalayer/**</text>
+        <text x="570" y="96" class="s-tiny f-dim">im Entscheidungsbaum genannt, ohne Rule und ohne Agent</text>
 
-        <rect x="556" y="122" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="570" y="142" class="s-mono f-alert">connector/spec/**</text>
-        <text x="570" y="160" class="s-tiny f-dim">Tests — obwohl TDD Pflicht ist</text>
+        <rect x="556" y="122" width="372" height="42" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="570" y="142" class="s-mono">.claude/** · bin/** · docs/**</text>
+        <text x="570" y="158" class="s-tiny f-dim">die Harness selbst — bewusst ohne Rule</text>
 
-        <rect x="556" y="186" width="372" height="54" rx="2" fill="var(--surface)" stroke="var(--alert)" stroke-opacity="0.45"></rect>
-        <text x="570" y="206" class="s-mono f-alert">datalayer/**</text>
-        <text x="570" y="224" class="s-tiny f-dim">im Entscheidungsbaum genannt, ohne Rule und ohne Agent</text>
-
-        <rect x="556" y="250" width="372" height="42" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="570" y="270" class="s-mono">.claude/** · bin/** · docs/**</text>
-        <text x="570" y="286" class="s-tiny f-dim">die Harness selbst — bewusst ohne Rule</text>
+        <rect x="556" y="180" width="372" height="80" rx="2" fill="var(--vite)" fill-opacity="0.08" stroke="var(--vite)" stroke-opacity="0.5"></rect>
+        <text x="570" y="200" class="s-lbl f-vite">seit 17. September 2026 abgedeckt</text>
+        <text x="570" y="222" class="s-mono">connector-worktrees/*/app · config · db · lib · spec</text>
+        <text x="570" y="242" class="s-mono">connector/spec/**</text>
       </svg>
-      <figcaption><b>Die Worktree-Lücke ist die folgenreichste.</b>
-        <code>CLAUDE.md</code> schreibt für Connector-Features einen eigenen Worktree unter
-        <code>connector-worktrees/&lt;branch&gt;/</code> vor. Die
-        <code>connector-conventions</code> greifen aber nur unter <code>connector/</code> —
-        also genau im Haupt-Worktree, in dem laut derselben Konvention nicht gearbeitet
-        wird. Der Fix ist ein zusätzliches Muster
-        <code>connector-worktrees/*/app/**</code> je Bereich.</figcaption>
+      <figcaption><b>Die Worktree-Lücke ist geschlossen.</b> Bis zum 17. September 2026
+        greifen die <code>connector-conventions</code> nur unter <code>connector/</code> —
+        also genau im Haupt-Worktree, in dem laut <code>CLAUDE.md</code> nicht gearbeitet
+        wird. Seither decken fünf zusätzliche Muster
+        <code>connector-worktrees/*/</code> ab, ein sechstes
+        <code>connector/spec/**</code>; damit gilt die TDD-Pflicht der Rule auch dort, wo
+        die Tests liegen. Offen bleibt <code>datalayer/**</code>.</figcaption>
     </figure>
   </section>
 
