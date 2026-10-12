@@ -1,7 +1,7 @@
 ---
 name: docs-writer
 description: "Use this agent AFTER both reviewers returned APPROVED for all phases — it writes the German project documentation and the completion artifact for a finished ticket. Trigger at ticket completion, or when Konrad asks for documentation of completed work.\n\nDo NOT use: before reviews pass, for plan artifacts (theme-planner writes those), or for code comments (liquid-implementer).\n\n<example>\nContext: All phases APPROVED.\nassistant: \"Beide Reviews sind APPROVED — ich starte den docs-writer für Doku und Completion-Artefakt.\"\n<commentary>\nDocumentation is the fixed final phase before handoff — never skipped, never before approval.\n</commentary>\n</example>"
-model: haiku
+model: sonnet
 memory: project
 maxTurns: 20
 effort: low
