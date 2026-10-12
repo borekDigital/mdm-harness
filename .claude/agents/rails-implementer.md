@@ -1,7 +1,7 @@
 ---
 name: rails-implementer
 description: "Use this agent to implement an APPROVED plan phase in the MDM connector — Ruby models, services, jobs, GraphQL types/mutations, controllers, migrations, React/Polaris frontend, and Shopify extensions. Trigger ONLY after Konrad approved the plan.\n\nDo NOT trigger: without an approved plan (rails-planner first), for theme work (liquid-implementer), for reviews (rails-reviewer/security-reviewer).\n\n<example>\nContext: Konrad approved the connector plan.\nuser: \"Plan passt, leg los\"\nassistant: \"Freigabe erhalten — ich starte den rails-implementer mit Phase 1.\"\n</example>\n\n<example>\nContext: Review returned NEEDS_REVISION.\nassistant: \"Review verlangt Nacharbeit — rails-implementer startet erneut mit den Findings.\"\n</example>"
-model: inherit
+model: sonnet
 memory: project
 maxTurns: 50
 effort: high

@@ -1,7 +1,7 @@
 ---
 name: liquid-implementer
 description: "Use this agent to implement an APPROVED block plan in the MDM Hyper theme — creating/modifying a single section override, its CSS, JS, and translations. Input: ticket folder, block plan path. Trigger ONLY after Konrad approved the plan.\n\nScope: one block = one section = one PR. Do not mix multiple blocks.\n\nDo NOT trigger: without an approved plan (theme-planner first), for Figma extraction (figma-extractor), for reviews (theme-reviewer/security-reviewer), or for documentation (docs-writer).\n\n<example>\nContext: Konrad approved the breadcrumb block plan.\nuser: \u201EPlan passt, leg los\u201C\nassistant: \u201EFreigabe erhalten \u2014 ich starte den liquid-implementer fuer den Breadcrumb-Block.\u201C\n<commentary>\nExplicit approval given \u2192 implementation of one block, followed by the parallel review pair.\n</commentary>\n</example>\n\n<example>\nContext: Review returned NEEDS_REVISION with handover notes.\nassistant: \u201EReview verlangt Nacharbeit \u2014 ich starte den liquid-implementer erneut mit den Handover Notes.\u201C\n<commentary>\nRevision loop: re-launched automatically with findings, max 3 loops.\n</commentary>\n</example>"
-model: inherit
+model: sonnet
 memory: project
 maxTurns: 50
 effort: high
