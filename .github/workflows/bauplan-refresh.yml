@@ -215,7 +215,11 @@ jobs:
 
       - name: Uebersicht neu erzeugen
         if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
-        run: python3 bin/bauplan-index.py --stand "$(date '+%-d. %B %Y')"
+        run: |
+          # Der Runner liefert englische Monatsnamen. Uebersetzung wortgleich mit
+          # sync.sh:125, sonst erzeugen lokaler Lauf und CI verschiedene Uebersichten.
+          today=$(date "+%-d. %B %Y" | sed 's/January/Januar/;s/February/Februar/;s/March/Maerz/;s/May/Mai/;s/June/Juni/;s/July/Juli/;s/October/Oktober/;s/December/Dezember/')
+          python3 bin/bauplan-index.py --stand "$today"
 
       - name: Pull Request oeffnen
         if: ${{ steps.stale.outputs.rc == '3' && (github.event_name == 'schedule' || inputs.regenerate) }}
