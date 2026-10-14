@@ -277,6 +277,11 @@ andere Blaetter zu verbessern, ist der Weg zu einem Diff, den niemand mehr revie
 3. **Je Etappe:** die geaenderten Quelldateien lesen, dann die betroffenen Blaetter
    anpassen. Blaetter derselben Etappe, deren Quellen sich nicht geaendert haben, bleiben
    Zeichen fuer Zeichen gleich.
+
+   Anpassen heisst: per Edit an der bestehenden HTML-Datei in `docs/bauplan/<repo>/`.
+   Das Zusammensetzen aus Phase 2e gilt nur fuer neue Etappen. Seine Shell-Umleitung
+   nach `docs/bauplan` blockiert `bauplan-guard.sh`, und im CI-Lauf ist sie nicht
+   freigegeben.
 4. **Diff pruefen**, bevor veroeffentlicht wird:
 
    ```bash

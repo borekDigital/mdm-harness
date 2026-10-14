@@ -26,6 +26,13 @@ import bauplan_lib as lib  # noqa: E402
 
 CLAUDE_TIMEOUT = 3600
 
+# Was der Abschnitt „Auffrischen — nur das Veraltete" im Skill per Shell aufruft.
+# Auf dem Runner gilt der Workspace als nicht vertraut, die Allow-Liste aus
+# .claude/settings.json wird dort ignoriert. Ohne diese Freigaben lehnt der
+# Headless-Lauf jeden dieser Befehle ab.
+REFRESH_SKRIPTE = ("bauplan-stale.py", "bauplan-wording.py")
+LESENDE_GIT_BEFEHLE = ("diff", "log", "show", "rev-parse")
+
 
 def sh(*args, cwd=None, check=False):
     return subprocess.run(args, cwd=cwd, capture_output=True, text=True, check=check)
@@ -69,6 +76,20 @@ def allowed_paths(project, repo, hits):
     return paths
 
 
+def allowed_tools(project, repo):
+    """Die Shell-Befehle, die ein Auffrischungslauf braucht — keine pauschale Freigabe."""
+    pfad = os.path.relpath(lib.repo_path(lib.load_manifest(repo, project), repo, project),
+                           project)
+    regeln = []
+    for skript in REFRESH_SKRIPTE:
+        regeln += ["Bash(python3 bin/%s:*)" % skript, "Bash(bin/%s:*)" % skript]
+    for befehl in LESENDE_GIT_BEFEHLE:
+        regeln.append("Bash(git %s:*)" % befehl)
+        for ort in sorted({".", pfad}):
+            regeln.append("Bash(git -C %s %s:*)" % (ort, befehl))
+    return regeln
+
+
 def regenerate(project, repo, hits):
     """Claude Code headless nur fuer die betroffenen Etappen aufrufen."""
     nrs = ",".join(str(e.get("nr")) for e, _ in hits)
@@ -78,11 +99,16 @@ def regenerate(project, repo, hits):
         "Zeichen fuer Zeichen unveraendert. Halte dich an den Abschnitt "
         "'Auffrischen — nur das Veraltete' im Skill." % (repo, nrs)
     )
-    cmd = ["claude", "-p", prompt, "--permission-mode", "acceptEdits"]
+    # --allowedTools nimmt beliebig viele Werte und steht deshalb am Ende,
+    # sonst verschluckt es nachfolgende Argumente.
+    cmd = ["claude", "-p", prompt, "--permission-mode", "acceptEdits",
+           "--allowedTools", *allowed_tools(project, repo)]
     print("  -> %s" % " ".join(cmd[:3]))
     try:
+        # stdin abhaengen: sonst wartet claude -p drei Sekunden auf Eingabe und
+        # schreibt dazu eine Warnung, die im Fehlerfall die Ursache ueberlagert.
         res = subprocess.run(cmd, cwd=project, capture_output=True, text=True,
-                             timeout=CLAUDE_TIMEOUT)
+                             stdin=subprocess.DEVNULL, timeout=CLAUDE_TIMEOUT)
     except FileNotFoundError:
         print("  Claude Code CLI nicht gefunden — nur Bericht moeglich.", file=sys.stderr)
         return False
@@ -90,7 +116,14 @@ def regenerate(project, repo, hits):
         print("  Zeitueberschreitung nach %d s." % CLAUDE_TIMEOUT, file=sys.stderr)
         return False
     if res.returncode != 0:
-        print(res.stderr.strip()[-1200:], file=sys.stderr)
+        # claude -p meldet Fehler wie ein abgelehntes Token (401) auf stdout,
+        # stderr traegt nur Warnungen. Nur stderr auszugeben hiess: die Ursache
+        # fehlte in jedem roten Lauf seit dem 11. September 2026.
+        print("  claude endete mit Exit %d" % res.returncode, file=sys.stderr)
+        for kanal, text in (("stdout", res.stdout), ("stderr", res.stderr)):
+            if text.strip():
+                print("  --- claude %s ---\n%s" % (kanal, text.strip()[-1200:]),
+                      file=sys.stderr)
         return False
     return True
 
@@ -104,6 +137,9 @@ def diff_within(project, allowed):
 
 
 def main():
+    # In der CI ist stdout eine Pipe und damit blockgepuffert. Ohne Zeilenpufferung
+    # steht der Fortschritt im Log hinter den Fehlermeldungen auf stderr.
+    sys.stdout.reconfigure(line_buffering=True)
     ap = argparse.ArgumentParser()
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--regenerate", action="store_true")
