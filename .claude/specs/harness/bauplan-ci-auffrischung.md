@@ -2,7 +2,7 @@
 
 Stand: 14. Oktober 2026
 Quelle: Analyse der roten Laeufe von „Bauplan auffrischen", 14. Oktober 2026
-Status: A–D auf `main` (PR #4), E IMPLEMENTIERT (14. Oktober 2026), Validierung durch den Lauf auf `main` steht aus — siehe „Umsetzung" am Ende
+Status: A–E VALIDIERT (14. Oktober 2026) — A–D mit PR #4, E mit PR #5, erster gruener Lauf 38550625855, Auffrischungs-PR #6 gemergt; F IMPLEMENTIERT, Validierung durch den naechsten Auffrischungslauf — siehe „Umsetzung" am Ende
 
 ## Ziel
 
@@ -78,6 +78,14 @@ Ergaenzt am 14. Oktober 2026 nach dem ersten Lauf auf `main` (Befund 9).
       „Veraltete Etappen ermitteln" haengt daran.
 - [x] E1: Der Kopfkommentar des Skripts beschreibt beide Faelle.
 
+### F. Deutscher Monatsname in der Uebersicht
+
+Ergaenzt am 14. Oktober 2026 nach PR #6: Die Uebersicht trug „14. October 2026".
+
+- [x] F1: Der Schritt „Uebersicht neu erzeugen" uebersetzt den Monatsnamen ins Deutsche.
+- [x] F1: Die Uebersetzung ist wortgleich mit `sync.sh:125`. Sonst erzeugen der lokale Lauf
+      und der CI-Lauf verschiedene Uebersichten, und jeder aendert die Datei des anderen.
+
 ## Akzeptanzkriterien
 
 - [x] Lokal: `CLAUDE_CODE_OAUTH_TOKEN=ungueltig python3 bin/bauplan-ci.py --regenerate --repo harness`
@@ -98,10 +106,15 @@ Ergaenzt am 14. Oktober 2026 nach dem ersten Lauf auf `main` (Befund 9).
 - [x] E1 nachgestellt mit Ersatz-`claude`: Ein erfolgreicher Neubau fuer zwei Repos ergibt
       Exit 0 (heute 3). Ein Uebergriff ergibt Exit 1. `--report` mit Veraltetem ergibt
       weiterhin Exit 3. Ein ungueltiges Token ergibt weiterhin Exit 1.
-- [ ] Manueller Lauf auf `main` nach dem Merge von E: Der Schritt „Betroffene Etappen neu
-      bauen" ist gruen, und der Workflow oeffnet den Auffrischungs-PR.
-- [ ] Der PR „docs: refresh stale bauplan sheets" enthaelt nur Dateien unter `docs/bauplan/`
-      und `.claude/bauplan/*.manifest.json`.
+- [x] Manueller Lauf auf `main` nach dem Merge von E: Der Schritt „Betroffene Etappen neu
+      bauen" ist gruen, und der Workflow oeffnet den Auffrischungs-PR. Erfuellt durch Lauf
+      38550625855: alle Schritte gruen, PR #6 von `github-actions` angelegt.
+- [x] Der PR „docs: refresh stale bauplan sheets" enthaelt nur Dateien unter `docs/bauplan/`
+      und `.claude/bauplan/*.manifest.json`. Erfuellt durch PR #6: zehn Dateien, keine
+      ausserhalb, Wortpruefung 0 Verstoesse, SVG-Tags ausgeglichen.
+- [x] F1: Die `sed`-Anweisung im Workflow-Schritt ist zeichengleich mit der aus `sync.sh`
+      und macht aus allen zwoelf englischen Monatsnamen die deutschen.
+- [ ] F1: Der naechste Auffrischungslauf schreibt den Stand mit deutschem Monatsnamen.
 
 ## Constraints
 
@@ -126,7 +139,9 @@ Ergaenzt am 14. Oktober 2026 nach dem ersten Lauf auf `main` (Befund 9).
 | Deny-Regel `Write(themes/*/config/settings_data.json)` wirkungslos | `.claude/settings.json:25`, Runner-Warnung | rein kosmetisch |
 | Den `<text>`-Zaehlbefehl aus Phase 2e, Schritt 3, blockiert ebenfalls der Guard, denn das Muster `'<text[ >]'` enthaelt `>` und der Befehl nennt `docs/bauplan` | `SKILL.md:184–187`; Claudes Antwort in Lauf 38546913702 | gleiche Ursache wie Befund 5, eigener Fix am Skill |
 | Offene Fragen landen im CI-Lauf nicht im Manifest. Claude kuendigt den Eintrag „nach deiner Freigabe" an, im Headless-Lauf kommt aber keine Freigabe. `last_seen_sha` setzt das Skript selbst, das ist nicht betroffen | Claudes Antwort in Lauf 38546913702 | Prompt oder Skill-Abschnitt fuer den CI-Fall anpassen |
-| Seiten auf claude.ai nach dem Merge neu veroeffentlichen | Befund 6 | Handarbeit, bis es einen Weg ohne `Artifact`-Werkzeug gibt |
+| Seiten auf claude.ai nach dem Merge neu veroeffentlichen, einzeln und im Uebersichts-Artefakt | Befund 6 | Handarbeit, bis es einen Weg ohne `Artifact`-Werkzeug gibt |
+| Laut Claudes Antwort in Lauf 38550625855 lehnt Claude Code im CI-Lauf das Bearbeiten der Manifeste unter `.claude/` als geschuetzte Datei ab. Befundzahlen und offene Fragen bleiben deshalb im Manifest alt, `last_seen_sha` setzt das Skript | Claudes Antwort im Log | ⚠️ Ursache nicht selbst geprueft; Manifest-Pflege fuer den CI-Fall klaeren |
+| Im Uebersichts-Artefakt laufen die Blaetter ohne `<!doctype html>` im Quirks-Modus, weil Unterseiten dort ohne Dokumentrahmen ausgeliefert werden | Warnung beim Veroeffentlichen, 14. Oktober 2026 | besteht seit der ersten Fassung vom 16. September 2026 |
 
 ## Offene Fragen
 
@@ -250,8 +265,43 @@ Vorab geprueft: Das Repo erlaubt Actions, PRs anzulegen
 (`default_workflow_permissions: write`, `can_approve_pull_request_reviews: true`). Die
 Org-Einstellung ist ohne Org-Adminrechte nicht lesbar ⚠️.
 
+#### Ergebnis E auf `main`
+
+PR #5 gemergt (`72da68b`). Lauf 38550625855: alle Schritte gruen, der Neubau dauerte
+knapp 12 Minuten. Der Workflow oeffnete PR #6 „docs: refresh stale bauplan sheets" mit
+Connector-Etappe 3, 5, 7, 9, Harness-Etappe 2, 3, 4, beiden Manifesten und der Uebersicht.
+Vor dem Merge geprueft: keine Datei ausserhalb der erlaubten Pfade, Wortpruefung ohne
+Verstoss, `bauplan-guard.py --verify` Exit 0, `<text>`-Tags in allen sieben Blaettern
+ausgeglichen. PR #6 gemergt (`3667f53`).
+
+### Veroeffentlichung (14. Oktober 2026)
+
+Die sieben aufgefrischten Blaetter sind an ihre bestehenden Adressen neu veroeffentlicht.
+Vorher wurde jede Live-Seite mit der Repo-Historie verglichen: Alle entsprachen exakt einem
+frueheren Repo-Stand, in der Oberflaeche war also nichts geaendert worden.
+
+Im Uebersichts-Artefakt (`MkGXGcmet5Zcixi9UceYMj`) waren ausserdem Harness-Etappe 1 und 5
+seit dem 18. September 2026 veraltet, und Harness-Etappe 6 fehlte ganz. Version 2 enthaelt
+die neue Uebersicht und alle zehn betroffenen Blaetter, insgesamt 24 Dateien.
+
+### Nachtrag F (14. Oktober 2026)
+
+| Datei | Aenderung |
+|---|---|
+| `.github/workflows/bauplan-refresh.yml` | Der Schritt „Uebersicht neu erzeugen" uebersetzt den Monatsnamen mit derselben `sed`-Anweisung wie `sync.sh:125`, der `run`-Wert ist jetzt ein Block-Skalar |
+
+#### Nachweis F
+
+Test zuerst (`test_monat_f.py`, im Scratchpad, nicht committet). Gegen den alten Workflow
+rot, weil der Schritt keine `sed`-Uebersetzung enthielt. Mit dem Fix gruen: Die
+`sed`-Anweisung ist zeichengleich mit `sync.sh`, und alle zwoelf Monate werden
+uebersetzt. Das YAML ist gueltig (Ruby `YAML.load_file`), und der Schritt liefert unter
+`LC_ALL=C` „14. Oktober 2026".
+
+Die Schreibweise „Maerz" stammt aus `sync.sh` und ist bewusst uebernommen.
+
 #### Noch offen
 
-- Der Lauf auf `main` nach dem Merge von E: gruen, und der Auffrischungs-PR enthaelt nur
-  Erlaubtes.
-- Danach die aufgefrischten Seiten auf claude.ai neu veroeffentlichen (Befund 6).
+- F im naechsten Auffrischungslauf bestaetigen: Der Stand der Uebersicht ist deutsch.
+- Nach jedem kuenftigen Auffrischungs-PR die geaenderten Seiten und das
+  Uebersichts-Artefakt von Hand neu veroeffentlichen.
