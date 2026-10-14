@@ -2,7 +2,7 @@
 
 Stand: 14. Oktober 2026
 Quelle: Analyse der roten Laeufe von „Bauplan auffrischen", 14. Oktober 2026
-Status: IMPLEMENTIERT (14. Oktober 2026), Validierung durch den manuellen Lauf steht aus — siehe „Umsetzung" am Ende
+Status: IMPLEMENTIERT (A–D, 14. Oktober 2026), Validierung durch den Lauf auf `main` steht aus — siehe „Umsetzung" am Ende
 
 ## Ziel
 
@@ -24,10 +24,12 @@ Laeufe, in denen nichts veraltet war — dann startet der Schritt gar nicht.
 |---|---|---|---|
 | 1 | Alle 18 roten Zeitplan-Laeufe seit dem 11. September 2026 scheitern im Schritt „Betroffene Etappen neu bauen" | `gh run view <id> --json jobs` fuer jeden roten Lauf | ✅ belegt |
 | 2 | Die Fehlermeldung von Claude fehlt im Log. Das Skript gibt bei Fehlern nur stderr aus, `claude -p` schreibt Fehler auf stdout | `bin/bauplan-ci.py:93`; lokal nachgestellt: ungueltiges Token → Exit 1, „401 authentication_error" nur auf stdout, stderr leer | ✅ belegt |
-| 3 | Ursache des Exit 1: ein abgelehntes `CLAUDE_CODE_OAUTH_TOKEN`. Das 401-Bild stimmt mit dem Runner ueberein (Exit 1, ~5 s, stderr nur Warnungen). Das Secret wurde am 14. Oktober 2026 erneuert | Gegenprobe lokal mit gueltiger Anmeldung im frischen Klon: Exit 0 | ⚠️ Vermutung |
+| 3 | Ursache des Exit 1: Bei Claude kommt kein verwertbares Token an. Nach dem Fix aus Teil A meldet das Log „Not logged in". Diese Meldung erzeugt CLI 2.1.299 (die Runner-Version) nur bei fehlendem, leerem oder nur aus Leerraum bestehendem Token. Ein falsches Token ergibt dagegen 401. **Korrektur:** Die erste Annahme „abgelehntes Token (401)" war falsch. Seit das Secret am 14. Oktober 2026 um 10:40 Uhr ueber die Zwischenablage gesetzt wurde (geprueft: Laenge 108, lokaler Test „OK"), meldet sich Claude auf dem Runner erfolgreich an | Lauf 38536107837 („Not logged in"); lokale Proben mit 2.1.299; Lauf 38536814197 (Claude zweimal Exit 0) | ✅ belegt fuer 14. Oktober 2026, ⚠️ fuer die Laeufe davor vermutet (ohne Teil A war die Meldung nicht sichtbar) |
 | 4 | Claude fehlen im CI-Lauf die Shell-Rechte. Gestartet wird nur mit `--permission-mode acceptEdits`. Der Refresh-Abschnitt braucht `bin/bauplan-stale.py`, `bin/bauplan-wording.py` und `git -C . diff`. Keiner dieser Befehle steht in der Allow-Liste, und der Runner ignoriert die Allow-Liste ohnehin („Ignoring 17 permissions.allow entries … not trusted") | `bin/bauplan-ci.py:81`; `SKILL.md:132`, `:274`, `:283`; `.claude/settings.json:4–19`; Runner-Log | ✅ fehlende Rechte belegt, ⚠️ Wirkung auf den Lauf vermutet |
 | 5 | Der Guard blockiert den Schreibweg des Skills. Phase 2e legt Blaetter per Shell-Umleitung `> docs/bauplan/…` ab, und `bauplan-guard.sh` blockiert jeden Bash-Befehl, der `>` und `docs/bauplan` enthaelt | `SKILL.md:165–168`; `.claude/hooks/bauplan-guard.sh:28–29`; am 14. Oktober 2026 live ausgeloest | ✅ belegt |
-| 6 | Ob das `Artifact`-Werkzeug im Headless-Lauf auf dem Runner verfuegbar ist (Schritt 5 im Refresh-Abschnitt: veroeffentlichen) | — | ❌ unbekannt, klaert der Pruef-Lauf |
+| 6 | Ob das `Artifact`-Werkzeug im Headless-Lauf auf dem Runner verfuegbar ist (Schritt 5 im Refresh-Abschnitt: veroeffentlichen) | Bei Erfolg schreibt das Skript Claudes Antwort nicht ins Log | ❌ unbekannt, klaert D2 |
+| 7 | Die Pruefung „nur Erlaubtes geaendert" vergleicht immer kumuliert mit `HEAD`. Beim zweiten Repo gelten deshalb die Aenderungen des ersten als „ausserhalb des Auftrags", und der Lauf bricht ab. Der Connector-Teil hatte genau seine vier veralteten Blaetter geaendert | `bin/bauplan-ci.py:131–136`, Schleife ab `:178`; Laeufe 38536814197 und 38543367343, beide mit ABBRUCH beim harness-Teil, gelistet waren nur Connector-Dateien | ✅ belegt |
+| 8 | Dieselbe Pruefung sieht neu angelegte Dateien nicht, denn `git diff --name-only` listet keine untracked Dateien | `bin/bauplan-ci.py:133` | ✅ belegt |
 
 ## Anforderungen
 
@@ -52,6 +54,18 @@ Laeufe, in denen nichts veraltet war — dann startet der Schritt gar nicht.
       neu zusammengesetzt.
 - [x] Die Regel des Guards bleibt unveraendert.
 
+### D. Pruefung je Repo und Antwort im Log
+
+Ergaenzt am 14. Oktober 2026 nach dem ersten Lauf mit gueltigem Token (Befunde 6–8).
+
+- [x] D1: Die Pruefung je Repo zaehlt nur Dateien, die der Claude-Lauf **dieses** Repos
+      geaendert, angelegt oder geloescht hat. Aenderungen frueherer Repos im selben Lauf
+      zaehlen nicht. Aendert ein spaeterer Lauf eine schon geaenderte Datei erneut, zaehlt
+      das sehr wohl.
+- [x] D1: Neu angelegte Dateien unter `docs/bauplan` und `.claude/bauplan` werden erfasst,
+      gitignorierte (`CI-BERICHT.json`, `*.STALE.md`) nicht.
+- [x] D2: Auch bei Erfolg steht das Ende von Claudes Antwort im Log, laengenbegrenzt.
+
 ## Akzeptanzkriterien
 
 - [x] Lokal: `CLAUDE_CODE_OAUTH_TOKEN=ungueltig python3 bin/bauplan-ci.py --regenerate --repo harness`
@@ -60,10 +74,17 @@ Laeufe, in denen nichts veraltet war — dann startet der Schritt gar nicht.
 - [x] `grep -n '"Bash"' bin/bauplan-ci.py` liefert keinen Treffer. Es gibt also keine
       Freigabe ohne Muster.
 - [x] `grep -n "per Edit" .claude/skills/repo-bauplan/SKILL.md` trifft im Refresh-Abschnitt.
-- [ ] Manueller Lauf mit `regenerate = true`: Der Schritt „Betroffene Etappen neu bauen" ist
-      entweder gruen, oder er ist rot und das Log nennt die Ursache im Klartext.
-- [ ] Ist der Lauf gruen: Der PR „docs: refresh stale bauplan sheets" enthaelt nur Dateien
-      unter `docs/bauplan/` und `.claude/bauplan/*.manifest.json`.
+- [x] Manueller Lauf mit `regenerate = true`: Der Schritt „Betroffene Etappen neu bauen" ist
+      entweder gruen, oder er ist rot und das Log nennt die Ursache im Klartext. Erfuellt
+      durch die Laeufe 38536107837 („Not logged in") und 38536814197 (ABBRUCH mit Dateiliste).
+- [x] D1 im Wegwerf-Repo: Eine **vor** dem Lauf geaenderte Datei wird nicht gemeldet. Eine im
+      Lauf geaenderte Datei wird gemeldet. Eine im Lauf neu angelegte Datei wird gemeldet,
+      und zwar als ausserhalb, wenn sie nicht erlaubt ist. Eine vorher geaenderte und im Lauf
+      erneut geaenderte Datei wird gemeldet. Eine gitignorierte Datei wird nicht gemeldet.
+- [ ] Manueller Lauf auf `main` nach dem Merge: Der Schritt „Betroffene Etappen neu bauen"
+      ist gruen, und das Log zeigt fuer jedes Repo das Ende von Claudes Antwort (D2).
+- [ ] Der PR „docs: refresh stale bauplan sheets" enthaelt nur Dateien unter `docs/bauplan/`
+      und `.claude/bauplan/*.manifest.json`.
 
 ## Constraints
 
@@ -134,3 +155,49 @@ Freigaben im frischen, nicht vertrauten Klon,        -> bauplan-stale.py: ausgef
 
 Diese drei Punkte und die beiden offenen Akzeptanzkriterien beantwortet der manuelle Lauf
 mit `regenerate = true`.
+
+Ergebnis der manuellen Laeufe auf dem Branch, 14. Oktober 2026: Das Secret von 10:15 Uhr
+kam als leer an („Not logged in"). Das von 10:40 Uhr wirkt. Der Lauf brach danach an
+Befund 7 ab, daraus wurde Teil D.
+
+### Nachtrag D (14. Oktober 2026)
+
+| Datei | Aenderung |
+|---|---|
+| `bin/bauplan-ci.py` | D1: `bauplan_stand()` haelt vor jedem Claude-Lauf den Inhalt aller abweichenden Bestandsdateien fest (`git ls-files --modified --deleted --others --exclude-standard`, Inhalt als SHA-1). `diff_within()` vergleicht danach mit diesem Stand statt mit `HEAD` |
+| `bin/bauplan-ci.py` | D2: Bei Erfolg kommt das Ende von Claudes Antwort ins Log (1500 Zeichen) |
+
+#### Nachweis D
+
+Test zuerst, im Wegwerf-Repo (`test_diff_within.py`, im Scratchpad, nicht committet):
+gegen den alten Code rot, denn `bauplan_stand` fehlt. Gegen den neuen Code gruen:
+
+```
+nur dieser Lauf, neue Datei erfasst          -> etappe-02 (geaendert), etappe-03 (neu)
+neue, nicht erlaubte Datei ist ausserhalb    -> etappe-03
+erneut geaenderte und geloeschte Datei       -> etappe-01, x.manifest.json
+gitignorierte CI-BERICHT.json                -> nicht gemeldet
+keine Aenderung                              -> leer
+```
+
+Zwei-Repo-Fall nachgestellt: Wegwerf-Klon des Branches, `connector` verlinkt und kuenstlich
+veraltet, `claude` durch ein Ersatz-Skript ersetzt, das nur die aufgetragenen Blaetter
+aendert:
+
+```
+alter Code (729b505)               -> ABBRUCH beim harness-Teil, gelistet die
+                                      Connector-Dateien (wie in Lauf 38536814197)
+neuer Code                         -> connector 7 Blaetter, harness 3 Blaetter, Exit 3,
+                                      Claudes Antwort je Repo im Log
+neuer Code, harness greift auf ein -> ABBRUCH, gelistet nur
+  emailservice-Blatt uebergreifend    docs/bauplan/emailservice/etappe-01.html
+```
+
+Wiederholt: ungueltiges Token, also Exit 1 mit `authentication_error`. `--report` ergibt
+Exit 3, `bauplan-guard.py --verify` Exit 0, und `grep '"Bash"'` findet keinen Treffer.
+
+#### Noch offen
+
+- Der Lauf auf `main` nach dem Merge: gruen, Claudes Antwort im Log, und der
+  Auffrischungs-PR enthaelt nur Erlaubtes.
+- Offene Frage 6 (`Artifact`), beantwortet durch D2 im Log dieses Laufs.

@@ -16,6 +16,7 @@ damit ein CI-Schritt das ohne Ausgabe-Parsing auswerten kann.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -32,6 +33,9 @@ CLAUDE_TIMEOUT = 3600
 # Headless-Lauf jeden dieser Befehle ab.
 REFRESH_SKRIPTE = ("bauplan-stale.py", "bauplan-wording.py")
 LESENDE_GIT_BEFEHLE = ("diff", "log", "show", "rev-parse")
+
+# Wo ein Auffrischungslauf schreiben darf. Alles darunter wird je Lauf geprueft.
+BAUPLAN_PFADE = ("docs/bauplan", ".claude/bauplan")
 
 
 def sh(*args, cwd=None, check=False):
@@ -125,14 +129,42 @@ def regenerate(project, repo, hits):
                 print("  --- claude %s ---\n%s" % (kanal, text.strip()[-1200:]),
                       file=sys.stderr)
         return False
+    # Auch bei Erfolg: Nur aus Claudes Antwort geht hervor, ob die Wortpruefung
+    # lief und ob Seiten veroeffentlicht wurden.
+    if res.stdout.strip():
+        print("  --- claude Antwort (Ende) ---\n%s" % res.stdout.strip()[-1500:])
     return True
 
 
-def diff_within(project, allowed):
-    """Hat der Lauf nur angefasst, was er anfassen durfte?"""
-    out = sh("git", "-C", project, "diff", "--name-only", "--",
-             "docs/bauplan", ".claude/bauplan")
-    touched = {line for line in out.stdout.splitlines() if line.strip()}
+def bauplan_stand(project):
+    """Inhalt jeder Bestandsdatei, die vom Index abweicht: geaendert, geloescht, neu.
+
+    Geloeschte Dateien stehen mit None im Ergebnis, unveraenderte fehlen.
+    Gitignorierte Dateien (CI-BERICHT.json, *.STALE.md) zaehlen nicht.
+    """
+    out = sh("git", "-C", project, "ls-files", "-z", "--modified", "--deleted",
+             "--others", "--exclude-standard", "--", *BAUPLAN_PFADE)
+    stand = {}
+    for rel in {p for p in out.stdout.split("\0") if p}:
+        pfad = os.path.join(project, rel)
+        if os.path.isfile(pfad):
+            with open(pfad, "rb") as fh:
+                stand[rel] = hashlib.sha1(fh.read()).hexdigest()
+        else:
+            stand[rel] = None
+    return stand
+
+
+def diff_within(project, allowed, vorher):
+    """Hat dieser Lauf nur angefasst, was er anfassen durfte?
+
+    Verglichen wird mit dem Stand vor dem Lauf, nicht mit HEAD. Sonst zaehlen beim
+    zweiten Repo die Aenderungen des ersten mit (belegt in Lauf 38536814197).
+    """
+    nachher = bauplan_stand(project)
+    wie_im_index = object()
+    touched = {rel for rel in set(vorher) | set(nachher)
+               if vorher.get(rel, wie_im_index) != nachher.get(rel, wie_im_index)}
     return touched, touched - allowed
 
 
@@ -178,10 +210,11 @@ def main():
         for repo, hits in veraltet.items():
             print("\nAuffrischen %s ..." % repo)
             allowed = allowed_paths(project, repo, hits)
+            vorher = bauplan_stand(project)
             if not regenerate(project, repo, hits):
                 fehler.append(repo)
                 continue
-            touched, ausserhalb = diff_within(project, allowed)
+            touched, ausserhalb = diff_within(project, allowed, vorher)
             if ausserhalb:
                 print("  ABBRUCH: der Lauf hat Dateien ausserhalb des Auftrags geaendert:",
                       file=sys.stderr)
