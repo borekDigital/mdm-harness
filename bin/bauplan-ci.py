@@ -13,6 +13,9 @@ Etappen betroffen sind.
 
 Ohne `--regenerate` wird nichts geschrieben. Exit 3 heisst „es gibt Veraltetes",
 damit ein CI-Schritt das ohne Ausgabe-Parsing auswerten kann.
+
+Mit `--regenerate` heisst Exit 0: alles Veraltete ist neu gebaut. Exit 1 heisst:
+mindestens ein Repo ist gescheitert, oder der Bestand-Check schlaegt an.
 """
 
 import argparse
@@ -259,6 +262,10 @@ def main():
 
     if fehler:
         return 1
+    if args.regenerate:
+        # Nach dem Neubau ist nichts mehr veraltet. Exit 3 wertet der Workflow-Schritt
+        # als Fehler und ueberspringt dann Uebersicht und PR (belegt in Lauf 38546913702).
+        return 0
     return 3 if veraltet else 0
 
 
