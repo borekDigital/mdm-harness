@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PDP Tabs — Aligned to the Page Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#002147; --ink:#1E1C17; --stone:#55504A;
+    --sand:#D6CAB3; --sand-light:#F5F0E6; --rule:#DDD6C8;
+    --go:#2E7D5B; --cut:#B03A2E; --warn:#9A6B1F;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--ink); background:#fff;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-size:11pt; line-height:1.55; }
+  .doc { max-width:190mm; margin:0 auto; padding:0 0 12mm; }
+
+  .titleblock { border-bottom:2px solid var(--navy); padding-bottom:10px; margin-bottom:24px; }
+  .eyebrow { font-size:8.5pt; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--stone); font-weight:600; margin:0 0 6px; }
+  h1 { font-family:"EB Garamond",Georgia,serif; font-weight:600; font-size:25pt;
+    line-height:1.15; margin:0 0 6px; color:var(--navy); }
+  .subtitle { margin:0; color:var(--stone); font-size:10.5pt; }
+  .meta { margin:10px 0 0; font-size:9pt; color:var(--stone); }
+  .meta span + span::before { content:"·"; margin:0 .55em; color:var(--sand); }
+
+  h2 { font-family:"EB Garamond",Georgia,serif; font-weight:600; font-size:15.5pt;
+    color:var(--navy); margin:28px 0 10px; padding-bottom:4px;
+    border-bottom:1px solid var(--rule); break-after:avoid-page; }
+  h3 { font-size:10.5pt; font-weight:600; margin:16px 0 6px; break-after:avoid-page; }
+  p { margin:0 0 10px; }
+  ul { margin:0 0 10px; padding-left:18px; }
+  li { margin-bottom:4px; }
+  .lede { font-size:12pt; line-height:1.5; color:var(--stone); margin-bottom:16px; }
+
+  table { width:100%; border-collapse:collapse; margin:0 0 14px; font-size:9.5pt;
+    break-inside:avoid-page; }
+  th,td { text-align:left; vertical-align:top; padding:6px 9px; border-bottom:1px solid var(--rule); }
+  th { background:var(--sand-light); font-weight:600; color:var(--navy);
+    border-bottom:1px solid var(--sand); }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  th.num { text-align:right; }
+  .zero { color:var(--go); font-weight:600; }
+  .bad { color:var(--cut); font-weight:600; }
+
+  .tag { display:inline-block; font-size:8pt; font-weight:600; padding:1px 6px;
+    border-radius:2px; white-space:nowrap; }
+  .t-keep { background:#E3F0E9; color:#1E5E43; }
+  .t-back { background:#FBEAE7; color:#8C2D22; }
+  .t-open { background:#E6EDF6; color:var(--navy); }
+
+  /* origin badges */
+  .o-nexvo  { background:#E3F0E9; color:#1E5E43; }
+  .o-brand  { background:#EDE8DE; color:#6B5A36; }
+  .o-css    { background:#F2EEE7; color:#7A6E58; }
+  .o-copy   { background:#FBEAE7; color:#8C2D22; }
+  .o-snip   { background:#F6E3D8; color:#8A4B22; }
+  .o-edit   { background:#E6EDF6; color:var(--navy); }
+  .st { font-size:8.5pt; white-space:nowrap; }
+  .st-un { color:var(--stone); }
+  .st-rm { color:var(--cut); font-weight:600; }
+  .st-ch { color:var(--warn); font-weight:600; }
+  .st-on { color:var(--go); font-weight:600; }
+  .grp td { background:var(--sand-light); font-weight:600; color:var(--navy);
+    font-size:9pt; padding-top:8px; padding-bottom:5px; }
+  .legend { font-size:9pt; margin:0 0 14px; }
+  .layerline { margin:-4px 0 12px; padding:5px 10px; background:#FAF8F4;
+    border-left:3px solid var(--sand); font-size:9pt; }
+  .layerline .ll { color:var(--stone); margin-left:6px; }
+  .legend div { margin-bottom:3px; }
+  .src { font-size:8.3pt; color:var(--stone); }
+
+  figure { margin:16px 0 20px; break-inside:avoid-page; }
+  figure svg { width:100%; height:auto; display:block; }
+  figcaption { font-size:8.5pt; color:var(--stone); margin-top:8px; line-height:1.45; }
+
+  .callout { border-left:3px solid var(--warn); background:#FBF7EF; padding:12px 14px;
+    margin:14px 0; break-inside:avoid-page; }
+  .callout h3 { margin-top:0; color:var(--warn); }
+  .callout p:last-child { margin-bottom:0; }
+  .quote { border-left:3px solid var(--sand); padding:2px 0 2px 14px; margin:12px 0;
+    color:var(--stone); font-style:italic; }
+
+  ol.asks { padding-left:0; list-style:none; counter-reset:ask; margin:0; }
+  ol.asks li { counter-increment:ask; position:relative; padding:0 0 13px 34px; margin:0;
+    break-inside:avoid-page; }
+  ol.asks li::before { content:"D" counter(ask); position:absolute; left:0; top:1px;
+    min-width:24px; height:20px; padding:0 4px; border-radius:10px; background:var(--navy);
+    color:#fff; font-size:8pt; font-weight:600; display:flex; align-items:center;
+    justify-content:center; }
+  ol.asks li b { display:block; font-weight:600; }
+  ol.asks li span { color:var(--stone); font-size:10pt; }
+
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:8.6pt;
+    background:#F4F2ED; padding:.1em .35em; border-radius:2px; }
+
+  footer { margin-top:30px; padding-top:10px; border-top:1px solid var(--rule);
+    font-size:8.5pt; color:var(--stone); break-inside:avoid-page; }
+
+  @page { size:A4; margin:16mm 12mm; }
+  html { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+<div class="titleblock">
+  <p class="eyebrow">Product detail page · Tabs section</p>
+  <h1>PDP Tabs — Aligned to the Page Grid</h1>
+  <p class="subtitle">Four changes to the tab area, what went back to the theme default, and five things I need you to decide</p>
+  <p class="meta"><span>21 September 2026</span><span>MDM Shopify theme</span><span>Konrad Thiemann</span></p>
+</div>
+
+<p class="lede">Three days ago we straightened the product block on the detail page so it lines
+up with the breadcrumbs. The tab area below it still had a page grid of its own, so the same
+misalignment was still there — just lower down the page. That is now fixed, along with three
+other things you asked for. One of them changes how text looks, and that is the part I would
+like you to look at first.</p>
+
+<h2>1. The four changes</h2>
+
+<p>Anything we change in a theme sits on one of five layers, from the theme’s own behaviour at
+the top to a rule typed into the theme editor at the bottom. The further up a change sits, the
+less of it is ours to maintain. Section 6 explains the layers in full; the last column here is
+the short answer for each change.</p>
+
+<p class="legend"><b>The five layers:</b>
+  <span class="tag o-nexvo">1 NEXVO</span>
+  <span class="tag o-brand">2 BRAND</span>
+  <span class="tag o-css">3 TABS CSS</span>
+  <span class="tag o-copy">4 SECTION</span>
+  <span class="tag o-edit">5 EDITOR</span>
+</p>
+
+<table>
+  <thead><tr>
+    <th style="width:18%">What</th><th style="width:31%">Before</th>
+    <th style="width:31%">After</th><th style="width:20%">Now lives on</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><b>Alignment</b></td>
+        <td>The tab area had its own margins and stopped at 1440&nbsp;px</td>
+        <td>Follows the theme page grid — same left edge as the breadcrumbs at every width</td>
+        <td><span class="tag o-nexvo">1 NEXVO</span><br><span class="st st-un">was layer 4</span></td></tr>
+    <tr><td><b>Reading column</b></td>
+        <td>700&nbsp;px</td>
+        <td><b>760&nbsp;px</b></td>
+        <td><span class="tag o-copy">4 SECTION</span><br><span class="st st-un">stays — ours</span></td></tr>
+    <tr><td><b>Text styling</b></td>
+        <td>Sizes, line height and colour written into this one section</td>
+        <td>Comes from the shop-wide rich-text rules, like every other page</td>
+        <td><span class="tag o-brand">2 BRAND</span><br><span class="st st-un">was layer 4</span></td></tr>
+    <tr><td><b>Technical data table</b></td>
+        <td>Stopped at 1280&nbsp;px</td>
+        <td>Full width — the theme default</td>
+        <td><span class="tag o-nexvo">1 NEXVO</span><br><span class="st st-un">was layer 4</span></td></tr>
+  </tbody>
+</table>
+
+<figure>
+<svg viewBox="0 0 620 196" role="img" aria-label="Which layer each of the four changes moved to">
+  <defs>
+    <marker id="pdptab-mv" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0 L7 3.5 L0 7 z" fill="#8F877C"/>
+    </marker>
+  </defs>
+  <g font-family="Inter,sans-serif">
+    <!-- column headers -->
+    <text x="128" y="14" font-size="8.5" font-weight="600" fill="#1E5E43" text-anchor="middle">1 NEXVO</text>
+    <text x="128" y="24" font-size="7.5" fill="#9A958C" text-anchor="middle">the theme</text>
+    <text x="238" y="14" font-size="8.5" font-weight="600" fill="#6B5A36" text-anchor="middle">2 BRAND</text>
+    <text x="238" y="24" font-size="7.5" fill="#9A958C" text-anchor="middle">whole shop</text>
+    <text x="348" y="14" font-size="8.5" font-weight="600" fill="#7A6E58" text-anchor="middle">3 TABS CSS</text>
+    <text x="348" y="24" font-size="7.5" fill="#9A958C" text-anchor="middle">our copy</text>
+    <text x="458" y="14" font-size="8.5" font-weight="600" fill="#8C2D22" text-anchor="middle">4 SECTION</text>
+    <text x="458" y="24" font-size="7.5" fill="#9A958C" text-anchor="middle">hand-set</text>
+    <text x="568" y="14" font-size="8.5" font-weight="600" fill="#002147" text-anchor="middle">5 EDITOR</text>
+    <text x="568" y="24" font-size="7.5" fill="#9A958C" text-anchor="middle">in the page</text>
+
+    <!-- column guides -->
+    <g stroke="#ECE7DD">
+      <line x1="128" y1="32" x2="128" y2="188"/><line x1="238" y1="32" x2="238" y2="188"/>
+      <line x1="348" y1="32" x2="348" y2="188"/><line x1="458" y1="32" x2="458" y2="188"/>
+      <line x1="568" y1="32" x2="568" y2="188"/>
+    </g>
+    <rect x="118" y="32" width="20" height="156" fill="#2E7D5B" opacity=".06"/>
+
+    <!-- row 1: alignment 4 -> 1 -->
+    <text x="0" y="56" font-size="9" font-weight="600" fill="#1E1C17">Alignment</text>
+    <circle cx="458" cy="52" r="4.5" fill="#fff" stroke="#B9B3A8" stroke-width="1.4"/>
+    <line x1="448" y1="52" x2="140" y2="52" stroke="#8F877C" stroke-width="1.2" marker-end="url(#pdptab-mv)"/>
+    <circle cx="128" cy="52" r="5.5" fill="#2E7D5B"/>
+
+    <!-- row 2: reading column stays at 4 -->
+    <text x="0" y="92" font-size="9" font-weight="600" fill="#1E1C17">Reading column</text>
+    <circle cx="458" cy="88" r="5.5" fill="#B03A2E"/>
+    <text x="474" y="91" font-size="8" fill="#8C2D22">stays — 700 → 760 px</text>
+
+    <!-- row 3: text styling 4 -> 2 -->
+    <text x="0" y="128" font-size="9" font-weight="600" fill="#1E1C17">Text styling</text>
+    <circle cx="458" cy="124" r="4.5" fill="#fff" stroke="#B9B3A8" stroke-width="1.4"/>
+    <line x1="448" y1="124" x2="250" y2="124" stroke="#8F877C" stroke-width="1.2" marker-end="url(#pdptab-mv)"/>
+    <circle cx="238" cy="124" r="5.5" fill="#6B5A36"/>
+
+    <!-- row 4: table width 4 -> 1 -->
+    <text x="0" y="164" font-size="9" font-weight="600" fill="#1E1C17">Table width</text>
+    <circle cx="458" cy="160" r="4.5" fill="#fff" stroke="#B9B3A8" stroke-width="1.4"/>
+    <line x1="448" y1="160" x2="140" y2="160" stroke="#8F877C" stroke-width="1.2" marker-end="url(#pdptab-mv)"/>
+    <circle cx="128" cy="160" r="5.5" fill="#2E7D5B"/>
+
+    <text x="0" y="186" font-size="7.5" fill="#9A958C">hollow = where it was · filled = where it is now</text>
+  </g>
+</svg>
+<figcaption>All four started as hand-set rules in this one section. Three of them moved up to a
+layer we no longer have to maintain — two to the theme itself, one to the shop-wide brand
+stylesheet. Only the reading column is still a deliberate exception, and it is the one you
+asked for.</figcaption>
+</figure>
+
+<h2>2. Alignment, measured</h2>
+
+<p class="layerline"><span class="tag o-nexvo">NOW ON LAYER 1 · NEXVO</span><span class="ll">the theme’s own page grid — no rule of ours involved any more</span></p>
+
+<p>Distance of the first breadcrumb and of the first tab label from the left window edge, in CSS
+pixels. Measured in headless Chrome via <code>getBoundingClientRect()</code>, on the same page,
+before and after the change.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:22%">Window width</th>
+      <th class="num">Breadcrumb</th>
+      <th class="num">Tabs before</th>
+      <th class="num">Offset before</th>
+      <th class="num">Tabs after</th>
+      <th class="num">Offset after</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>375 px · phone</td><td class="num">16</td><td class="num">16</td><td class="num zero">0</td><td class="num">16</td><td class="num zero">0</td></tr>
+    <tr><td>767 px · phone, large</td><td class="num">16</td><td class="num">16</td><td class="num zero">0</td><td class="num">16</td><td class="num zero">0</td></tr>
+    <tr><td>1000 px · tablet</td><td class="num">16</td><td class="num">80</td><td class="num bad">64</td><td class="num">16</td><td class="num zero">0</td></tr>
+    <tr><td>1280 px · laptop</td><td class="num">50</td><td class="num">80</td><td class="num bad">30</td><td class="num">50</td><td class="num zero">0</td></tr>
+    <tr><td>1440 px · laptop, large</td><td class="num">50</td><td class="num">80</td><td class="num bad">30</td><td class="num">50</td><td class="num zero">0</td></tr>
+    <tr><td>1636 px · desktop</td><td class="num">135</td><td class="num">178</td><td class="num bad">43</td><td class="num">135</td><td class="num zero">0</td></tr>
+    <tr><td>1920 px · desktop, large</td><td class="num">135</td><td class="num">320</td><td class="num bad">185</td><td class="num">135</td><td class="num zero">0</td></tr>
+  </tbody>
+</table>
+
+<p>The tab area was off at every width above 767&nbsp;px, and worst on large screens: 185&nbsp;px
+at 1920&nbsp;px. Every value in the last column is now the theme gutter, so the page scales with
+the theme instead of against it.</p>
+
+<figure>
+<svg viewBox="0 0 620 300" role="img" aria-label="Alignment of breadcrumbs and tabs at a 1920 pixel window, before and after">
+  <defs>
+    <marker id="pdptab-ar" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0 L7 3.5 L0 7 z" fill="#B03A2E"/>
+    </marker>
+  </defs>
+
+  <!-- BEFORE -->
+  <text x="0" y="12" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#55504A">BEFORE — window 1920 px</text>
+  <rect x="0" y="20" width="620" height="110" fill="#FCFBF8" stroke="#DDD6C8"/>
+  <!-- grid line at breadcrumb edge -->
+  <line x1="43" y1="20" x2="43" y2="130" stroke="#B03A2E" stroke-width="1" stroke-dasharray="3 3"/>
+  <!-- breadcrumb -->
+  <rect x="43" y="34" width="52" height="7" rx="2" fill="#9A958C"/>
+  <text x="103" y="41" font-family="Inter,sans-serif" font-size="8" fill="#9A958C">breadcrumbs · 135 px</text>
+  <!-- product block -->
+  <rect x="43" y="52" width="180" height="26" rx="2" fill="#EDE8DE"/>
+  <text x="231" y="69" font-family="Inter,sans-serif" font-size="8" fill="#9A958C">product block · 135 px</text>
+  <!-- tabs, pushed in -->
+  <rect x="103" y="92" width="70" height="9" rx="2" fill="#002147"/>
+  <rect x="183" y="92" width="86" height="9" rx="2" fill="#B9B3A8"/>
+  <line x1="103" y1="107" x2="517" y2="107" stroke="#D6CAB3"/>
+  <rect x="103" y="114" width="240" height="6" rx="2" fill="#C8C2B7"/>
+  <!-- offset marker -->
+  <line x1="43" y1="86" x2="99" y2="86" stroke="#B03A2E" stroke-width="1.4" marker-end="url(#pdptab-ar)"/>
+  <text x="277" y="99" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#B03A2E">tabs · 320 px — 185 px too far in</text>
+
+  <!-- AFTER -->
+  <text x="0" y="172" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#55504A">AFTER — window 1920 px</text>
+  <rect x="0" y="180" width="620" height="110" fill="#FCFBF8" stroke="#DDD6C8"/>
+  <line x1="43" y1="180" x2="43" y2="290" stroke="#2E7D5B" stroke-width="1" stroke-dasharray="3 3"/>
+  <rect x="43" y="194" width="52" height="7" rx="2" fill="#9A958C"/>
+  <text x="103" y="201" font-family="Inter,sans-serif" font-size="8" fill="#9A958C">breadcrumbs · 135 px</text>
+  <rect x="43" y="212" width="180" height="26" rx="2" fill="#EDE8DE"/>
+  <text x="231" y="229" font-family="Inter,sans-serif" font-size="8" fill="#9A958C">product block · 135 px</text>
+  <rect x="43" y="252" width="70" height="9" rx="2" fill="#002147"/>
+  <rect x="123" y="252" width="86" height="9" rx="2" fill="#B9B3A8"/>
+  <line x1="43" y1="267" x2="577" y2="267" stroke="#D6CAB3"/>
+  <rect x="43" y="274" width="240" height="6" rx="2" fill="#C8C2B7"/>
+  <text x="217" y="259" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#2E7D5B">tabs · 135 px — flush</text>
+</svg>
+<figcaption>Schematic, drawn to scale from the measured values. The dashed line is the left edge
+of the breadcrumbs. Note that the rule under the tab labels also starts and ends with the grid
+now, instead of floating inside it.</figcaption>
+</figure>
+
+<h2>3. The reading column: 700 → 760 px</h2>
+
+<p class="layerline"><span class="tag o-copy">STAYS ON LAYER 4 · SECTION</span><span class="ll">hand-set in this section — a deliberate exception, the only one left</span></p>
+
+<p>The description and the free-extras tab are held to a fixed reading width so the lines do not
+run the full width of a large screen. That column is now <b>760&nbsp;px</b> instead of 700&nbsp;px,
+as you asked. It takes effect from 1280&nbsp;px upward; below that the window is narrower than the
+column anyway, so nothing changes on phones and tablets.</p>
+
+<p>The technical data table is deliberately <em>not</em> inside this column — see section 5.</p>
+
+<h2>4. Text styling — the change you will notice</h2>
+
+<p class="layerline"><span class="tag o-brand">NOW ON LAYER 2 · BRAND</span><span class="ll">our shop-wide rich-text stylesheet — shared with every other page</span></p>
+
+<p>This section used to carry its own type scale, written directly into it. That is now gone, so
+the text in the tabs is styled by the same shop-wide rich-text rules that already style the help
+pages, the policy pages and every other body copy in the shop.</p>
+
+<p>On desktop the body copy is practically unchanged. The headings inside the description are
+not — they used to render as a small uppercase eyebrow line, and now render as a real heading.</p>
+
+<table>
+  <thead><tr><th style="width:22%">Element</th><th style="width:39%">Before</th><th style="width:39%">After</th></tr></thead>
+  <tbody>
+    <tr><td><b>Body copy</b><br><span style="color:#55504A;font-size:9pt">desktop</span></td>
+        <td>Inter 16 px · line height 26.4 px · <span style="color:#615B4F">#615B4F</span></td>
+        <td>Inter 16 px · line height 27.2 px · <span style="color:#3E3A32">#3E3A32</span></td></tr>
+    <tr><td><b>Body copy</b><br><span style="color:#55504A;font-size:9pt">phone</span></td>
+        <td>Inter <b>14 px</b> · line height 21 px</td>
+        <td>Inter <b>16 px</b> · line height 27.2 px</td></tr>
+    <tr><td><b>Heading in the copy</b><br><span style="color:#55504A;font-size:9pt">desktop</span></td>
+        <td>Inter 16 px · semibold · <b>UPPERCASE</b> · letter spacing 1.68 px · <span style="color:#615B4F">#615B4F</span></td>
+        <td>EB Garamond <b>32 px</b> · medium · sentence case · <span style="color:#002147">#002147</span></td></tr>
+    <tr><td><b>Heading in the copy</b><br><span style="color:#55504A;font-size:9pt">phone</span></td>
+        <td>Inter 11 px · semibold · <b>UPPERCASE</b> · letter spacing 1.54 px</td>
+        <td>EB Garamond <b>32 px</b> · medium · sentence case</td></tr>
+    <tr><td><b>Paragraph spacing</b></td>
+        <td>24 px between every element</td>
+        <td>16 px after a paragraph, 32 px before a heading</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <h3>Worth knowing: “theme default” here means two different things</h3>
+  <p>The page grid went back to the <strong>theme’s own</strong> stylesheet — that is a true
+  restoration of the Nexvo default.</p>
+  <p>The typography went back to <strong>our brand layer</strong>, the file that sits on top of
+  the theme and carries the MDM type scale and colours. That is still our own design, just
+  defined once for the whole shop instead of separately inside this one section. Nexvo untouched
+  would look different again.</p>
+</div>
+
+<h2>5. The technical data table</h2>
+
+<p class="layerline"><span class="tag o-nexvo">WIDTH NOW ON LAYER 1 · NEXVO</span><span class="ll">no width rule at all; the table itself stays ours — layer 4 markup, see section 6</span></p>
+
+<p>You asked what the theme default is here. It is <b>full width</b> — the theme puts no limit on
+it. The table was never limited itself; it was simply boxed in by the 1440&nbsp;px cap on the
+section around it. With that gone, it now uses the full content width.</p>
+
+<table>
+  <thead><tr><th style="width:34%">Window width</th><th class="num">Table before</th><th class="num">Table after</th></tr></thead>
+  <tbody>
+    <tr><td>1000 px</td><td class="num">840 px</td><td class="num">968 px</td></tr>
+    <tr><td>1280 px</td><td class="num">1120 px</td><td class="num">1180 px</td></tr>
+    <tr><td>1440 px</td><td class="num">1280 px</td><td class="num">1340 px</td></tr>
+    <tr><td>1636 px</td><td class="num">1280 px</td><td class="num">1366 px</td></tr>
+    <tr><td>1920 px</td><td class="num">1280 px</td><td class="num"><b>1650 px</b></td></tr>
+  </tbody>
+</table>
+
+<p>1650 px is where the theme’s own maximum content width lands on a 1920 px screen. It is a
+merchant setting, currently 1700 px, and it applies to every section of the shop.</p>
+
+<h2>6. Where every rule comes from</h2>
+
+<p>You asked for this and it is the most useful page in the document: for every part of the tab
+area, whether it is the theme’s own behaviour or something we added, and if we added it, from
+which of our layers. Five layers stack on top of each other, and the lower one always wins.</p>
+
+<figure>
+<svg viewBox="0 0 620 176" role="img" aria-label="The five stylesheet layers, from the theme default at the top to the theme editor at the bottom">
+  <g font-family="Inter,sans-serif">
+    <rect x="0" y="6" width="330" height="26" rx="3" fill="#E3F0E9" stroke="#2E7D5B"/>
+    <text x="10" y="23" font-size="9.5" font-weight="600" fill="#1E5E43">1 · Nexvo — the theme itself</text>
+    <text x="340" y="23" font-size="8.5" fill="#55504A">theme.css · component-tabs.css · tabs-content.liquid</text>
+
+    <rect x="16" y="38" width="330" height="26" rx="3" fill="#EDE8DE" stroke="#B9AC8E"/>
+    <text x="26" y="55" font-size="9.5" font-weight="600" fill="#6B5A36">2 · Our brand layer — whole shop</text>
+    <text x="356" y="55" font-size="8.5" fill="#55504A">brand-overrides.css</text>
+
+    <rect x="32" y="70" width="330" height="26" rx="3" fill="#F2EEE7" stroke="#C8BFA8"/>
+    <text x="42" y="87" font-size="9.5" font-weight="600" fill="#7A6E58">3 · Our copy of the tabs stylesheet</text>
+    <text x="372" y="87" font-size="8.5" fill="#55504A">mdm-component-tabs.css — 1 rule differs</text>
+
+    <rect x="48" y="102" width="330" height="26" rx="3" fill="#FBEAE7" stroke="#B03A2E"/>
+    <text x="58" y="119" font-size="9.5" font-weight="600" fill="#8C2D22">4 · Hand-set inside this section</text>
+    <text x="388" y="119" font-size="8.5" fill="#55504A">mdm-tabs-content.liquid — where I worked</text>
+
+    <rect x="64" y="134" width="330" height="26" rx="3" fill="#E6EDF6" stroke="#002147"/>
+    <text x="74" y="151" font-size="9.5" font-weight="600" fill="#002147">5 · Theme editor — stored in the page</text>
+    <text x="404" y="151" font-size="8.5" fill="#55504A">product templates — not in the code</text>
+
+    <text x="0" y="172" font-size="8" fill="#9A958C">lower layer wins ↓</text>
+  </g>
+</svg>
+<figcaption>Layer 5 is the one worth remembering: rules typed into the Custom CSS field of the
+theme editor beat everything in the codebase, and they are invisible to anyone reading the code.</figcaption>
+</figure>
+
+<p class="legend">
+  <span class="tag o-nexvo">NEXVO</span> theme default, untouched &nbsp;
+  <span class="tag o-brand">BRAND</span> our shop-wide CSS &nbsp;
+  <span class="tag o-css">TABS CSS</span> our copy of the tabs stylesheet<br>
+  <span class="tag o-copy">SECTION</span> hand-set in this section &nbsp;
+  <span class="tag o-snip">SNIPPET</span> our own component, no Nexvo equivalent &nbsp;
+  <span class="tag o-edit">EDITOR</span> typed into the theme editor
+</p>
+
+<table>
+  <thead><tr>
+    <th style="width:31%">Element</th><th style="width:30%">Rule</th>
+    <th style="width:22%">Where it comes from</th><th style="width:17%">Status</th>
+  </tr></thead>
+  <tbody>
+    <tr class="grp"><td colspan="4">The section frame</td></tr>
+    <tr><td>Section wrapper and its classes</td><td>markup, <code>page-width</code></td>
+        <td><span class="tag o-nexvo">NEXVO</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Side margin</td><td><code>padding-inline: var(--page-padding)</code></td>
+        <td><span class="tag o-nexvo">NEXVO</span></td><td class="st st-on">now active</td></tr>
+    <tr><td>Its own side margin</td><td><code>clamp(2rem, 5.56vw, 8rem)</code>, then <code>8rem</code> flat</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-rm">removed</td></tr>
+    <tr><td>Width cap</td><td><code>max-width: 1440px</code></td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-rm">removed</td></tr>
+    <tr><td>Container width “fixed”</td><td>a setting, not a rule</td>
+        <td><span class="tag o-edit">EDITOR</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Space above the section</td><td>60 px</td>
+        <td><span class="tag o-edit">EDITOR</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Space below the section</td><td>60 px, hand-set — see the box below</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+
+    <tr class="grp"><td colspan="4">The tab bar</td></tr>
+    <tr><td>Tab buttons, switching, keyboard use</td><td>markup and behaviour</td>
+        <td><span class="tag o-nexvo">NEXVO</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Tab labels are EB Garamond</td><td>Nexvo puts them on the heading font</td>
+        <td><span class="tag o-nexvo">NEXVO</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Tab label size, weight, colour</td><td>24 px · 400 · <span style="color:#615B4F">#615B4F</span>, active <span style="color:#002147">#002147</span></td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Space between labels</td><td>48 px — Nexvo has 60 px</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Space between labels, phone</td><td>24 px — <em>identical to Nexvo</em></td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">redundant</td></tr>
+    <tr><td>Rule under the tabs</td><td><span style="color:#8a7d5f">#D6CAB3</span> — Nexvo uses 20&nbsp;% of the text colour</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Active tab indicator</td><td><span style="color:#002147">#002147</span></td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Tabs start at the left on phones</td><td>Nexvo centres them</td>
+        <td><span class="tag o-css">TABS CSS</span></td><td class="st st-un">unchanged</td></tr>
+
+    <tr class="grp"><td colspan="4">The tab content</td></tr>
+    <tr><td>Content wrapper</td><td><code>page__content rte text-subtext</code></td>
+        <td><span class="tag o-nexvo">NEXVO</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Reading column</td><td><code>max-width</code> 700 → <b>760 px</b></td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-ch">changed</td></tr>
+    <tr><td>Body copy type</td><td>Inter 16 px · 1.7 · <span style="color:#3E3A32">#3E3A32</span></td>
+        <td><span class="tag o-brand">BRAND</span></td><td class="st st-on">now active</td></tr>
+    <tr><td>Headings in the copy</td><td>EB Garamond 32 px · <span style="color:#002147">#002147</span></td>
+        <td><span class="tag o-brand">BRAND</span></td><td class="st st-on">now active</td></tr>
+    <tr><td>Its own type scale</td><td>sizes, line height, colour, spacing — desktop and phone</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-rm">removed</td></tr>
+    <tr><td>Space above the panel, gap</td><td>40 px · 16 px — 24 px · 10 px on phones</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Where the text comes from</td><td>Nexvo: text typed per tab. Ours: the product description and product fields</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+
+    <tr class="grp"><td colspan="4">The technical data tab</td></tr>
+    <tr><td>The tab type itself</td><td>Nexvo has no such tab — we added it</td>
+        <td><span class="tag o-copy">SECTION</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Table markup and styling</td><td>rows, rules, labels, group headings</td>
+        <td><span class="tag o-snip">SNIPPET</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Two columns, 80 px apart</td><td><code>1fr 1fr</code>, one column on phones</td>
+        <td><span class="tag o-snip">SNIPPET</span></td><td class="st st-un">unchanged</td></tr>
+    <tr><td>Table width</td><td>no rule at all — it takes what the section gives it</td>
+        <td><span class="tag o-nexvo">NEXVO</span></td><td class="st st-on">now full width</td></tr>
+
+    <tr class="grp"><td colspan="4">Left in the theme editor</td></tr>
+    <tr><td>Image-with-text width</td><td><code>max-width: 52rem</code> — see section 10</td>
+        <td><span class="tag o-edit">EDITOR</span></td><td class="st st-un">inert</td></tr>
+  </tbody>
+</table>
+
+<p>Read down the “where it comes from” column and the picture is this: the tab area is mostly
+Nexvo underneath, with roughly a dozen hand-set rules on top. Eleven of those left with this
+change, one was adjusted to your 760 px, and what remains is brand styling — colours, type sizes
+and spacing — rather than layout.</p>
+
+<div class="callout">
+  <h3>One override you should know about: the bottom spacing</h3>
+  <p>The theme editor has a control for the space below this section, and it is set to
+  <b>0&nbsp;px</b>. The section ignores it: a hand-set <code>60&nbsp;px</code> in the code wins,
+  and I measured 60&nbsp;px on the page. So turning that dial in the editor does nothing.</p>
+  <p>I left it as it is, because removing it would collapse the gap to the section below and that
+  is a spacing decision, not a cleanup. But it is exactly the kind of thing that makes the editor
+  feel broken — see D5.</p>
+</div>
+
+<h2>7. Five decisions for you</h2>
+
+<ol class="asks">
+  <li><b>The headings inside the description</b>
+      <span>This is the real question in this document. Those lines used to be a small uppercase
+      eyebrow — a deliberate choice from the Figma file, noted in the code. Letting the theme
+      settings drive the text means that choice goes away and they become EB Garamond 32 px in
+      navy, like headings everywhere else in the shop. Both are defensible. If you want the
+      eyebrow back, it comes back as a section-level exception, and we should write down why —
+      otherwise it is exactly the kind of override that is invisible later.</span></li>
+  <li><b>That heading is 32 px on phones too</b>
+      <span>The shop-wide rule has no separate phone size for this heading level, so a 375 px
+      screen gets a 32 px heading. It was 11 px before. If that is too large, the fix belongs in
+      the shop-wide type scale rather than in this section — it would fix the help pages at the
+      same time.</span></li>
+  <li><b>Body copy on phones grew from 14 to 16 px</b>
+      <span>A direct consequence of dropping the section’s own sizes. 16 px is the shop-wide
+      body size and, for what it is worth, the friendlier of the two to read. Just confirming
+      you are happy with it, because it is a visible change on every product page.</span></li>
+  <li><b>Wide screens: the table rules now run long</b>
+      <span>Each of the two table columns is 785 px wide at 1920 px, but the widest row only
+      uses 326 px of it. So the hairline under each row carries 459 px of empty space — it was
+      274 px before, so the change made an existing effect more visible. Either the two columns
+      should not grow past a sensible maximum, or the rules should stop where the text stops.
+      This is a design call, not a bug.</span></li>
+  <li><b>Should the bottom spacing go back to the editor?</b>
+      <span>The box in section 6: the space below this section is hand-set to 60 px in the code
+      and the editor control for it is dead. I can release it, and then the value you set in the
+      editor is the value on the page — but the current 0 px in the editor would make the gap
+      collapse, so we would need to put 60 px in first. Small job, your call whether it is worth
+      doing now or with the next round of spacing work.</span></li>
+</ol>
+
+<h2>8. One observation outside the layout</h2>
+
+<p>On the test product several rows in the technical data table have no label at all — “Silber
+(900/1000)”, “10000”, “2026” and “50.00” sit there on their own. That is product data, not
+layout: the label fields on the product are empty. Flagging it because it will show up in any
+screenshot you take of this tab, and it is not something the theme can fix.</p>
+
+<h2>9. How this was checked</h2>
+
+<table>
+  <thead><tr><th style="width:30%">Check</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Measurement</td><td>Headless Chrome, seven window widths from 375 px to 1920 px, element edges read via <code>getBoundingClientRect()</code>. Offset is 0 px at every width.</td></tr>
+    <tr><td>Theme linter</td><td><code>shopify theme check</code>: 37 errors, 23 warnings — identical with and without the change on the same commit. All pre-existing.</td></tr>
+    <tr><td>Liquid validation</td><td>Passed Shopify’s theme check for the edited file.</td></tr>
+    <tr><td>Scope</td><td>One file, style rules only. No markup, no settings, no template changed. No theme core file touched.</td></tr>
+  </tbody>
+</table>
+
+<div class="quote">“But if you override everything, then we won’t know later what has to be
+removed.” — the same principle as on the collection card. Eleven hand-set rules left this
+section; one stayed, and it is the one you asked for.</div>
+
+<h2>10. Still open in the theme editor</h2>
+
+<p>One rule is still stored in the section’s Custom CSS field in the theme editor, not in the
+code: <code>.image-with-text__content { max-width: 52rem }</code>. It has no effect on the tabs
+as they are built today, because the block it targets is not in use. It would take effect the
+moment someone adds an image-with-text block to this section. Say the word and I take it out
+while we are in here.</p>
+
+<footer>
+  MDM coin shop · Shopify theme (Hyper 1.3.3) · Product detail page, tabs section ·
+  Figures measured on the local development server, 21 September 2026 ·
+  Follow-up to “PDP Layout — Nexvo Defaults vs. MDM Customisations”, 18 September 2026
+</footer>
+
+</div>
+</body>
+</html>
