@@ -403,10 +403,10 @@
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>10 SKILL.md · 5 Rules · settings.json</dd></div>
-      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 230 gesamt</dd></div>
+      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 235 gesamt</dd></div>
       <div class="tb-cell"><dt>Rechte</dt><dd>17 erlaubt · 2 verboten</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>14. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -458,7 +458,7 @@
 
         <rect x="16" y="168" width="928" height="34" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
         <text x="30" y="190" class="s-mono f-alert">repo-bauplan</text>
-        <text x="230" y="190" class="s-tiny f-dim">363 Zeilen — der größte</text>
+        <text x="230" y="190" class="s-tiny f-dim">368 Zeilen — der größte</text>
         <text x="440" y="190" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
         <text x="640" y="190" text-anchor="middle" class="s-tiny f-worker">nachgetragen</text>
         <text x="830" y="190" class="s-tiny f-worker">aufrufbar, dokumentiert</text>
@@ -499,7 +499,7 @@
 
         <text x="30" y="66" class="s-mono">liquid-conventions</text>
         <text x="44" y="84" class="s-tiny f-dim">themes/*/sections · snippets · blocks · layout</text>
-        <text x="490" y="66" text-anchor="end" class="s-tiny f-dim">50 Zeilen</text>
+        <text x="490" y="66" text-anchor="end" class="s-tiny f-dim">71 Zeilen</text>
 
         <text x="30" y="112" class="s-mono">templates-json</text>
         <text x="44" y="130" class="s-tiny f-dim">themes/*/templates</text>
@@ -589,17 +589,18 @@
         <caption>.claude/specs/ — Bestand</caption>
         <thead><tr><th class="m">Bereich</th><th class="m">Specs</th><th>Inhalt</th></tr></thead>
         <tbody>
-          <tr><td class="m">theme/</td><td class="m">6</td><td><code>_conventions.md</code>, <code>breadcrumbs.md</code>, <code>hilfe-hub.md</code>, <code>hilfe-template.md</code>, <code>page-title.md</code>, <code>global-brand-overrides.md</code></td></tr>
-          <tr><td class="m">harness/</td><td class="m">5</td><td><code>mdm-harness-repo.md</code> — die Spec dieses Repos; dazu vier Entwürfe aus dem Review vom 11. September 2026: <code>portabler-workspace.md</code>, <code>setup-bash-3-2.md</code>, <code>git-remotes-neutral.md</code>, <code>themes-mehrere-marken.md</code></td></tr>
+          <tr><td class="m">themes/</td><td class="m">7</td><td><code>_conventions.md</code>; unter <code>mdm/</code>: <code>breadcrumbs.md</code>, <code>hilfe-hub.md</code>, <code>hilfe-template.md</code>, <code>page-title.md</code>, <code>global-brand-overrides.md</code>, <code>plp-card-nexvo-default.md</code></td></tr>
+          <tr><td class="m">harness/</td><td class="m">10</td><td><code>mdm-harness-repo.md</code> — die Spec dieses Repos; vier Entwürfe aus dem Review vom 11. September 2026: <code>portabler-workspace.md</code>, <code>setup-bash-3-2.md</code>, <code>git-remotes-neutral.md</code>, <code>themes-mehrere-marken.md</code>; dazu <code>theme-sync.md</code> und vier Bauplan-Specs: <code>bauplan-ci-auffrischung.md</code>, <code>bauplan-etappe-gesamtstruktur.md</code>, <code>bauplan-repo-pfad.md</code>, <code>bauplan-wording-rueckbau.md</code></td></tr>
           <tr><td class="m">connector/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
           <tr><td class="m">creditcheck/ · emailservice/ · payment-service/ · datalayer/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="lead">Die Theme-Arbeit läuft also spec-getrieben, alles andere bisher nicht —
-      obwohl <code>CLAUDE.md</code> es für <strong>jede</strong> Änderung fordert. Das ist
-      ein Widerspruch, der nicht wegzudokumentieren ist: entweder gilt die Regel für alle
-      Bereiche, oder sie gilt für das Theme.</p>
+    <p class="lead">Theme- und Harness-Arbeit laufen also spec-getrieben, Connector,
+      Middleware und Datalayer bisher nicht — obwohl <code>CLAUDE.md</code> es für
+      <strong>jede</strong> Änderung fordert. Das ist ein Widerspruch, der nicht
+      wegzudokumentieren ist: entweder gilt die Regel für alle Bereiche, oder sie gilt für
+      Theme und Harness.</p>
 
     <div class="checks">
       <div class="check">
@@ -636,10 +637,10 @@
       <div class="check">
         <span class="check-no">03</span>
         <div>
-          <h3>Spec-Driven ist für einen von sieben Bereichen gelebt</h3>
-          <p><b>Beleg:</b> <code>.claude/specs/</code> enthält dreizehn Dateien; sechs davon
-             liegen unter <code>theme/</code>, eine unter <code>harness/</code>, der Rest sind
-             <code>.gitkeep</code>-Platzhalter.</p>
+          <h3>Spec-Driven ist für zwei von sieben Bereichen gelebt</h3>
+          <p><b>Beleg:</b> <code>.claude/specs/</code> enthält dreiundzwanzig Dateien; sieben
+             davon liegen unter <code>themes/</code>, zehn unter <code>harness/</code>, dazu
+             <code>README.md</code> und fünf <code>.gitkeep</code>-Platzhalter.</p>
           <p><b>Konsequenz:</b> Für Connector- und Middleware-Features gibt es die geforderte
              Spec nicht. Entweder wird die Regel dort nicht angewandt, oder sie wird
              angewandt, ohne dass ein Artefakt entsteht — beides gehört benannt, bevor der

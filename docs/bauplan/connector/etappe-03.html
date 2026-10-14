@@ -405,8 +405,8 @@
       <div class="tb-cell"><dt>Gelesen</dt><dd>db/schema.rb · 8 Modelle</dd></div>
       <div class="tb-cell"><dt>Tabellen</dt><dd>8</dd></div>
       <div class="tb-cell"><dt>Fremdschlüssel</dt><dd>9</dd></div>
-      <div class="tb-cell"><dt>Migrationen</dt><dd>19</dd></div>
-      <div class="tb-cell"><dt>Modell-Zeilen</dt><dd>571, davon 242 in Shop</dd></div>
+      <div class="tb-cell"><dt>Migrationen</dt><dd>20</dd></div>
+      <div class="tb-cell"><dt>Modell-Zeilen</dt><dd>607, davon 243 in Shop</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
     </dl>
   </div>
@@ -480,9 +480,9 @@
         <!-- Bestellstrom -->
         <rect x="640" y="168" width="248" height="76" rx="3" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
         <text x="654" y="192" class="s-name f-web">orders</text>
-        <text x="654" y="210" class="s-tiny f-dim">6 Spalten · shopify_id UNIQUE NOT NULL</text>
+        <text x="654" y="210" class="s-tiny f-dim">7 Spalten · shopify_id UNIQUE NOT NULL</text>
         <text x="654" y="226" class="s-tiny">sap_status enum: pending/failed/completed</text>
-        <text x="654" y="240" class="s-tiny f-dim">(shop_id, name) UNIQUE</text>
+        <text x="654" y="240" class="s-tiny f-dim">(shop_id, name) UNIQUE · sap_order_id</text>
 
         <path d="M764 244 L764 286" fill="none" stroke="var(--web)" stroke-opacity="0.6" marker-end="url(#e3fk)"></path>
         <text x="774" y="268" class="s-tiny f-dim">has_many</text>
@@ -514,7 +514,7 @@
         die eine Bestellung mit einem Produkt verbindet — keine Positionen, keine
         Artikelzuordnung. Der Connector führt also kein Abbild der Bestellinhalte; die
         Positionen holt er bei Bedarf über <code>Order#shopify_order</code> live aus der
-        Shopify-API (<code>app/models/order.rb:70</code>). Das begrenzt den Umfang der
+        Shopify-API (<code>app/models/order.rb:105</code>). Das begrenzt den Umfang der
         Datenbank auf Zustand und Protokoll.</figcaption>
     </figure>
   </section>
@@ -585,9 +585,10 @@
       <span class="plate-no">Blatt 03/05</span>
       <h2>Schreibende Modelle</h2>
     </div>
-    <p class="lead">Die Modelle sind dünn: Assoziationen, Enums, zwei Scopes. Eine Ausnahme
+    <p class="lead">Die Modelle sind dünn: Assoziationen, Enums, zwei Scopes. Zwei Ausnahmen
       gibt es — <strong>drei <code>after_commit</code>-Hooks setzen Shopify-Metafelder</strong>.
-      Diese Aufrufe sind synchron und laufen nicht über Sidekiq.</p>
+      Diese Aufrufe sind synchron und laufen nicht über Sidekiq. Die zweite Ausnahme ist ein
+      Lesezugriff, der in die Datenbank schreibt (Anhang 06).</p>
 
     <figure>
       <svg viewBox="0 0 960 396" role="img" aria-label="Die drei after-commit-Hooks. Order schreibt das Metafeld sap_status bei Statuswechsel, Shop schreibt sap_config_data bei Konfigurationsaenderung, SapOrderEvent schreibt ein eigenes Metafeld je Ereignis und zwar bedingungslos.">
@@ -604,7 +605,7 @@
         <rect x="24" y="52" width="420" height="62" rx="2" fill="var(--web)" fill-opacity="0.09" stroke="var(--web)" stroke-opacity="0.5"></rect>
         <text x="38" y="74" class="s-name f-web">Order</text>
         <text x="38" y="92" class="s-tiny">if: :saved_change_to_sap_status?</text>
-        <text x="38" y="108" class="s-tiny f-dim">app/models/order.rb:34</text>
+        <text x="38" y="108" class="s-tiny f-dim">app/models/order.rb:52</text>
         <line x1="444" y1="83" x2="462" y2="83" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e3ar)"></line>
         <text x="470" y="80" class="s-mono">sap.sap_status</text>
         <text x="470" y="98" class="s-tiny f-dim">single_line_text_field</text>
@@ -613,7 +614,7 @@
         <rect x="24" y="126" width="420" height="62" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.5"></rect>
         <text x="38" y="148" class="s-name f-vite">Shop</text>
         <text x="38" y="166" class="s-tiny">if: :saved_change_to_sap_config_data?</text>
-        <text x="38" y="182" class="s-tiny f-dim">app/models/shop.rb:72</text>
+        <text x="38" y="182" class="s-tiny f-dim">app/models/shop.rb:73</text>
         <line x1="444" y1="157" x2="462" y2="157" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#e3ar)"></line>
         <text x="470" y="154" class="s-mono">sap.sap_config_data</text>
         <text x="470" y="172" class="s-tiny f-dim">json</text>
@@ -657,7 +658,7 @@
       der Datenbank.</p>
 
     <figure>
-      <svg viewBox="0 0 960 358" role="img" aria-label="Aufbau der Metafeld-Zuordnung. Drei Eintraege fuer PRODUCT, 26 fuer PRODUCTVARIANT, davon 22 aus SAP-Attributen und 4 berechnete. Verteilung nach Feldtyp: 13 Text, 10 Metaobjekt-Referenz, 4 Datum, 1 JSON, 1 Textliste.">
+      <svg viewBox="0 0 960 358" role="img" aria-label="Aufbau der Metafeld-Zuordnung. Drei Eintraege fuer PRODUCT, 27 fuer PRODUCTVARIANT, davon 23 aus SAP-Attributen und 4 berechnete. Verteilung nach Feldtyp: 14 Text, 10 Metaobjekt-Referenz, 4 Datum, 1 JSON, 1 Textliste.">
         <rect x="24" y="40" width="288" height="128" rx="3" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
         <text x="40" y="64" class="s-lbl f-worker">PRODUCT — 3 Einträge</text>
         <text x="40" y="90" class="s-mono">stataktiv</text>
@@ -666,16 +667,16 @@
         <text x="40" y="154" class="s-tiny f-dim">alle single_line_text_field</text>
 
         <rect x="336" y="40" width="600" height="128" rx="3" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="352" y="64" class="s-lbl f-worker">PRODUCTVARIANT — 26 Einträge</text>
-        <text x="352" y="90" class="s-tiny">22 × <tspan class="s-mono">sap_attribute</tspan> — kommen unverändert aus den SAP-Rohdaten</text>
+        <text x="352" y="64" class="s-lbl f-worker">PRODUCTVARIANT — 27 Einträge</text>
+        <text x="352" y="90" class="s-tiny">23 × <tspan class="s-mono">sap_attribute</tspan> — kommen unverändert aus den SAP-Rohdaten</text>
         <text x="352" y="112" class="s-tiny">4 × <tspan class="s-mono">custom_attribute</tspan> — werden im Transformer berechnet (Etappe 5)</text>
         <text x="352" y="132" class="s-tiny f-dim">atpdat · data · gewicht_in_feinunzen · collection_filter</text>
-        <text x="352" y="154" class="s-tiny f-dim">Die 26 Einträge erzeugen 26 Metafeld-Definitionen je Shop.</text>
+        <text x="352" y="154" class="s-tiny f-dim">Die 27 Einträge erzeugen 27 Metafeld-Definitionen je Shop.</text>
 
         <text x="24" y="204" class="s-lbl f-dim">Verteilung nach Feldtyp — über beide Gruppen</text>
 
-        <rect x="24" y="216" width="356" height="22" rx="2" fill="var(--web)" fill-opacity="0.35" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="388" y="232" class="s-tiny">13 × single_line_text_field</text>
+        <rect x="24" y="216" width="383" height="22" rx="2" fill="var(--web)" fill-opacity="0.35" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="415" y="232" class="s-tiny">14 × single_line_text_field</text>
 
         <rect x="24" y="244" width="274" height="22" rx="2" fill="var(--vite)" fill-opacity="0.35" stroke="var(--vite)" stroke-opacity="0.5"></rect>
         <text x="306" y="260" class="s-tiny">10 × metaobject_reference<tspan class="f-dim">  — je eigene Nachschlagemethode, siehe unten</tspan></text>
@@ -691,14 +692,14 @@
         <text x="536" y="254" class="s-tiny f-dim">sammelgebiet · laenderschlue · praegestaette · waehrung</text>
         <text x="536" y="270" class="s-tiny f-dim">erhaltungkd · metall · taklv · inco1 · aboart · kostenstelle</text>
         <text x="536" y="292" class="s-tiny">Jede Methode ist drei Zeilen lang und unterscheidet sich</text>
-        <text x="536" y="308" class="s-tiny">nur im Typ-String (shop.rb:101–139).</text>
+        <text x="536" y="308" class="s-tiny">nur im Typ-String (shop.rb:102–140).</text>
 
         <rect x="24" y="336" width="912" height="20" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.4"></rect>
         <text x="480" y="350" text-anchor="middle" class="s-tiny f-alert">Ein SAP-Attribut steht zweimal in der Tabelle: inco1 füllt sowohl inco1 als auch shipxcode (shop.rb:49–50).</text>
       </svg>
       <figcaption><b>Die zehn Methoden existieren nur für <code>send</code>.</b>
         <code>find_or_create_metaobject_entity</code> baut den Methodennamen zur Laufzeit aus dem
-        Typ zusammen (<code>"#{type}_metaobject_data"</code>, <code>shop.rb:144</code>) und ruft
+        Typ zusammen (<code>"#{type}_metaobject_data"</code>, <code>shop.rb:145</code>) und ruft
         ihn über <code>respond_to?</code> und <code>send</code> auf. Deshalb lassen sich die zehn
         Methoden nicht durch eine Suche nach ihrem Namen finden — und deshalb fällt ein
         fehlender Typ nicht beim Start auf, sondern erst zur Laufzeit: <code>respond_to?</code>
@@ -713,20 +714,20 @@
       <span class="plate-no">Blatt 05/05</span>
       <h2>Prüfpunkte und Fundstellen</h2>
     </div>
-    <p class="lead">Alle fünf sind aus <code>db/schema.rb</code> und den Modelldateien belegt.
+    <p class="lead">Alle sechs sind aus <code>db/schema.rb</code> und den Modelldateien belegt.
       Die Wirkung der dritten lässt sich ohne laufende Instanz nicht messen; sie ist als
-      Vermutung gekennzeichnet.</p>
+      Vermutung gekennzeichnet, ebenso die Randfälle der sechsten.</p>
 
     <div class="checks">
       <div class="check">
         <span class="check-no">01</span>
         <div>
           <h3>product_variants trägt shop_id doppelt</h3>
-          <p>Belegt: <code>db/schema.rb:43,45</code> — die Tabelle hat
+          <p>Belegt: <code>db/schema.rb:44,46</code> — die Tabelle hat
             <code>product_id</code> <em>und</em> <code>shop_id</code>, beide NOT NULL, beide mit
             Fremdschlüssel. Der Shop steht bereits über <code>products.shop_id</code> fest.</p>
           <p>Die Spalte ist damit redundant, aber nicht folgenlos: sie erlaubt
-            <code>shop.product_variants</code> ohne Join (<code>shop.rb:65</code>) und wird in
+            <code>shop.product_variants</code> ohne Join (<code>shop.rb:66</code>) und wird in
             der Bestandskette genutzt. Nichts erzwingt, dass beide Wege denselben Shop
             ergeben — ein <code>ProductVariant</code> mit abweichendem <code>shop_id</code> ist
             auf Datenbankebene gültig.</p>
@@ -740,7 +741,7 @@
           <p>Belegt: <code>orders</code> hat kein <code>action</code>;
             <code>sap_order_events.action</code> und <code>credit_check_events.action</code>
             sind <code>integer</code> mit Enum, <code>sap_product_events.action</code> ist
-            <code>string</code> ohne Enum (<code>db/schema.rb:74, 18, 87</code>).</p>
+            <code>string</code> ohne Enum (<code>db/schema.rb:75, 18, 88</code>).</p>
           <p>Folge: Für die beiden Integer-Spalten prüft Rails den Wertebereich und erzeugt
             Abfragemethoden. Bei <code>sap_product_events</code> fehlt beides — jeder
             Zeichenkettenwert ist gültig, und ein Tippfehler im schreibenden Job fällt erst
@@ -768,9 +769,9 @@
         <span class="check-no">04</span>
         <div>
           <h3>Zwei Validierungen haben ein wirkungsloses allow_nil</h3>
-          <p>Belegt: <code>app/models/order.rb:31–32</code> setzt
+          <p>Belegt: <code>app/models/order.rb:49–50</code> setzt
             <code>allow_nil: true</code> für <code>shopify_id</code> und <code>name</code>.
-            Beide Spalten sind in <code>db/schema.rb:31,34</code> als <code>null: false</code>
+            Beide Spalten sind in <code>db/schema.rb:31,35</code> als <code>null: false</code>
             definiert.</p>
           <p>Folge: Der Zweig ist nicht erreichbar — ein <code>nil</code> scheitert vorher an
             der Datenbank. Bei <code>products</code> und <code>product_variants</code> ist
@@ -792,13 +793,35 @@
             <code>action</code> nichts ableiten.</p>
         </div>
       </div>
+
+      <div class="check">
+        <span class="check-no">06</span>
+        <div>
+          <h3>Der Getter sap_order_id schreibt in die Datenbank</h3>
+          <p>Belegt: <code>app/models/order.rb:72–74</code> überschreibt das Attribut
+            <code>sap_order_id</code>. Ist die Spalte leer, ruft der Getter
+            <code>generate_sap_order_id</code> auf; diese Methode baut die Nummer aus
+            <code>sap_config_data['sap_order_identifier_prefix']</code> und dem Bestellnamen und
+            speichert sie mit <code>update!</code> (<code>Zeile 78–89</code>). Fehlt das Präfix,
+            gibt der Getter <code>nil</code> zurück und schreibt nichts (<code>Zeile 80</code>).
+            Die Spalte ist NULL-fähig und hat keinen Index (<code>db/schema.rb:32</code>).</p>
+          <p>Folge: Ein Lesezugriff kann eine Ausnahme aus der Datenbank werfen. Jede
+            Bestellung aus der Zeit vor der Migration <code>20261001115848</code> erhält ihre
+            Nummer erst beim ersten Lesen. Die Aufrufer stehen in Etappe 5. ⚠️ Vermutung:
+            <code>shop_prefix.to_i.digits.length</code> (<code>Zeile 82</code>) liefert bei
+            einem nicht numerischen Präfix die Länge 1, und <code>rjust</code> kürzt einen
+            längeren Bestellnamen nicht. Die Nummer hat dann nicht 10 Zeichen. Zum Beweis fehlt
+            ein Lauf der Methode mit diesen Eingaben; in dieser Sitzung war Ausführen nicht
+            freigegeben.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
     <span>MDM Connector · Etappe 3 · Datenmodell</span>
-    <span>Quelle: db/schema.rb · app/models/ · 19 Migrationen</span>
-    <span>Stand: 11. September 2026 · Commit 69455cd</span>
+    <span>Quelle: db/schema.rb · app/models/ · 20 Migrationen</span>
+    <span>Stand: 14. Oktober 2026 · Commit 8c7c8fb</span>
     <span>Als nächstes: <a href="etappe-04.html">Eingang</a> · <a href="https://claude.ai/code/artifact/084d5ca5-837d-482b-9d5f-d73de9129b21">Artefakt</a></span>
   </footer>
 

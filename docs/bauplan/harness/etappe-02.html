@@ -406,13 +406,13 @@
       <div class="tb-cell"><dt>Zeilen</dt><dd>992 gesamt</dd></div>
       <div class="tb-cell"><dt>Schreibgesperrt</dt><dd>4 von 12</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>14. Oktober 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
     <span class="legend-item"><i class="swatch sw-web"></i>Planen <span>— opus, Freigabe danach</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Umsetzen <span>— erbt das Sitzungsmodell</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Umsetzen <span>— sonnet, schreibt ins Arbeits-Repo</span></span>
     <span class="legend-item"><i class="swatch sw-vite"></i>Prüfen <span>— sonnet, schreibgesperrt</span></span>
     <span class="legend-item"><i class="swatch sw-alert"></i>Prüfpunkt <span>— Konvention ohne Durchsetzung</span></span>
   </div>
@@ -459,7 +459,7 @@
         <rect x="478" y="86" width="140" height="60" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
         <text x="492" y="108" class="s-tiny">Umsetzer</text>
         <text x="492" y="124" class="s-tiny f-dim">liquid · rails · symfony</text>
-        <text x="492" y="140" class="s-tiny f-worker">inherit · high · 50</text>
+        <text x="492" y="140" class="s-tiny f-worker">sonnet · high · 50</text>
 
         <line x1="618" y1="104" x2="656" y2="62" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
         <line x1="618" y1="128" x2="656" y2="170" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h2a)"></line>
@@ -479,13 +479,13 @@
 
         <rect x="844" y="86" width="100" height="60" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.35"></rect>
         <text x="858" y="108" class="s-tiny">docs-writer</text>
-        <text x="858" y="124" class="s-tiny f-dim">haiku · low</text>
+        <text x="858" y="124" class="s-tiny f-dim">sonnet · low</text>
         <text x="858" y="140" class="s-tiny f-dim">20 Züge</text>
 
         <rect x="16" y="222" width="928" height="60" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="32" y="242" class="s-tiny">Nur der Umsetzer schreibt in ein Arbeits-Repo. Planer schreiben Plan-Dateien, Prüfer nichts, der Docs-Writer nach docs/ und Tickets/.</text>
         <text x="32" y="260" class="s-tiny f-dim">Der security-reviewer ist der einzige Prüfer mit effort: high — er sucht, was die Bereichs-Prüfer nicht suchen: XSS, Secrets, Auth, DSGVO.</text>
-        <text x="32" y="276" class="s-tiny f-dim">Der Docs-Writer ist der einzige Agent auf haiku und mit effort: low. Deutsche Doku ist Formulierungsarbeit, keine Analyse.</text>
+        <text x="32" y="276" class="s-tiny f-dim">Der Docs-Writer ist der einzige Agent mit effort: low. Deutsche Doku ist Formulierungsarbeit, keine Analyse.</text>
       </svg>
       <figcaption><b>Relevant beim Erweitern:</b> ein neuer Bereich braucht drei Agenten, kein
         neues Muster. Ein vierter Bereich — etwa <code>datalayer</code>, für den bisher
@@ -567,8 +567,9 @@
       <h2>Modell und Denkaufwand</h2>
     </div>
     <p class="lead">Kein Agent wählt sein Modell nach Bereich. Alle drei Planer bekommen
-      <code>opus</code>, alle drei Umsetzer erben das Sitzungsmodell, alle Prüfer bekommen
-      <code>sonnet</code>. Das ist konsequent durchgehalten — mit einer bewussten Ausnahme.</p>
+      <code>opus</code>, die übrigen neun Agenten bekommen <code>sonnet</code> — Umsetzer,
+      Prüfer, Extraktor und Docs-Writer. Den Unterschied zwischen den Rollen trägt der
+      Denkaufwand. Das ist konsequent durchgehalten — mit einer bewussten Ausnahme.</p>
 
     <div class="tw">
       <table>
@@ -576,11 +577,11 @@
         <thead><tr><th class="m">Rolle</th><th class="m">Modell</th><th class="m">Effort</th><th class="m">maxTurns</th><th class="m">Memory</th><th>Werkzeuge</th></tr></thead>
         <tbody>
           <tr><td class="m">3 × Planer</td><td class="m">opus</td><td class="m">high</td><td class="m">40</td><td class="m">project</td><td>unbeschränkt</td></tr>
-          <tr><td class="m">3 × Umsetzer</td><td class="m">inherit</td><td class="m">high</td><td class="m">50</td><td class="m">project</td><td>unbeschränkt</td></tr>
+          <tr><td class="m">3 × Umsetzer</td><td class="m">sonnet</td><td class="m">high</td><td class="m">50</td><td class="m">project</td><td>unbeschränkt</td></tr>
           <tr><td class="m">3 × Bereichs-Prüfer</td><td class="m">sonnet</td><td class="m">medium</td><td class="m">30</td><td class="m">project</td><td><code>disallowedTools: Edit, Write, NotebookEdit</code></td></tr>
           <tr><td class="m">security-reviewer</td><td class="m">sonnet</td><td class="m">high</td><td class="m">30</td><td class="m">project</td><td><code>disallowedTools: Edit, Write, NotebookEdit</code></td></tr>
           <tr><td class="m">figma-extractor</td><td class="m">sonnet</td><td class="m">medium</td><td class="m">30</td><td class="m">project</td><td>unbeschränkt</td></tr>
-          <tr><td class="m">docs-writer</td><td class="m">haiku</td><td class="m">low</td><td class="m">20</td><td class="m">project</td><td>unbeschränkt</td></tr>
+          <tr><td class="m">docs-writer</td><td class="m">sonnet</td><td class="m">low</td><td class="m">20</td><td class="m">project</td><td>unbeschränkt</td></tr>
         </tbody>
       </table>
     </div>
@@ -589,6 +590,11 @@
       dieselbe Zugrenze von 30 und soll damit tiefer suchen — Sicherheitslücken zeigen sich
       seltener beim Überfliegen. Die Zugrenzen selbst steigen mit dem Schreibumfang: 20 für
       Doku, 30 fürs Lesen und Prüfen, 40 fürs Planen, 50 fürs Umsetzen.</p>
+    <p class="lead">Seit dem 12. Oktober 2026 legt <code>.claude/settings.json:2</code> das
+      Sitzungsmodell auf <code>opus</code> fest. Im selben Commit wechselten die drei
+      Umsetzer von <code>model: inherit</code> auf <code>model: sonnet</code> (Zeile 4 jeder
+      Umsetzer-Datei). Damit schreibt ein anderes Modell den Code als das, das ihn plant, und
+      ein Modellwechsel in der Sitzung erreicht die Umsetzer nicht mehr.</p>
   </section>
 
   <!-- ============ BLATT 04 ============ -->

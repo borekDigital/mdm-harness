@@ -396,15 +396,15 @@
     <div class="tb-main">
       <p class="tb-eyebrow">MDM Connector · Etappe 5 · Action, API, Transformer</p>
       <h1>Fachlogik</h1>
-      <p>88 Dateien, 4 227 Zeilen, fünf Fremdsysteme — und drei Rollen, die sich über alle
+      <p>89 Dateien, 4 251 Zeilen, fünf Fremdsysteme — und drei Rollen, die sich über alle
          Namensräume wiederholen. Die Aufrufregel steht in sieben Zeilen. Zwei Dateien
          enthalten eine Methode, die nie ausgeführt wird.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>app/services/ — 88 Dateien</dd></div>
-      <div class="tb-cell"><dt>Zeilen</dt><dd>4 227</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>app/services/ — 89 Dateien</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>4 251</dd></div>
       <div class="tb-cell"><dt>Namensräume</dt><dd>5</dd></div>
-      <div class="tb-cell"><dt>Rollen</dt><dd>22 Action · 49 Api · 15 Transformer</dd></div>
+      <div class="tb-cell"><dt>Rollen</dt><dd>22 Action · 50 Api · 15 Transformer</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
     </dl>
   </div>
@@ -424,11 +424,11 @@
     </div>
     <p class="lead">Die gesamte Fachlogik folgt einem Muster:
       <code>Irgendwas::Rolle::Name.call(...)</code>. Möglich macht das eine Basisklasse mit
-      <strong>sieben Zeilen</strong>. Jede der 88 Dateien ist entweder Action, Api oder
+      <strong>sieben Zeilen</strong>. Jede der 89 Dateien ist entweder Action, Api oder
       Transformer — bis auf zwei.</p>
 
     <figure>
-      <svg viewBox="0 0 960 434" role="img" aria-label="Die drei Rollen der Fachlogik. ApplicationService definiert die Klassenmethode call. Darunter die Rollen Action mit 22 Dateien, Api mit 49 und Transformer mit 15, jeweils mit Aufgabe und Rueckgabewert. Unten die beiden Dateien ausserhalb der Rollen.">
+      <svg viewBox="0 0 960 434" role="img" aria-label="Die drei Rollen der Fachlogik. ApplicationService definiert die Klassenmethode call. Darunter die Rollen Action mit 22 Dateien, Api mit 50 und Transformer mit 15, jeweils mit Aufgabe und Rueckgabewert. Unten die beiden Dateien ausserhalb der Rollen.">
         <defs>
           <marker id="e5ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
@@ -454,7 +454,7 @@
         <text x="40" y="292" class="s-tiny">response_data und user_errors</text>
 
         <rect x="340" y="150" width="280" height="150" rx="3" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-width="1.5"></rect>
-        <text x="356" y="174" class="s-lbl f-vite">Api — 49 Dateien</text>
+        <text x="356" y="174" class="s-lbl f-vite">Api — 50 Dateien</text>
         <text x="356" y="200" class="s-tiny">Führt genau einen HTTP- oder</text>
         <text x="356" y="216" class="s-tiny">GraphQL-Aufruf aus.</text>
         <text x="356" y="240" class="s-tiny f-dim">Enthält keine Fachlogik. Kennt weder</text>
@@ -477,14 +477,18 @@
         <text x="360" y="372" class="s-tiny f-dim">die Basisklasse selbst, 7 Zeilen</text>
         <text x="42" y="392" class="s-mono">app/services/auth/jwt.rb</text>
         <text x="360" y="392" class="s-tiny f-dim">32 Zeilen — das einzige selbst geschriebene Auth-Verfahren, siehe Etappe 4</text>
-        <text x="42" y="412" class="s-tiny">Fünf Namensräume: auth (1) · credit (9) · openiban (9) · sap (17) · shopify (51).</text>
+        <text x="42" y="412" class="s-tiny">Fünf Namensräume: auth (1) · credit (9) · openiban (9) · sap (17) · shopify (52).</text>
       </svg>
       <figcaption><b>Die Trennung ist durchgehalten, nicht nur benannt.</b> Kein Transformer
         greift auf das Netz zu, keine Api-Klasse liest <code>sap_config_data</code>. Das macht
         die Transformer einzeln prüfbar: sie bekommen Shop und Daten herein und geben einen
         Hash zurück. Die 15 Transformer sind damit der Teil der Fachlogik, der sich ohne
         laufende Fremdsysteme testen lässt — <code>spec/</code> enthält dafür bisher nur die
-        Grundgerüste.</figcaption>
+        Grundgerüste. Seit Commit <code>60273ea</code> ruft
+        <code>Sap::Transformer::OrderInput#order_id</code> den Getter
+        <code>order.sap_order_id</code> auf (<code>sap/transformer/order_input.rb:360</code>).
+        Ist die Spalte noch leer, schreibt dieser Getter in die Datenbank (Etappe 3,
+        Anhang 06) — der Transformer hat damit einen Seiteneffekt.</figcaption>
     </figure>
   </section>
 
@@ -494,12 +498,12 @@
       <span class="plate-no">Blatt 02/05</span>
       <h2>Zwei verschiedene API-Muster</h2>
     </div>
-    <p class="lead">Die 49 Api-Dateien folgen <strong>nicht</strong> einem Muster, sondern
+    <p class="lead">Die 50 Api-Dateien folgen <strong>nicht</strong> einem Muster, sondern
       zwei. Welches gilt, hängt davon ab, ob das Fremdsystem über HTTParty oder über das
       Shopify-Gem angesprochen wird.</p>
 
     <figure>
-      <svg viewBox="0 0 960 420" role="img" aria-label="Vergleich der beiden API-Muster. Muster A gilt fuer credit, openiban und sap: fuenf gleiche Geruestdateien plus Resource-Unterordner, Transport ueber HTTParty. Muster B gilt fuer shopify: 25 flache Dateien, die von Resource erben und ihre GraphQL-Abfrage als Konstante tragen.">
+      <svg viewBox="0 0 960 420" role="img" aria-label="Vergleich der beiden API-Muster. Muster A gilt fuer credit, openiban und sap: fuenf gleiche Geruestdateien plus Resource-Unterordner, Transport ueber HTTParty. Muster B gilt fuer shopify: 23 flache Dateien, die von Resource erben und ihre GraphQL-Abfrage als Konstante tragen.">
         <rect x="24" y="40" width="440" height="300" rx="3" fill="var(--vite)" fill-opacity="0.07" stroke="var(--vite)" stroke-width="1.5"></rect>
         <text x="40" y="64" class="s-lbl f-vite">Muster A — credit · openiban · sap</text>
         <text x="40" y="86" class="s-tiny f-dim">Transport: HTTParty · je Fremdsystem dasselbe Gerüst</text>
@@ -534,7 +538,7 @@
         <text x="526" y="160" class="s-mono">too_many_requests_error.rb</text>
         <text x="672" y="160" class="s-tiny f-dim">für Throttling</text>
 
-        <text x="512" y="204" class="s-tiny">Dazu 22 flache Dateien, eine je Operation:</text>
+        <text x="512" y="204" class="s-tiny">Dazu 23 flache Dateien, eine je Operation:</text>
         <text x="512" y="226" class="s-tiny f-dim">get_order · get_product · get_shop · get_locations · get_job</text>
         <text x="512" y="242" class="s-tiny f-dim">get_metaobject(s) · get_metafield_definitions · get_product_variant</text>
         <text x="512" y="258" class="s-tiny f-dim">set_product · set_metafields · create_metaobject · cancel_order</text>
@@ -547,7 +551,7 @@
         <text x="42" y="398" class="s-tiny f-dim">Bei Muster B übernimmt das Shopify-Gem — übrig bleibt die Abfrage. Deshalb ist dort eine Datei je Operation ausreichend.</text>
       </svg>
       <figcaption><b>Muster A ist bei SAP am aufwendigsten.</b> Während
-        <code>credit/api/client.rb</code> und <code>openiban/api/client.rb</code> je 61 Zeilen
+        <code>credit/api/client.rb</code> 63 und <code>openiban/api/client.rb</code> 61 Zeilen
         haben, sind es bei <code>sap/api/client.rb</code> 125. Der Unterschied ist ein
         CSRF-Token: SAP verlangt für schreibende Aufrufe ein Token, das der Client vorab über
         einen eigenen Aufruf holt, zusammen mit Cookies verschickt und bei Ablauf erneut
@@ -563,7 +567,7 @@
       <h2>credit und openiban</h2>
     </div>
     <p class="lead">Die fünf Gerüstdateien der beiden Namensräume unterscheiden sich in
-      <strong>sieben Zeilen</strong>. Nachgewiesen durch Vergleich nach Ersetzung der
+      <strong>zehn Zeilen</strong>. Nachgewiesen durch Vergleich nach Ersetzung der
       Namensräume: vier der fünf Dateien sind danach zeichengleich.</p>
 
     <div class="tw">
@@ -577,13 +581,13 @@
           <tr><td class="m">http_response.rb</td><td class="m">—</td><td>keine — zeichengleich</td></tr>
           <tr><td class="m">timeout_error.rb</td><td class="m">14</td><td>keine — zeichengleich</td></tr>
           <tr><td class="m">http_request.rb</td><td class="m">—</td><td>2 Zeilen</td></tr>
-          <tr><td class="m">client.rb</td><td class="m">61</td><td>1 Zeile: <code>"#{API_URL}/creditcheck/…"</code> gegen <code>"#{API_URL}/…"</code></td></tr>
+          <tr><td class="m">client.rb</td><td class="m">63 / 61</td><td>4 Zeilen: <code>"#{API_URL}/creditcheck/…"</code> gegen <code>"#{API_URL}/…"</code>, dazu <code>USER_AGENT</code> und die Kopfzeile <code>User-Agent</code> nur bei credit (<code>credit/api/client.rb:9, 17–18</code>)</td></tr>
         </tbody>
       </table>
     </div>
 
     <figure>
-      <svg viewBox="0 0 960 244" role="img" aria-label="Die drei Unterschiede zwischen dem credit- und dem openiban-Geruest: der Modulname, vier Umgebungsvariablen und ein Pfadpraefix. Alles Uebrige ist identisch.">
+      <svg viewBox="0 0 960 296" role="img" aria-label="Die vier Unterschiede zwischen dem credit- und dem openiban-Geruest: der Modulname, vier Umgebungsvariablen, ein Pfadpraefix und eine User-Agent-Kopfzeile nur bei credit. Alles Uebrige ist identisch.">
         <text x="24" y="38" class="s-lbl f-dim">Was sich unterscheidet</text>
 
         <rect x="24" y="52" width="912" height="44" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
@@ -598,10 +602,15 @@
         <text x="300" y="124" class="s-mono">path = "#{API_URL}/creditcheck/#{http_request.path}"</text>
         <text x="300" y="140" class="s-mono f-dim">path = "#{API_URL}/#{http_request.path}"</text>
 
-        <rect x="24" y="164" width="912" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
-        <text x="42" y="186" class="s-lbl f-dim">Was gleich ist</text>
-        <text x="42" y="208" class="s-tiny">Header-Vorgaben · Basic Auth · Timeout-Auflösung aus der Umgebung mit Rückfall auf 30 Sekunden ·</text>
-        <text x="42" y="224" class="s-tiny">Umwandlung von Timeout-Ausnahmen · Fehlerklassen · Antwort-Hülle · die Prüfung des Anfrageobjekts.</text>
+        <rect x="24" y="156" width="912" height="44" rx="2" fill="var(--alert)" fill-opacity="0.08" stroke="var(--alert)" stroke-opacity="0.45"></rect>
+        <text x="42" y="176" class="s-tiny f-alert">4 — eine Kopfzeile</text>
+        <text x="300" y="176" class="s-mono">'User-Agent' =&gt; USER_AGENT   # 'Shopify Middleware'</text>
+        <text x="300" y="192" class="s-mono f-dim">— fehlt bei openiban</text>
+
+        <rect x="24" y="216" width="912" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="42" y="238" class="s-lbl f-dim">Was gleich ist</text>
+        <text x="42" y="260" class="s-tiny">Content-Type und Accept · Basic Auth · Timeout-Auflösung aus der Umgebung mit Rückfall auf 30 Sekunden ·</text>
+        <text x="42" y="276" class="s-tiny">Umwandlung von Timeout-Ausnahmen · Fehlerklassen · Antwort-Hülle · die Prüfung des Anfrageobjekts.</text>
       </svg>
       <figcaption><b>Eine Änderung am Transport muss zweimal gemacht werden.</b> Wird etwa das
         Timeout-Verhalten angepasst oder eine Wiederholung eingebaut, betrifft das beide
@@ -711,7 +720,7 @@
           <p>Folge: <code>GetOrder</code> holt <code>lineItems(first: 250)</code>
             (<code>Zeile 33</code>) in einem einzigen Aufruf. Eine Bestellung mit mehr als 250
             Positionen verliert die übrigen ohne Meldung. Aufrufer sind
-            <code>app/models/order.rb:71</code> und
+            <code>app/models/order.rb:106</code> und
             <code>shopify/action/order/create.rb:18</code> — also auch der Weg, der eine
             Bestellung nach SAP schreibt. Für <code>GetMetaobject</code> gilt dasselbe bei
             <code>referencedBy(first: 250)</code>.</p>
@@ -721,13 +730,15 @@
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Das credit- und das openiban-Gerüst sind bis auf sieben Zeilen gleich</h3>
+          <h3>Das credit- und das openiban-Gerüst sind bis auf zehn Zeilen gleich</h3>
           <p>Belegt: Vergleich der fünf Dateien nach Ersetzung des Namensraums — drei sind
             zeichengleich, <code>http_request.rb</code> weicht in zwei Zeilen ab,
-            <code>client.rb</code> in einer.</p>
-          <p>Folge: Jede Änderung am Transportverhalten ist zweimal zu machen. Ein Unterschied
-            zwischen beiden Dateien fällt erst auf, wenn ein Fremdsystem sich anders verhält
-            als das andere.</p>
+            <code>client.rb</code> in vier. Drei der vier kamen mit Commit
+            <code>885fc47</code>: die Konstante <code>USER_AGENT</code> und die Kopfzeile
+            <code>User-Agent</code> stehen nur in <code>credit/api/client.rb:9, 17–18</code>.</p>
+          <p>Folge: Jede Änderung am Transportverhalten ist zweimal zu machen. Der
+            User-Agent zeigt den Fall: die Änderung ging nur in einen der beiden Clients.
+            Ob openiban dieselbe Kopfzeile braucht, steht nicht im Repository.</p>
         </div>
       </div>
 
@@ -735,12 +746,26 @@
         <span class="check-no">03</span>
         <div>
           <h3>Eine Datei trägt elf Prozent der Fachlogik</h3>
-          <p>Belegt: <code>sap/transformer/order_input.rb</code> hat 468 Zeilen bei 4 227
+          <p>Belegt: <code>sap/transformer/order_input.rb</code> hat 455 Zeilen bei 4 251
             Zeilen in <code>app/services/</code> insgesamt. Die zweitgrößte Datei
             (<code>shopify/transformer/product_variants_input.rb</code>) hat 217.</p>
-          <p>Diese eine Datei baut die Bestellung für SAP auf. Sie ist der Ort, an dem sich
-            Änderungen am SAP-Vertrag auswirken — der Commit vor dem aktuellen Stand heißt
-            <code>change-sap-order-payload</code>.</p>
+          <p>Diese eine Datei baut die Bestellung für SAP auf. Mit Commit <code>4eff161</code>
+            und <code>60273ea</code> sind die Konstanten <code>ORDER_TYPE</code>,
+            <code>SHOPIFY_CARD_TYPE</code>, <code>PAYMENT_TERMS_KEY</code> und die Bildung der
+            SAP-Bestellnummer nach <code>app/models/order.rb:27–42, 78–89</code> gewandert.
+            <code>PAYMENT_TERMS_KEY</code> nutzt seitdem auch
+            <code>credit/transformer/check_information_input.rb:68</code>.</p>
+          <p>Neu ist ein Ablauf über drei Stellen. <code>shopify/action/order/create.rb:21</code>
+            legt die Bestellung an, Zeile 26 erzeugt die SAP-Bestellnummer. Zeile 29–30 setzt
+            sie per <code>Shopify::Api::AddTags</code> als Tag und wirft bei
+            <code>userErrors</code>. Erst danach entsteht der
+            <code>CreditCheckEvent</code> (Zeile 41–48). Wirft der Tag-Aufruf, ist die
+            Bestellung bereits gespeichert; ein erneuter Aufruf endet in Zeile 16 mit
+            <code>return if order.present?</code>. ⚠️ Vermutung: Tag und
+            <code>CreditCheckEvent</code> fehlen dann dauerhaft, und
+            <code>Satzart14</code> entfällt im SAP-Auftrag
+            (<code>sap/transformer/order_input.rb:52</code>). Zum Beweis fehlt ein Lauf mit
+            fehlschlagendem <code>tagsAdd</code>.</p>
         </div>
       </div>
 
@@ -787,8 +812,8 @@
 
   <footer>
     <span>MDM Connector · Etappe 5 · Fachlogik</span>
-    <span>Quelle: app/services/ — 88 Dateien, 4 227 Zeilen</span>
-    <span>Stand: 11. September 2026 · Commit 69455cd</span>
+    <span>Quelle: app/services/ — 89 Dateien, 4 251 Zeilen</span>
+    <span>Stand: 14. Oktober 2026 · Commit 8c7c8fb</span>
     <span>Als nächstes: <a href="etappe-06.html">Jobs</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></span>
   </footer>
 
