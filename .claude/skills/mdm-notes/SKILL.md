@@ -28,7 +28,7 @@ nie im Standard-Ordner „Notes". Ticket-Notizen → `Tickets`, Tagebuch → `Ta
 | Titel | Typ | Pflege |
 |---|---|---|
 | `MDM Shopify :: Index` | Verzeichnis + Konventionen | nur bei Strukturänderung |
-| `MDM Shopify :: Tagebuch 2026-H2` | Log | append-only, neuester Eintrag OBEN |
+| `MDM Shopify :: Tagebuch 2026-H2 Teil 2` | Log | append-only, neuester Eintrag OBEN (Teil 1 `… 2026-H2` seit 2026-10-14 abgeschlossen, nur lesen) |
 | `MDM Shopify :: System und Ops` | Zustand | in place; überholtes mit „ersetzt am JJJJ-MM-TT" markieren |
 | `MDM Shopify :: Skills und Agenten` | Zustand | nur Status/Datum ändern, Beschreibungen stabil |
 | `MDM Shopify :: Ticket <ID>` | Status-Kopf + Timeline | Kopf in place, Timeline append-only |
