@@ -435,7 +435,7 @@
         <tbody>
           <tr><td class="m">credit-check</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Bonitätsprüfung im Checkout</td></tr>
           <tr><td class="m">sepa-iban</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>IBAN-Eingabe und -Prüfung</td></tr>
-          <tr><td class="m">tax-information-display</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">2</td><td class="m">0</td><td>Steuerhinweis im Checkout</td></tr>
+          <tr><td class="m">tax-information-display</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Steuerhinweis im Checkout</td></tr>
           <tr><td class="m">order-credit-check-block</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Admin-Block zur Bonität</td></tr>
           <tr><td class="m">order-sap-status-block</td><td class="m">ui_extension</td><td class="m">1</td><td class="m">3</td><td class="m">0</td><td>Admin-Block zum SAP-Status</td></tr>
           <tr><td class="m">payment-customization</td><td class="m">function</td><td class="m">3</td><td class="m">0</td><td class="m">14</td><td>Zahlarten ein- und ausblenden</td></tr>
@@ -730,14 +730,20 @@
         <span class="check-no">04</span>
         <div>
           <h3>Gebaute Dateien liegen im Repository</h3>
-          <p>Belegt: 16 Dateien unter <code>extensions/*/dist/</code> sind versioniert,
+          <p>Belegt: 17 Dateien unter <code>extensions/*/dist/</code> sind versioniert,
             darunter <code>product-limit/dist/function.wasm</code> und mehrere
             <code>.js.map</code>. <code>git check-ignore</code> meldet für
-            <code>extensions/credit-check/dist</code> keinen Treffer.</p>
-          <p>Folge: Jeder Build erzeugt einen Diff, auch ohne Quelltextänderung. Im Vergleich
-            der letzten 22 Commits stehen unter anderem
-            <code>tax-information-display/dist/tax-information-display.js</code> und
-            <code>product-limit/dist/function.wasm</code>. Ob das gewollt ist — etwa weil
+            <code>extensions/credit-check/dist</code> keinen Treffer. Die siebzehnte,
+            <code>tax-information-display/dist/tax-information-display.metafile.json</code>,
+            kam mit Commit <code>7f7b2fd</code> („update Cache issues") dazu.</p>
+          <p>Folge: Jeder Build erzeugt einen Diff, auch ohne Quelltextänderung. Zwischen
+            <code>69455cd</code> und <code>8c7c8fb</code> ändern sich 21 Dateien unter
+            <code>extensions/</code>: 15 unter <code>dist/</code>, eine generierte Typdatei
+            (<code>product-limit/generated/api.ts</code>), zwei
+            <code>src/Checkout.jsx</code> und drei Übersetzungsdateien. In
+            <code>order-credit-check-block</code> und <code>order-sap-status-block</code>
+            ändern sich nur <code>.js.map</code> und <code>.metafile.json</code>, ohne
+            Änderung an <code>src/</code>. Ob das gewollt ist — etwa weil
             Shopifys Ausrollweg die gebaute Datei erwartet — lässt sich aus dem Repository
             nicht entscheiden.</p>
         </div>
@@ -779,7 +785,7 @@
   <footer>
     <span>MDM Connector · Etappe 9 · Bauen und Ausrollen</span>
     <span>Quelle: deploy.sh · Dockerfile.web · Dockerfile.worker · ci.yml · 7 Extensions</span>
-    <span>Stand: 11. September 2026 · Commit 69455cd</span>
+    <span>Stand: 14. Oktober 2026 · Commit 8c7c8fb</span>
     <span>Ende des Blattsatzes — <a href="../index.html">Übersicht</a></span>
   </footer>
 

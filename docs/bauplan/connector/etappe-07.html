@@ -527,7 +527,7 @@
         <text x="40" y="376" class="s-name f-vite">creditCheck</text>
         <text x="920" y="376" text-anchor="end" class="s-tiny f-worker">{ responseData, requestData, userErrors }</text>
         <text x="40" y="394" class="s-tiny f-dim">Mutations::Public::Credit::Check — ruft Credit::Action::Check, schreibt nichts</text>
-        <text x="40" y="408" class="s-tiny">order: OrderInputType!<tspan class="f-dim">   ·   </tspan>customer: CustomerInputType!<tspan class="f-alert">      requestData → Anhang 06</tspan></text>
+        <text x="40" y="408" class="s-tiny">order: OrderInputType! <tspan class="f-dim">{ amount, paymentMethod }</tspan><tspan class="f-dim">   ·   </tspan>customer: CustomerInputType!<tspan class="f-alert">      requestData → Anhang 06</tspan></text>
 
         <rect x="24" y="418" width="912" height="58" rx="2" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.45"></rect>
         <text x="40" y="440" class="s-name f-vite">openibanValidate</text>
@@ -538,12 +538,19 @@
         <rect x="24" y="486" width="912" height="22" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
         <text x="480" y="501" text-anchor="middle" class="s-note">Sechs Operationen — keine liefert Produkte, keine schreibt fachliche Daten direkt.</text>
       </svg>
-      <figcaption><b>Zwei Dinge, die die Karte verrät.</b> Erstens: das Admin-UI kann nur
+      <figcaption><b>Drei Dinge, die die Karte verrät.</b> Erstens: das Admin-UI kann nur
         <em>Bestellungen ansehen und einen Sync neu anstoßen</em> — mehr gibt das Schema nicht her,
         also kann das Frontend auch nicht mehr können. Zweitens ist
         <code>docs/overview.md</code> hier veraltet: sie listet für das öffentliche Schema nur
         <code>credit_check</code>, aber <code>openibanValidate</code> steht seit dem SEPA-Feature
-        gleichberechtigt daneben (<code>public_mutation_type.rb:6</code>).</figcaption>
+        gleichberechtigt daneben (<code>public_mutation_type.rb:6</code>). Drittens nimmt
+        <code>creditCheck</code> seit Commit <code>3c97c43</code> ein optionales
+        <code>paymentMethod</code> an (<code>types/credit/order_input_type.rb:7</code>), das
+        der Transformer über <code>Order::PAYMENT_TERMS_KEY</code> in einen SAP-Zahlungsschlüssel
+        übersetzt (Etappe 5). Der einzige Aufrufer im Repository,
+        <code>extensions/credit-check/src/Checkout.jsx:1469–1471</code>, sendet im
+        <code>order</code>-Objekt nur <code>amount</code>. Die Bonitäts-API erhält deshalb
+        aus diesem Aufrufer immer <code>paymentMethod: ''</code>.</figcaption>
     </figure>
   </section>
 
@@ -631,7 +638,7 @@
       <strong>Nebeneffekt, der in einer Query nicht zu erwarten ist</strong>.</p>
 
     <figure>
-      <svg viewBox="0 0 960 420" role="img" aria-label="Ablauf des orders-Resolvers: die Mandantengrenze über scope, dann apply_filter mit sechs Filtern, und ein Nebeneffekt, der bei Angabe einer shopifyId eine fehlende Bestellung erst per Shopify-Aufruf anlegt.">
+      <svg viewBox="0 0 960 420" role="img" aria-label="Ablauf des orders-Resolvers: die Mandantengrenze über scope, dann apply_filter mit sechs Filtern, und ein Nebeneffekt, der bei Angabe einer shopifyId eine fehlende Bestellung erst per Shopify-Aufruf anlegt und mit ihrer SAP-Bestellnummer taggt.">
         <defs>
           <marker id="e7ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
@@ -668,8 +675,8 @@
         <text x="664" y="218" class="s-tiny f-alert">Der Nebeneffekt</text>
         <text x="664" y="236" class="s-tiny">Bestellung nicht in der Datenbank?</text>
         <text x="664" y="252" class="s-tiny">→ Shopify::Action::Order::Create</text>
-        <text x="664" y="270" class="s-tiny f-dim">also: HTTP zu Shopify und ein</text>
-        <text x="664" y="284" class="s-tiny f-dim">INSERT — mitten in einer Query</text>
+        <text x="664" y="270" class="s-tiny f-dim">also: GetOrder, tagsAdd, INSERT</text>
+        <text x="664" y="284" class="s-tiny f-dim">und UPDATE — mitten in einer Query</text>
 
         <text x="650" y="310" class="s-tiny f-dim">rescue StandardError → nur Rails.logger.warn</text>
 
@@ -813,10 +820,15 @@
             <code>ensure_order_record_for_shopify_id</code> ruft bei gesetztem
             <code>shopifyId</code> und fehlendem Datensatz
             <code>Shopify::Action::Order::Create</code> auf. Das macht einen GraphQL-Aufruf zu
-            Shopify und ein <code>INSERT</code>.</p>
+            Shopify und ein <code>INSERT</code>. Seit Commit <code>60273ea</code> folgen bei
+            gesetztem Präfix ein <code>UPDATE</code> für <code>sap_order_id</code> und die
+            Shopify-Mutation <code>tagsAdd</code>
+            (<code>shopify/action/order/create.rb:26–31</code>).</p>
           <p>Zusätzlich fängt <code>rescue StandardError</code> in Zeile 53 jeden Fehler ab und
-            schreibt nur eine Warnung ins Log — der Client sieht davon nichts. Sauberer wäre eine
-            eigene Mutation, die das Nachladen explizit macht.</p>
+            schreibt nur eine Warnung ins Log — der Client sieht davon nichts. Scheitert
+            <code>tagsAdd</code>, bleibt die Bestellung ohne Tag gespeichert (Etappe 5,
+            Befund 03). Sauberer wäre eine eigene Mutation, die das Nachladen explizit
+            macht.</p>
         </div>
       </div>
       <div class="check">
@@ -865,7 +877,7 @@
             <code>field :request_data, GraphQL::Types::JSON</code>, und
             <code>Credit::Action::Check</code> liefert diese Nutzlast mit. Die
             Checkout-Extension liest sie auch aus
-            (<code>extensions/credit-check/src/Checkout.jsx:486</code>).</p>
+            (<code>extensions/credit-check/src/Checkout.jsx:684</code>).</p>
           <p>Darin stehen die Daten, die zur Bonitätsprüfung an den Dienstleister gehen — Name,
             Adresse, Geburtsdatum. Sie kommen zwar ursprünglich vom Client selbst, gehen also
             nicht neu nach draußen. Trotzdem: personenbezogene Daten über das öffentliche Schema

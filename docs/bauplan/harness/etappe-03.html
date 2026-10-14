@@ -403,10 +403,10 @@
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>11 Skripte · settings.json</dd></div>
-      <div class="tb-cell"><dt>Zeilen</dt><dd>639 gesamt</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>650 gesamt</dd></div>
       <div class="tb-cell"><dt>Blockierend</dt><dd>6 Skripte</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>14. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -698,8 +698,10 @@
           <h3>Gute Nachricht: die Linter prüfen nur die geänderte Datei</h3>
           <p><b>Beleg:</b> Alle drei <code>post-edit-*</code>-Hooks filtern auf den Pfad aus
              der Hook-Nutzlast und laufen nur bei passender Endung — Theme Check bei
-             <code>theme/*.liquid</code> und <code>*.json</code>, RuboCop bei
-             <code>connector/*.rb</code>, PHPStan bei Middleware-<code>*.php</code>.</p>
+             <code>themes/*.liquid</code> und <code>*.json</code>, RuboCop bei
+             <code>connector/*.rb</code>, PHPStan bei Middleware-<code>*.php</code>. Theme
+             Check läuft im Verzeichnis der Marke, die der Hook aus dem Pfad liest
+             (<code>post-edit-theme-check.sh:16–17</code> und <code>:29–31</code>).</p>
           <p><b>Konsequenz:</b> Eine Änderung im Connector löst keinen Theme Check aus. Bei
              Timeouts von 60 bis 90 Sekunden ist das der Unterschied zwischen einem
              brauchbaren und einem unerträglichen Arbeitsablauf.</p>
