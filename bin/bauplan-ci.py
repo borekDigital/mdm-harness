@@ -16,6 +16,7 @@ damit ein CI-Schritt das ohne Ausgabe-Parsing auswerten kann.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -25,6 +26,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bauplan_lib as lib  # noqa: E402
 
 CLAUDE_TIMEOUT = 3600
+
+# Was der Abschnitt „Auffrischen — nur das Veraltete" im Skill per Shell aufruft.
+# Auf dem Runner gilt der Workspace als nicht vertraut, die Allow-Liste aus
+# .claude/settings.json wird dort ignoriert. Ohne diese Freigaben lehnt der
+# Headless-Lauf jeden dieser Befehle ab.
+REFRESH_SKRIPTE = ("bauplan-stale.py", "bauplan-wording.py")
+LESENDE_GIT_BEFEHLE = ("diff", "log", "show", "rev-parse")
+
+# Wo ein Auffrischungslauf schreiben darf. Alles darunter wird je Lauf geprueft.
+BAUPLAN_PFADE = ("docs/bauplan", ".claude/bauplan")
 
 
 def sh(*args, cwd=None, check=False):
@@ -69,6 +80,20 @@ def allowed_paths(project, repo, hits):
     return paths
 
 
+def allowed_tools(project, repo):
+    """Die Shell-Befehle, die ein Auffrischungslauf braucht — keine pauschale Freigabe."""
+    pfad = os.path.relpath(lib.repo_path(lib.load_manifest(repo, project), repo, project),
+                           project)
+    regeln = []
+    for skript in REFRESH_SKRIPTE:
+        regeln += ["Bash(python3 bin/%s:*)" % skript, "Bash(bin/%s:*)" % skript]
+    for befehl in LESENDE_GIT_BEFEHLE:
+        regeln.append("Bash(git %s:*)" % befehl)
+        for ort in sorted({".", pfad}):
+            regeln.append("Bash(git -C %s %s:*)" % (ort, befehl))
+    return regeln
+
+
 def regenerate(project, repo, hits):
     """Claude Code headless nur fuer die betroffenen Etappen aufrufen."""
     nrs = ",".join(str(e.get("nr")) for e, _ in hits)
@@ -78,11 +103,16 @@ def regenerate(project, repo, hits):
         "Zeichen fuer Zeichen unveraendert. Halte dich an den Abschnitt "
         "'Auffrischen — nur das Veraltete' im Skill." % (repo, nrs)
     )
-    cmd = ["claude", "-p", prompt, "--permission-mode", "acceptEdits"]
+    # --allowedTools nimmt beliebig viele Werte und steht deshalb am Ende,
+    # sonst verschluckt es nachfolgende Argumente.
+    cmd = ["claude", "-p", prompt, "--permission-mode", "acceptEdits",
+           "--allowedTools", *allowed_tools(project, repo)]
     print("  -> %s" % " ".join(cmd[:3]))
     try:
+        # stdin abhaengen: sonst wartet claude -p drei Sekunden auf Eingabe und
+        # schreibt dazu eine Warnung, die im Fehlerfall die Ursache ueberlagert.
         res = subprocess.run(cmd, cwd=project, capture_output=True, text=True,
-                             timeout=CLAUDE_TIMEOUT)
+                             stdin=subprocess.DEVNULL, timeout=CLAUDE_TIMEOUT)
     except FileNotFoundError:
         print("  Claude Code CLI nicht gefunden — nur Bericht moeglich.", file=sys.stderr)
         return False
@@ -90,20 +120,58 @@ def regenerate(project, repo, hits):
         print("  Zeitueberschreitung nach %d s." % CLAUDE_TIMEOUT, file=sys.stderr)
         return False
     if res.returncode != 0:
-        print(res.stderr.strip()[-1200:], file=sys.stderr)
+        # claude -p meldet Fehler wie ein abgelehntes Token (401) auf stdout,
+        # stderr traegt nur Warnungen. Nur stderr auszugeben hiess: die Ursache
+        # fehlte in jedem roten Lauf seit dem 11. September 2026.
+        print("  claude endete mit Exit %d" % res.returncode, file=sys.stderr)
+        for kanal, text in (("stdout", res.stdout), ("stderr", res.stderr)):
+            if text.strip():
+                print("  --- claude %s ---\n%s" % (kanal, text.strip()[-1200:]),
+                      file=sys.stderr)
         return False
+    # Auch bei Erfolg: Nur aus Claudes Antwort geht hervor, ob die Wortpruefung
+    # lief und ob Seiten veroeffentlicht wurden.
+    if res.stdout.strip():
+        print("  --- claude Antwort (Ende) ---\n%s" % res.stdout.strip()[-1500:])
     return True
 
 
-def diff_within(project, allowed):
-    """Hat der Lauf nur angefasst, was er anfassen durfte?"""
-    out = sh("git", "-C", project, "diff", "--name-only", "--",
-             "docs/bauplan", ".claude/bauplan")
-    touched = {line for line in out.stdout.splitlines() if line.strip()}
+def bauplan_stand(project):
+    """Inhalt jeder Bestandsdatei, die vom Index abweicht: geaendert, geloescht, neu.
+
+    Geloeschte Dateien stehen mit None im Ergebnis, unveraenderte fehlen.
+    Gitignorierte Dateien (CI-BERICHT.json, *.STALE.md) zaehlen nicht.
+    """
+    out = sh("git", "-C", project, "ls-files", "-z", "--modified", "--deleted",
+             "--others", "--exclude-standard", "--", *BAUPLAN_PFADE)
+    stand = {}
+    for rel in {p for p in out.stdout.split("\0") if p}:
+        pfad = os.path.join(project, rel)
+        if os.path.isfile(pfad):
+            with open(pfad, "rb") as fh:
+                stand[rel] = hashlib.sha1(fh.read()).hexdigest()
+        else:
+            stand[rel] = None
+    return stand
+
+
+def diff_within(project, allowed, vorher):
+    """Hat dieser Lauf nur angefasst, was er anfassen durfte?
+
+    Verglichen wird mit dem Stand vor dem Lauf, nicht mit HEAD. Sonst zaehlen beim
+    zweiten Repo die Aenderungen des ersten mit (belegt in Lauf 38536814197).
+    """
+    nachher = bauplan_stand(project)
+    wie_im_index = object()
+    touched = {rel for rel in set(vorher) | set(nachher)
+               if vorher.get(rel, wie_im_index) != nachher.get(rel, wie_im_index)}
     return touched, touched - allowed
 
 
 def main():
+    # In der CI ist stdout eine Pipe und damit blockgepuffert. Ohne Zeilenpufferung
+    # steht der Fortschritt im Log hinter den Fehlermeldungen auf stderr.
+    sys.stdout.reconfigure(line_buffering=True)
     ap = argparse.ArgumentParser()
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--regenerate", action="store_true")
@@ -142,10 +210,11 @@ def main():
         for repo, hits in veraltet.items():
             print("\nAuffrischen %s ..." % repo)
             allowed = allowed_paths(project, repo, hits)
+            vorher = bauplan_stand(project)
             if not regenerate(project, repo, hits):
                 fehler.append(repo)
                 continue
-            touched, ausserhalb = diff_within(project, allowed)
+            touched, ausserhalb = diff_within(project, allowed, vorher)
             if ausserhalb:
                 print("  ABBRUCH: der Lauf hat Dateien ausserhalb des Auftrags geaendert:",
                       file=sys.stderr)
