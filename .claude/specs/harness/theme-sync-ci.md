@@ -288,6 +288,21 @@ Probelauf des ersten PRs (Sandbox, MDM inklusive der beiden vorbereiteten MDM-Br
 6. Testlauf: `gh workflow run theme-sync.yml -R borekDigital/shopifyFrontend_MDM`.
 7. Danach `gh variable set THEME_SYNC_ENABLED --body true -R borekDigital/shopifyFrontend_MDM`.
 
+## Inbetriebnahme erledigt — 15. Oktober 2026
+
+| Schritt | Ergebnis |
+|---|---|
+| Harness | PR mdm-harness #10 gemergt (`d6ffe74`) |
+| Workflow | PR shopifyFrontend_MDM #48 gemergt; Push-Lauf danach wie vorgesehen `skipped` |
+| PLP vorab von Hand | MDM #49, #50; Borek #21; IMM #20 gemergt |
+| Erster Lauf (`workflow_dispatch`) | Run 38729722105 rot: `403` beim Checkout — PAT lag auf dem persönlichen Account statt auf `borekDigital`; neuer Token |
+| Zweiter Lauf | Run 38730565133 grün: Borek #22, IMM #21 (PDP-Templates + `ai_gen_block_96dbfd1`), beide gemergt |
+| Push-Auslöser | `THEME_SYNC_ENABLED=true` seit 15.10.2026, 14:17 |
+| Test per Push | MDM #51 (Kommentar in `brand-overrides.css`) → Run 38734296009 grün → Borek #23, IMM #22 mit genau dieser Datei; „Seit dem letzten Sync (`12c33b9`)“ erkannt, keine Warnung |
+
+A1 erfüllt auf GitHub. A2 (Aktualisierung eines offenen PRs) und A3 (Schließen ohne Unterschied)
+sind lokal belegt und auf GitHub mit dem nächsten MDM-Push zu sehen.
+
 ## Status
 
-IMPLEMENTIERT — 15. Oktober 2026 (Commits, Secret und erster Lauf auf GitHub offen)
+VALIDIERT — 15. Oktober 2026 (A2, A3 auf GitHub beim nächsten Lauf beobachten)
