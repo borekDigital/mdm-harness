@@ -1,7 +1,7 @@
 # Spec: Gleiche Aenderungen zwischen den Marken-Themes
 
-Stand: 16. September 2026 (Patch-Modus, Exit-Codes, selektive Freigabe, settings)
-Status: UMGESETZT — `bin/theme-sync.sh`
+Stand: 15. Oktober 2026 (geteilte Templates, Glob-Fehler der Blockliste behoben)
+Status: UMGESETZT — `bin/theme-sync.sh`, Tests: `bin/test-theme-sync.sh`
 
 ## Ziel
 
@@ -63,7 +63,26 @@ bin/theme-sync.sh drift [pfad-praefix]      # was laeuft auseinander?
 bin/theme-sync.sh settings <schluessel>     # Grundwert je Marke vergleichen
 bin/theme-sync.sh port <quelle> <ziele> <pfade...>
 bin/theme-sync.sh port <quelle> <ziele> --commit <sha> [--as-patch]
+bin/theme-sync.sh align <quelle> <ziele> [--branch <name>] [--report <datei>]
 ```
+
+### align (seit 15. Oktober 2026)
+
+Bringt das Ziel auf den committeten Stand der Quelle statt einzelne Dateien oder Commits zu
+übertragen. Grundlage des CI-Syncs (`theme-sync-ci.md`).
+
+- Nur Dateien in `assets/ blocks/ config/ layout/ locales/ sections/ snippets/ templates/`,
+  ohne markenspezifische Pfade; geteilte Templates mit dem Layout der Zielmarke.
+- Neue Quelldateien werden angelegt, nichts wird gelöscht. Kein Commit.
+- Branch (Standard `sync/theme-<quelle>`) wird mit `checkout -B` vom aktuellen Stand des Ziels
+  neu aufgebaut.
+- Überschreibt das Ziel eine eigene Änderung (Ziel-Blob nie in der Quell-Historie der Datei),
+  meldet `align` das in der Ausgabe mit ⚠ — ohne zu sperren.
+- `--report <datei>` (nur mit einem Ziel) schreibt die PR-Beschreibung: enthaltene Dateien,
+  Quell-Commits seit dem letzten Sync, W1 eigene Ziel-Änderungen mit Autor bzw. Theme-Editor-Person,
+  W2 Theme-Editor-Commits der Quelle an geteilten Templates, W3 fehlende Locale-Schlüssel und
+  geänderte markenspezifische Dateien, W4 Dateien nur im Ziel.
+- Exit-Codes wie `port`.
 
 ### settings
 
@@ -136,12 +155,48 @@ freizugeben.
 ```
 config/settings_data.json      Live-Einstellungen des Theme-Editors
 config/settings_schema.json    Marken-Defaults
+config/markets.json            Shopify Markets je Store (seit 15.10.2026)
 locales/*                      Uebersetzungen
-templates/*                    Seitenaufbau je Shop
+templates/*                    Seitenaufbau je Shop — ausser den geteilten (unten)
 sections/*-group.json          header-, footer-, overlay-group
 layout/*                       mdm-theme.liquid vs. borek-theme.liquid
 .shopifyignore, .gitignore, README.md, temp/*
 ```
+
+### Geteilte Templates (seit 15. Oktober 2026)
+
+Entscheidung im Call Konrad/Bhavani: Die PLP- und PDP-Templates sind in allen Marken
+gleich, Vorlage ist MDM (`../themes/templates-angleichen-plp-pdp.md`). Im Skript stehen
+sie in `SHARED_TEMPLATES`:
+
+```
+templates/collection.json
+templates/collection.mdm.json
+templates/product.json
+templates/product.mdm.json
+```
+
+- `port` uebertraegt sie ohne `--allow-brand`.
+- Jedes kopierte Template (`templates/*.json`, auch ein per `--allow-brand` freigegebenes)
+  bekommt das Layout der Zielmarke: `"layout": "<quelle>-theme"` wird zu
+  `"layout": "<ziel>-theme"`. Fehlt `layout/<ziel>-theme.liquid` im Ziel, wird das Ziel
+  uebersprungen.
+- `drift` vergleicht geteilte Templates ohne den `layout`-Schluessel und listet sie, statt
+  sie als markenspezifisch zu zaehlen.
+- `--as-patch` setzt das Layout nicht um. Beruehrt ein Hunk die `layout`-Zeile, passt der
+  Patch nicht und das Ziel wird uebersprungen.
+
+### Behobener Fehler: Blockliste griff nicht fuer `templates/*`
+
+`is_brand_path` las die Muster mit `for pattern in $BRAND_PATTERNS`. Unquotiert expandiert
+Bash dabei Glob-Muster gegen das aktuelle Verzeichnis. Im Workspace-Root liegt ein Ordner
+`templates/` (Vorlagen fuer `CLAUDE.md`); aus `~/MDM` aufgerufen wurde `templates/*` zu
+`templates/footer.md templates/header.md …`, und kein Theme-Template war gesperrt. Seit
+15. Oktober 2026 liest die Funktion die Muster zeilenweise. `drift` war nicht betroffen
+(es reicht die Muster als String an awk). Belegt am 15. Oktober 2026 mit
+`bin/test-theme-sync.sh` (rot vor, gruen nach dem Fix). Ob `port` deshalb je ungewollt ein
+Template kopiert hat, ist nicht feststellbar; die `mdm-theme`-Layouts in Borek und IMM
+stammen nachweislich vom Erst-Import am 26. August 2026, nicht vom Skript.
 
 ## Akzeptanzkriterien
 
@@ -168,6 +223,22 @@ layout/*                       mdm-theme.liquid vs. borek-theme.liquid
       Preset-Namen auf
 - [x] `usage` liest den Kopfkommentar bis zur ersten Leerzeile statt eines festen
       Zeilenbereichs
+
+Geteilte Templates, 15. Oktober 2026 — `bin/test-theme-sync.sh`, 14 von 14 gruen
+(Bash 3.2, Aufruf aus einem Verzeichnis mit eigenem `templates/`):
+
+- [x] Ein geteiltes Template wird ohne `--allow-brand` uebertragen (Exit 0), Inhalt gleich
+      der Quelle bis auf `layout`, `layout` zeigt auf die Zielmarke
+- [x] Nur im `layout` verschieden zaehlt als „bereits identisch“
+- [x] Ein uebriges Template bleibt gesperrt (Exit 1), das Ziel unveraendert — auch aus
+      dem Workspace-Root aufgerufen
+- [x] Ein per `--allow-brand=<pfad>` freigegebenes Template bekommt ebenfalls das Ziel-Layout
+- [x] Ziel ohne `layout/<ziel>-theme.liquid` wird uebersprungen und bleibt unveraendert,
+      die anderen Ziele werden geschrieben (Exit 2)
+- [x] `drift`: nur `layout` verschieden ist kein Drift; abweichender Inhalt wird gelistet;
+      uebrige Templates zaehlen weiter als markenspezifisch
+- [x] Gegenprobe an den echten Themes (`drift templates/`, nur lesend): die vier geteilten
+      Templates stehen als Drift im Bericht, 66 uebrige als markenspezifisch
 
 ## Grenzen
 

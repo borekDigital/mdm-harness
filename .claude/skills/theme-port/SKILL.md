@@ -57,6 +57,21 @@ git -C themes/borek push -u origin sync/mdm-<datum>
 
 ### 5. PR je Ziel-Theme von Hand
 
+## Automatisch: Sync-CI im MDM-Theme
+
+Seit 15. Oktober 2026 bringt der Workflow `.github/workflows/theme-sync.yml` im MDM-Theme jeden
+Stand von MDM `main` als PR nach Borek und IMM — Branch `sync/theme-mdm`, Titel
+`sync/theme-mdm: MDM main @ <sha> (<datum>)`, ein offener PR je Marke, Merge von Hand (Deploy!).
+Er ruft `bin/theme-sync.sh align` auf. Lokal dasselbe:
+
+```bash
+bin/theme-sync.sh align mdm borek --report /tmp/body.md   # Ziel wird auf sync/theme-mdm abgeglichen, kein Commit
+```
+
+Der Bericht nennt eigene Änderungen der Zielmarke, die der Sync überschreibt (z. B. Theme-Editor in
+Borek/IMM). Das ist eine Warnung, keine Sperre — Konrad entscheidet. Läuft ein Port in Gegenrichtung
+(Quelle `borek` oder `imm`), immer ausdrücklich darauf hinweisen. Spec: `.claude/specs/harness/theme-sync-ci.md`.
+
 ## Sicherungen
 
 - Ziel mit unsauberem Arbeitsbaum wird uebersprungen, nicht ueberschrieben.
@@ -66,6 +81,11 @@ git -C themes/borek push -u origin sync/mdm-<datum>
   `sections/*-group.json`) werden uebersprungen. `--allow-brand` gibt alle frei,
   `--allow-brand=<pfad>[,<pfad>]` nur die genannten — fuer den Fall, dass ein einzelner
   Uebersetzungsschluessel fuer alle Marken gilt.
+- Ausnahme: Die PLP- und PDP-Templates (`collection.json`, `collection.mdm.json`,
+  `product.json`, `product.mdm.json`) sind seit 15. Oktober 2026 geteilt und gehen ohne
+  `--allow-brand` durch. Jedes kopierte Template bekommt das Layout der Zielmarke
+  (`layout/<ziel>-theme.liquid`); fehlt die Datei im Ziel, wird das Ziel uebersprungen.
+  `drift` vergleicht geteilte Templates ohne den `layout`-Schluessel.
 - Das Skript committet nie und pusht nie.
 
 ## Exit-Codes von `port`
