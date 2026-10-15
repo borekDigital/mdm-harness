@@ -12,5 +12,10 @@ paths:
   `<typ>.mdm.json` für MDM-Varianten von product/collection.
 - Section-IDs im Template sprechend wählen (`mdm-breadcrumbs`, `mdm-faq`), Reihenfolge
   über `order` steuern.
+- Geteilte Templates: `collection.json`, `collection.mdm.json`, `product.json` und
+  `product.mdm.json` sind in allen drei Themes gleich, Vorlage ist MDM. Änderungen daran
+  zuerst in `themes/mdm/`, dann mit `bin/theme-sync.sh port mdm borek,imm <pfad>`
+  übertragen — das Skript setzt den `layout`-Schlüssel auf die Zielmarke. Alle übrigen
+  Templates bleiben markenspezifisch, bis sie mit Bhavani abgestimmt sind.
 - Abschlusstest: Datei nach Entfernen eines etwaigen `/* */`-Banners mit einem
   JSON-Parser validieren.
