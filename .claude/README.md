@@ -248,6 +248,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |
 | post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in dieser README dokumentiert sind |
+| harness-sync-check.sh | SessionStart (alle) | `sync.sh --check`: nicht geklonte Repos, abweichende `CLAUDE.md`/Bauplan-Uebersicht/Fusszeilen, veraltete Etappen, Setup-Warnungen; `systemMessage` plus `additionalContext`, schreibt nichts, schweigt wenn sauber. Ersetzt den lokal einzurichtenden post-merge-Hook |
 | harness-stand.sh | SessionStart (startup) | `bin/harness-stand.py hinweis`: meldet, wenn die installierte Claude-Code-Version neuer ist als die in `bin/harness-referenz.json` gepruefte; kein Netz, schweigt sonst |
 | harness-check.sh | Stop | `bin/harness-check.py --offline`: Frontmatter, Modelle, Hook-Events, Hook-Ziele, MCP-Werkzeuge und -Versionen, Skill-Verweise, Rule-Globs gegen `bin/harness-referenz.json`; schweigt wenn sauber |
 | bauplan-guard.sh | PreToolUse (Bash/Edit/Write), fail-closed | Bash: `bin/bauplan-guard.py --check-bash` blockiert nur, wenn Bauplan-Bestand Ziel von rm/mv/truncate/cp/tee/git rm/find -delete/xargs rm oder einer Umleitung ist (auch als Glob oder Vorfahre wie `rm -rf docs`), und `git stash`/`checkout --`/`restore`, wenn sie lokale Aenderungen daran verwerfen. Nennen ist erlaubt. Edit/Write: Manifeste und Workspace-Datei duerfen nicht schrumpfen |

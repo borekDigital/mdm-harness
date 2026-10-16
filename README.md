@@ -111,6 +111,7 @@ Review und Security laufen immer parallel nach jeder Implementierung.
 | bauplan-staleness | PostToolUse | Ordnet geaenderte Dateien den Blattsatz-Etappen zu |
 | bauplan-report | Stop | Verdichtet das Staleness-Ledger zu einer Arbeitsliste |
 | bauplan-verify | Stop | Prueft den Blattsatz-Bestand gegen den letzten Commit |
+| harness-sync-check | SessionStart | `sync.sh --check`: nicht geklonte Repos, abweichende generierte Dateien, veraltete Etappen — schreibt nichts |
 
 ## Setup-Befehle
 
@@ -126,6 +127,28 @@ Review und Security laufen immer parallel nach jeder Implementierung.
 
 # CLAUDE.md manuell regenerieren
 ./sync.sh
+
+# Nur pruefen, nichts schreiben (Exit 3, wenn eine generierte Datei abweicht)
+./sync.sh --check
+```
+
+### Nach `git clone` ist nichts einzurichten
+
+`CLAUDE.md`, die Bauplan-Uebersicht und die Fusszeilen der Blattseiten sind versioniert
+und haengen nur vom Repo ab, nicht vom lokalen Klon. Ein Pull bringt sie aktuell mit; ob
+sie zu `templates/`, `workspace.yaml` und den Manifesten passen, prueft die CI
+(`harness-check.yml`, Schritt „Generierte Dateien passen zum Stand“). Wer Claude im
+Workspace startet, bekommt beim Sitzungsstart gemeldet, was lokal fehlt oder abweicht
+(Hook `harness-sync-check`).
+
+Wer ohne Claude arbeitet, braucht nichts davon. Die Setup-Hinweise (Repo eingetragen,
+Verzeichnis fehlt; letzter Lauf von `sync.sh` aelter als 7 Tage) zeigt `./sync.sh`.
+
+**Optional:** der Git-Hook `post-merge` fuehrt `sync.sh` nach jedem Pull aus. Git
+verteilt Hooks nicht beim Klonen, er wird je Rechner eingerichtet:
+
+```bash
+cp git-hooks/post-merge .git/hooks/post-merge && chmod +x .git/hooks/post-merge
 ```
 
 ## Architektur-Blattsaetze
@@ -159,7 +182,7 @@ Drei Schichten verhindern, dass Repos oder Konfiguration versehentlich verloren 
 
 1. **Manifest-Guard** — `workspace.yaml` ist die Referenz. Kein Prozess darf Repos daraus entfernen.
 2. **Local-State-Guard** — `.workspace.local.yaml` dokumentiert explizit geklonte Repos. "Nicht vorhanden" = bewusst uebersprungen.
-3. **Git-Hook-Guard** — `post-merge` fuehrt `sync.sh` aus, sodass nach jedem `git pull` die CLAUDE.md aktuell bleibt. Unter `docs/bauplan/` schreibt der Lauf nichts.
+3. **Generierte Dateien** — `CLAUDE.md` und die Bauplan-Uebersicht haengen nur vom Repo ab; die CI prueft sie (`./sync.sh --check`). Der optionale `post-merge`-Hook und der SessionStart-Hook `harness-sync-check` melden lokale Abweichungen, schreiben aber nichts unter `docs/bauplan/`.
 
 ## Technologien
 

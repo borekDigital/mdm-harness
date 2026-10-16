@@ -95,6 +95,76 @@ post_merge "$WS" "$WORK/home4" >/dev/null
 S=$(status "$WORK/home4/MDM")
 [ -z "$S" ] && ok "Haupt-Checkout unberuehrt" || fehl "Haupt-Checkout unberuehrt" "$S"
 
+# --- Spec harness-ohne-lokale-einrichtung ---------------------------------------
+
+check() {
+  # sync.sh --check wie im SessionStart-Hook und in der CI: ohne Claude-Umgebung.
+  (cd "$1" && env -u CLAUDE_PROJECT_DIR HOME="$2" ./sync.sh --check --quiet 2>&1)
+}
+fingerabdruck() {
+  # Inhalt und Aenderungszeit — "schreibt nichts" heisst beides unveraendert.
+  for f in "$@"; do printf '%s %s\n' "$(cksum < "$f")" "$(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f")"; done
+}
+
+echo "Fall 5: nur ein Repo geklont (Befund 6)"
+WS="$WORK/home5/MDM"; kopie "$WS"
+printf 'installed:\n  theme-mdm:\n' > "$WS/.workspace.local.yaml"
+AUS=$(post_merge "$WS" "$WORK/home5")
+S=$(status "$WS")
+[ -z "$S" ] && ok "git status sauber" || fehl "git status sauber" "$S"
+echo "$AUS" | grep -q "Nicht geklont.*connector" && ok "Konsole nennt nicht geklonte Repos" \
+  || fehl "Konsole nennt nicht geklonte Repos" "$AUS"
+
+echo "Fall 6: ohne .workspace.local.yaml"
+WS="$WORK/home6/MDM"; kopie "$WS"
+rm -f "$WS/.workspace.local.yaml"
+post_merge "$WS" "$WORK/home6" >/dev/null
+S=$(status "$WS")
+[ -z "$S" ] && ok "git status sauber" || fehl "git status sauber" "$S"
+
+echo "Fall 7: templates geaendert, CLAUDE.md nicht neu erzeugt"
+WS="$WORK/home7/MDM"; kopie "$WS"
+echo "Neue Zeile aus dem Template." >> "$WS/templates/footer.md"
+git -C "$WS" -c user.name=test -c user.email=test@example.invalid commit -q -am "template ohne Neubau"
+AUS=$(check "$WS" "$WORK/home7"); RC=$?
+[ "$RC" -eq 3 ] && ok "--check endet mit 3" || fehl "--check endet mit 3 (ist $RC)" "$AUS"
+echo "$AUS" | grep -q "CLAUDE.md.*\./sync.sh" && ok "Meldung nennt ./sync.sh" \
+  || fehl "Meldung nennt ./sync.sh" "$AUS"
+S=$(status "$WS")
+[ -z "$S" ] && ok "--check schreibt nichts" || fehl "--check schreibt nichts" "$S"
+
+echo "Fall 8: --check auf sauberem Stand"
+WS="$WORK/home8/MDM"; kopie "$WS"
+VORHER=$(fingerabdruck "$WS/CLAUDE.md" "$WS/.workspace.local.yaml")
+sleep 1
+AUS=$(check "$WS" "$WORK/home8"); RC=$?
+[ "$RC" -eq 0 ] && ok "--check endet mit 0" || fehl "--check endet mit 0 (ist $RC)" "$AUS"
+NACHHER=$(fingerabdruck "$WS/CLAUDE.md" "$WS/.workspace.local.yaml")
+[ "$VORHER" = "$NACHHER" ] && ok "CLAUDE.md und .workspace.local.yaml unveraendert" \
+  || fehl "CLAUDE.md und .workspace.local.yaml unveraendert" "$VORHER / $NACHHER"
+
+echo "Fall 9: SessionStart-Hook"
+HOOK="$REPO/.claude/hooks/harness-sync-check.sh"
+hook() { (cd "$1" && env CLAUDE_PROJECT_DIR="$1" HOME="$2" bash "$HOOK" </dev/null 2>&1); }
+AUS=$(hook "$WORK/home5/MDM" "$WORK/home5"); RC=$?
+[ "$RC" -eq 0 ] && ok "Exit 0 bei Meldungen" || fehl "Exit 0 bei Meldungen (ist $RC)" "$AUS"
+echo "$AUS" | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+ctx = d["hookSpecificOutput"]["additionalContext"]
+assert d["hookSpecificOutput"]["hookEventName"] == "SessionStart"
+assert d["systemMessage"].strip()
+assert "connector" in ctx and "abgeschafft" in ctx
+' 2>/dev/null && ok "JSON mit systemMessage und additionalContext" \
+  || fehl "JSON mit systemMessage und additionalContext" "$AUS"
+rm -f "$WORK/home8/MDM/.claude/bauplan/harness.STALE.md" "$WORK/home8/MDM/.claude/bauplan/harness.staleness.jsonl"
+AUS=$(hook "$WORK/home8/MDM" "$WORK/home8"); RC=$?
+[ "$RC" -eq 0 ] && [ -z "$AUS" ] && ok "schweigt bei sauberem Stand" \
+  || fehl "schweigt bei sauberem Stand (Exit $RC)" "$AUS"
+mkdir -p "$WORK/leer"
+AUS=$(hook "$WORK/leer" "$WORK/home8"); RC=$?
+[ "$RC" -eq 0 ] && [ -z "$AUS" ] && ok "schweigt ohne sync.sh" || fehl "schweigt ohne sync.sh (Exit $RC)" "$AUS"
+
 echo
 echo "$PASS bestanden, $FAIL fehlgeschlagen"
 [ "$FAIL" -eq 0 ]

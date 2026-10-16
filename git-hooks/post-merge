@@ -4,6 +4,11 @@
 # Regeneriert CLAUDE.md aus Templates + workspace.yaml und prueft die
 # Bauplan-Uebersicht. Unter docs/bauplan/ schreibt der Lauf nichts — sonst
 # waere die versionierte Uebersicht nach jedem Pull lokal geaendert.
+#
+# Optional: Git verteilt Hooks nicht beim Klonen. Ohne diesen Hook geht nichts verloren —
+# CLAUDE.md kommt aus dem Repo und wird in der CI geprueft, Claude-Nutzer bekommen die
+# Hinweise beim Sitzungsstart (.claude/hooks/harness-sync-check.sh). Einrichten:
+#   cp git-hooks/post-merge .git/hooks/post-merge && chmod +x .git/hooks/post-merge
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SYNC_SCRIPT="${REPO_ROOT}/sync.sh"
