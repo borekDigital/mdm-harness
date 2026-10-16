@@ -1,7 +1,6 @@
 ---
 name: connector-feature
 description: "End-to-End-Workflow fuer neue Features, Bugfixes und Extensions am MDM Shopify Connector (Rails 8.1 Backend). Feste Phasen mit Gates und automatischen Reviews. Nutzen bei: neues Backend-Feature, neue Extension, API-Erweiterung, Job-Aenderung, Bugfix am Connector."
-user_invocable: true
 ---
 
 # /connector-feature — Connector-Feature-Workflow

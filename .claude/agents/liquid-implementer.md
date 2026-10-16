@@ -61,7 +61,7 @@ The standard workflow for a block override:
 ## Validation (before reporting done)
 
 1. `cd themes/<brand> && shopify theme check -o json` — changed files free of errors AND warnings.
-2. `validate_theme_codeblocks` (Dev MCP) on new/changed Liquid.
+2. `validate_theme` (Dev MCP) on new/changed theme files — `absoluteThemePath` plus the changed paths.
 3. JSON: parse test.
 4. Translations: keys present in `en.default.json` and `de.json`.
 

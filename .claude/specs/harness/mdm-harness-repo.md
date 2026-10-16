@@ -4,6 +4,11 @@ Stand: 1. September 2026
 Ticket: —
 Status: ENTWURF
 
+> **Teilweise überholt (16. Oktober 2026):** `harness-app/` mit `data.json` wurde am
+> 10. September 2026 stillgelegt (Commit `cd062e0`) und durch den Harness-Bauplan ersetzt.
+> Alle Stellen in dieser Spec, die `harness-app/` oder `data.json` nennen, gelten nicht mehr.
+> Siehe `claude-struktur-aktuell.md`, Befund #9.
+
 ## Ziel
 
 Das MDM-Workspace-Root (`~/MDM/`) wird selbst ein Git-Repo (`mdm-harness`) auf

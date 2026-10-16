@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "model": "opus",
   "permissions": {
     "allow": [
@@ -18,7 +19,7 @@
       "mcp__shopify-dev-mcp__learn_shopify_api",
       "mcp__shopify-dev-mcp__search_docs_chunks",
       "mcp__shopify-dev-mcp__validate_theme",
-      "mcp__shopify-dev-mcp__validate_theme_codeblocks"
+      "mcp__shopify-dev-mcp__validate"
     ],
     "deny": [
       "Edit(themes/*/config/settings_data.json)",

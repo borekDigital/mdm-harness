@@ -1,7 +1,6 @@
 ---
 name: "setup"
 description: "Interaktives Setup fuer den MDM-Workspace. Klont ausgewaehlte Repos und richtet die lokale Umgebung ein."
-user_invocable: true
 ---
 
 # /setup — MDM Workspace Setup

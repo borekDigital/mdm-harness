@@ -173,6 +173,10 @@ flowchart TD
 
 ## Agents (`.claude/agents/`)
 
+Hauptsitzung im Workspace: `opus` aus `.claude/settings.json`. Die Projekt-Einstellung schlaegt
+die globale — ein `opus[1m]` in `~/.claude/settings.json` greift hier absichtlich nicht
+(entschieden 16. Oktober 2026). Agenten setzen ihr Modell selbst per Frontmatter-Alias.
+
 ### Theme-Agenten
 
 | Agent | Modell | Rolle | Modi | Schreibrechte |
@@ -242,7 +246,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | post-edit-rubocop.sh | PostToolUse (Edit/Write) | RuboCop gefiltert auf editierte Datei (nur connector/*.rb) |
 | post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |
-| post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in der README dokumentiert sind |
+| post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in dieser README dokumentiert sind |
 | bauplan-guard.sh | PreToolUse (Bash/Edit/Write) | Blockt Loeschen von `docs/bauplan/**`, Schrumpfen der Manifeste, Entfernen von Repos aus `workspace.yaml` |
 | bauplan-staleness.sh | PostToolUse (Edit/Write) | Ordnet die geaenderte Datei den Blattsatz-Etappen zu (Zuordnung in `bin/bauplan_lib.py`), schreibt ins Ledger |
 | bauplan-report.sh | Stop | Verdichtet das Ledger zu `.claude/bauplan/<repo>.STALE.md` — Arbeitsliste fuer `--refresh` |
@@ -250,7 +254,9 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 
 ## MCP-Server
 
-- **shopify-dev-mcp** (`.mcp.json`): `learn_shopify_api`, `search_docs_chunks`, `validate_theme`
+- **shopify-dev-mcp** (`.mcp.json`, Version fest auf `1.16.1`): `learn_shopify_api`, `search_docs_chunks`,
+  `validate_theme` (Theme-Dateien), `validate` (GraphQL, Polaris, Functions). Hochstufen nur bewusst,
+  weil sich Werkzeugnamen zwischen Versionen aendern.
 - **Figma** (Connector, user-scope): Design-Extraktion
 - **Apple Notes** (Connector, user-scope): Notiz-Pflege (nur Haupt-Thread)
 

@@ -1,7 +1,6 @@
 ---
 name: repo-bauplan
 description: "Erzeugt einen visuellen Architektur-Blattsatz fuer ein Repo im Workspace — nummerierte Etappen als Artifact-Seiten mit Inline-SVG-Figuren, jede Figur mit genau einer belegten Aussage, plus Anhang mit Fundstellen. Nutzen bei: Onboarding in ein unbekanntes Repo, Architektur verstehen, Wissenstransfer, Uebergabe an Kollegen, /repo-bauplan <repo>."
-user_invocable: true
 ---
 
 # /repo-bauplan — Architektur-Blattsatz fuer ein Repo
