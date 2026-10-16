@@ -1,0 +1,69 @@
+# Prueft die Claude-Struktur bei jeder Aenderung an der Harness.
+#
+# Spec: .claude/specs/harness/claude-struktur-aktuell.md, Teil C.
+# Was erlaubt ist, steht in bin/harness-referenz.json — nicht im Workflow.
+#
+# Die Kind-Repos werden hier nicht geklont. Rule-Globs, deren Verzeichnis
+# fehlt, ueberspringt das Skript; sie prueft der lokale Stop-Hook.
+
+name: Harness pruefen
+
+on:
+  push:
+    paths:
+      - ".claude/**"
+      - ".mcp.json"
+      - "templates/**"
+      - "bin/harness-check.py"
+      - "bin/harness-referenz.json"
+      - "bin/test_harness_check.py"
+      - "bin/harness-stand.py"
+      - "bin/test_harness_stand.py"
+      - ".github/workflows/harness-check.yml"
+  pull_request:
+    paths:
+      - ".claude/**"
+      - ".mcp.json"
+      - "templates/**"
+      - "bin/harness-check.py"
+      - "bin/harness-referenz.json"
+      - "bin/test_harness_check.py"
+      - "bin/harness-stand.py"
+      - "bin/test_harness_stand.py"
+      - ".github/workflows/harness-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Werkzeuge installieren
+        run: |
+          # jsonschema fuer die Settings-Validierung, die CLI fuer plugin validate.
+          # Beides braucht kein Token.
+          pip install --quiet jsonschema
+          npm install -g @anthropic-ai/claude-code
+
+      - name: Tests der Pruefskripte
+        run: python3 -m unittest bin/test_harness_check.py bin/test_harness_stand.py
+
+      - name: Harness pruefen
+        shell: bash
+        run: |
+          set +e
+          python3 bin/harness-check.py | tee bericht.txt
+          RC=${PIPESTATUS[0]}
+          {
+            echo "### Harness-Check"
+            echo '```'
+            cat bericht.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          # 0 = sauber, 3 = Befund, alles andere = Defekt. Beides ausser 0 ist rot.
+          exit $RC

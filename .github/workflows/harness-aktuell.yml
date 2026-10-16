@@ -1,0 +1,180 @@
+# Gleicht die Claude-Struktur woechentlich mit neuen Claude-Code-Versionen ab.
+#
+# Spec: .claude/specs/harness/claude-struktur-aktuell.md, Teil E.
+#
+#   Changelog seit gepruefter Version ─┐
+#   Shopify Dev MCP: Referenz vs. npm ─┼─► nichts neu: gruen, kein Claude-Lauf
+#   bin/harness-check.py ──────────────┘   neu: claude -p (nur lesen) ─► Bericht ─► PR
+#
+# Der Lauf MELDET nur. Er aendert nie Agenten, Skills, Rules, Hooks oder Settings.
+# Der PR enthaelt ausschliesslich .claude/harness-bericht.md und die angehobene
+# Version in bin/harness-referenz.json. Was uebernommen wird, entscheidet Konrad
+# (Spec, Freigabe, Umsetzung).
+#
+# Secret: CLAUDE_CODE_OAUTH_TOKEN (dasselbe wie fuer „Bauplan auffrischen“).
+# Kein --bare: das liest nur ANTHROPIC_API_KEY, nie ein OAuth-Token.
+
+name: Harness aktuell halten
+
+on:
+  schedule:
+    - cron: "41 4 * * 1"   # montags 04:41 UTC
+  workflow_dispatch:
+    inputs:
+      seit:
+        description: "Abgleich ab dieser Version statt der geprueften (zum Testen, z. B. 2.1.290)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: harness-aktuell
+  cancel-in-progress: false
+
+jobs:
+  abgleich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CLAUDE_PROJECT_DIR: ${{ github.workspace }}
+      SEIT: ${{ inputs.seit }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Werkzeuge installieren
+        run: |
+          pip install --quiet jsonschema
+          npm install -g @anthropic-ai/claude-code
+
+      - name: Changelog laden
+        run: |
+          URL=$(python3 -c "import json;print(json.load(open('bin/harness-referenz.json'))['quellen']['changelog_roh'])")
+          curl -sfL --retry 3 "$URL" -o CHANGELOG.md
+
+      - name: Neue Claude-Code-Versionen ermitteln
+        id: neu
+        shell: bash
+        run: |
+          set +e
+          ARGS="--datei CHANGELOG.md"
+          [ -n "$SEIT" ] && ARGS="$ARGS --seit $SEIT"
+          python3 bin/harness-stand.py changelog $ARGS > neu.md
+          RC=$?
+          if [ "$RC" != "0" ] && [ "$RC" != "3" ]; then
+            echo "::error::harness-stand.py changelog endete mit $RC"
+            exit 1
+          fi
+          echo "rc=$RC" >> "$GITHUB_OUTPUT"
+          echo "neueste=$(python3 bin/harness-stand.py neueste --datei CHANGELOG.md)" >> "$GITHUB_OUTPUT"
+
+      - name: Shopify Dev MCP vergleichen
+        id: mcp
+        shell: bash
+        run: |
+          REF=$(python3 -c "import json;print(json.load(open('bin/harness-referenz.json'))['mcp_server']['shopify-dev-mcp']['version'])")
+          NPM=$(npm view @shopify/dev-mcp version)
+          echo "referenz=$REF" >> "$GITHUB_OUTPUT"
+          echo "npm=$NPM" >> "$GITHUB_OUTPUT"
+          if [ "$REF" != "$NPM" ]; then echo "neu=1" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Harness pruefen
+        shell: bash
+        run: |
+          set +e
+          python3 bin/harness-check.py > check.txt
+          RC=$?
+          cat check.txt
+          # Befunde (3) gehen in den Bericht; nur ein Defekt bricht ab.
+          if [ "$RC" != "0" ] && [ "$RC" != "3" ]; then
+            echo "::error::harness-check.py endete mit $RC"
+            exit 1
+          fi
+
+      - name: Abgleich mit Claude
+        if: ${{ steps.neu.outputs.rc == '3' || steps.mcp.outputs.neu == '1' }}
+        shell: bash
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          ARGS="--datei CHANGELOG.md --check check.txt"
+          [ -n "$SEIT" ] && ARGS="$ARGS --seit $SEIT"
+          python3 bin/harness-stand.py prompt $ARGS > prompt.md
+
+          set +e
+          claude -p --output-format text --max-budget-usd 5 \
+            --allowedTools Read Glob Grep WebFetch \
+            < prompt.md > bericht.md 2> claude-stderr.txt
+          RC=$?
+          set -e
+          if [ "$RC" != "0" ]; then
+            # claude -p meldet Fehler (z. B. 401) auf stdout — beide Kanaele zeigen.
+            echo "::error::claude -p endete mit $RC"
+            echo "--- stdout ---"; tail -c 2000 bericht.md
+            echo "--- stderr ---"; tail -c 2000 claude-stderr.txt
+            exit 1
+          fi
+          if [ ! -s bericht.md ]; then
+            echo "::error::claude -p lieferte einen leeren Bericht"
+            exit 1
+          fi
+
+          if [ "${{ steps.mcp.outputs.neu }}" = "1" ]; then
+            {
+              echo
+              echo "## Shopify Dev MCP"
+              echo
+              echo "Referenz und \`.mcp.json\`: ${{ steps.mcp.outputs.referenz }}, npm: ${{ steps.mcp.outputs.npm }}."
+              echo "Werkzeugliste der neuen Version pruefen, dann \`.mcp.json\` und \`mcp_server\`"
+              echo "in \`bin/harness-referenz.json\` gemeinsam anheben (sonst meldet harness-check H12)."
+            } >> bericht.md
+          fi
+          cp bericht.md .claude/harness-bericht.md
+
+          if [ "${{ steps.neu.outputs.rc }}" = "3" ]; then
+            python3 bin/harness-stand.py anheben --version "${{ steps.neu.outputs.neueste }}"
+          fi
+
+      - name: Pull Request oeffnen
+        if: ${{ steps.neu.outputs.rc == '3' || steps.mcp.outputs.neu == '1' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: harness/stand
+          title: "chore(harness): review claude code ${{ steps.neu.outputs.neueste }}"
+          body-path: bericht.md
+          add-paths: |
+            .claude/harness-bericht.md
+            bin/harness-referenz.json
+          commit-message: "chore(harness): review claude code ${{ steps.neu.outputs.neueste }}"
+          delete-branch: true
+
+      - name: Ergebnis melden
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          {
+            echo "### Harness-Abgleich"
+            echo
+            echo "- Claude Code: neueste ${{ steps.neu.outputs.neueste }}, neue Eintraege: $([ '${{ steps.neu.outputs.rc }}' = '3' ] && echo ja || echo nein)"
+            echo "- Shopify Dev MCP: Referenz ${{ steps.mcp.outputs.referenz }}, npm ${{ steps.mcp.outputs.npm }}"
+            echo
+            echo '```'
+            cat check.txt 2>/dev/null
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Dateien als Artefakt
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-abgleich
+          include-hidden-files: true
+          path: |
+            neu.md
+            check.txt
+            prompt.md
+            bericht.md
+            claude-stderr.txt
+          if-no-files-found: ignore

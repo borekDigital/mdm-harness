@@ -1,7 +1,6 @@
 ---
 name: middleware-feature
 description: "End-to-End-Workflow fuer neue Features, Bugfixes und Erweiterungen an den MDM Middleware-Services (creditcheck, emailservice, payment-service). Feste Phasen mit Gates und automatischen Reviews. Nutzen bei: neues Feature, API-Aenderung, Queue-Handler, Migration, Bugfix an einem der Middleware-Services."
-user_invocable: true
 ---
 
 # /middleware-feature — Middleware-Feature-Workflow

@@ -173,6 +173,10 @@ flowchart TD
 
 ## Agents (`.claude/agents/`)
 
+Hauptsitzung im Workspace: `opus` aus `.claude/settings.json`. Die Projekt-Einstellung schlaegt
+die globale — ein `opus[1m]` in `~/.claude/settings.json` greift hier absichtlich nicht
+(entschieden 16. Oktober 2026). Agenten setzen ihr Modell selbst per Frontmatter-Alias.
+
 ### Theme-Agenten
 
 | Agent | Modell | Rolle | Modi | Schreibrechte |
@@ -242,15 +246,42 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | post-edit-rubocop.sh | PostToolUse (Edit/Write) | RuboCop gefiltert auf editierte Datei (nur connector/*.rb) |
 | post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |
-| post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in der README dokumentiert sind |
+| post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in dieser README dokumentiert sind |
+| harness-stand.sh | SessionStart (startup) | `bin/harness-stand.py hinweis`: meldet, wenn die installierte Claude-Code-Version neuer ist als die in `bin/harness-referenz.json` gepruefte; kein Netz, schweigt sonst |
+| harness-check.sh | Stop | `bin/harness-check.py --offline`: Frontmatter, Modelle, Hook-Events, Hook-Ziele, MCP-Werkzeuge und -Versionen, Skill-Verweise, Rule-Globs gegen `bin/harness-referenz.json`; schweigt wenn sauber |
 | bauplan-guard.sh | PreToolUse (Bash/Edit/Write) | Blockt Loeschen von `docs/bauplan/**`, Schrumpfen der Manifeste, Entfernen von Repos aus `workspace.yaml` |
 | bauplan-staleness.sh | PostToolUse (Edit/Write) | Ordnet die geaenderte Datei den Blattsatz-Etappen zu (Zuordnung in `bin/bauplan_lib.py`), schreibt ins Ledger |
 | bauplan-report.sh | Stop | Verdichtet das Ledger zu `.claude/bauplan/<repo>.STALE.md` — Arbeitsliste fuer `--refresh` |
 | bauplan-verify.sh | Stop | Prueft den Bauplan-Bestand gegen `git HEAD`, schreibt `BESTAND-WARNUNG.md` bei Abweichung |
 
+### Harness-Check
+
+`python3 bin/harness-check.py` prueft die Claude-Struktur gegen `bin/harness-referenz.json`
+(Feldlisten, Modelle, Hook-Events und MCP-Werkzeuge laut Claude-Code-Doku, Stand dort vermerkt).
+Exit 0 = sauber, 3 = Befund, sonst Defekt. `--offline` ohne Schema-Validierung und
+`claude plugin validate`, `--json` fuer die CI. Laeuft im Stop-Hook und im Workflow
+„Harness pruefen" bei jeder Aenderung an der Harness. Tests: `python3 -m unittest bin/test_harness_check.py`.
+
+Neue Claude-Code-Felder oder -Events: Referenzdatei anpassen, nicht das Skript.
+
+### Harness aktuell halten
+
+```
+SessionStart ── harness-stand.sh ── installierte Version > gepruefte? ── Hinweis in der Session
+montags (CI) ── Changelog seit geprueft + Dev-MCP-Version + harness-check
+             └─ neu? ── claude -p (nur Read/Glob/Grep/WebFetch) ── .claude/harness-bericht.md
+                        + gepruefte Version angehoben ── PR harness/stand
+```
+
+Workflow `.github/workflows/harness-aktuell.yml`, Skript `bin/harness-stand.py`. Der Lauf meldet
+nur — Uebernahmen laufen ueber Spec und Freigabe. Testlauf: Workflow manuell mit `seit`
+(z. B. `2.1.290`) starten. Tests: `python3 -m unittest bin/test_harness_stand.py`.
+
 ## MCP-Server
 
-- **shopify-dev-mcp** (`.mcp.json`): `learn_shopify_api`, `search_docs_chunks`, `validate_theme`
+- **shopify-dev-mcp** (`.mcp.json`, Version fest auf `1.16.1`): `learn_shopify_api`, `search_docs_chunks`,
+  `validate_theme` (Theme-Dateien), `validate` (GraphQL, Polaris, Functions). Hochstufen nur bewusst,
+  weil sich Werkzeugnamen zwischen Versionen aendern.
 - **Figma** (Connector, user-scope): Design-Extraktion
 - **Apple Notes** (Connector, user-scope): Notiz-Pflege (nur Haupt-Thread)
 

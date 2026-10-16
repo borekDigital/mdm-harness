@@ -1,0 +1,55 @@
+{
+  "stand": "16. Oktober 2026",
+  "claude_code_version": "2.1.301",
+  "quellen": {
+    "agent_felder": "https://code.claude.com/docs/en/sub-agents.md",
+    "skill_felder": "https://code.claude.com/docs/en/skills.md",
+    "rule_felder": "https://code.claude.com/docs/en/memory.md",
+    "hook_events": "https://code.claude.com/docs/en/hooks.md",
+    "settings_schema": "https://json.schemastore.org/claude-code-settings.json",
+    "pfadregeln": "https://code.claude.com/docs/en/permissions.md",
+    "changelog": "https://code.claude.com/docs/en/changelog.md",
+    "changelog_roh": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md"
+  },
+  "agent_pflichtfelder": ["name", "description"],
+  "agent_felder": [
+    "name", "description", "tools", "disallowedTools", "model", "permissionMode",
+    "maxTurns", "autoCompactWindow", "skills", "mcpServers", "hooks", "memory",
+    "background", "omitClaudeMd", "effort", "isolation", "color", "initialPrompt",
+    "experimental"
+  ],
+  "modell_aliase": ["sonnet", "opus", "haiku", "fable", "inherit"],
+  "modell_id_muster": "^claude-[a-z0-9]+(-[a-z0-9]+)*$",
+  "skill_felder": [
+    "name", "description", "when_to_use", "argument-hint", "arguments",
+    "disable-model-invocation", "user-invocable", "allowed-tools", "disallowed-tools",
+    "model", "effort", "context", "agent", "background", "hooks", "paths", "shell",
+    "metadata", "license", "compatibility"
+  ],
+  "rule_felder": ["paths"],
+  "hook_events": [
+    "SessionStart", "Setup", "UserPromptSubmit", "UserPromptExpansion", "PreToolUse",
+    "PermissionRequest", "PermissionDenied", "PostToolUse", "PostToolUseFailure",
+    "PostToolBatch", "Notification", "MessageDisplay", "SubagentStart", "SubagentStop",
+    "TaskCreated", "TaskCompleted", "Stop", "StopFailure", "TeammateIdle",
+    "InstructionsLoaded", "ConfigChange", "CwdChanged", "DirectoryAdded", "FileChanged",
+    "WorktreeCreate", "WorktreeRemove", "PreCompact", "PostCompact", "PreModelSwitch",
+    "PostModelSwitch", "Elicitation", "ElicitationResult", "SessionEnd"
+  ],
+  "mcp_server": {
+    "shopify-dev-mcp": {
+      "paket": "@shopify/dev-mcp",
+      "version": "1.16.1",
+      "werkzeuge": ["learn_shopify_api", "search_docs_chunks", "validate", "validate_theme", "feedback"],
+      "stichworte": ["Dev MCP", "shopify-dev-mcp"]
+    }
+  },
+  "werkzeuge_ohne_pfadregel": ["Write", "NotebookEdit", "Glob", "MultiEdit"],
+  "agent_rollen": ["planner", "implementer", "reviewer", "writer", "extractor"],
+  "externe_agenten": [],
+  "externe_skills": [
+    "loop", "schedule", "simplify", "code-review", "security-review", "init", "run",
+    "claude-api", "update-config", "fewer-permission-prompts", "skill-doctor",
+    "doctor", "config", "permissions", "hooks", "agents", "model", "design-login"
+  ]
+}
