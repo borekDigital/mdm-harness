@@ -508,7 +508,7 @@
       <code>git-safety</code> und <code>bauplan-guard</code> nicht mehr den Befehlstext,
       sondern die Einzelbefehle, in die <code>bin/befehl.py</code> ihn zerlegt.</p>
 
-    <pre><code><span class="fp">bin/test-waechter-hooks.sh:79, :89–91 — Wort gegen Text</span>
+    <pre><code><span class="fp">bin/test-waechter-hooks.sh:79, :89–90, :94 — Wort gegen Text</span>
 git -C connector push --force                 blockiert   globale Option übersprungen
 git commit -m "git push --force ist verboten" erlaubt     ein Argument, kein Befehl
 cat &lt;&lt;'EOF' … git push --force … EOF          erlaubt     Heredoc-Inhalt ist Daten
@@ -545,16 +545,21 @@ bash -c "git push --force"                    blockiert   bash -c wird mitzerleg
       eine Section ohne <code>mdm-</code>-Präfix zu ändern ist nicht verboten, aber
       begründungspflichtig. Scheitert das Erzeugen der Rückfrage, blockiert der Hook
       (<code>:43</code>), statt die Rückfrage still auszulassen.</p>
-    <p class="lead">Die Zerlegung hat Grenzen, die beim Auffrischen am 16. Oktober 2026
-      zweimal sichtbar wurden. <code>bauplan-guard</code> und <code>git-safety</code>
-      blockierten je einen reinen Lesebefehl mit „Befehl nicht zerlegbar (No closing
-      quotation)“. Im ersten Fall stand ein <code>"</code> zwischen Apostrophen
-      innerhalb von <code>"…$(…)…"</code>; <code>shlex</code> kennt diese Verschachtelung
-      nicht. Im zweiten Fall stand <code>&lt;&lt;EOF</code> in einem String; das
-      Heredoc-Muster in <code>bin/befehl.py:44</code> greift zeilenweise ohne Rücksicht auf
-      Anführungszeichen und verwirft den Rest des Befehls samt schließendem
-      <code>"</code>. Beides ist fail-closed wie vorgesehen — der Preis ist, dass ein
-      harmloser Befehl umformuliert werden muss.</p>
+    <p class="lead">Beim Auffrischen am 16. Oktober 2026 (PR #23) blockierten
+      <code>bauplan-guard</code> und <code>git-safety</code> je einen reinen Lesebefehl mit
+      „Befehl nicht zerlegbar (No closing quotation)“. Im ersten Fall stand ein
+      <code>"</code> zwischen Apostrophen innerhalb von <code>"…$(…)…"</code>; im zweiten
+      stand <code>&lt;&lt;EOF</code> in einem String. Ursache war <code>shlex</code>, das die
+      Quoting-Regeln von Bash nicht kennt. Seit Commit <code>dc444a6</code> zerlegt ein
+      eigener Lexer (<code>bin/befehl.py:43</code>): <code>$(…)</code> öffnet auch in
+      <code>"…"</code> einen eigenen Quoting-Kontext, <code>&lt;&lt;</code> gilt nur
+      außerhalb von Strings als Heredoc (<code>bin/befehl.py:11–13</code>). Beide Fälle
+      laufen als Regressionstests für beide Wächter
+      (<code>bin/test-waechter-hooks.sh:92–93</code>, <code>:131–132</code>;
+      Nachweis in <code>.claude/specs/harness/bauplan-guard-fehlalarme.md:82–101</code>).
+      Fail-closed bleibt: Bei offenen Anführungszeichen oder Klammern wirft
+      <code>zerlege</code> einen <code>ValueError</code>, und der Wächter blockiert
+      (<code>bin/befehl.py:16–17</code>).</p>
   </section>
 
   <!-- ============ BLATT 03 ============ -->

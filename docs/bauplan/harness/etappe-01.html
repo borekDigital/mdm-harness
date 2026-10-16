@@ -404,7 +404,7 @@
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>sync.sh · setup.sh · workspace.yaml</dd></div>
       <div class="tb-cell"><dt>Steuerdateien</dt><dd>12 Agenten · 10 Skills · 13 Hooks · 6 Rules</dd></div>
-      <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>466 setup · 253 sync</dd></div>
+      <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>466 setup · 269 sync</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
@@ -438,13 +438,13 @@
         <text x="46" y="102" class="s-tiny f-dim">skills/ 10 Verzeichnisse</text>
         <text x="46" y="118" class="s-tiny f-dim">hooks/ 13 Skripte, 651 Zeilen</text>
         <text x="46" y="134" class="s-tiny f-dim">rules/ 6 Dateien, 262 Zeilen</text>
-        <text x="46" y="150" class="s-tiny f-dim">specs/ 38 Dateien · bauplan/ Manifeste</text>
+        <text x="46" y="150" class="s-tiny f-dim">specs/ 39 Dateien · bauplan/ Manifeste</text>
         <text x="46" y="166" class="s-tiny f-dim">settings.json — Rechte und Hook-Verdrahtung</text>
 
         <text x="32" y="196" class="s-name">Skripte</text>
         <text x="46" y="216" class="s-tiny f-dim">setup.sh 466 Zeilen — klont Repos</text>
-        <text x="46" y="232" class="s-tiny f-dim">sync.sh 253 Zeilen — erzeugt CLAUDE.md</text>
-        <text x="46" y="248" class="s-tiny f-dim">bin/ 22 Dateien: 11 Blattsatz, 2 theme-sync, 9 Prüfung und Wächter</text>
+        <text x="46" y="232" class="s-tiny f-dim">sync.sh 269 Zeilen — erzeugt CLAUDE.md</text>
+        <text x="46" y="248" class="s-tiny f-dim">bin/ 25 Dateien: 13 Blattsatz, 2 theme-sync, 10 Prüfung und Wächter</text>
 
         <text x="32" y="278" class="s-name">Vorlagen und Doku</text>
         <text x="46" y="298" class="s-tiny f-dim">templates/ 7 Bausteine für CLAUDE.md</text>
@@ -507,7 +507,7 @@
                  aus workspace.yaml + .workspace.local.yaml</code></pre>
 
     <figure>
-      <svg viewBox="0 0 960 356" role="img" aria-label="Drei Eingaben speisen sync.sh: das versionierte Repo-Manifest workspace.yaml, der lokale Klon-Status und sieben Vorlagen-Bausteine. sync.sh erzeugt daraus CLAUDE.md, erzeugt zusätzlich die Blattsatz-Übersicht docs/bauplan/index.html und schreibt die Zeitstempel im lokalen Status um.">
+      <svg viewBox="0 0 960 356" role="img" aria-label="Drei Eingaben speisen sync.sh: das versionierte Repo-Manifest workspace.yaml, der lokale Klon-Status und sieben Vorlagen-Bausteine. sync.sh erzeugt daraus CLAUDE.md, prüft die Blattsatz-Übersicht docs/bauplan/index.html, ohne sie zu schreiben, und schreibt die Zeitstempel im lokalen Status um.">
         <defs>
           <marker id="h1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
@@ -539,12 +539,12 @@
 
         <rect x="392" y="106" width="228" height="86" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
         <text x="406" y="130" class="s-name f-worker">sync.sh</text>
-        <text x="406" y="150" class="s-tiny f-dim">idempotent, 253 Zeilen</text>
+        <text x="406" y="150" class="s-tiny f-dim">idempotent, 269 Zeilen</text>
         <text x="406" y="168" class="s-tiny f-dim">yaml_get liest per sed,</text>
         <text x="406" y="184" class="s-tiny f-dim">ohne YAML-Parser</text>
 
         <line x1="620" y1="120" x2="670" y2="74" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
-        <line x1="620" y1="149" x2="670" y2="149" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
+        <line x1="620" y1="149" x2="670" y2="149" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="4 3" marker-end="url(#h1a)"></line>
         <line x1="620" y1="178" x2="670" y2="224" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#h1a)"></line>
 
         <rect x="676" y="42" width="268" height="62" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
@@ -554,8 +554,8 @@
 
         <rect x="676" y="118" width="268" height="62" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
         <text x="690" y="140" class="s-mono">docs/bauplan/index.html</text>
-        <text x="690" y="158" class="s-tiny f-dim">ruft bin/bauplan-index.py auf</text>
-        <text x="690" y="174" class="s-tiny f-dim">erzeugt aus den Manifesten</text>
+        <text x="690" y="158" class="s-tiny f-dim">nur geprüft: bauplan-index.py --check</text>
+        <text x="690" y="174" class="s-tiny f-alert">erzeugt im PR, nicht beim Pull</text>
 
         <rect x="676" y="194" width="268" height="62" rx="2" fill="var(--vite)" fill-opacity="0.1" stroke="var(--vite)" stroke-opacity="0.55"></rect>
         <text x="690" y="216" class="s-mono">.workspace.local.yaml</text>
@@ -677,7 +677,7 @@
         <tbody>
           <tr><td class="m">Manifest</td><td class="m">workspace.yaml</td><td>Versioniert, listet alle acht Repos mit Remote, Gruppe und Branch. Referenz für <code>sync.sh</code>, <code>setup.sh</code> und den CI-Lauf.</td></tr>
           <tr><td class="m">Lokaler Zustand</td><td class="m">.workspace.local.yaml</td><td>Gitignored. Hält fest, was auf <em>diesem</em> Rechner geklont ist. „Fehlt hier" heißt übersprungen, nicht abgeschafft.</td></tr>
-          <tr><td class="m">Git-Hook</td><td class="m">git-hooks/post-merge</td><td>Führt <code>sync.sh --quiet</code> nach jedem Pull aus, damit die <code>CLAUDE.md</code> zum Manifest passt. Muss je Rechner eingerichtet werden.</td></tr>
+          <tr><td class="m">Git-Hook</td><td class="m">git-hooks/post-merge</td><td>Führt <code>sync.sh --quiet</code> nach jedem Pull aus, damit die <code>CLAUDE.md</code> zum Manifest passt. Unter <code>docs/bauplan/</code> schreibt der Lauf nichts (<code>git-hooks/post-merge:4–6</code>). Muss je Rechner eingerichtet werden.</td></tr>
         </tbody>
       </table>
     </div>
@@ -745,11 +745,21 @@
              per <code>awk</code> und <code>sed</code> — eine Datenbank, die jede neue
              Komponente von Hand nachgetragen bekommen musste. Der Drift-Melder aus Etappe 3
              meldete dafür zwölf Rückstände.</p>
-          <p><b>Jetzt:</b> <code>update_index</code> (<code>sync.sh:122</code>) ruft
-             <code>bin/bauplan-index.py</code> auf. Die Übersicht entsteht aus
+          <p><b>Jetzt:</b> <code>bin/bauplan-index.py</code> erzeugt die Übersicht aus
              <code>workspace.yaml</code> und den Manifesten in
-             <code>.claude/bauplan/</code> und kann deshalb nicht mehr vom Bestand
+             <code>.claude/bauplan/</code>; sie kann deshalb nicht mehr vom Bestand
              abweichen. <code>harness-app/</code> ist entfernt.</p>
+          <p><b>Nachtrag 16. Oktober 2026:</b> <code>sync.sh</code> erzeugt die Übersicht
+             nicht mehr. <code>check_bauplan</code> (<code>sync.sh:124–138</code>) ruft
+             <code>bin/bauplan-index.py</code> und <code>bin/bauplan-nav.py</code> mit
+             <code>--check</code> auf und warnt bei Exit 3;
+             <code>report_veraltet</code> (<code>sync.sh:141–147</code>) nennt veraltete
+             Etappen nur in der Konsole. Übersicht und Fusszeilen erzeugt der PR, der ihre
+             Eingaben ändert; der Schritt „Bauplan-Uebersicht passt zum Stand“ in
+             <code>.github/workflows/harness-check.yml:92–102</code> prüft das. Konsequenz:
+             <code>git status</code> bleibt nach einem Pull sauber
+             (<code>bin/test-sync-sauber.sh</code>, Fall 1–3;
+             Spec <code>bauplan-index-lokal-sauber</code>).</p>
           <p><b>Nachtrag:</b> Seit Commit <code>c022abe</code> prüft auch der Drift-Melder
              nicht mehr gegen <code>harness-app/data.json</code>. Er gleicht Agenten, Skills,
              Hooks und Rules nur noch mit <code>.claude/README.md</code> ab
