@@ -174,6 +174,8 @@ ein neuer Code-Override nur, wenn kein Setting existiert — und dann dokumentie
   jedem Fall ein bewusster Zusatz, kein Rueckbau — und steht damit in Spannung zu
   "we don't want to override anything over here". Zu klaeren: ob ueberhaupt, und wenn ja,
   ob nach dem Rueckbau noch noetig. Details und Abwaegung im englischen Handout.
+  **Entschieden am 13. Oktober 2026 durch Ticket SHOP-9 (Kerstin Meyer): umsetzen.**
+  Weiter in `produktkachel-vollflaechig-klickbar.md`.
 - **C2 — "Weitere Ausgaben"-Thumbnails.** Laut Call reine Darstellung ohne Funktion.
   Zu klaeren: Links entfernen und rein dekorativ lassen, oder ganz entfernen? Und wie
   wird die Doppelnutzung von `product.images[1]` aufgeloest (siehe oben)?
