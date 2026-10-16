@@ -1040,8 +1040,13 @@
           <p><code>:49–53</code> und die Akzeptanzkriterien in
             <code>.claude/specs/harness/theme-sync.md</code> halten fest, dass das Skript
             weder committet noch pusht. Im Harness existiert kein Aufruf von
-            <code>gh pr create</code>; der einzige GitHub-Workflow des Harness ist
-            weiterhin <code>.github/workflows/bauplan-refresh.yml</code>.</p>
+            <code>gh pr create</code>. Seit dem 16. Oktober 2026 hat das Harness drei
+            GitHub-Workflows: <code>bauplan-refresh.yml</code>,
+            <code>harness-check.yml</code> und <code>harness-aktuell.yml</code>. Keiner ruft
+            <code>bin/theme-sync.sh</code> oder <code>bin/test-theme-sync.sh</code> auf;
+            <code>harness-check.yml:13–27</code> führt beide Dateien nicht unter
+            <code>paths</code>, eine Änderung am Sync-Skript löst dort keinen Testlauf
+            aus.</p>
           <p>Nach <code>port</code> liegt die Änderung als uncommittete Änderung auf einem
             Branch <code>sync/&lt;quelle&gt;-&lt;datum&gt;</code> (<code>:458</code>). Commit,
             Push und PR je Ziel-Theme sind Handarbeit. Für <code>align</code> übernimmt das
