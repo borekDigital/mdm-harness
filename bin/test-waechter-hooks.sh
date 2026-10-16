@@ -35,6 +35,8 @@ exec "$ECHT_PY" "\$@"
 EOF
 chmod +x "$WORK/halb-python/python3"
 
+mkdir -p "$WORK/leer"
+
 json() { python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$1"; }
 bash_in() { printf '{"tool_name":"Bash","tool_input":{"command":%s}}' "$(json "$1")"; }
 edit_in() { printf '{"tool_name":"Edit","tool_input":{"file_path":%s,"old_string":"a","new_string":"b"}}' "$(json "$1")"; }
@@ -83,6 +85,11 @@ erwartet "kaputtes JSON blockiert"           2 $G '{"tool_name": "Bash", kaputt'
 erwartet "leeres stdin blockiert"            2 $G ''
 erwartet "command fehlt blockiert"           2 $G '{"tool_name":"Bash","tool_input":{}}'
 erwartet "ohne python3 blockiert"            2 $G "$(bash_in 'ls')" PATH="$WORK/ohne-python"
+# Spec bauplan-guard-fehlalarme: Text ist kein Befehl
+erwartet "Commit-Message mit Force-Push-Text"  0 $G "$(bash_in 'git commit -m "git push --force ist verboten"')"
+erwartet "Heredoc mit Force-Push-Text"       0 $G "$(bash_in "$(printf "cat <<'EOF'\ngit push --force\nEOF")")"
+erwartet "bash -c mit Force-Push blockiert"  2 $G "$(bash_in 'bash -c "git push --force"')"
+erwartet "Pruefskript fehlt: blockiert"      2 $G "$(bash_in 'ls')" CLAUDE_PROJECT_DIR="$WORK/leer"
 
 # --- protect-merchant-files ----------------------------------------------
 echo "protect-merchant-files"
@@ -113,8 +120,16 @@ erwartet "leeres stdin blockiert"            2 $B ''
 erwartet "tool_name fehlt blockiert"         2 $B '{"tool_input":{"command":"ls"}}'
 erwartet "Edit ohne file_path blockiert"     2 $B '{"tool_name":"Edit","tool_input":{}}'
 erwartet "ohne python3 blockiert"            2 $B "$(bash_in 'ls')" PATH="$WORK/ohne-python"
-mkdir -p "$WORK/leer"
 erwartet "Pruefskript fehlt: blockiert"      2 $B "$(bash_in 'ls')" CLAUDE_PROJECT_DIR="$WORK/leer"
+# Spec bauplan-guard-fehlalarme: nennen ist erlaubt, zerstoeren nicht
+erwartet "grep mit 2>/dev/null erlaubt"      0 $B "$(bash_in 'grep -n tech workspace.yaml 2>/dev/null')"
+erwartet "Session-Befehl #1 erlaubt"         0 $B "$(bash_in "git pull -q 2>/dev/null; grep -n 'tech: \"PHP' workspace.yaml")"
+erwartet "Heredoc nennt Bestand erlaubt"     0 $B "$(bash_in "$(printf "python3 - <<'PY'\nopen('x.txt', 'w').write('workspace.yaml')\nPY")")"
+erwartet "cat | head erlaubt"                0 $B "$(bash_in 'cat docs/bauplan/index.html | head')"
+erwartet "mv workspace.yaml blockiert"       2 $B "$(bash_in 'mv workspace.yaml w.bak')"
+erwartet "Umleitung auf Manifest blockiert"  2 $B "$(bash_in 'echo x > .claude/bauplan/theme-mdm.manifest.json')"
+erwartet "git rm docs/bauplan blockiert"     2 $B "$(bash_in 'git rm -r docs/bauplan')"
+erwartet "rm -rf docs blockiert"             2 $B "$(bash_in 'rm -rf docs')"
 
 echo
 echo "$PASS ok, $FAIL Fehler"

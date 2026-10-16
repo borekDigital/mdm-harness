@@ -20,6 +20,10 @@ on:
       - "bin/harness-stand.py"
       - "bin/test_harness_stand.py"
       - "bin/test-waechter-hooks.sh"
+      - "bin/befehl.py"
+      - "bin/git-safety.py"
+      - "bin/bauplan-guard.py"
+      - "bin/test_befehl.py"
       - ".github/workflows/harness-check.yml"
   pull_request:
     paths:
@@ -32,6 +36,10 @@ on:
       - "bin/harness-stand.py"
       - "bin/test_harness_stand.py"
       - "bin/test-waechter-hooks.sh"
+      - "bin/befehl.py"
+      - "bin/git-safety.py"
+      - "bin/bauplan-guard.py"
+      - "bin/test_befehl.py"
       - ".github/workflows/harness-check.yml"
   workflow_dispatch:
 
@@ -53,7 +61,7 @@ jobs:
           npm install -g @anthropic-ai/claude-code
 
       - name: Tests der Pruefskripte
-        run: python3 -m unittest bin/test_harness_check.py bin/test_harness_stand.py
+        run: python3 -m unittest bin/test_harness_check.py bin/test_harness_stand.py bin/test_befehl.py
 
       - name: Tests der Waechter-Hooks
         run: bash bin/test-waechter-hooks.sh

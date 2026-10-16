@@ -29,21 +29,14 @@ print(tool, ti.get('file_path') or '-')
 " 2>/dev/null) || blockiere "Hook-Eingabe nicht lesbar"
 read -r TOOL FILE <<< "$KOPF"
 
-# --- Bash: Loeschen und Verschieben von Bestand ---
+# --- Bash: nur echte Schreib- und Loeschziele (Spec bauplan-guard-fehlalarme) ---
+# Die Pruefung zerlegt den Befehl (bin/befehl.py): Wer Bestand nur nennt, wird durchgelassen.
 if [ "$TOOL" = "Bash" ]; then
-  CMD=$(printf '%s' "$PAYLOAD" | python3 -c "
-import sys, json
-print(json.load(sys.stdin)['tool_input']['command'])
-" 2>/dev/null) || blockiere "Befehl nicht lesbar"
-  if echo "$CMD" | grep -qE "(\brm\b|git[[:space:]]+rm\b|\bmv\b|\btruncate\b|>[[:space:]]*[^|]*)" \
-     && echo "$CMD" | grep -qE "(docs/bauplan|\.claude/bauplan/[^[:space:]]*\.manifest\.json|workspace\.yaml)"; then
-    echo "BLOCKED: Bauplan-Bestand wird nicht per Shell entfernt oder verschoben." >&2
-    echo "Betroffen: docs/bauplan, .claude/bauplan/*.manifest.json oder workspace.yaml." >&2
-    echo "Eine Etappe wird aktualisiert (/repo-bauplan <repo> --refresh), nicht geloescht." >&2
-    echo "Ist ein Repo lokal nicht geklont, heisst das uebersprungen — nicht abgeschafft." >&2
-    exit 2
-  fi
-  exit 0
+  printf '%s' "$PAYLOAD" | "$GUARD" --check-bash --project "$PROJECT"
+  RC=$?
+  [ $RC -eq 0 ] && exit 0
+  [ $RC -eq 2 ] && exit 2
+  blockiere "Bash-Pruefung endete mit Exit $RC"
 fi
 
 [ "$FILE" = "-" ] && exit 0

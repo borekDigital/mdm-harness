@@ -15,6 +15,7 @@ Exit 0 = unauffaellig, 2 = Verstoss (blockiert im Hook, faellt in CI durch).
 """
 
 import argparse
+import fnmatch
 import json
 import os
 import re
@@ -167,9 +168,166 @@ def verify(project):
     return verluste, luecken
 
 
+# --- Bash-Befehle (Spec bauplan-guard-fehlalarme) ---------------------------------
+#
+# Blockiert wird nur, wenn geschuetzter Bestand ZIEL einer zerstoerenden Operation ist.
+# Wer einen Pfad nur nennt (grep, cat, Commit-Message, Heredoc), wird durchgelassen.
+
+GESCHUETZT_TEXT = ("docs/bauplan", ".claude/bauplan", "workspace.yaml")
+# Stellvertreter fuer Glob- und Vorfahren-Pruefung
+GESCHUETZT_PFADE = ("docs/bauplan", "docs/bauplan/index.html", "workspace.yaml", ".claude/bauplan",
+                    ".claude/bauplan/x.manifest.json")
+# Pathspecs fuer git status: nur echter Bestand, nicht Ledger oder STALE-Berichte
+GESCHUETZT_STATUS = ("docs/bauplan", "workspace.yaml", ":(glob).claude/bauplan/*.manifest.json")
+LOESCHEN = {"rm", "unlink", "rmdir", "shred", "truncate", "mv"}
+GIT_VERWERFEN = {"stash", "checkout", "restore"}
+
+
+def _relativ(project, cwd, pfad):
+    """Pfad aus dem Befehl -> relativ zum Projekt ('.' = Projekt selbst, None = ausserhalb)."""
+    pfad = os.path.expanduser(pfad)
+    if cwd.startswith("~"):
+        cwd = os.path.expanduser(cwd)
+    if not os.path.isabs(pfad):
+        pfad = os.path.join(cwd if os.path.isabs(cwd) else os.path.join(project, cwd), pfad)
+    pfad = os.path.normpath(pfad)
+    projekt = os.path.normpath(project)
+    if pfad == projekt or projekt.startswith(pfad.rstrip("/") + "/"):
+        return "."  # Projekt oder ein Vorfahre davon
+    if not pfad.startswith(projekt + "/"):
+        return None
+    return os.path.relpath(pfad, projekt)
+
+
+def _trifft(project, cwd, pfad):
+    """Betrifft `pfad` (auch als Glob oder Vorfahre) geschuetzten Bestand?"""
+    rel = _relativ(project, cwd, pfad)
+    if rel is None:
+        return False
+    if rel == ".":
+        return True
+    if any(c in rel for c in "*?["):
+        return any(fnmatch.fnmatchcase(g, rel) or fnmatch.fnmatchcase(g, rel + "/*")
+                   for g in GESCHUETZT_PFADE)
+    if rel == "workspace.yaml" or rel == "docs/bauplan" or rel.startswith("docs/bauplan/"):
+        return True
+    if fnmatch.fnmatchcase(rel, ".claude/bauplan/*.manifest.json"):
+        return True
+    return any(g.startswith(rel + "/") for g in ("docs/bauplan", ".claude/bauplan/x.manifest.json"))
+
+
+def _deckt(project, cwd, spec, datei):
+    """Erfasst die Pathspec `spec` die (projektrelative) Datei `datei`?"""
+    rel = _relativ(project, cwd, spec)
+    if rel is None:
+        return False
+    return rel == "." or datei == rel or datei.startswith(rel.rstrip("/") + "/") or fnmatch.fnmatchcase(datei, rel)
+
+
+def _lokal_geaendert(project):
+    """Geschuetzte Dateien mit lokalen Aenderungen. Wirft RuntimeError, wenn git scheitert."""
+    res = git(project, "status", "--porcelain", "-uall", "--", *GESCHUETZT_STATUS)
+    if res.returncode != 0:
+        raise RuntimeError("git status scheitert: %s" % res.stderr.strip()[:200])
+    return [z[3:] for z in res.stdout.splitlines() if z.strip()]
+
+
+def _git_pathspecs(sub, rest):
+    """Pathspecs von stash/checkout/restore. None = keine Verwerfung, [] = alles."""
+    if sub == "stash":
+        if rest and not rest[0].startswith("-") and rest[0] != "push" and rest[0] != "save":
+            return None  # list, show, pop, apply, drop ...
+        if rest and rest[0] in ("push", "save"):
+            rest = rest[1:]
+        if "--" in rest:
+            return rest[rest.index("--") + 1:]
+        specs, ueberspringen = [], False
+        for a in rest:
+            if ueberspringen:
+                ueberspringen = False
+            elif a in ("-m", "--message"):
+                ueberspringen = True
+            elif not a.startswith("-"):
+                specs.append(a)
+        return specs
+    if sub == "restore":
+        if ("--staged" in rest or "-S" in rest) and not ("--worktree" in rest or "-W" in rest):
+            return None  # nur Index, Arbeitsbaum bleibt
+        specs, ueberspringen = [], False
+        for a in rest:
+            if ueberspringen:
+                ueberspringen = False
+            elif a in ("-s", "--source"):
+                ueberspringen = True
+            elif not a.startswith("-"):
+                specs.append(a)
+        return specs or None
+    if sub == "checkout":
+        if "-f" in rest or "--force" in rest:
+            return []
+        if "--" in rest:
+            return rest[rest.index("--") + 1:]
+        specs = [a for a in rest if a == "." or "/" in a]
+        return specs or None
+    return None
+
+
+def check_bash(project, cmd):
+    """Liefert Verstoesse (leer = erlaubt)."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import befehl
+    try:
+        befehle = befehl.zerlege(cmd)
+    except ValueError as e:
+        if any(t in cmd for t in GESCHUETZT_TEXT):
+            return ["Befehl nicht zerlegbar (%s) und nennt Bauplan-Bestand — fail-closed blockiert." % e]
+        return []
+
+    verstoesse = []
+    nennt_bestand = any(_trifft(project, b.cwd, w) for b in befehle for w in b.woerter[1:])
+    for b in befehle:
+        w, cwd = b.woerter, b.cwd
+        ziele = []
+        if w[0] in LOESCHEN:
+            ziele = [a for a in w[1:] if not a.startswith("-")]
+        elif w[0] in ("cp", "install", "tee") and len(w) > 1:
+            args = [a for a in w[1:] if not a.startswith("-")]
+            ziele = args if w[0] == "tee" else args[-1:]
+            if w[0] == "tee" and ("-a" in w or "--append" in w):
+                ziele = []
+        elif w[0] == "git" and len(w) > 1 and w[1] == "rm":
+            ziele = [a for a in w[2:] if not a.startswith("-")]
+        elif w[0] == "find" and ("-delete" in w or any(
+                a in ("-exec", "-execdir") and i + 1 < len(w) and w[i + 1] in LOESCHEN
+                for i, a in enumerate(w))):
+            ziele = [a for a in w[1:] if not a.startswith(("-", "(", "!"))][:1]
+        elif w[0] == "xargs" and any(a in LOESCHEN for a in w[1:]) and nennt_bestand:
+            verstoesse.append("`%s` loescht Eingaben aus einer Pipeline, die Bauplan-Bestand nennt." % " ".join(w))
+        elif w[0] == "git" and len(w) > 1 and w[1] in GIT_VERWERFEN:
+            specs = _git_pathspecs(w[1], w[2:])
+            if specs is not None and (not specs or any(_trifft(project, cwd, s) for s in specs)):
+                try:
+                    geaendert = _lokal_geaendert(project)
+                except RuntimeError as e:
+                    return ["%s — fail-closed blockiert." % e]
+                betroffen = [g for g in geaendert if not specs or any(_deckt(project, cwd, s, g) for s in specs)]
+                if betroffen:
+                    verstoesse.append("`git %s` verwirft lokale Aenderungen an Bauplan-Bestand: %s"
+                                      % (w[1], ", ".join(betroffen[:3])))
+        for ziel in ziele:
+            if _trifft(project, cwd, ziel):
+                verstoesse.append("`%s` trifft Bauplan-Bestand (%s)." % (w[0] if w[0] != "git" else "git rm", ziel))
+        for op, ziel in b.umleitungen:
+            if _trifft(project, cwd, ziel):
+                verstoesse.append("Umleitung `%s %s` ueberschreibt Bauplan-Bestand." % (op, ziel))
+    return verstoesse
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--check-write", nargs=2, metavar=("ZIEL", "INHALTSDATEI"))
+    ap.add_argument("--check-bash", action="store_true",
+                    help="PreToolUse: Hook-JSON auf stdin, prueft den Bash-Befehl")
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--strict", action="store_true",
                     help="auch offene Luecken als Verstoss werten")
@@ -177,6 +335,20 @@ def main():
     args = ap.parse_args()
     project = lib.project_root(args.project)
 
+    if args.check_bash:
+        try:
+            cmd = json.load(sys.stdin)["tool_input"]["command"]
+        except Exception as e:
+            print("BAUPLAN-GUARD: Hook-Eingabe nicht lesbar (%s) — fail-closed blockiert." % e, file=sys.stderr)
+            return 2
+        violations = check_bash(project, cmd)
+        if violations:
+            for v in violations:
+                print("BLOCKED: %s" % v, file=sys.stderr)
+            print("Eine Etappe wird aktualisiert (/repo-bauplan <repo> --refresh), nicht geloescht.", file=sys.stderr)
+            print("Ist ein Repo lokal nicht geklont, heisst das uebersprungen — nicht abgeschafft.", file=sys.stderr)
+            return 2
+        return 0
     if args.check_write:
         target, content_file = args.check_write
         with open(content_file, encoding="utf-8") as fh:
