@@ -17,6 +17,14 @@ The `mdm-` file prefix is the house convention in **all three** themes, not a br
 
 One ticket touches one theme. To carry the same change into another theme, do not edit it twice — report it and let `bin/theme-sync.sh port` do it.
 
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- Liquid, theme schema, filters, objects: Shopify Dev MCP — `learn_shopify_api` (api `liquid`) once, then `search_docs_chunks`.
+- Hyper 1.3.3 sections and settings: WebFetch https://docs.foxecom.com/hyper-theme (no connector).
+- Validate changed files with `validate_theme` (see Validation).
+
 ## Scope: one block per invocation
 
 Each invocation implements ONE block (one section override). Do not touch files outside the block's scope. The block plan defines exactly which files are in scope.

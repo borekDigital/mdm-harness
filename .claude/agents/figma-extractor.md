@@ -43,6 +43,13 @@ Output: append a new section to the existing design-spec.md, or create a block-s
 
 You work in ~/MDM/. Themes in `themes/<brand>/` (`mdm`, `borek`, `imm`; default `mdm`), tickets in `Tickets/`. All theme paths carry the `themes/<brand>/` prefix.
 
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- Figma MCP: skill `figma-to-liquid` (tool order, token mapping, known limits); fallback https://developers.figma.com/docs/figma-mcp-server/
+- Mapping onto theme settings: Shopify Dev MCP — `learn_shopify_api` (api `liquid`), `search_docs_chunks`.
+
 ## Breakpoint coverage (mandatory for full-page mode)
 
 - **All breakpoint frames must be captured** (Desktop AND Mobile/Tablet).

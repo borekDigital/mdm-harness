@@ -28,6 +28,10 @@ model: sonnet
 ---
 
 # theme-reviewer
+
+## Doku-Quellen
+
+Shopify Dev MCP (`learn_shopify_api`).
 """
 
 SKILL = """---
@@ -46,6 +50,26 @@ paths:
 
 # Liquid
 """
+
+QUELLEN = """# Doku-Quellen
+
+| Bereich | Bibliothek | Version | Beleg | Context7 | Fallback |
+|---|---|---|---|---|---|
+| Connector | Rails | 8.1 | `connector/Gemfile.lock` · `rails` | `/websites/api_rubyonrails_v8_1_3` | https://guides.rubyonrails.org/v8.1/ |
+| Middleware | Symfony | 7.1 | `emailservice/www/composer.lock` · `symfony/framework-bundle` | `/websites/symfony_doc_7_4` | https://symfony.com/doc/7.1/ |
+| Middleware | Nuxt | 2.15 | `payment-service/client/package.json` · `nuxt` | `/websites/v2_nuxt` | https://v2.nuxt.com/ |
+| Theme | Hyper | 1.3.3 | `themes/mdm/config/settings_schema.json` · `theme_version` | — | https://docs.foxecom.com/hyper-theme |
+| Theme | Liquid | — | — | Shopify Dev MCP | https://shopify.dev/docs/api/liquid |
+"""
+
+GEMFILE_LOCK = """GEM
+  specs:
+    rails (8.1.3)
+      actioncable (= 8.1.3)
+"""
+
+COMPOSER_LOCK = json.dumps({"packages": [
+    {"name": "symfony/framework-bundle", "version": "v7.1.11"}], "packages-dev": []})
 
 HOOK = """#!/usr/bin/env bash
 README="${CLAUDE_PROJECT_DIR}/.claude/README.md"
@@ -85,6 +109,12 @@ class HarnessCheckTest(unittest.TestCase):
         self.write(".claude/settings.json", settings())
         self.write(".mcp.json", MCP)
         self.write("themes/mdm/sections/mdm-breadcrumbs.liquid", "{{ 'x' }}\n")
+        self.write("themes/mdm/config/settings_schema.json",
+                   '[\n  {\n    "name": "theme_info",\n    "theme_name": "Hyper",\n    "theme_version": "1.3.3"\n  }\n]\n')
+        self.write(".claude/rules/doku-quellen.md", QUELLEN)
+        self.write("connector/Gemfile.lock", GEMFILE_LOCK)
+        self.write("emailservice/www/composer.lock", COMPOSER_LOCK)
+        self.write("payment-service/client/package.json", '{"dependencies": {"nuxt": "2.15.8"}}\n')
         with open(REFERENZ, encoding="utf-8") as fh:
             self.write("bin/harness-referenz.json", fh.read())
 
@@ -154,6 +184,52 @@ class HarnessCheckTest(unittest.TestCase):
                    AGENT.replace("theme-reviewer", "b-planner").replace("sonnet", "inherit"))
         self.assertEqual(self.befunde(), (0, []))
 
+    def test_agent_ohne_doku_quellen(self):
+        # Spec Teil A: jeder Agent nennt seine Doku-Quelle mit Werkzeug.
+        self.write(".claude/agents/theme-reviewer.md", AGENT.split("## Doku-Quellen")[0])
+        self.assert_befund("H18", ".claude/agents/theme-reviewer.md", text="Doku-Quellen")
+
+    # --- Versionen gegen Lockfiles -----------------------------------------
+
+    def test_version_weicht_vom_composer_lock_ab(self):
+        # So stand es bis Oktober 2026: payment-service hiess "Symfony 7.1", lief auf 7.2.
+        self.write("emailservice/www/composer.lock", COMPOSER_LOCK.replace("v7.1.11", "v7.2.2"))
+        self.assert_befund("H19", ".claude/rules/doku-quellen.md", 6, "7.2.2")
+
+    def test_version_weicht_vom_gemfile_lock_ab(self):
+        self.write("connector/Gemfile.lock", GEMFILE_LOCK.replace("8.1.3", "8.2.0"))
+        self.assert_befund("H19", ".claude/rules/doku-quellen.md", 5, "8.2.0")
+
+    def test_version_weicht_von_package_json_ab(self):
+        self.write("payment-service/client/package.json", '{"dependencies": {"nuxt": "^3.17.7"}}\n')
+        self.assert_befund("H19", ".claude/rules/doku-quellen.md", 7, "3.17.7")
+
+    def test_version_aus_json_schluessel(self):
+        self.write("themes/mdm/config/settings_schema.json", '[{"theme_version": "1.4.0"}]\n')
+        self.assert_befund("H19", ".claude/rules/doku-quellen.md", 8, "1.4.0")
+
+    def test_paketname_als_teil_eines_anderen_pakets(self):
+        # "react" darf nicht "eslint-plugin-react" treffen.
+        self.write("payment-service/client/package.json",
+                   '{"devDependencies": {"eslint-plugin-nuxt": "^4.0.0"}, "dependencies": {"nuxt": "2.15.8"}}\n')
+        self.assertEqual(self.befunde(), (0, []))
+
+    def test_version_aus_ruby_version(self):
+        self.write(".claude/rules/doku-quellen.md", QUELLEN +
+                   "| Connector | Ruby | 4.0 | `connector/.ruby-version` · `ruby` | — | https://docs.ruby-lang.org/en/4.0/ |\n")
+        self.write("connector/.ruby-version", "ruby-4.0.2\n")
+        self.assertEqual(self.befunde(), (0, []))
+        self.write("connector/.ruby-version", "ruby-3.4.1\n")
+        self.assert_befund("H19", ".claude/rules/doku-quellen.md", 10, "3.4.1")
+
+    def test_fehlendes_lockfile_ist_kein_befund(self):
+        os.remove(os.path.join(self.root, "connector/Gemfile.lock"))
+        self.assertEqual(self.befunde(), (0, []))
+
+    def test_paket_fehlt_im_lockfile(self):
+        self.write("connector/Gemfile.lock", "GEM\n  specs:\n    rack (3.1.0)\n")
+        self.assert_befund("H19", ".claude/rules/doku-quellen.md", 5, "nicht gefunden")
+
     # --- Skills -----------------------------------------------------------
 
     def test_unbekanntes_skillfeld(self):
@@ -187,7 +263,7 @@ class HarnessCheckTest(unittest.TestCase):
 
     def test_rule_glob_fuer_fehlendes_repo_ist_kein_befund(self):
         # In der CI fehlen Kind-Repos, die nicht geklont werden konnten.
-        self.write(".claude/rules/connector.md", RULE.replace("themes/*/sections/**", "connector/app/**"))
+        self.write(".claude/rules/creditcheck.md", RULE.replace("themes/*/sections/**", "creditcheck/www/src/**"))
         self.assertEqual(self.befunde(), (0, []))
 
     def test_rule_glob_auf_leeren_platzhalter_ist_kein_befund(self):
@@ -239,7 +315,12 @@ class HarnessCheckTest(unittest.TestCase):
     def test_unbekanntes_mcp_werkzeug_im_agenten(self):
         self.write(".claude/agents/theme-reviewer.md",
                    AGENT + "\n2. `validate_theme_codeblocks` (Dev MCP) on new Liquid.\n")
-        self.assert_befund("H11", ".claude/agents/theme-reviewer.md", 9, "validate_theme_codeblocks")
+        self.assert_befund("H11", ".claude/agents/theme-reviewer.md", 13, "validate_theme_codeblocks")
+
+    def test_konfig_schluessel_in_dev_mcp_zeile_ist_kein_werkzeug(self):
+        self.write(".claude/README.md",
+                   "| `connector/shopify.app.toml` · `api_version` | Shopify Dev MCP: `learn_shopify_api` |\n")
+        self.assertEqual(self.befunde(), (0, []))
 
     def test_unbekannter_server_wird_nicht_geprueft(self):
         self.write(".claude/README.md", "`mcp__claude_ai_Figma__get_screenshot`\n")

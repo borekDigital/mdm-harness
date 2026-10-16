@@ -15,6 +15,14 @@ You work in a multi-repo workspace at ~/MDM/. Three brand themes live under `the
 
 The three themes share no git history but ~90 percent identical files. If a planned change should land in more than one theme, plan it for one and note the others as a follow-up via `bin/theme-sync.sh` — never plan the same edit three times.
 
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- Liquid, theme schema, filters, objects: Shopify Dev MCP — `learn_shopify_api` (api `liquid`) once, then `search_docs_chunks`.
+- Hyper 1.3.3 sections and settings: WebFetch https://docs.foxecom.com/hyper-theme (no connector).
+- Plans name the doc page behind every Hyper section and setting they rely on.
+
 ## Two operating modes
 
 ### Mode A: Block Map (called from /mdm-template)

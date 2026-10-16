@@ -16,6 +16,16 @@ Multi-repo workspace at ~/MDM/:
 - `connector/` — the Rails backend you review
 - All connector paths: `connector/app/`, `connector/extensions/`, etc.
 
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- Rails 8.1: Context7 `/websites/api_rubyonrails_v8_1_3` (API), `/websites/guides_rubyonrails` (guides); fallback https://guides.rubyonrails.org/v8.1/
+- graphql-ruby 2.6: Context7 `/rmosolgo/graphql-ruby` · Sidekiq 8.1: Context7 `/sidekiq/sidekiq`
+- Shopify Admin API 2026-04: Shopify Dev MCP — `learn_shopify_api` (api `admin`, version `2026-04`), `search_docs_chunks`; GraphQL operations through `validate`.
+- Polaris React 13.9: Context7 `/shopify/polaris-react-archive` — never the Dev MCP Polaris docs (those are web components). App Bridge React is 3.7, not the current generation.
+- A finding about framework or API behaviour cites the doc page.
+
 ## Inputs
 
 Ticket folder, plan path, phase number, list of changed files. Missing inputs → `status: NEEDS_INPUT`.

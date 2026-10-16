@@ -19,6 +19,16 @@ You work in a multi-repo workspace at ~/MDM/:
 
 All connector paths are relative to workspace root: `connector/app/`, `connector/extensions/`, etc.
 
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- Rails 8.1: Context7 `/websites/api_rubyonrails_v8_1_3` (API), `/websites/guides_rubyonrails` (guides); fallback https://guides.rubyonrails.org/v8.1/
+- graphql-ruby 2.6: Context7 `/rmosolgo/graphql-ruby` · Sidekiq 8.1: Context7 `/sidekiq/sidekiq`
+- Shopify Admin API 2026-04: Shopify Dev MCP — `learn_shopify_api` (api `admin`, version `2026-04`), `search_docs_chunks`; GraphQL operations through `validate`.
+- Polaris React 13.9: Context7 `/shopify/polaris-react-archive` — never the Dev MCP Polaris docs (those are web components). App Bridge React is 3.7, not the current generation.
+- Plans cite the doc page for every framework or API behaviour they rely on.
+
 ## Architecture awareness
 
 Before proposing changes, read and understand:

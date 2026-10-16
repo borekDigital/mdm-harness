@@ -115,6 +115,10 @@ class Pruefung:
             for pflicht in self.ref["agent_pflichtfelder"]:
                 if pflicht not in felder:
                     self.melde("H01", rel, 1, "Pflichtfeld `%s` fehlt" % pflicht)
+            zeilen = [z.strip() for z in self.lies(rel)]
+            for abschnitt in self.ref["agent_pflichtabschnitte"]:
+                if abschnitt not in zeilen:
+                    self.melde("H18", rel, 1, "Abschnitt `%s` fehlt — Spec Teil A" % abschnitt)
             for feld, (nr, wert) in felder.items():
                 if feld not in erlaubt:
                     self.melde("H02", rel, nr, "unbekanntes Agenten-Feld `%s` — wird still ignoriert" % feld)
@@ -162,6 +166,58 @@ class Pruefung:
                 treffer = glob.iglob(g, root_dir=self.root, recursive=True)
                 if next(treffer, None) is None:
                     self.melde("H06", rel, zeile, "Glob `%s` trifft keine Datei" % g)
+
+    # --- Versionen gegen Lockfiles ----------------------------------------
+
+    def versionen(self):
+        """Tabellen mit Spalten `Version` und `Beleg` in den Rules gegen die Lockfiles pruefen.
+
+        Beleg-Zelle: `datei` · `paket`. Die Version in der Tabelle gilt als Praefix:
+        „7.1“ passt zu 7.1.11, nicht zu 7.2.2.
+        """
+        for rel in self.dateien(".claude/rules/**/*.md"):
+            spalten = None
+            for nr, zeile in enumerate(self.lies(rel), 1):
+                if not zeile.startswith("|"):
+                    spalten = None
+                    continue
+                zellen = [z.strip() for z in zeile.strip().strip("|").split("|")]
+                if spalten is None:
+                    if "Version" in zellen and "Beleg" in zellen:
+                        spalten = (zellen.index("Bibliothek") if "Bibliothek" in zellen else 0,
+                                   zellen.index("Version"), zellen.index("Beleg"))
+                    continue
+                if set(zeile) <= set("|-: "):
+                    continue
+                name, soll, beleg = (zellen[i] if i < len(zellen) else "" for i in spalten)
+                teile = re.findall(r"`([^`]+)`", beleg)
+                if len(teile) < 2 or not re.match(r"^\d", soll):
+                    continue
+                datei, paket = teile[0], teile[1]
+                if not os.path.isfile(self.pfad(datei)):
+                    self.uebersprungen.append("%s: %s — %s fehlt" % (rel, name, datei))
+                    continue
+                ist = self.installiert(datei, paket)
+                if ist is None:
+                    self.melde("H19", rel, nr, "%s: Paket `%s` in `%s` nicht gefunden" % (name, paket, datei))
+                elif not (ist == soll or ist.startswith(soll + ".") or ist.startswith(soll + "-")):
+                    self.melde("H19", rel, nr, "%s steht hier auf %s, `%s` auf %s" % (name, soll, datei, ist))
+
+    def installiert(self, datei, paket):
+        text = open(self.pfad(datei), encoding="utf-8").read()
+        if datei.endswith("composer.lock"):
+            daten = json.loads(text)
+            for p in daten.get("packages", []) + daten.get("packages-dev", []):
+                if p.get("name") == paket:
+                    return p.get("version", "").lstrip("v")
+            return None
+        if datei.endswith("Gemfile.lock"):
+            m = re.search(r"^ {4}%s \(([^)]+)\)" % re.escape(paket), text, re.M)
+            return m.group(1) if m else None
+        # Generisch: JSON/TOML/Ruby-Zuweisung (`"nuxt": "2.15.8"`, `api_version = "2026-04"`)
+        # und .ruby-version (`ruby-4.0.2`).
+        m = re.search(r"(?<![\w@/.-])[\"']?%s[\"']?\s*[=:-]\s*[\"']?[\^~>=<v ]*(\d[\w.-]*)" % re.escape(paket), text)
+        return m.group(1) if m else None
 
     # --- Settings, Hooks, MCP ---------------------------------------------
 
@@ -250,8 +306,11 @@ class Pruefung:
                                    % (werkzeug, srv, server[srv]["version"]))
                 kontext = next((s for w, s in stichworte.items() if w in zeile or w in abschnitt), None)
                 if kontext and "mcp__" not in zeile:
+                    # Nur werkzeugartige Namen (Muster aus der Referenz), sonst waere
+                    # jeder Konfig-Schluessel wie `api_version` ein Befund.
+                    muster = re.compile(server[kontext]["werkzeug_muster"])
                     for werkzeug in nackt.findall(zeile):
-                        if werkzeug not in server[kontext]["werkzeuge"]:
+                        if muster.match(werkzeug) and werkzeug not in server[kontext]["werkzeuge"]:
                             self.melde("H11", rel, nr, "MCP-Werkzeug `%s` gibt es bei %s@%s nicht"
                                        % (werkzeug, kontext, server[kontext]["version"]))
                 for name in sorted(set(agent.findall(zeile))):
@@ -316,6 +375,7 @@ class Pruefung:
         self.skills_pruefen()  # zuerst: verweise() braucht Skill- und Agenten-Namen
         self.agenten()
         self.rules()
+        self.versionen()
         self.settings()
         self.hook_skripte()
         self.mcp_json()
