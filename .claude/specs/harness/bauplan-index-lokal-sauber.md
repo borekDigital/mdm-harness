@@ -3,7 +3,7 @@
 Stand: 16. Oktober 2026
 Quelle: Vorfall vom 16. Oktober 2026 — `docs/bauplan/index.html` nach `git pull` auf `acf54f7` lokal geändert,
 versehentlich committet, `main` per Reset repariert
-Status: IMPLEMENTIERT (16. Oktober 2026; freigegeben am selben Tag — Frage 1 und 2 wie empfohlen, Teil F als eigene Spec)
+Status: VALIDIERT (16. Oktober 2026; freigegeben und umgesetzt am selben Tag — Frage 1 und 2 wie empfohlen, Teil F als eigene Spec)
 
 ## Ziel
 
@@ -180,8 +180,9 @@ Nicht Teil dieser Spec (Frage 3: eigene Spec). Bis dahin legt `bin/test-sync-sau
 
 ## Akzeptanzkriterien
 
-- [ ] **AK1** In einem Checkout mit vorhandenen `*.STALE.md` ist nach `git pull` plus post-merge-Hook
-      `git status --porcelain` leer (`bin/test-sync-sauber.sh` grün am 16. Oktober 2026; real in `~/MDM` offen bis nach dem Merge).
+- [x] **AK1** In einem Checkout mit vorhandenen `*.STALE.md` ist nach `git pull` plus post-merge-Hook
+      `git status --porcelain` leer (`bin/test-sync-sauber.sh` grün am 16. Oktober 2026; real in `~/MDM` belegt: Pull `0ff4af8..eb23344`
+      mit post-merge, danach `git status --porcelain` leer).
 - [x] **AK2** Nach einem manuellen `./sync.sh` gilt dasselbe.
 - [x] **AK3** `bin/bauplan-index.py` erzeugt auf demselben Commit lokal und in der CI byte-gleiche Dateien:
       Der CI-Check `--check` ist grün auf einem Commit, dessen Übersicht lokal erzeugt wurde.
@@ -191,8 +192,9 @@ Nicht Teil dieser Spec (Frage 3: eigene Spec). Bis dahin legt `bin/test-sync-sau
       wird von der CI rot gemeldet. Mit neu erzeugter Übersicht ist er grün.
 - [x] **AK6** Der Bauplan-Guard ist unverändert: `git diff main -- bin/bauplan-guard.py .claude/hooks/bauplan-guard.sh`
       ist leer, `bin/test-waechter-hooks.sh` ist grün.
-- [ ] **AK7** Der nächste geplante Lauf von `bauplan-refresh.yml` nach dem Merge endet ohne Fehler im
-      Schritt „Uebersicht neu erzeugen". Offen bis zum ersten Lauf nach dem Merge.
+- [x] **AK7** Der nächste geplante Lauf von `bauplan-refresh.yml` nach dem Merge endet ohne Fehler im
+      Schritt „Uebersicht neu erzeugen". Belegt mit dem manuellen Lauf 38889258534 (`regenerate = true`,
+      grün). Bot-PR #27 bestand lokal `--check` für Übersicht und Navigation.
 - [x] **AK8** Alle Tests in `harness-check.yml` sind grün. Die Doku-Stellen aus Teil E sind angepasst.
 
 ## Constraints
@@ -223,12 +225,17 @@ Nicht Teil dieser Spec (Frage 3: eigene Spec). Bis dahin legt `bin/test-sync-sau
 
 ## Umsetzung (16. Oktober 2026)
 
-- AK1 per Test belegt, real in `~/MDM` erst nach dem Merge prüfbar. Der erste Pull bringt die neue
+- AK1 erst per Test, dann real in `~/MDM` belegt. Der erste Pull bringt die neue
   `sync.sh` mit; die installierte Hook-Kopie ruft nur `sync.sh` auf und muss nicht ersetzt werden.
   Nur ihre Kommentare und die Abschlussmeldung sind dann älter als `git-hooks/post-merge`.
 - Harness-Etappe 1 belegt `sync.sh`, `git-hooks/**` und `bin/**` und beschreibt den alten Ablauf
   (`docs/bauplan/harness/etappe-01.html:557`, `:749`). Sie wird damit veraltet und läuft über
   `/repo-bauplan harness --refresh` oder die CI, nicht über diesen PR.
+
+- Bot-PRs aus `bauplan-refresh.yml` lösen keine weiteren Workflows aus, der Drift-Check läuft dort also
+  nicht ⚠️ Vermutung (GitHub-Verhalten bei PRs mit dem Workflow-Token, nicht in der Doku nachgelesen;
+  beobachtet: #27 ohne Checks). Der Check läuft beim Push auf `main` nach dem Merge ✅ belegt
+  (`harness-check.yml` auf `0271964` grün).
 
 ## Entscheidungen (16. Oktober 2026)
 
