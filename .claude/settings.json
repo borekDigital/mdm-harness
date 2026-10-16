@@ -39,6 +39,15 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/harness-sync-check.sh\"",
+            "timeout": 20
+          }
+        ]
       }
     ],
     "PreToolUse": [

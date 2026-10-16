@@ -89,17 +89,14 @@ jobs:
       - name: Tests sync.sh und post-merge
         run: bash bin/test-sync-sauber.sh
 
-      - name: Bauplan-Uebersicht passt zum Stand
-        env:
-          CLAUDE_PROJECT_DIR: ${{ github.workspace }}
+      - name: Generierte Dateien passen zum Stand
         run: |
-          # Uebersicht und Fusszeilen sind generiert und versioniert. Aendert ein
-          # PR Manifest, workspace.yaml oder Blattseiten, muss er sie mitbringen —
-          # sync.sh erzeugt sie nach dem Pull nicht mehr (Spec bauplan-index-lokal-sauber).
-          rc=0
-          python3 bin/bauplan-index.py --check || rc=1
-          python3 bin/bauplan-nav.py --check || rc=1
-          exit $rc
+          # CLAUDE.md, Bauplan-Uebersicht und Fusszeilen sind generiert und versioniert.
+          # Aendert ein PR ihre Eingaben (templates/, workspace.yaml, Manifeste,
+          # Blattseiten), muss er sie mitbringen. Der Post-merge-Hook ist optional,
+          # also sichert das hier ab (Specs bauplan-index-lokal-sauber und
+          # harness-ohne-lokale-einrichtung). Die WARNUNG-Zeilen im Log nennen den Befehl.
+          ./sync.sh --check
 
       - name: Harness pruefen
         shell: bash

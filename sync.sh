@@ -3,7 +3,12 @@
 # und prueft Harness-Konsistenz.
 #
 # Idempotent: mehrfaches Ausfuehren liefert gleiches Ergebnis.
-# Verwendung: ./sync.sh [--quiet]
+# Verwendung: ./sync.sh [--quiet] [--check]
+#
+#   --check  schreibt nichts: vergleicht CLAUDE.md, Bauplan-Uebersicht und Fusszeilen
+#            mit dem, was sie sein muessten, und meldet lokale Hinweise. Exit 3, wenn
+#            eine versionierte Datei abweicht, sonst 0. So laufen der SessionStart-Hook
+#            und die CI (Spec harness-ohne-lokale-einrichtung).
 
 set -euo pipefail
 
@@ -15,7 +20,17 @@ OUTPUT="${SCRIPT_DIR}/CLAUDE.md"
 INDEX_SCRIPT="${SCRIPT_DIR}/bin/bauplan-index.py"
 NAV_SCRIPT="${SCRIPT_DIR}/bin/bauplan-nav.py"
 WORDING_SCRIPT="${SCRIPT_DIR}/bin/bauplan-wording.py"
-QUIET="${1:-}"
+QUIET=""
+CHECK=""
+for arg in "$@"; do
+  case "$arg" in
+    --quiet) QUIET="--quiet" ;;
+    --check) CHECK="--check" ;;
+    *) echo "FEHLER: unbekannte Option ${arg} — erlaubt: --quiet, --check" >&2; exit 1 ;;
+  esac
+done
+# Versionierte Dateien, die im Pruefmodus abweichen. Bestimmt den Exit-Code.
+ABWEICHUNGEN=0
 
 # --- Hilfsfunktionen ---
 
@@ -61,20 +76,22 @@ dir_exists() {
 # Eine kompakte Tabelle statt Baum + zwei Plattform-Tabellen. Pfade, Stack und
 # Branch stehen im Manifest; die Remote-URLs nicht mehr — die stehen in der
 # .git/config des jeweiligen Repos und muessen nicht in jede Session geladen
-# werden. Nicht geklonte Repos werden markiert, nicht weggelassen (Guard-Semantik).
+# werden. Die Tabelle nennt alle Repos aus dem Manifest und haengt nicht vom
+# lokalen Klon ab: CLAUDE.md ist versioniert. Welche Repos hier fehlen, meldet
+# report_nicht_geklont in der Konsole und beim Sitzungsstart (Guard-Semantik:
+# nicht geklont heisst uebersprungen, nicht abgeschafft).
 generate_repo_table() {
   local table=""
   table+='| Repo | Pfad | Stack | Branch |\n'
   table+='|---|---|---|---|\n'
 
   while IFS= read -r repo_id; do
-    local name path tech branch marker=""
+    local name path tech branch
     name="$(yaml_get "$repo_id" "name")"
     path="$(yaml_get "$repo_id" "path")"
     tech="$(yaml_get "$repo_id" "tech")"
     branch="$(yaml_get "$repo_id" "branch")"
-    is_installed "$repo_id" || marker=" _(nicht installiert)_"
-    table+="| ${name}${marker} | \`${path}\` | ${tech} | \`${branch}\` |\n"
+    table+="| ${name} | \`${path}\` | ${tech} | \`${branch}\` |\n"
   done < <(get_repo_ids)
 
   echo -e "$table"
@@ -130,7 +147,8 @@ check_bauplan() {
     "$script" --project "$SCRIPT_DIR" --check >/dev/null 2>&1 || rc=$?
     case "$rc" in
       0) ;;
-      3) warn "${name}: versionierter Stand weicht ab — \`bin/${name}\` ausfuehren und mit dem PR committen, der die Eingaben aendert" ;;
+      3) warn "${name}: versionierter Stand weicht ab — \`bin/${name}\` ausfuehren und mit dem PR committen, der die Eingaben aendert"
+         ABWEICHUNGEN=$((ABWEICHUNGEN + 1)) ;;
       *) warn "${name} fehlgeschlagen (Exit ${rc})" ;;
     esac
   done
@@ -144,6 +162,32 @@ report_veraltet() {
   while IFS= read -r zeile; do
     [[ -n "$zeile" ]] && echo "  Bauplan: $zeile"
   done < <("$INDEX_SCRIPT" --project "$SCRIPT_DIR" --veraltet 2>/dev/null || true)
+}
+
+# --- CLAUDE.md gegen Templates pruefen (nur --check) ---
+
+check_claude_md() {
+  local soll
+  soll="$(generate_claude_md)"
+  if [[ ! -f "$OUTPUT" ]] || [[ "$soll" != "$(cat "$OUTPUT")" ]]; then
+    warn "CLAUDE.md weicht von templates/ und workspace.yaml ab — \`./sync.sh\` ausfuehren und mit dem PR committen"
+    ABWEICHUNGEN=$((ABWEICHUNGEN + 1))
+  fi
+}
+
+# --- Nicht geklonte Repos melden ---
+
+# Ersetzt die fruehere Markierung in CLAUDE.md. Auch mit --quiet: nach einem
+# Pull und beim Sitzungsstart ist das die Stelle, an der es auftaucht.
+report_nicht_geklont() {
+  local fehlend=() repo_id
+  while IFS= read -r repo_id; do
+    is_installed "$repo_id" || fehlend+=("$repo_id")
+  done < <(get_repo_ids)
+  [[ ${#fehlend[@]} -gt 0 ]] || return 0
+  local liste
+  liste="$(printf '%s, ' "${fehlend[@]}")"
+  echo "  Nicht geklont (uebersprungen, nicht abgeschafft): ${liste%, }"
 }
 
 # --- Wording der Blattseiten melden ---
@@ -231,10 +275,14 @@ main() {
     exit 1
   fi
 
-  # CLAUDE.md generieren
-  log "  CLAUDE.md generieren..."
-  generate_claude_md > "$OUTPUT"
-  log "  → ${OUTPUT} geschrieben"
+  if [[ -n "$CHECK" ]]; then
+    check_claude_md
+  else
+    log "  CLAUDE.md generieren..."
+    generate_claude_md > "$OUTPUT"
+    log "  → ${OUTPUT} geschrieben"
+  fi
+  report_nicht_geklont
 
   # Bauplan-Uebersicht pruefen (schreibt nicht)
   if [[ -x "$INDEX_SCRIPT" ]]; then
@@ -253,6 +301,15 @@ main() {
   log "  Konsistenz pruefen..."
   if check_consistency; then
     log "  → Alles konsistent"
+  fi
+
+  # Pruefmodus: kein Wording-Lauf (Prosa ist kein versionierter Stand), keine
+  # Zeitstempel. Er schreibt nichts, auch nicht .workspace.local.yaml.
+  if [[ -n "$CHECK" ]]; then
+    log ""
+    log "Fertig (Pruefmodus, nichts geschrieben)."
+    [[ "$ABWEICHUNGEN" -eq 0 ]] || exit 3
+    return 0
   fi
 
   check_wording
