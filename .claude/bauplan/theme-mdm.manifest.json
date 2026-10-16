@@ -1,0 +1,234 @@
+{
+  "repo": "theme-mdm",
+  "name": "Shopify Theme MDM",
+  "tech": "Liquid/CSS/JS (Hyper 1.3.3)",
+  "root": "themes/mdm",
+  "design_system": "bauplan-v1",
+  "generated": "2026-10-15",
+  "last_seen_sha": "b3467e838fe9959763b253fa15abc194b37fd33d",
+  "etappen": [
+    {
+      "nr": 1,
+      "title": "Umfang",
+      "url": "https://claude.ai/artifact/87dKmNfmKWA82W5Z7Mfudd",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "README.md",
+        ".gitignore",
+        ".shopifyignore",
+        ".theme-check.yml",
+        "config/settings_schema.json",
+        "layout/**",
+        "blocks/**",
+        "snippets/css-variables.liquid",
+        "snippets/collection-cards-item.liquid",
+        "snippets/facets-drawer.liquid",
+        "snippets/icon-minus.liquid",
+        "snippets/icon-plus.liquid",
+        "snippets/product-information-blocks.liquid",
+        "sections/featured-product.liquid",
+        "assets/component-product-variant-picker.css",
+        "assets/header.js",
+        "assets/product-info.js",
+        "assets/theme.css"
+      ],
+      "open_questions": [],
+      "closes": []
+    },
+    {
+      "nr": 2,
+      "title": "Seitenaufbau",
+      "url": "https://claude.ai/artifact/T6yrQ4YkCr6twibz5Wq5GP",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "layout/**",
+        "sections/header-group.json",
+        "sections/footer-group.json",
+        "sections/overlay-group.json",
+        "snippets/mdm-consentmanager.liquid",
+        "snippets/mdm-werbecode-seo.liquid",
+        "templates/*.json",
+        "templates/customers/*.json",
+        "assets/vendor.css",
+        "assets/theme.css",
+        "assets/brand-overrides.css",
+        "assets/vendor.js",
+        "assets/theme.js",
+        "assets/mdm-page-retoure.css",
+        "config/settings_data.json"
+      ],
+      "open_questions": [
+        "Legt die Shopify-App Forms Templates ohne layout-Schlüssel an? Beweis nur über das Ereignisprotokoll im Admin"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 3,
+      "title": "Einstellungen",
+      "url": "https://claude.ai/artifact/5tyaiaCrKwaTNSeD2WWGXo",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "config/**",
+        "snippets/css-variables.liquid",
+        "snippets/js-variables.liquid",
+        "snippets/card-product.liquid",
+        "snippets/mdm-card-product.liquid",
+        "assets/brand-overrides.css",
+        "assets/mdm-*.css",
+        "sections/overlay-group.json",
+        "templates/*.json"
+      ],
+      "open_questions": [
+        "Sichtprüfung der Bereiche mit fehlenden Farbschemata steht aus: Warenkorb-Empfehlungen, /collections, Seite contact"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 4,
+      "title": "Templates",
+      "url": "https://claude.ai/artifact/JYKMQzLmPEGfuVPgyUVPA4",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 5,
+      "sources": [
+        "templates/**",
+        "blocks/**",
+        "sections/header-group.json",
+        "sections/footer-group.json",
+        "sections/overlay-group.json",
+        "snippets/mdm-product-shipping-returns.liquid",
+        "snippets/mdm-product-tax-note.liquid",
+        "snippets/mdm-product-information-blocks.liquid",
+        "snippets/mdm-product-key-facts.liquid",
+        "snippets/mdm-product-price-eyebrow.liquid",
+        "layout/mdm-theme.liquid"
+      ],
+      "open_questions": [
+        "Rendert Shopify die 18 Seiten mit Suffix page über page.json? Abruf im Storefront fehlt, der Shop ist passwortgeschützt"
+      ],
+      "closes": [
+        "Etappe 2, Blatt 04 — 13 veröffentlichte Hilfe-Seiten nutzen page.Forms - Hilfeservice (lesende Admin-Abfrage, 15. Oktober 2026)"
+      ]
+    },
+    {
+      "nr": 5,
+      "title": "Namensraum",
+      "url": "https://claude.ai/artifact/YXsb8JwkbHagLrMJJQQdgs",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "sections/**",
+        "snippets/**",
+        "layout/**",
+        "assets/*.css",
+        "assets/*.js",
+        "README.md"
+      ],
+      "open_questions": [
+        "Sichtprüfung Quick View: welche Elemente der Produktseite fehlen über die Preisdarstellung hinaus"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 6,
+      "title": "Assets",
+      "url": "https://claude.ai/artifact/VaZivYZpYYmVGeAQsse9Te",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "assets/**",
+        "layout/mdm-theme.liquid",
+        "sections/mdm-*.liquid",
+        "snippets/mdm-*.liquid",
+        "snippets/css-variables.liquid",
+        "README.md"
+      ],
+      "open_questions": [
+        "Lädt die Produktseite die selbst gehosteten TTF-Dateien? Netzwerkmitschnitt fehlt"
+      ],
+      "closes": [
+        "Etappe 2, Prüfpunkt 04 — der Tabellenstil im Layout überstimmt die Haarlinie aus brand-overrides.css:562"
+      ]
+    },
+    {
+      "nr": 7,
+      "title": "Übersetzungen",
+      "url": "https://claude.ai/artifact/K2ZYN93xEvrMwGG6ZBaJLv",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "locales/**",
+        "snippets/mdm-*.liquid",
+        "sections/mdm-*.liquid",
+        "snippets/product-information-blocks.liquid",
+        "README.md"
+      ],
+      "open_questions": [
+        "Welche Sprachen sind im Shop veröffentlicht? shopLocales verlangt den Scope read_locales"
+      ],
+      "closes": []
+    },
+    {
+      "nr": 8,
+      "title": "Schnittstellen",
+      "url": "https://claude.ai/artifact/JAPjj2AUbDwjAagaiM95mn",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "snippets/mdm-*.liquid",
+        "layout/mdm-theme.liquid",
+        "assets/mdm-werbecode-seo.js",
+        "config/settings_data.json",
+        "templates/page.Forms - Hilfeservice.json",
+        "templates/product.reservierung.json",
+        "snippets/video.liquid",
+        "snippets/bpi-price.liquid"
+      ],
+      "open_questions": [
+        "Sind die Metafelder foxtheme.code_head und foxtheme.code_body belegt?",
+        "Führen die Metafeld-Definitionen im Admin dieselben Schlüssel wie der Code (lieferrhytmus gegen lieferrhythmus)?",
+        "Welche Fassung des Consent-Snippets ist die Quelle: Theme oder datalayer/mdm_consentmanager.liquid?"
+      ],
+      "closes": [
+        "Harness, Etappe 5 — themes/mdm ruft auf main kein /apps/ auf; die App-Proxy-Route hat in diesem Theme keinen Aufrufer"
+      ]
+    },
+    {
+      "nr": 9,
+      "title": "Auslieferung",
+      "url": "https://claude.ai/artifact/6G4Msh8TUhpp3VPnawdQCz",
+      "favicon": "🪙",
+      "icon": "coin",
+      "blaetter": 4,
+      "findings": 4,
+      "sources": [
+        "README.md",
+        ".theme-check.yml",
+        "locales/*.json",
+        "blocks/**"
+      ],
+      "open_questions": [
+        "Hat main eine Branch-Protection mit Review-Pflicht? Nur in den Repo-Einstellungen auf GitHub prüfbar"
+      ],
+      "closes": []
+    }
+  ]
+}
