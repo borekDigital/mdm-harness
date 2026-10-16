@@ -8,19 +8,26 @@ Die Waechter pruefen Woerter, nicht Text: In `git commit -m "git push --force"` 
 Befehlsersetzungen (`$(...)`, Backticks) und `bash -c`/`eval` werden mitzerlegt, weil
 die Shell sie ausfuehrt.
 
+Der Lexer folgt den Quoting-Regeln von Bash, nicht denen von shlex: `$(...)` oeffnet auch
+in "..." einen eigenen Quoting-Kontext, `<<` ist nur ausserhalb von Strings ein Heredoc,
+`$'...'` kennt Escapes, `#` beginnt nur am Wortanfang einen Kommentar. (shlex scheiterte an
+den ersten beiden Faellen — Fund aus dem CI-Lauf von PR #23.)
+
 Grenzen (bewusst): Variablen, Aliase und Funktionen werden nicht aufgeloest. Bei offenen
-Anfuehrungszeichen wirft `zerlege` ValueError — der Aufrufer entscheidet fail-closed.
+Anfuehrungszeichen oder Klammern wirft `zerlege` ValueError — der Aufrufer entscheidet fail-closed.
 """
 
 import posixpath
 import re
-import shlex
 
 TRENNER = {";", "&&", "||", "|", "&", "|&", "(", ")", ";;"}
 AUSGABE = {">", ">>", ">|", "&>", "&>>"}
 EINGABE = {"<", "<<", "<<<", "<>", "<&", "<<-"}
 WRAPPER = {"sudo", "env", "command", "builtin", "exec", "time", "nice", "nohup", "npx"}
 SHELLS = {"bash", "sh", "zsh", "dash"}
+# Laengste zuerst, damit "&&" vor "&" und "<<-" vor "<<" greift
+OPERATOREN = sorted(TRENNER | AUSGABE | EINGABE | {">&"}, key=len, reverse=True)
+WORTENDE = set(" \t\r\n;&|()<>")
 
 
 class Befehl:
@@ -33,83 +40,202 @@ class Befehl:
         return "Befehl(%r, %r, cwd=%r)" % (self.woerter, self.umleitungen, self.cwd)
 
 
-def _heredocs(text):
-    """Heredoc-Inhalte entfernen. Liefert (befehlstext, inhalte_mit_ersetzung)."""
-    zeilen = text.split("\n")
-    raus, ersetzbar, i = [], [], 0
-    while i < len(zeilen):
-        zeile = zeilen[i]
-        raus.append(zeile)
-        i += 1
-        for m in re.finditer(r"<<(-?)\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\2", zeile):
-            tabs, quote, ende = m.group(1), m.group(2), m.group(3)
-            inhalt = []
-            while i < len(zeilen):
-                z = zeilen[i].lstrip("\t") if tabs else zeilen[i]
-                i += 1
-                if z == ende:
-                    break
-                inhalt.append(zeilen[i - 1])
-            if not quote:  # ungequotet: die Shell fuehrt $(...) im Inhalt aus
-                ersetzbar.append("\n".join(inhalt))
-    return "\n".join(raus), ersetzbar
+class _Lexer:
+    """Text -> Token ('w', wort) | ('op', operator) | ('nl', '\\n').
 
-
-def _ersetzungen(text, quoting=True):
-    """Inhalte von $(...) und `...`, die die Shell ausfuehrt.
-
-    Nicht ausgefuehrt werden: alles in einfachen Anfuehrungszeichen, escapte Backticks (\\`)
-    und $((...)) (Arithmetik). In Heredoc-Inhalten gilt kein Quoting (quoting=False).
+    Sammelt nebenbei die Inhalte von Befehlsersetzungen, die die Shell ausfuehrt.
     """
-    funde, i, n, einfach = [], 0, len(text), False
+
+    def __init__(self, text):
+        self.t, self.i, self.n = text, 0, len(text)
+        self.ersetzungen = []
+        self.offene_heredocs = []  # [(ende, tabs_entfernen, gequotet)]
+
+    def token(self):
+        toks = []
+        while self.i < self.n:
+            c = self.t[self.i]
+            if c in " \t\r":
+                self.i += 1
+            elif c == "\\" and self.t[self.i + 1:self.i + 2] == "\n":
+                self.i += 2  # Zeilenfortsetzung
+            elif c == "\n":
+                self.i += 1
+                toks.append(("nl", "\n"))
+                self._heredoc_inhalte()
+            elif c == "#":
+                while self.i < self.n and self.t[self.i] != "\n":
+                    self.i += 1
+            else:
+                op = next((o for o in OPERATOREN if self.t.startswith(o, self.i)), None)
+                if op:
+                    self.i += len(op)
+                    toks.append(("op", op))
+                    if op in ("<<", "<<-"):
+                        while self.i < self.n and self.t[self.i] in " \t":
+                            self.i += 1
+                        roh_start = self.i
+                        ende = self._wort()
+                        gequotet = any(q in self.t[roh_start:self.i] for q in "'\"\\")
+                        self.offene_heredocs.append((ende, op == "<<-", gequotet))
+                        toks.append(("w", ende))
+                else:
+                    toks.append(("w", self._wort()))
+        return toks
+
+    def _wort(self):
+        teile = []
+        while self.i < self.n and self.t[self.i] not in WORTENDE:
+            c = self.t[self.i]
+            if c == "\\":
+                if self.i + 1 >= self.n:
+                    raise ValueError("Backslash am Ende")
+                teile.append(self.t[self.i + 1])
+                self.i += 2
+            elif c == "'":
+                ende = self.t.find("'", self.i + 1)
+                if ende < 0:
+                    raise ValueError("Kein schliessendes '")
+                teile.append(self.t[self.i + 1:ende])
+                self.i = ende + 1
+            elif c == "$" and self.t[self.i + 1:self.i + 2] == "'":
+                teile.append(self._ansi_c())
+            elif c == '"':
+                teile.append(self._doppelt())
+            elif c == "$" and self.t[self.i + 1:self.i + 2] == "(":
+                teile.append(self._klammer())
+            elif c == "`":
+                teile.append(self._backtick())
+            else:
+                teile.append(c)
+                self.i += 1
+        return "".join(teile)
+
+    def _ansi_c(self):
+        i, teile = self.i + 2, []
+        while i < self.n and self.t[i] != "'":
+            if self.t[i] == "\\" and i + 1 < self.n:
+                teile.append(self.t[i + 1])
+                i += 2
+            else:
+                teile.append(self.t[i])
+                i += 1
+        if i >= self.n:
+            raise ValueError("Kein schliessendes ' in $'...'")
+        self.i = i + 1
+        return "".join(teile)
+
+    def _doppelt(self):
+        self.i += 1
+        teile = []
+        while self.i < self.n and self.t[self.i] != '"':
+            c = self.t[self.i]
+            if c == "\\" and self.i + 1 < self.n:
+                nachfolger = self.t[self.i + 1]
+                teile.append(nachfolger if nachfolger in '$`"\\\n' else "\\" + nachfolger)
+                self.i += 2
+            elif c == "$" and self.t[self.i + 1:self.i + 2] == "(":
+                teile.append(self._klammer())
+            elif c == "`":
+                teile.append(self._backtick())
+            else:
+                teile.append(c)
+                self.i += 1
+        if self.i >= self.n:
+            raise ValueError('Kein schliessendes "')
+        self.i += 1
+        return "".join(teile)
+
+    def _klammer(self):
+        """$(...) oder $((...)) ab self.i; liefert den Rohtext, merkt sich den Inhalt."""
+        start = self.i
+        arithmetik = self.t[start + 2:start + 3] == "("
+        self.i += 2
+        tiefe = 1
+        while self.i < self.n:
+            c = self.t[self.i]
+            if c == "\\":
+                self.i += 2
+            elif c == "'":
+                ende = self.t.find("'", self.i + 1)
+                if ende < 0:
+                    raise ValueError("Kein schliessendes ' in $(...)")
+                self.i = ende + 1
+            elif c == '"':
+                self._doppelt()
+            elif c == "`":
+                self._backtick()
+            elif c == "(":
+                tiefe += 1
+                self.i += 1
+            elif c == ")":
+                tiefe -= 1
+                self.i += 1
+                if tiefe == 0:
+                    break
+            else:
+                self.i += 1
+        if tiefe:
+            raise ValueError("Keine schliessende Klammer fuer $(")
+        roh = self.t[start:self.i]
+        if not arithmetik:
+            self.ersetzungen.append(self.t[start + 2:self.i - 1])
+        return roh
+
+    def _backtick(self):
+        start = self.i
+        i, teile = self.i + 1, []
+        while i < self.n and self.t[i] != "`":
+            if self.t[i] == "\\" and i + 1 < self.n:
+                teile.append(self.t[i + 1])
+                i += 2
+            else:
+                teile.append(self.t[i])
+                i += 1
+        if i >= self.n:
+            raise ValueError("Kein schliessender Backtick")
+        self.ersetzungen.append("".join(teile))
+        self.i = i + 1
+        return self.t[start:self.i]
+
+    def _heredoc_inhalte(self):
+        """Nach einem Zeilenumbruch: Inhalte offener Heredocs ueberspringen (Daten, kein Befehl)."""
+        for ende, tabs, gequotet in self.offene_heredocs:
+            zeilen = []
+            while self.i < self.n:
+                nl = self.t.find("\n", self.i)
+                zeile = self.t[self.i:] if nl < 0 else self.t[self.i:nl]
+                self.i = self.n if nl < 0 else nl + 1
+                if (zeile.lstrip("\t") if tabs else zeile) == ende:
+                    break
+                zeilen.append(zeile)
+            if not gequotet:  # ungequotet: die Shell fuehrt $(...) im Inhalt aus
+                self.ersetzungen.extend(_ersetzungen_ohne_quoting("\n".join(zeilen)))
+        self.offene_heredocs = []
+
+
+def _ersetzungen_ohne_quoting(text):
+    """$(...) und Backticks in Heredoc-Inhalten (dort gilt kein Quoting)."""
+    funde, i, n = [], 0, len(text)
     while i < n:
-        c = text[i]
-        if c == "\\" and not einfach:
+        if text[i] == "\\":
             i += 2
-            continue
-        if quoting and c == "'":
-            einfach = not einfach
-        elif einfach:
-            pass
-        elif c == "$" and text[i + 1:i + 2] == "(" and text[i + 2:i + 3] != "(":
+        elif text.startswith("$(", i) and not text.startswith("$((", i):
             tiefe, j = 1, i + 2
             while j < n and tiefe:
                 tiefe += {"(": 1, ")": -1}.get(text[j], 0)
                 j += 1
             funde.append(text[i + 2:j - 1])
             i = j
-            continue
-        elif c == "`":
-            puffer, j = [], i + 1
-            while j < n and text[j] != "`":
-                if text[j] == "\\" and j + 1 < n:
-                    puffer.append(text[j + 1])
-                    j += 2
-                    continue
-                puffer.append(text[j])
-                j += 1
-            funde.append("".join(puffer))
+        elif text[i] == "`":
+            j = text.find("`", i + 1)
+            if j < 0:
+                break
+            funde.append(text[i + 1:j])
             i = j + 1
-            continue
-        i += 1
-    return funde
-
-
-def _token(text):
-    lex = shlex.shlex(text, posix=True, punctuation_chars=True)
-    lex.whitespace = " \t\r"
-    lex.whitespace_split = False
-    lex.commenters = "#"
-    toks = []
-    for t in lex:
-        if t and set(t) <= set("();<>|&\n") and "\n" in t:
-            # shlex fasst Satzzeichen zusammen ("|\n"): Zeilenumbruch abtrennen
-            for teil in re.split(r"(\n)", t):
-                if teil:
-                    toks.append(teil)
         else:
-            toks.append(t)
-    return toks
+            i += 1
+    return funde
 
 
 def _ohne_wrapper(w):
@@ -130,10 +256,9 @@ def _ohne_wrapper(w):
 
 
 def zerlege(text, cwd=""):
-    """Befehlstext -> [Befehl]. Wirft ValueError bei offenen Anfuehrungszeichen."""
-    text = text.replace("\\\n", " ")
-    befehlstext, heredoc_inhalte = _heredocs(text)
-    toks = _token(befehlstext)
+    """Befehlstext -> [Befehl]. Wirft ValueError bei offenen Anfuehrungszeichen oder Klammern."""
+    lexer = _Lexer(text)
+    toks = lexer.token()
 
     ergebnis, woerter, umleitungen = [], [], []
 
@@ -153,11 +278,11 @@ def zerlege(text, cwd=""):
 
     i = 0
     while i < len(toks):
-        t = toks[i]
-        if t in TRENNER or t == "\n":
+        art, t = toks[i]
+        if art == "nl" or (art == "op" and t in TRENNER):
             abschliessen()
-        elif t in AUSGABE or t == ">&":
-            ziel = toks[i + 1] if i + 1 < len(toks) else ""
+        elif art == "op" and (t in AUSGABE or t == ">&"):
+            ziel = toks[i + 1][1] if i + 1 < len(toks) and toks[i + 1][0] == "w" else ""
             i += 1
             if woerter and re.fullmatch(r"\d+", woerter[-1]):
                 woerter.pop()  # "2>" — die 2 ist der Dateideskriptor, kein Argument
@@ -165,7 +290,7 @@ def zerlege(text, cwd=""):
                 pass  # 2>&1: Kopie eines Dateideskriptors
             elif ziel != "/dev/null":
                 umleitungen.append((">" if t == ">&" else t, ziel))
-        elif t in EINGABE:
+        elif art == "op" and t in EINGABE:
             i += 1
             if woerter and re.fullmatch(r"\d+", woerter[-1]):
                 woerter.pop()
@@ -174,6 +299,6 @@ def zerlege(text, cwd=""):
         i += 1
     abschliessen()
 
-    for inhalt in _ersetzungen(befehlstext) + [e for h in heredoc_inhalte for e in _ersetzungen(h, quoting=False)]:
+    for inhalt in lexer.ersetzungen:
         ergebnis.extend(zerlege(inhalt, cwd))
     return ergebnis

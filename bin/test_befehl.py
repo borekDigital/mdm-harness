@@ -89,6 +89,40 @@ class ParserTest(unittest.TestCase):
     def test_backticks_in_einfachen_anfuehrungszeichen_sind_text(self):
         self.assertEqual(woerter("echo 'nutze `rm x` nie'"), [["echo", "nutze `rm x` nie"]])
 
+    # --- Fehlalarme aus dem CI-Lauf „Bauplan auffrischen" (PR #23, Etappe 3) ---
+
+    def test_anfuehrungszeichen_in_ersetzung_in_doppelten(self):
+        # Bash: $(...) in "..." oeffnet einen neuen Quoting-Kontext; ' darin enthaelt ein ".
+        w = woerter("echo \"Treffer: $(grep -c 'a\"b' datei.txt)\"")
+        self.assertEqual(w[0][0], "echo")
+        self.assertIn(["grep", "-c", 'a"b', "datei.txt"], w)
+
+    def test_heredoc_operator_im_string_ist_text(self):
+        cmd = 'git commit -m "Heredoc-Erkennung: <<EOF\nzweite Zeile"\nls'
+        self.assertEqual(woerter(cmd), [["git", "commit", "-m", "Heredoc-Erkennung: <<EOF\nzweite Zeile"], ["ls"]])
+
+    def test_heredoc_operator_im_string_einzeilig(self):
+        self.assertEqual(woerter('grep -n "<<EOF" sync.sh'), [["grep", "-n", "<<EOF", "sync.sh"]])
+
+    def test_verschachtelte_doppelte_anfuehrungszeichen(self):
+        self.assertIn(["echo", "innen"], woerter('echo "$(echo "innen")"'))
+
+    def test_here_string(self):
+        self.assertEqual(woerter('cat <<< "text mit <<EOF"'), [["cat"]])
+
+    def test_ansi_c_quoting(self):
+        self.assertEqual(woerter("echo $'a\\'b'"), [["echo", "a'b"]])
+
+    def test_kommentar_nur_am_wortanfang(self):
+        self.assertEqual(woerter("echo a#b # rm docs/bauplan"), [["echo", "a#b"]])
+
+    def test_arithmetik_ist_keine_ersetzung(self):
+        self.assertEqual(woerter("echo $((1+2))"), [["echo", "$((1+2))"]])
+
+    def test_ersetzung_ohne_schliessende_klammer(self):
+        with self.assertRaises(ValueError):
+            befehl.zerlege("echo $(rm docs/bauplan")
+
     def test_offenes_anfuehrungszeichen(self):
         with self.assertRaises(ValueError):
             befehl.zerlege('rm "docs/bauplan')
