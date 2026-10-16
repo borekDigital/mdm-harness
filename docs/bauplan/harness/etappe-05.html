@@ -404,7 +404,7 @@
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>workspace.yaml · .claude/rules · .claude/bauplan</dd></div>
       <div class="tb-cell"><dt>Repos</dt><dd>8 Arbeits-Repos · 2 Plattformen</dd></div>
-      <div class="tb-cell"><dt>Abdeckung</dt><dd>7 Rules · 3 Blattsätze · 1 Spec-Satz</dd></div>
+      <div class="tb-cell"><dt>Abdeckung</dt><dd>Rules für 7 Repos · 3 Blattsätze · 1 Spec-Satz</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
@@ -478,7 +478,7 @@
         <text x="100" y="242" class="s-name">creditcheck</text>
         <text x="268" y="242" class="s-mono f-dim">creditcheck/</text>
         <text x="452" y="242" class="s-mono f-dim">gitlab.mdm.de</text>
-        <text x="646" y="242" class="s-tiny f-dim">PHP 7.4 · Symfony</text>
+        <text x="646" y="242" class="s-tiny f-dim">PHP 7.4 · Symfony 5.4</text>
 
         <rect x="88" y="256" width="848" height="30" rx="2" fill="var(--worker)" fill-opacity="0.09" stroke="var(--worker)" stroke-opacity="0.35"></rect>
         <text x="100" y="276" class="s-name">emailservice</text>
@@ -490,7 +490,7 @@
         <text x="100" y="310" class="s-name">payment-service</text>
         <text x="268" y="310" class="s-mono f-dim">payment-service/</text>
         <text x="452" y="310" class="s-mono f-dim">gitlab.mdm.de</text>
-        <text x="646" y="310" class="s-tiny f-dim">PHP 8.3 · Symfony 7.1 · Nuxt</text>
+        <text x="646" y="310" class="s-tiny f-dim">PHP 8.3 · Symfony 7.2 · Nuxt 2</text>
 
         <line x1="88" y1="220" x2="936" y2="220" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 4"></line>
 
@@ -503,7 +503,13 @@
         Repos fehl:</b> <code>creditcheck</code>, <code>emailservice</code>,
         <code>payment-service</code>. Das Skript meldet drei Einzelfehler mit einer Ursache.
         Relevant beim Einrichten: <code>group</code> benennt Plattform, Team und Zugangsweg
-        zugleich.</figcaption>
+        zugleich. Die Technik-Spalte folgt dem Feld <code>tech</code>
+        (<code>workspace.yaml:69</code>, <code>:89</code>); seit dem 16. Oktober 2026 nennt
+        es die Symfony-Version auch für <code>creditcheck</code> und die Nuxt-Generation für
+        <code>payment-service</code>. Gegen die Lockfiles prüft
+        <code>bin/harness-check.py:173–205</code> (H19) nur die Versionstabelle in
+        <code>.claude/rules/doku-quellen.md</code>, nicht dieses Feld; ist ein Repo nicht
+        geklont, überspringt die Prüfung die Zeile.</figcaption>
     </figure>
   </section>
 
@@ -685,7 +691,9 @@
     <p class="lead">Die Harness deckt ihre Repos auf drei Arten ab: path-scoped Rules unter
       <code>.claude/rules/</code>, Specs unter <code>.claude/specs/</code>, Blattsätze unter
       <code>docs/bauplan/</code>. Rules decken sieben der acht Repos ab, Specs eines,
-      Blattsätze drei. Ein Repo trägt in allen drei Spalten eine leere Zelle.</p>
+      Blattsätze drei. Ein Repo trägt in allen drei Spalten eine leere Zelle. Nicht in der
+      Matrix steht <code>doku-quellen.md</code>: die Rule hat kein <code>paths</code>, gilt
+      in jeder Sitzung und nennt Doku-Quellen, keine Konventionen eines Repos.</p>
 
     <figure>
       <svg viewBox="0 0 960 384" role="img" aria-label="Matrix aus acht Repos gegen drei Arten der Abdeckung. Sieben Repos sind von Rules gedeckt, nur theme-mdm hat Specs, connector, emailservice und theme-mdm haben einen Blattsatz. Datalayer hat in allen drei Spalten eine leere Zelle.">
@@ -780,7 +788,9 @@
           <h3><code>datalayer</code> steht in keiner Rule und in keinem Manifest</h3>
           <p>Als einziges der acht Repos nennt es keine <code>paths</code>-Liste unter
             <code>.claude/rules/</code>. Die anderen sieben deckt mindestens eine Rule ab.
-            Specs und Blattsatz fehlen ebenfalls.</p>
+            Specs und Blattsatz fehlen ebenfalls. Die immer geladene
+            <code>doku-quellen.md:40</code> nennt für den GTM-dataLayer eine Doku-Quelle; eine
+            Konvention für das Repo ist das nicht.</p>
           <p>Folge: Beim Bearbeiten greift kein PostToolUse-Hook, und
             <code>bin/bauplan-stale.py</code> kennt das Verzeichnis nicht. Eine Rule unter
             <code>.claude/rules/</code> schließt die erste Lücke; die zweite schließt erst

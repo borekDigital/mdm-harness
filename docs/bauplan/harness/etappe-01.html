@@ -403,7 +403,7 @@
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>sync.sh · setup.sh · workspace.yaml</dd></div>
-      <div class="tb-cell"><dt>Steuerdateien</dt><dd>12 Agenten · 10 Skills · 11 Hooks · 5 Rules</dd></div>
+      <div class="tb-cell"><dt>Steuerdateien</dt><dd>12 Agenten · 10 Skills · 13 Hooks · 6 Rules</dd></div>
       <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>466 setup · 253 sync</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
@@ -434,17 +434,17 @@
         <text x="32" y="30" class="s-lbl f-web">im Harness-Repo versioniert</text>
 
         <text x="32" y="66" class="s-name">.claude/</text>
-        <text x="46" y="86" class="s-tiny f-dim">agents/ 12 Dateien, 1000 Zeilen</text>
+        <text x="46" y="86" class="s-tiny f-dim">agents/ 12 Dateien, 1103 Zeilen</text>
         <text x="46" y="102" class="s-tiny f-dim">skills/ 10 Verzeichnisse</text>
-        <text x="46" y="118" class="s-tiny f-dim">hooks/ 11 Skripte, 650 Zeilen</text>
-        <text x="46" y="134" class="s-tiny f-dim">rules/ 5 Dateien, 192 Zeilen</text>
-        <text x="46" y="150" class="s-tiny f-dim">specs/ 35 Dateien · bauplan/ Manifeste</text>
+        <text x="46" y="118" class="s-tiny f-dim">hooks/ 13 Skripte, 651 Zeilen</text>
+        <text x="46" y="134" class="s-tiny f-dim">rules/ 6 Dateien, 262 Zeilen</text>
+        <text x="46" y="150" class="s-tiny f-dim">specs/ 38 Dateien · bauplan/ Manifeste</text>
         <text x="46" y="166" class="s-tiny f-dim">settings.json — Rechte und Hook-Verdrahtung</text>
 
         <text x="32" y="196" class="s-name">Skripte</text>
         <text x="46" y="216" class="s-tiny f-dim">setup.sh 466 Zeilen — klont Repos</text>
         <text x="46" y="232" class="s-tiny f-dim">sync.sh 253 Zeilen — erzeugt CLAUDE.md</text>
-        <text x="46" y="248" class="s-tiny f-dim">bin/ 13 Dateien: 11 für Blattsätze, 2 für theme-sync</text>
+        <text x="46" y="248" class="s-tiny f-dim">bin/ 22 Dateien: 11 Blattsatz, 2 theme-sync, 9 Prüfung und Wächter</text>
 
         <text x="32" y="278" class="s-name">Vorlagen und Doku</text>
         <text x="46" y="298" class="s-tiny f-dim">templates/ 7 Bausteine für CLAUDE.md</text>
@@ -563,7 +563,7 @@
         <text x="690" y="250" class="s-tiny f-alert">Eingabe und Ausgabe zugleich</text>
 
         <rect x="16" y="276" width="928" height="66" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="32" y="298" class="s-tiny">Ausgelöst wird das an drei Stellen: von Hand, durch <tspan class="s-mono">git-hooks/post-merge</tspan> nach jedem Pull, und durch den Stop-Hook post-implement-harness-sync.</text>
+        <text x="32" y="298" class="s-tiny">Ausgelöst wird das an zwei Stellen: von Hand und durch <tspan class="s-mono">git-hooks/post-merge</tspan> nach jedem Pull. Kein Hook in .claude/hooks/ ruft sync.sh auf.</text>
         <text x="32" y="318" class="s-tiny f-dim">Der post-merge-Hook muss auf jedem Rechner einzeln eingerichtet werden — Git verteilt Hooks nicht über den Klon.</text>
         <text x="32" y="336" class="s-tiny f-dim">Ein Rechner ohne diesen Hook arbeitet nach einem Pull mit einer veralteten CLAUDE.md weiter, ohne Hinweis.</text>
       </svg>
@@ -721,21 +721,20 @@
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Vier Slash-Befehle sind dokumentiert, aber nicht aufrufbar</h3>
-          <p><b>Beleg:</b> <code>README.md</code> und <code>.claude/README.md</code> führen
-             <code>/figma-to-liquid</code>, <code>/mdm-block</code>,
-             <code>/mdm-template</code> und <code>/mdm-notes</code> als Slash-Befehle. Keine
-             der vier <code>SKILL.md</code> trägt <code>user_invocable: true</code>; nur vier
-             der zehn Skills tun das.</p>
-          <p><b>Konsequenz:</b> Der Aufruf liefert keinen Skill und keine Meldung, die
-             das erklärt.</p>
-          <p><b>Fix:</b> Entweder <code>user_invocable: true</code> ergänzen oder die vier
-             aus den Slash-Tabellen nehmen. Die Entscheidung ist inhaltlich — laut README
-             delegiert <code>mdm-template</code> an <code>mdm-block</code>, und
-             <code>figma-to-liquid</code> ist eine Konventionssammlung, also möglicherweise
-             zu Recht kein Einstiegspunkt. Die übrige Doku-Drift (ein Skill, vier Hooks,
-             zwölf Einträge zur entfernten <code>data.json</code>) wurde am
-             10. September 2026 nachgetragen.</p>
+          <h3>Erledigt: alle zehn Skills sind als Slash-Befehl aufrufbar</h3>
+          <p><b>Vorher:</b> Dieser Prüfpunkt meldete vier Slash-Befehle
+             (<code>/figma-to-liquid</code>, <code>/mdm-block</code>,
+             <code>/mdm-template</code>, <code>/mdm-notes</code>) als nicht aufrufbar, weil
+             ihre <code>SKILL.md</code> kein <code>user_invocable: true</code> trugen. Die
+             Annahme war falsch: Claude Code kennt nur <code>user-invocable</code> mit
+             Bindestrich, Default <code>true</code>. Der Schlüssel mit Unterstrich war
+             wirkungslos (<code>.claude/specs/harness/claude-struktur-aktuell.md:29</code>).</p>
+          <p><b>Jetzt:</b> Commit <code>c022abe</code> entfernt <code>user_invocable</code> aus
+             den vier Skills, die ihn trugen; keine <code>SKILL.md</code> führt ihn noch. Am
+             16. Oktober 2026 listet eine Sitzung alle zehn Skills als aufrufbar, darunter
+             die vier aus den Slash-Tabellen in <code>README.md:91–94</code>.</p>
+          <p><b>Offen:</b> <code>README.md:45</code> zählt weiterhin 7 Skills, im
+             Verzeichnis liegen 10.</p>
         </div>
       </div>
       <div class="check">
@@ -751,9 +750,10 @@
              <code>workspace.yaml</code> und den Manifesten in
              <code>.claude/bauplan/</code> und kann deshalb nicht mehr vom Bestand
              abweichen. <code>harness-app/</code> ist entfernt.</p>
-          <p><b>Offen:</b> Der Drift-Melder prüft weiterhin gegen
-             <code>harness-app/data.json</code> und steigt bei fehlender Datei still aus
-             (Etappe 3, Prüfpunkt 02).</p>
+          <p><b>Nachtrag:</b> Seit Commit <code>c022abe</code> prüft auch der Drift-Melder
+             nicht mehr gegen <code>harness-app/data.json</code>. Er gleicht Agenten, Skills,
+             Hooks und Rules nur noch mit <code>.claude/README.md</code> ab
+             (<code>.claude/hooks/post-implement-harness-sync.sh:9–10</code>, Etappe 3).</p>
         </div>
       </div>
       <div class="check">

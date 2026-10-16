@@ -403,10 +403,10 @@
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>12 Agenten-Frontmatter</dd></div>
-      <div class="tb-cell"><dt>Zeilen</dt><dd>992 gesamt</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>1103 gesamt</dd></div>
       <div class="tb-cell"><dt>Schreibgesperrt</dt><dd>4 von 12</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>14. Oktober 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -521,7 +521,7 @@
         <text x="510" y="68" text-anchor="middle" class="s-tiny">liquid-implementer</text>
         <rect x="610" y="46" width="160" height="34" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.55"></rect>
         <text x="690" y="68" text-anchor="middle" class="s-tiny">theme-reviewer</text>
-        <text x="860" y="68" text-anchor="middle" class="s-tiny f-dim">74 · 112 · 74 · 44</text>
+        <text x="860" y="68" text-anchor="middle" class="s-tiny f-dim">81 · 122 · 86 · 54</text>
 
         <text x="16" y="118" class="s-mono">connector</text>
         <rect x="70" y="94" width="160" height="34" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="4 3"></rect>
@@ -532,7 +532,7 @@
         <text x="510" y="116" text-anchor="middle" class="s-tiny">rails-implementer</text>
         <rect x="610" y="94" width="160" height="34" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.55"></rect>
         <text x="690" y="116" text-anchor="middle" class="s-tiny">rails-reviewer</text>
-        <text x="860" y="116" text-anchor="middle" class="s-tiny f-dim">— · 128 · 103 · 56</text>
+        <text x="860" y="116" text-anchor="middle" class="s-tiny f-dim">— · 138 · 112 · 66</text>
 
         <text x="16" y="166" class="s-mono">middleware</text>
         <rect x="70" y="142" width="160" height="34" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="4 3"></rect>
@@ -543,7 +543,7 @@
         <text x="510" y="164" text-anchor="middle" class="s-tiny">symfony-implementer</text>
         <rect x="610" y="142" width="160" height="34" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.55"></rect>
         <text x="690" y="164" text-anchor="middle" class="s-tiny">symfony-reviewer</text>
-        <text x="860" y="164" text-anchor="middle" class="s-tiny f-dim">— · 127 · 98 · 55</text>
+        <text x="860" y="164" text-anchor="middle" class="s-tiny f-dim">— · 137 · 107 · 65</text>
 
         <text x="16" y="214" class="s-mono">datalayer</text>
         <rect x="70" y="190" width="700" height="34" rx="2" fill="none" stroke="var(--alert)" stroke-opacity="0.45" stroke-dasharray="4 3"></rect>
@@ -551,12 +551,15 @@
         <text x="860" y="212" text-anchor="middle" class="s-tiny f-dim">0</text>
 
         <line x1="16" y1="234" x2="944" y2="234" stroke="currentColor" stroke-opacity="0.2"></line>
-        <text x="16" y="254" class="s-tiny f-dim">Übergreifend: security-reviewer (50 Zeilen) prüft alle Repos, docs-writer (71 Zeilen) schreibt die Abschlussdoku. Zusammen 992 Zeilen.</text>
+        <text x="16" y="254" class="s-tiny f-dim">Übergreifend: security-reviewer (58 Zeilen) prüft alle Repos, docs-writer (77 Zeilen) schreibt die Abschlussdoku. Zusammen 1103 Zeilen.</text>
       </svg>
-      <figcaption><b>Die Zeilenzahlen verraten, wo die Arbeit steckt:</b> Planer sind mit 112
-        bis 128 Zeilen die längsten Dateien, Prüfer mit 44 bis 56 die kürzesten. Planen
+      <figcaption><b>Die Zeilenzahlen verraten, wo die Arbeit steckt:</b> Planer sind mit 122
+        bis 138 Zeilen die längsten Dateien, Prüfer mit 54 bis 66 die kürzesten. Planen
         braucht Anweisungen, Prüfen braucht eine Checkliste. Die Substanz einer Anpassung
-        liegt deshalb bei den Planern.</figcaption>
+        liegt deshalb bei den Planern. Von den 111 Zeilen seit dem 14. Oktober 2026 gehören
+        die meisten zum Abschnitt <code>## Doku-Quellen</code>, den Commit
+        <code>e09cbf2</code> in alle zwölf Dateien setzt; fehlt er, meldet
+        <code>bin/harness-check.py:120–122</code> den Befund H18.</figcaption>
     </figure>
   </section>
 
@@ -590,7 +593,7 @@
       dieselbe Zugrenze von 30 und soll damit tiefer suchen — Sicherheitslücken zeigen sich
       seltener beim Überfliegen. Die Zugrenzen selbst steigen mit dem Schreibumfang: 20 für
       Doku, 30 fürs Lesen und Prüfen, 40 fürs Planen, 50 fürs Umsetzen.</p>
-    <p class="lead">Seit dem 12. Oktober 2026 legt <code>.claude/settings.json:2</code> das
+    <p class="lead">Seit dem 12. Oktober 2026 legt <code>.claude/settings.json:3</code> das
       Sitzungsmodell auf <code>opus</code> fest. Im selben Commit wechselten die drei
       Umsetzer von <code>model: inherit</code> auf <code>model: sonnet</code> (Zeile 4 jeder
       Umsetzer-Datei). Damit schreibt ein anderes Modell den Code als das, das ihn plant, und
@@ -654,7 +657,7 @@
         <span class="check-no">02</span>
         <div>
           <h3>Für <code>datalayer</code> gibt es keinen Agenten</h3>
-          <p><b>Beleg:</b> Der Entscheidungsbaum in <code>.claude/README.md:40</code> leitet
+          <p><b>Beleg:</b> Der Entscheidungsbaum in <code>.claude/README.md:42</code> leitet
              „Datalayer (GTM)" auf einen „Datalayer-Workflow". In <code>.claude/agents/</code>
              liegt kein Agent für diesen Bereich, in <code>.claude/rules/</code> keine Rule mit
              <code>datalayer/**</code> im Pfad-Scope.</p>

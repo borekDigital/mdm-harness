@@ -402,17 +402,17 @@
          entscheidet über einen <strong>einzelnen Werkzeugaufruf</strong>.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>10 SKILL.md · 5 Rules · settings.json</dd></div>
-      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 255 gesamt</dd></div>
-      <div class="tb-cell"><dt>Rechte</dt><dd>17 erlaubt · 2 verboten</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>10 SKILL.md · 6 Rules · settings.json</dd></div>
+      <div class="tb-cell"><dt>Skill-Zeilen</dt><dd>1 251 gesamt</dd></div>
+      <div class="tb-cell"><dt>Rechte</dt><dd>17 erlaubt · 1 verboten</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
-    <span class="legend-item"><i class="swatch sw-web"></i>Aufrufbar <span>— user_invocable: true</span></span>
-    <span class="legend-item"><i class="swatch sw-worker"></i>Nur intern <span>— von einem Skill geladen</span></span>
+    <span class="legend-item"><i class="swatch sw-web"></i>Aufrufbar <span>— user-invocable, Default true</span></span>
+    <span class="legend-item"><i class="swatch sw-worker"></i>Entfernt <span>— Schlüssel ohne Wirkung</span></span>
     <span class="legend-item"><i class="swatch sw-vite"></i>Pfad-gebunden <span>— Rule greift automatisch</span></span>
     <span class="legend-item"><i class="swatch sw-alert"></i>Lücke <span>— dokumentiert, aber nicht vorhanden</span></span>
   </div>
@@ -424,12 +424,13 @@
       <h2>Skills und README</h2>
     </div>
     <p class="lead">Ob ein Skill mit <code>/</code> aufgerufen werden kann, entscheidet
-      allein <code>user_invocable: true</code> im Frontmatter. Sechs der zehn Skills tragen
-      es nicht, werden aber als Slash-Befehl geschrieben — seit dem 17. September 2026 zwei
-      mehr als zuvor.</p>
+      <code>user-invocable</code> im Frontmatter — mit Bindestrich, Default
+      <code>true</code>. Der Schlüssel <code>user_invocable</code> mit Unterstrich, den vier
+      Skills trugen, hatte keine Wirkung; Commit <code>c022abe</code> entfernt ihn. Alle zehn
+      Skills sind aufrufbar, weil keiner den Default abschaltet.</p>
 
     <figure>
-      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von zehn Skills. Vier sind aufrufbar: connector-feature, middleware-feature, repo-bauplan und setup. Sechs weitere werden als Slash-Befehl geschrieben, tragen aber kein user_invocable und sind daher nicht aufrufbar.">
+      <svg viewBox="0 0 960 290" role="img" aria-label="Vergleich von zehn Skills. Vier trugen den wirkungslosen Schlüssel user_invocable, der entfernt wurde: connector-feature, middleware-feature, repo-bauplan und setup. Sechs weitere tragen keinen Schlüssel. Alle zehn sind über den Default aufrufbar.">
         <text x="16" y="28" class="s-lbl f-dim">Skill</text>
         <text x="440" y="28" text-anchor="middle" class="s-lbl f-dim">Frontmatter</text>
         <text x="640" y="28" text-anchor="middle" class="s-lbl f-dim">README</text>
@@ -437,47 +438,48 @@
 
         <rect x="16" y="42" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
         <text x="30" y="64" class="s-mono">connector-feature</text>
-        <text x="230" y="64" class="s-tiny f-dim">145 Zeilen</text>
-        <text x="440" y="64" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
+        <text x="230" y="64" class="s-tiny f-dim">144 Zeilen</text>
+        <text x="440" y="64" text-anchor="middle" class="s-tiny f-worker">user_invocable entfernt</text>
         <text x="640" y="64" text-anchor="middle" class="s-tiny">gelistet</text>
-        <text x="830" y="64" class="s-tiny f-web">aufrufbar, dokumentiert</text>
+        <text x="830" y="64" class="s-tiny f-web">aufrufbar (Default)</text>
 
         <rect x="16" y="84" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
         <text x="30" y="106" class="s-mono">middleware-feature</text>
-        <text x="230" y="106" class="s-tiny f-dim">148 Zeilen</text>
-        <text x="440" y="106" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
+        <text x="230" y="106" class="s-tiny f-dim">147 Zeilen</text>
+        <text x="440" y="106" text-anchor="middle" class="s-tiny f-worker">user_invocable entfernt</text>
         <text x="640" y="106" text-anchor="middle" class="s-tiny">gelistet</text>
-        <text x="830" y="106" class="s-tiny f-web">aufrufbar, dokumentiert</text>
+        <text x="830" y="106" class="s-tiny f-web">aufrufbar (Default)</text>
 
         <rect x="16" y="126" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
         <text x="30" y="148" class="s-mono">setup</text>
-        <text x="230" y="148" class="s-tiny f-dim">38 Zeilen</text>
-        <text x="440" y="148" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
+        <text x="230" y="148" class="s-tiny f-dim">37 Zeilen</text>
+        <text x="440" y="148" text-anchor="middle" class="s-tiny f-worker">user_invocable entfernt</text>
         <text x="640" y="148" text-anchor="middle" class="s-tiny">gelistet</text>
-        <text x="830" y="148" class="s-tiny f-web">aufrufbar, dokumentiert</text>
+        <text x="830" y="148" class="s-tiny f-web">aufrufbar (Default)</text>
 
-        <rect x="16" y="168" width="928" height="34" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
-        <text x="30" y="190" class="s-mono f-alert">repo-bauplan</text>
-        <text x="230" y="190" class="s-tiny f-dim">368 Zeilen — der größte</text>
-        <text x="440" y="190" text-anchor="middle" class="s-tiny f-web">user_invocable</text>
-        <text x="640" y="190" text-anchor="middle" class="s-tiny f-worker">nachgetragen</text>
-        <text x="830" y="190" class="s-tiny f-worker">aufrufbar, dokumentiert</text>
+        <rect x="16" y="168" width="928" height="34" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="30" y="190" class="s-mono">repo-bauplan</text>
+        <text x="230" y="190" class="s-tiny f-dim">367 Zeilen — der größte</text>
+        <text x="440" y="190" text-anchor="middle" class="s-tiny f-worker">user_invocable entfernt</text>
+        <text x="640" y="190" text-anchor="middle" class="s-tiny">gelistet</text>
+        <text x="830" y="190" class="s-tiny f-web">aufrufbar (Default)</text>
 
-        <rect x="16" y="210" width="928" height="52" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="5 4"></rect>
-        <text x="30" y="230" class="s-mono f-alert">mdm-template · mdm-block · figma-to-liquid · mdm-notes · theme-port · jira-comment</text>
-        <text x="30" y="250" class="s-tiny f-dim">120 · 98 · 105 · 78 · 113 · 42 Zeilen — theme-port und jira-comment kamen am 17. September 2026 dazu</text>
-        <text x="440" y="240" text-anchor="middle" class="s-tiny f-alert">kein user_invocable</text>
-        <text x="640" y="240" text-anchor="middle" class="s-tiny">als /befehl gelistet</text>
-        <text x="830" y="240" class="s-tiny f-alert">nicht aufrufbar</text>
+        <rect x="16" y="210" width="928" height="52" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
+        <text x="30" y="230" class="s-mono">mdm-template · mdm-block · figma-to-liquid · mdm-notes · theme-port · jira-comment</text>
+        <text x="30" y="250" class="s-tiny f-dim">120 · 98 · 105 · 78 · 113 · 42 Zeilen</text>
+        <text x="440" y="250" text-anchor="middle" class="s-tiny f-dim">kein Schlüssel</text>
+        <text x="640" y="250" text-anchor="middle" class="s-tiny">als /befehl gelistet</text>
+        <text x="830" y="250" class="s-tiny f-web">aufrufbar (Default)</text>
 
-        <text x="16" y="282" class="s-tiny f-dim">Das ist nicht zwangsläufig ein Fehler: mdm-block wird laut README von mdm-template delegiert, figma-to-liquid ist eine Konventionssammlung. Nur die README behauptet etwas anderes.</text>
+        <text x="16" y="282" class="s-tiny f-dim">Beleg: .claude/specs/harness/claude-struktur-aktuell.md:29 und :155; am 16. Oktober 2026 listet eine Sitzung alle zehn als aufrufbar.</text>
       </svg>
-      <figcaption><b>Eine Entscheidung bleibt offen.</b>
-        <code>repo-bauplan</code> ist am 10. September 2026 in beide READMEs nachgetragen
-        worden. Bei den sechs übrigen ist zu entscheiden, ob sie von Hand aufrufbar sein
-        <em>sollen</em> — dann
-        <code>user_invocable: true</code> ergänzen — oder ob sie interne Bausteine bleiben,
-        dann gehören sie in der README nicht in die Slash-Tabelle.</figcaption>
+      <figcaption><b>Die Frage aus früheren Ständen ist entschieden, aber anders als
+        gedacht.</b> Bis zum 16. Oktober 2026 nannte dieses Blatt sechs Skills „nicht
+        aufrufbar“, weil ihnen <code>user_invocable: true</code> fehlte. Die Annahme stimmte
+        nicht: Der Schlüssel war wirkungslos, die sechs waren immer aufrufbar. Ein Skill,
+        der künftig nur interner Baustein sein soll, braucht
+        <code>user-invocable: false</code>; <code>bin/harness-check.py</code> prüft die
+        Felder gegen <code>bin/harness-referenz.json</code>.</figcaption>
     </figure>
   </section>
 
@@ -487,11 +489,14 @@
       <span class="plate-no">Blatt 02/04</span>
       <h2>Geltung der Rules</h2>
     </div>
-    <p class="lead">Rules werden nicht aufgerufen, sondern nach Pfad zugeschaltet. Fünf
-      Dateien deklarieren zusammen zwanzig Pfadmuster. Die Bereiche ohne Treffer stehen in der zweiten Spalte.</p>
+    <p class="lead">Rules werden nicht aufgerufen, sondern nach Pfad zugeschaltet. Fünf der
+      sechs Dateien deklarieren zusammen zwanzig Pfadmuster. Die Bereiche ohne Treffer stehen
+      in der zweiten Spalte. Die sechste, <code>doku-quellen.md</code>, kam mit Commit
+      <code>e09cbf2</code> dazu, hat kein <code>paths</code> und wird deshalb in jeder
+      Sitzung geladen.</p>
 
     <figure>
-      <svg viewBox="0 0 960 322" role="img" aria-label="Pfad-Abdeckung der fünf Rules. Theme ist durch drei Rules abgedeckt, Connector samt Worktrees und Tests durch eine, die drei Middleware-Repos durch eine gemeinsame. Nicht abgedeckt bleiben datalayer und die Harness selbst.">
+      <svg viewBox="0 0 960 372" role="img" aria-label="Pfad-Abdeckung der Rules. Theme ist durch drei Rules abgedeckt, Connector samt Worktrees und Tests durch eine, die drei Middleware-Repos durch eine gemeinsame. Nicht abgedeckt bleiben datalayer und die Harness selbst. Eine sechste Rule ohne Pfadmuster gilt immer.">
         <text x="16" y="28" class="s-lbl f-vite">abgedeckt — 20 Pfadmuster</text>
         <text x="540" y="28" class="s-lbl f-alert">nicht abgedeckt</text>
 
@@ -533,6 +538,11 @@
         <text x="570" y="200" class="s-lbl f-vite">seit 17. September 2026 abgedeckt</text>
         <text x="570" y="222" class="s-mono">connector-worktrees/*/app · config · db · lib · spec</text>
         <text x="570" y="242" class="s-mono">connector/spec/**</text>
+
+        <rect x="16" y="318" width="928" height="42" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"></rect>
+        <text x="30" y="337" class="s-mono">doku-quellen</text>
+        <text x="490" y="337" text-anchor="end" class="s-tiny f-dim">70 Zeilen</text>
+        <text x="30" y="352" class="s-tiny f-dim">kein paths-Eintrag — immer geladen, für Hauptsitzung und alle Agenten; Versionstabelle mit Beleg je Bibliothek</text>
       </svg>
       <figcaption><b>Die Worktree-Lücke ist geschlossen.</b> Bis zum 17. September 2026
         greifen die <code>connector-conventions</code> nur unter <code>connector/</code> —
@@ -540,7 +550,9 @@
         wird. Seither decken fünf zusätzliche Muster
         <code>connector-worktrees/*/</code> ab, ein sechstes
         <code>connector/spec/**</code>; damit gilt die TDD-Pflicht der Rule auch dort, wo
-        die Tests liegen. Offen bleibt <code>datalayer/**</code>.</figcaption>
+        die Tests liegen. Offen bleibt <code>datalayer/**</code>: die immer geladene
+        <code>doku-quellen.md</code> nennt für den Datalayer eine Doku-Quelle, aber keine
+        Konvention.</figcaption>
     </figure>
   </section>
 
@@ -560,18 +572,24 @@
         <thead><tr><th class="m">Art</th><th class="m">Anzahl</th><th>Inhalt</th></tr></thead>
         <tbody>
           <tr><td class="m">allow · Bash</td><td class="m">13</td><td>Lesende Shopify-CLI (<code>theme check/info/list</code>), <code>git status/diff/log</code>, Connector-Linter (<code>rubocop</code>, <code>brakeman</code>, <code>rspec</code>), <code>git worktree</code> — jeweils mit <code>cd &lt;repo&gt; &amp;&amp;</code> davor</td></tr>
-          <tr><td class="m">allow · MCP</td><td class="m">4</td><td><code>learn_shopify_api</code>, <code>search_docs_chunks</code>, <code>validate_theme</code>, <code>validate_theme_codeblocks</code></td></tr>
-          <tr><td class="m">deny</td><td class="m">2</td><td><code>Edit</code> und <code>Write</code> auf <code>themes/*/config/settings_data.json</code></td></tr>
+          <tr><td class="m">allow · MCP</td><td class="m">4</td><td><code>learn_shopify_api</code>, <code>search_docs_chunks</code>, <code>validate_theme</code>, <code>validate</code></td></tr>
+          <tr><td class="m">deny</td><td class="m">1</td><td><code>Edit</code> auf <code>themes/*/config/settings_data.json</code></td></tr>
           <tr><td class="m">MCP-Server</td><td class="m">1</td><td><code>shopify-dev-mcp</code> in <code>enabledMcpjsonServers</code></td></tr>
         </tbody>
       </table>
     </div>
     <p class="lead">Bei <code>settings_data.json</code> besteht eine Doppelung: die
-      Datei steht auf der <code>deny</code>-Liste <em>und</em> wird von
-      <code>protect-merchant-files.sh:19</code> hart blockiert. Das ist keine Redundanz aus
-      Versehen — die <code>deny</code>-Regel greift nur bei exakt diesem Pfad, der Hook
-      erkennt zusätzlich <code>*/themes/*/config/settings_data.json</code> in Worktrees und
-      anderen Klonen.</p>
+      Datei steht auf der <code>deny</code>-Liste (<code>.claude/settings.json:25</code>)
+      <em>und</em> wird von <code>protect-merchant-files.sh:20–23</code> hart blockiert. Das
+      ist keine Redundanz aus Versehen — die <code>deny</code>-Regel greift nur bei exakt
+      diesem Pfad, der Hook erkennt zusätzlich
+      <code>*/themes/*/config/settings_data.json</code> in Worktrees und anderen Klonen.</p>
+    <p class="lead">Für <code>Write</code> trägt der Hook den Schutz allein. Die frühere
+      Regel <code>Write(themes/*/config/settings_data.json)</code> griff nie, weil Claude
+      Code Pfadregeln nur für <code>Edit</code> und <code>Read</code> prüft; Commit
+      <code>c022abe</code> entfernt sie, und <code>bin/harness-check.py:239</code> meldet
+      eine solche Regel als H17
+      (<code>.claude/specs/harness/claude-struktur-aktuell.md:31</code>).</p>
   </section>
 
   <!-- ============ BLATT 04 ============ -->
@@ -590,7 +608,7 @@
         <thead><tr><th class="m">Bereich</th><th class="m">Specs</th><th>Inhalt</th></tr></thead>
         <tbody>
           <tr><td class="m">themes/</td><td class="m">17</td><td><code>_conventions.md</code>, <code>templates-angleichen-plp-pdp.md</code> — markenübergreifend; unter <code>mdm/</code> fünfzehn: <code>breadcrumbs.md</code>, <code>hilfe-hub.md</code>, <code>hilfe-template.md</code>, <code>page-title.md</code>, <code>global-brand-overrides.md</code>, <code>plp-card-nexvo-default.md</code>, <code>forms-hilfeservice-layout.md</code>, <code>kollektion-abstand-ohne-verwandte-kategorien.md</code>, <code>kollektion-mehr-anzeigen-farbe.md</code>, <code>produktkachel-vollflaechig-klickbar.md</code>, <code>rich-text-kontrast-dunkle-schemes.md</code>, <code>rte-inhalte-dunkle-schemes.md</code>, <code>tech-data-ausgabe-escapen.md</code>, <code>tech-data-herkunft-zeilen.md</code>, <code>trust-section-footer-group.md</code></td></tr>
-          <tr><td class="m">harness/</td><td class="m">11</td><td><code>mdm-harness-repo.md</code> — die Spec dieses Repos; vier Entwürfe aus dem Review vom 11. September 2026: <code>portabler-workspace.md</code>, <code>setup-bash-3-2.md</code>, <code>git-remotes-neutral.md</code>, <code>themes-mehrere-marken.md</code>; dazu <code>theme-sync.md</code>, <code>theme-sync-ci.md</code> und vier Bauplan-Specs: <code>bauplan-ci-auffrischung.md</code>, <code>bauplan-etappe-gesamtstruktur.md</code>, <code>bauplan-repo-pfad.md</code>, <code>bauplan-wording-rueckbau.md</code></td></tr>
+          <tr><td class="m">harness/</td><td class="m">15</td><td><code>mdm-harness-repo.md</code> — die Spec dieses Repos; vier Entwürfe aus dem Review vom 11. September 2026: <code>portabler-workspace.md</code>, <code>setup-bash-3-2.md</code>, <code>git-remotes-neutral.md</code>, <code>themes-mehrere-marken.md</code>; dazu <code>theme-sync.md</code>, <code>theme-sync-ci.md</code>, fünf Bauplan-Specs: <code>bauplan-ci-auffrischung.md</code>, <code>bauplan-etappe-gesamtstruktur.md</code>, <code>bauplan-repo-pfad.md</code>, <code>bauplan-wording-rueckbau.md</code>, <code>bauplan-sources-luecken.md</code>; seit dem 16. Oktober 2026 drei zur Claude-Struktur: <code>claude-struktur-aktuell.md</code>, <code>waechter-hooks-fail-closed.md</code>, <code>bauplan-guard-fehlalarme.md</code></td></tr>
           <tr><td class="m">connector/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
           <tr><td class="m">creditcheck/ · emailservice/ · payment-service/ · datalayer/</td><td class="m">0</td><td>nur <code>.gitkeep</code></td></tr>
         </tbody>
@@ -606,40 +624,38 @@
       <div class="check">
         <span class="check-no">01</span>
         <div>
-          <h3>Vier dokumentierte Slash-Befehle existieren nicht</h3>
-          <p><b>Beleg:</b> <code>README.md</code> und <code>.claude/README.md</code>
-             listen <code>/mdm-template</code>, <code>/mdm-block</code>,
-             <code>/figma-to-liquid</code> und <code>/mdm-notes</code>. Keine der vier
-             <code>SKILL.md</code> trägt <code>user_invocable: true</code>. Dies ist der
-             einzige verbliebene Punkt der Doku-Drift — die übrigen sechzehn wurden am
-             10. September 2026 nachgetragen.</p>
-          <p><b>Konsequenz:</b> Der Aufruf liefert keinen Skill und keine Fehlermeldung,
-             die das erklärt.</p>
+          <h3>Erledigt: die dokumentierten Slash-Befehle existieren</h3>
+          <p><b>Vorher:</b> Dieser Prüfpunkt meldete <code>/mdm-template</code>,
+             <code>/mdm-block</code>, <code>/figma-to-liquid</code> und
+             <code>/mdm-notes</code> als nicht vorhanden, weil ihre <code>SKILL.md</code> kein
+             <code>user_invocable: true</code> trugen.</p>
+          <p><b>Jetzt:</b> Der Befund beruhte auf einem falschen Schlüsselnamen. Claude Code
+             kennt nur <code>user-invocable</code>, Default <code>true</code>; alle zehn
+             Skills sind aufrufbar (Blatt 01). Damit ist auch der Widerspruch zwischen
+             diesem Prüfpunkt und Blatt 01 aufgelöst, der beim Veröffentlichen am
+             16. Oktober 2026 auffiel.</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">02</span>
         <div>
-          <h3>Die Worktrees haben keine Konventionen</h3>
-          <p><b>Beleg:</b> <code>connector-conventions.md</code> deklariert
+          <h3>Erledigt: die Worktrees haben Konventionen</h3>
+          <p><b>Vorher:</b> <code>connector-conventions.md</code> deklarierte nur
              <code>connector/app/**</code>, <code>config/**</code>, <code>db/**</code>,
              <code>lib/**</code>. <code>CLAUDE.md</code> verlangt für Feature-Arbeit einen
-             Worktree unter <code>connector-worktrees/&lt;branch&gt;/</code>.</p>
-          <p><b>Konsequenz:</b> Genau in dem Verzeichnis, in dem laut Konvention gearbeitet
-             wird, greift die Konventionsdatei nicht. Im Haupt-Worktree, wo sie greift, soll
-             nicht gearbeitet werden.</p>
-          <p><b>Fix:</b> Pfadmuster <code>connector-worktrees/*/app/**</code> und die
-             übrigen Verzeichnisse derselben Ebene ergänzen. Dasselbe gilt für
-             <code>connector/spec/**</code>, das trotz
-             TDD-Pflicht in keinem Scope steht.</p>
+             Worktree unter <code>connector-worktrees/&lt;branch&gt;/</code> — dort griff die
+             Rule nicht.</p>
+          <p><b>Jetzt:</b> <code>.claude/rules/connector-conventions.md:2–12</code> führt
+             zehn Muster, darunter <code>connector/spec/**</code> und fünf unter
+             <code>connector-worktrees/*/</code> (Blatt 02).</p>
         </div>
       </div>
       <div class="check">
         <span class="check-no">03</span>
         <div>
           <h3>Spec-Driven ist für zwei von sieben Bereichen gelebt</h3>
-          <p><b>Beleg:</b> <code>.claude/specs/</code> enthält vierunddreißig Dateien; siebzehn
-             davon liegen unter <code>themes/</code>, elf unter <code>harness/</code>, dazu
+          <p><b>Beleg:</b> <code>.claude/specs/</code> enthält achtunddreißig Dateien; siebzehn
+             davon liegen unter <code>themes/</code>, fünfzehn unter <code>harness/</code>, dazu
              <code>README.md</code> und fünf <code>.gitkeep</code>-Platzhalter.</p>
           <p><b>Konsequenz:</b> Für Connector- und Middleware-Features gibt es die geforderte
              Spec nicht. Entweder wird die Regel dort nicht angewandt, oder sie wird
