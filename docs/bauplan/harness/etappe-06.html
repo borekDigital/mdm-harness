@@ -1044,9 +1044,11 @@
             GitHub-Workflows: <code>bauplan-refresh.yml</code>,
             <code>harness-check.yml</code> und <code>harness-aktuell.yml</code>. Keiner ruft
             <code>bin/theme-sync.sh</code> oder <code>bin/test-theme-sync.sh</code> auf;
-            <code>harness-check.yml:13–27</code> führt beide Dateien nicht unter
+            <code>harness-check.yml:13–37</code> führt beide Dateien nicht unter
             <code>paths</code>, eine Änderung am Sync-Skript löst dort keinen Testlauf
-            aus.</p>
+            aus. Die Liste ist am 16. Oktober 2026 um zehn Einträge gewachsen —
+            <code>sync.sh</code>, <code>git-hooks/**</code>, <code>docs/bauplan/**</code>
+            und die Bauplan-Werkzeuge —, die beiden Sync-Dateien sind nicht darunter.</p>
           <p>Nach <code>port</code> liegt die Änderung als uncommittete Änderung auf einem
             Branch <code>sync/&lt;quelle&gt;-&lt;datum&gt;</code> (<code>:458</code>). Commit,
             Push und PR je Ziel-Theme sind Handarbeit. Für <code>align</code> übernimmt das

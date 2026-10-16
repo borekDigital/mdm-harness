@@ -396,13 +396,13 @@
     <div class="tb-main">
       <p class="tb-eyebrow">MDM Connector · Etappe 5 · Action, API, Transformer</p>
       <h1>Fachlogik</h1>
-      <p>89 Dateien, 4 251 Zeilen, fünf Fremdsysteme — und drei Rollen, die sich über alle
+      <p>89 Dateien, 4 255 Zeilen, fünf Fremdsysteme — und drei Rollen, die sich über alle
          Namensräume wiederholen. Die Aufrufregel steht in sieben Zeilen. Zwei Dateien
          enthalten eine Methode, die nie ausgeführt wird.</p>
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>app/services/ — 89 Dateien</dd></div>
-      <div class="tb-cell"><dt>Zeilen</dt><dd>4 251</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>4 255</dd></div>
       <div class="tb-cell"><dt>Namensräume</dt><dd>5</dd></div>
       <div class="tb-cell"><dt>Rollen</dt><dd>22 Action · 50 Api · 15 Transformer</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
@@ -698,9 +698,9 @@
   <section class="plate">
     <div class="plate-head">
       <span class="plate-no">Blatt 05/05</span>
-      <h2>Sechs Beobachtungen</h2>
+      <h2>Sieben Beobachtungen</h2>
     </div>
-    <p class="lead">Befund 01 ist durch Ausführen belegt, nicht durch Lesen. Die übrigen fünf
+    <p class="lead">Befund 01 ist durch Ausführen belegt, nicht durch Lesen. Die übrigen sechs
       stammen aus dem Quelltext.</p>
 
     <div class="checks">
@@ -746,7 +746,7 @@
         <span class="check-no">03</span>
         <div>
           <h3>Eine Datei trägt elf Prozent der Fachlogik</h3>
-          <p>Belegt: <code>sap/transformer/order_input.rb</code> hat 455 Zeilen bei 4 251
+          <p>Belegt: <code>sap/transformer/order_input.rb</code> hat 457 Zeilen bei 4 255
             Zeilen in <code>app/services/</code> insgesamt. Die zweitgrößte Datei
             (<code>shopify/transformer/product_variants_input.rb</code>) hat 217.</p>
           <p>Diese eine Datei baut die Bestellung für SAP auf. Mit Commit <code>4eff161</code>
@@ -766,6 +766,11 @@
             <code>Satzart14</code> entfällt im SAP-Auftrag
             (<code>sap/transformer/order_input.rb:52</code>). Zum Beweis fehlt ein Lauf mit
             fehlschlagendem <code>tagsAdd</code>.</p>
+          <p>Seit Commit <code>cd8cd51</code> lädt der Transformer die Ereignisse mit
+            <code>reload</code> neu aus der Datenbank (<code>sap/transformer/order_input.rb:52, 290</code>).
+            Damit zählt auch ein <code>CreditCheckEvent</code>, das nach dem ersten Laden der
+            Assoziation entstanden ist. Ein Ereignis, das nie angelegt wurde, findet auch
+            <code>reload</code> nicht — die Vermutung oben bleibt offen.</p>
         </div>
       </div>
 
@@ -807,13 +812,40 @@
             <code>GetMetaobject</code> betroffen wäre.</p>
         </div>
       </div>
+
+      <div class="check">
+        <span class="check-no">07</span>
+        <div>
+          <h3>Geldbeträge werden mit BigDecimal umgerechnet</h3>
+          <p>Belegt: Seit Commit <code>cd8cd51</code> rechnet <code>convert_to_cent</code> mit
+            <code>BigDecimal</code> statt mit <code>to_f</code> und gibt für leere Werte 0 zurück
+            (<code>sap/transformer/order_input.rb:430–434</code>). Die drei Betragsfelder des
+            SAP-Auftrags laufen jetzt alle über diese Methode: <code>VkpreisCent</code> und
+            <code>AutwrCentRate</code> (Zeile 303–311) sowie <code>AutwrCent</code>
+            (Zeile 339–343). Vorher rechneten diese Stellen eigenständig mit
+            <code>to_f * 100</code>. In Gegenrichtung rechnet <code>formatted_price</code> den
+            SAP-Wert <code>VkpreisCent</code> für Shopify ebenfalls mit <code>BigDecimal</code> um
+            (<code>shopify/transformer/product_set_input.rb:122–126</code>).</p>
+          <p>Folge: <code>to_i</code> schneidet ab und rundet nicht. Ein Gleitkomma-Produkt knapp
+            unter dem ganzen Cent hat einen Cent verloren; mit <code>BigDecimal</code> entfällt
+            dieser Fehler. ⚠️ Vermutung: Betroffen waren Beträge wie <code>0.29</code>. Zum
+            Beweis fehlt ein Lauf, der alte und neue Umrechnung vergleicht.</p>
+          <p>Dieselbe Methode rechnet auch <code>creditLimit</code> aus der geparsten Antwort der
+            Bonitäts-API um (Zeile 265–269). ⚠️ Vermutung: Liefert die API den Wert als
+            JSON-Zahl mit Nachkommastellen, kommt ein <code>Float</code> an.
+            <code>BigDecimal</code> wirft dann ohne Angabe der Genauigkeit eine Ausnahme,
+            <code>to_f</code> hat das nicht getan. Ebenso bei einem nicht numerischen Text. Zum
+            Beweis fehlen eine echte Antwort mit <code>creditLimit</code> und ein Lauf von
+            <code>convert_to_cent</code> mit diesem Wert.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer>
     <span>MDM Connector · Etappe 5 · Fachlogik</span>
-    <span>Quelle: app/services/ — 89 Dateien, 4 251 Zeilen</span>
-    <span>Stand: 14. Oktober 2026 · Commit 8c7c8fb</span>
+    <span>Quelle: app/services/ — 89 Dateien, 4 255 Zeilen</span>
+    <span>Stand: 16. Oktober 2026 · Commit 547c0ec</span>
     <span>Als nächstes: <a href="etappe-06.html">Jobs</a> · <a href="https://claude.ai/code/artifact/4cf9fa1f-b9bd-4813-9359-5b9cfa28a1bf">Artefakt</a></span>
   </footer>
 
