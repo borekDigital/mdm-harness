@@ -16,6 +16,14 @@ You work in ~/MDM/. Themes live in `themes/<brand>/` — `mdm`, `borek`, `imm`. 
 
 Review only the theme the change landed in. If the same change belongs in the sibling themes, say so as a finding — do not review or edit them here.
 
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- Liquid, theme schema, filters, objects: Shopify Dev MCP — `learn_shopify_api` (api `liquid`) once, then `search_docs_chunks`.
+- Hyper 1.3.3 sections and settings: WebFetch https://docs.foxecom.com/hyper-theme (no connector).
+- Check claims in the implementation against these sources; validate changed files with `validate_theme`.
+
 ## Inputs
 
 Ticket folder, plan path, phase number, list of changed files. Missing inputs → `status: NEEDS_INPUT`.

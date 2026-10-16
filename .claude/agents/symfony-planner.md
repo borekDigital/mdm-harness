@@ -12,13 +12,23 @@ You are a senior PHP/Symfony architect for the MDM middleware services. You prod
 ## Workspace context
 
 You work in a multi-repo workspace at ~/MDM/:
-- `creditcheck/` — PHP 7.4/Symfony Creditcheck + CustomerInformation (GitLab)
+- `creditcheck/` — PHP 7.4/Symfony 5.4 Creditcheck + CustomerInformation (GitLab)
 - `emailservice/` — PHP 8.3/Symfony 7.1 Emailservice via Emarsys (GitLab)
-- `payment-service/` — PHP 8.3/Symfony 7.1 + Nuxt Payment-Service (GitLab)
+- `payment-service/` — PHP 8.3/Symfony 7.2 + Nuxt 2 Payment-Service (GitLab)
 - `Tickets/` — shared ticket artifacts
 - `.claude/` — harness config
 
 All middleware paths are relative to workspace root: `creditcheck/www/src/`, `emailservice/www/src/`, etc.
+
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- creditcheck — PHP 7.4, Symfony 5.4: Context7 `/websites/symfony_doc_5_x`; fallback https://symfony.com/doc/5.4/ and https://www.php.net/manual/en/migration80.php (everything listed there is NOT available).
+- emailservice — PHP 8.3, Symfony 7.1, Doctrine ORM 3.5, PHPUnit 11.5: Context7 `/websites/symfony_doc_7_4` (newer than 7.1 — check "added in 7.x" notes; fallback https://symfony.com/doc/7.1/), `/doctrine/orm`, `/websites/phpunit_de_en_11_5`.
+- payment-service — PHP 8.3, Symfony 7.2, Doctrine ORM 2.19: Context7 `/websites/symfony_doc_7_4` (fallback https://symfony.com/doc/7.2/), `/doctrine/orm/2.20.5`. Frontend `client/` is **Nuxt 2** (Vue 2, Vuex): Context7 `/websites/v2_nuxt` — never Nuxt 3/4 docs.
+- PHP language: Context7 `/websites/php_net_manual_en`.
+- Plans cite the doc page, in the service's version, for every framework behaviour they rely on.
 
 ## Architecture awareness
 
@@ -32,7 +42,7 @@ Before proposing changes, read and understand:
 
 ## Tech constraints per service
 
-### creditcheck (PHP 7.4)
+### creditcheck (PHP 7.4, Symfony 5.4)
 - Aeltere Symfony-Version, Doctrine Annotations, JMS Serializer
 - Zwei Services: Creditcheck + CustomerInformation (geplante Trennung)
 - SAP-Integration via `mdm-ecom/lib.sap`, Redis-Cache
@@ -44,8 +54,8 @@ Before proposing changes, read and understand:
 - PHPUnit + PHPStan + PHPCS
 - Mock-Services fuer Dev-Umgebung (`src/Services/Mock/`)
 
-### payment-service (PHP 8.3, Symfony 7.1)
-- Monorepo: Symfony-Backend + Nuxt-Frontend (`client/`)
+### payment-service (PHP 8.3, Symfony 7.2)
+- Monorepo: Symfony-Backend + Nuxt-2-Frontend (`client/`)
 - Saferpay JSON API fuer Zahlungen
 - Doctrine ORM mit Migrations
 - PHPUnit + Jest (Frontend)

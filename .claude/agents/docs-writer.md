@@ -15,6 +15,12 @@ Du arbeitest in ~/MDM/. Themes in `themes/<marke>/` (`mdm`, `borek`, `imm`), Con
 - Theme-Doku: `themes/<marke>/docs/<ticketId>-<kurzbeschreibung>.md`
 - Connector-Doku: `connector/docs/<ticketId>-<kurzbeschreibung>.md`
 
+## Doku-Quellen
+
+Full table, versions and pitfalls: `.claude/rules/doku-quellen.md` — read it first. Every API, framework or setting claim you make cites its source; without one it is a ⚠️ assumption.
+
+- You document finished work; you do not add new technical claims. Statements about APIs, frameworks or settings are taken from the plan or review (with their source) or checked against the source for that area in the rule's table.
+
 ## Artefakt 1: Projekt-Doku
 
 Pfad: `<repo>/docs/<ticketId>-<kurzbeschreibung>.md` (repo = `theme` oder `connector`)

@@ -2,7 +2,7 @@
 
 Stand: 16. Oktober 2026
 Quelle: Analyse der Harness-Konfiguration und Recherche in der Claude-Code-Doku, 16. Oktober 2026
-Status: FREIGEGEBEN (16. Oktober 2026) — B, C, D, E IMPLEMENTIERT (16. Oktober 2026); Workflows werden auf GitHub validiert (C mit dem PR, E nach dem Merge); A offen
+Status: FREIGEGEBEN (16. Oktober 2026) — A–E IMPLEMENTIERT (16. Oktober 2026); C validiert (PR #14); E wird mit dem ersten manuellen Lauf validiert
 
 ## Ziel
 
@@ -29,6 +29,7 @@ automatisch auf und wird gemeldet. Was übernommen wird, entscheidet weiterhin K
 | 12 | Vier Skills nutzen `user_invocable: true`. Claude Code kennt nur `user-invocable` (Bindestrich, Default `true`), der Schlüssel ist also wirkungslos | `skills/*/SKILL.md:4`; code.claude.com/docs/en/skills.md, Frontmatter-Referenz | ✅ belegt |
 | 13 | Es gibt keinen Mechanismus, der Updates von Claude Code oder Shopify Dev MCP gegen die Harness abgleicht | Bestand `bin/`, `.github/workflows/`, `hooks/` | ✅ belegt |
 | 14 | Die Deny-Regel `Write(themes/*/config/settings_data.json)` greift nie, weil Claude Code Pfadregeln nur für `Edit` und `Read` prüft. Den Schutz trugen allein `Edit(...)` und der Hook | `.claude/settings.json:26`; code.claude.com/docs/en/permissions.md; Warnung von Claude Code bei der Generalprobe von E | ✅ belegt (behoben, Prüfung H17) |
+| 15 | Falsche oder fehlende Versionsangaben: payment-service läuft auf Symfony **7.2** (nicht 7.1), creditcheck auf Symfony **5.4** (nirgends genannt), das Frontend von payment-service auf **Nuxt 2.15** (nur „Nuxt") | `payment-service/www/composer.lock` (framework-bundle v7.2.2), `creditcheck/www/composer.lock` (v5.4.28), `payment-service/client/package.json` (nuxt 2.15.8); vorher Workspace-Manifest, `templates/repo-middleware.md`, `rules/middleware-conventions.md`, `agents/symfony-*.md` | ✅ belegt (behoben, Prüfung H19) |
 
 ## Soll-Bild
 
@@ -57,16 +58,16 @@ Spec, Freigabe, Umsetzung ein.
 
 ### A — Doku-Quellen je Bereich
 
-- [ ] Neue Rule ohne `paths`, also immer geladen: „Doku-Quellen". Sie legt je Bereich die
+- [x] Neue Rule ohne `paths`, also immer geladen: „Doku-Quellen". Sie legt je Bereich die
       maßgebliche Quelle, die Version und das Werkzeug fest. Eine Quelle muss abgefragt werden,
       bevor eine Empfehlung oder ein Plan auf API-Wissen beruht.
-- [ ] Harness-Änderungen (Agenten, Skills, Rules, Hooks, Settings, MCP): vorher Abgleich mit der
+- [x] Harness-Änderungen (Agenten, Skills, Rules, Hooks, Settings, MCP): vorher Abgleich mit der
       Claude-Code-Doku über `claude-code-guide` oder die `.md`-Seiten aus `llms.txt`.
-- [ ] Theme: `theme-planner`, `theme-reviewer` und `security-reviewer` erhalten den Shopify-Doku-Abruf
+- [x] Theme: `theme-planner`, `theme-reviewer` und `security-reviewer` erhalten den Shopify-Doku-Abruf
       in ihrem Ablauf, ebenso den Verweis auf die Hyper-Doku.
-- [ ] Connector und Middleware: `rails-*` und `symfony-*` fragen die offizielle Doku mit
+- [x] Connector und Middleware: `rails-*` und `symfony-*` fragen die offizielle Doku mit
       Versionsangabe ab. Für `creditcheck` ist PHP 7.4 ausdrücklich verpflichtend.
-- [ ] Jede Quelle ist mit Werkzeug **und** Fallback (WebFetch auf die offizielle URL) angegeben,
+- [x] Jede Quelle ist mit Werkzeug **und** Fallback (WebFetch auf die offizielle URL) angegeben,
       damit ein fehlender Connector den Agenten nicht blind arbeiten lässt.
 
 ### B — Sofort-Befunde beheben
@@ -114,7 +115,7 @@ Spec, Freigabe, Umsetzung ein.
 
 ## Akzeptanzkriterien
 
-- [ ] grep nach Doku-Quelle in jedem Agenten: alle 12 Agenten nennen mindestens eine Quelle mit Werkzeug.
+- [x] grep nach Doku-Quelle in jedem Agenten: alle 12 Agenten nennen mindestens eine Quelle mit Werkzeug. (automatisch: H18)
 - [x] `bin/harness-check.py` auf dem heutigen Stand meldet mindestens #3, #9 und #10 mit Exit 3.
       Nach Teil B endet er mit Exit 0.
 - [x] Ein absichtlich eingebautes falsches Agenten-Feld (`modle: opus`) wird mit Datei und Zeile gemeldet.
@@ -227,3 +228,26 @@ Nachweise:
 Außerhalb des Repos gemeldet, nicht geändert: Claude Code warnt, dass
 `Bash(cd themes/* && shopify theme:*)` in der persönlichen `.claude/settings.local.json` nie greift
 (`*` vor `:*` wird nicht expandiert).
+
+### A — 16. Oktober 2026
+
+| Teil | Ort |
+|---|---|
+| Rule | `.claude/rules/doku-quellen.md`, ohne `paths`: 26 Zeilen mit Bibliothek, Version, Beleg, Werkzeug und Fallback, dazu Fallstricke und Ablauf |
+| Agenten | alle 12 mit Abschnitt `## Doku-Quellen` (Verweis auf die Rule und die eigenen Quellen) |
+| Versionen | korrigiert im Workspace-Manifest, in `templates/repo-middleware.md` (dadurch `CLAUDE.md`), `rules/middleware-conventions.md`, `agents/symfony-*.md` (#15) |
+| Prüfungen | H18 (Agent ohne `## Doku-Quellen`), H19 (Version der Tabelle ≠ Lockfile; Parser für `composer.lock`, `Gemfile.lock`, JSON/TOML-Schlüssel, `.ruby-version`) |
+
+Belege:
+- Context7-IDs am 16. Oktober 2026 per `resolve-library-id` ermittelt. Eine exakte Version gibt es für Rails
+  (`/websites/api_rubyonrails_v8_1_3`), Symfony 5.x, Nuxt 2 und PHPUnit 11.5. Symfony 7.1/7.2 und
+  Doctrine 2.19 haben nur die nächstgelegene Version (7.4 bzw. 2.20.5), das steht als Fallstrick in der Rule.
+- Alle Fallback-URLs liefern HTTP 200. Ausnahmen: `polaris-react.shopify.com` antwortet nicht, ersetzt durch
+  das GitHub-Repo; Doctrine 3.5 ist nicht gehostet, ersetzt durch 3.6.
+- Tests: 36 in `test_harness_check.py` (neu: H18, H19 je Lockfile-Typ, zwei Regressionen aus dem echten
+  Bestand: `api_version` ist kein MCP-Werkzeug, `react` trifft nicht `eslint-plugin-react`). Echter Bestand: sauber.
+- H11 prüft Namen ohne `mcp__`-Präfix seither nur, wenn sie dem `werkzeug_muster` aus der Referenz entsprechen.
+
+Grenze ⚠️: Ob Subagenten die Rule automatisch laden, ist nicht belegt. Deshalb nennt jeder Agent seine
+Quellen zusätzlich selbst. Ob Subagenten den Context7-Connector der claude.ai-Sitzung erben, ist ebenfalls offen.
+Der Fallback per WebFetch deckt beides ab.

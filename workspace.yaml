@@ -66,7 +66,7 @@ repos:
     path: "creditcheck/"
     remote: "git@gitlab.mdm.de:middleware/creditcheck.git"
     platform: "gitlab"
-    tech: "PHP 7.4 / Symfony"
+    tech: "PHP 7.4 / Symfony 5.4"
     group: "middleware"
     default: false
     branch: "master"
@@ -86,7 +86,7 @@ repos:
     path: "payment-service/"
     remote: "git@gitlab.mdm.de:middleware/payment-service.git"
     platform: "gitlab"
-    tech: "PHP 8.3 / Symfony 7.1 / Nuxt"
+    tech: "PHP 8.3 / Symfony 7.2 / Nuxt 2"
     group: "middleware"
     default: false
     branch: "master"

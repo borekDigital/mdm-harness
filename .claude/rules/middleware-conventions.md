@@ -12,7 +12,7 @@ paths:
 - GitLab CI (`<repo>/.gitlab-ci.yml`) definiert die Pipeline. Jenkins fuer Doku-Generierung (VuePress).
 - Team Middleware (ecom-middleware@mdm.de) ist Ansprechpartner fuer alle drei Services.
 
-## creditcheck (PHP 7.4)
+## creditcheck (PHP 7.4, Symfony 5.4)
 - Doctrine Annotations (nicht Attributes), JMS Serializer-Bundle.
 - Zwei logische Services (Creditcheck + CustomerInformation) — geplante Trennung beachten.
 - SAP-Anbindung via `mdm-ecom/lib.sap`, Redis fuer Caching.
@@ -27,11 +27,11 @@ paths:
 - Statische Analyse: PHPStan (`phpstan.neon`) + PHPCS (`phpcs.xml.dist`).
 - Tests: `www/tests/`, PHPUnit (`phpunit.xml.dist`).
 
-## payment-service (PHP 8.3, Symfony 7.1 + Nuxt)
+## payment-service (PHP 8.3, Symfony 7.2 + Nuxt 2)
 - Monorepo: Symfony-Backend (`www/`) + Nuxt-Frontend (`client/`).
 - Saferpay JSON API (`ticketpark/saferpay-json-api`) fuer Zahlungsabwicklung.
 - Doctrine ORM mit Migrations unter `www/migrations/`.
-- Frontend: Nuxt/Vue.js mit Jest-Tests, i18n, Vuex Store.
+- Frontend: Nuxt 2/Vue 2 mit Jest-Tests, i18n, Vuex Store.
 - Deploy historisch von Docker Compose → k8s → Docker Swarm migriert.
 - Tests Backend: `www/tests/`, PHPUnit. Tests Frontend: `client/`, Jest.
 

@@ -12,6 +12,7 @@
     "changelog_roh": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md"
   },
   "agent_pflichtfelder": ["name", "description"],
+  "agent_pflichtabschnitte": ["## Doku-Quellen"],
   "agent_felder": [
     "name", "description", "tools", "disallowedTools", "model", "permissionMode",
     "maxTurns", "autoCompactWindow", "skills", "mcpServers", "hooks", "memory",
@@ -41,7 +42,8 @@
       "paket": "@shopify/dev-mcp",
       "version": "1.16.1",
       "werkzeuge": ["learn_shopify_api", "search_docs_chunks", "validate", "validate_theme", "feedback"],
-      "stichworte": ["Dev MCP", "shopify-dev-mcp"]
+      "stichworte": ["Dev MCP", "shopify-dev-mcp"],
+      "werkzeug_muster": "^(learn|search|validate|introspect|fetch|get)_"
     }
   },
   "werkzeuge_ohne_pfadregel": ["Write", "NotebookEdit", "Glob", "MultiEdit"],

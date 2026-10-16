@@ -235,6 +235,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | merchant-config | themes/*/config,locales | Merchant-verwaltete Dateien |
 | connector-conventions | connector + connector-worktrees/*: app,config,db,lib,spec | Rails/Shopify-App-Konventionen + TDD-Pflicht |
 | middleware-conventions | creditcheck,emailservice,payment-service | PHP/Symfony-Konventionen (3 Services) + TDD-Pflicht |
+| doku-quellen | immer geladen | Offizielle Doku je Bibliothek: Version (gegen Lockfile geprueft, H19), Context7-ID oder MCP-Werkzeug, versionierter Fallback; Fallstricke (Polaris React vs. Web Components, Nuxt 2, Symfony 5.4/7.1/7.2) |
 
 ## Hooks (`.claude/hooks/`)
 
@@ -263,6 +264,10 @@ Exit 0 = sauber, 3 = Befund, sonst Defekt. `--offline` ohne Schema-Validierung u
 „Harness pruefen" bei jeder Aenderung an der Harness. Tests: `python3 -m unittest bin/test_harness_check.py`.
 
 Neue Claude-Code-Felder oder -Events: Referenzdatei anpassen, nicht das Skript.
+
+Zusaetzlich: jeder Agent hat einen Abschnitt `## Doku-Quellen` (H18), und die Versionstabelle in
+`.claude/rules/doku-quellen.md` stimmt mit den Lockfiles der Kind-Repos ueberein (H19). Laeuft ein
+Repo auf eine neue Version, meldet der Stop-Hook das — Tabelle, Context7-ID und Fallback anpassen.
 
 ### Harness aktuell halten
 
