@@ -183,7 +183,7 @@ die globale — ein `opus[1m]` in `~/.claude/settings.json` greift hier absichtl
 |---|---|---|---|---|
 | figma-extractor | sonnet | Figma MCP → design-spec.md | full-page, per-block | Tickets/ |
 | theme-planner | opus | Design → Hyper-Architektur | Block Map, Block Plan | Plan-Dateien |
-| liquid-implementer | inherit | Setzt freigegebene Block-Plaene um | — | themes/<marke>/ |
+| liquid-implementer | sonnet | Setzt freigegebene Block-Plaene um | — | themes/<marke>/ |
 | theme-reviewer | sonnet | QA: Konventionen, a11y, Performance, Visual Parity | — | **read-only** |
 
 ### Connector-Agenten
@@ -191,7 +191,7 @@ die globale — ein `opus[1m]` in `~/.claude/settings.json` greift hier absichtl
 | Agent | Modell | Rolle | TDD | Schreibrechte |
 |---|---|---|---|---|
 | rails-planner | opus | Feature → Rails-Architektur + Test-Strategie | plant Tests | Plan-Dateien |
-| rails-implementer | inherit | TDD-Zyklen: Red → Green → Refactor | fuehrt Tests aus | connector/ + worktrees |
+| rails-implementer | sonnet | TDD-Zyklen: Red → Green → Refactor | fuehrt Tests aus | connector/ + worktrees |
 | rails-reviewer | sonnet | QA: RuboCop, Tests, Queries, GraphQL, Extensions | prueft Coverage | **read-only** |
 
 ### Middleware-Agenten
@@ -199,7 +199,7 @@ die globale — ein `opus[1m]` in `~/.claude/settings.json` greift hier absichtl
 | Agent | Modell | Rolle | TDD | Schreibrechte |
 |---|---|---|---|---|
 | symfony-planner | opus | Feature → Symfony-Architektur + Test-Strategie | plant Tests | Plan-Dateien |
-| symfony-implementer | inherit | TDD-Zyklen: Red → Green → Refactor | fuehrt Tests aus | creditcheck/, emailservice/, payment-service/ |
+| symfony-implementer | sonnet | TDD-Zyklen: Red → Green → Refactor | fuehrt Tests aus | creditcheck/, emailservice/, payment-service/ |
 | symfony-reviewer | sonnet | QA: PHPUnit, PHPStan, PHPCS, Doctrine, Security | prueft Coverage | **read-only** |
 
 ### Uebergreifende Agenten
@@ -207,7 +207,7 @@ die globale — ein `opus[1m]` in `~/.claude/settings.json` greift hier absichtl
 | Agent | Modell | Rolle | Schreibrechte |
 |---|---|---|---|
 | security-reviewer | sonnet | Security: XSS, DSGVO, Secrets, Auth (alle Repos) | **read-only** |
-| docs-writer | haiku | Deutsche Doku + Completion-Artefakte | docs/, Tickets/ |
+| docs-writer | sonnet | Deutsche Doku + Completion-Artefakte | docs/, Tickets/ |
 
 Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 
