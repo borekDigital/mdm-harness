@@ -398,7 +398,8 @@
       <h1>Auslieferung</h1>
       <p>Drei Wege führen auf <code>main</code>, und <code>main</code> ist das Theme im Store. Pull
          Requests tragen 35 Änderungen, Direkt-Pushes 33, das Admin als <code>shopify[bot]</code>
-         1&#8239;725. Keiner der drei Wege läuft durch eine CI. Das Branch-Modell der README mit
+         1&#8239;725. Keiner der drei Wege läuft durch eine Prüfung. Der einzige Workflow überträgt
+         jeden Push nach Borek und IMM. Das Branch-Modell der README mit
          <code>staging</code> wird nicht angewendet, und der dokumentierte Lint-Schritt schlägt auf
          <code>main</code> fehl.</p>
     </div>
@@ -407,7 +408,7 @@
       <div class="tb-cell"><dt>Wege nach main</dt><dd>35 PRs · 33 Direkt-Pushes · 1 725 Bot-Commits</dd></div>
       <div class="tb-cell"><dt>Theme Check</dt><dd>41 Fehler · 23 Warnungen</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>15. Oktober 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -430,7 +431,7 @@
       <code>main</code>, nur einer davon über einen Pull Request.</p>
 
     <figure>
-      <svg viewBox="0 0 960 352" role="img" aria-label="Drei Wege nach main: 35 Pull Requests, davon 17 mit Review, 33 Direkt-Pushes und 1725 Commits von shopify[bot] aus dem Admin. main synchronisiert mit dem Theme im Store, das Theme committet Admin-Änderungen zurück. Das Repo hat keine CI.">
+      <svg viewBox="0 0 960 352" role="img" aria-label="Drei Wege nach main: 35 Pull Requests, davon 17 mit Review, 33 Direkt-Pushes und 1725 Commits von shopify[bot] aus dem Admin. main synchronisiert mit dem Theme im Store, das Theme committet Admin-Änderungen zurück. Der einzige Workflow, theme-sync.yml, prüft nichts.">
         <defs><marker id="t9a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path></marker></defs>
         <text x="16" y="24" class="s-lbl f-dim">Weg nach main</text>
         <text x="410" y="24" class="s-lbl f-dim">Repo</text>
@@ -454,7 +455,7 @@
         <text x="424" y="142" class="s-tiny f-dim">borekDigital/shopifyFrontend_MDM</text>
         <text x="424" y="160" class="s-tiny f-dim">1 915 Commits · b3467e8</text>
         <text x="424" y="178" class="s-tiny f-dim">Branch-Schutz nicht geprüft</text>
-        <text x="424" y="196" class="s-tiny f-dim">keine CI: .github/ fehlt</text>
+        <text x="424" y="196" class="s-tiny f-dim">1 Workflow: theme-sync, prüft nicht</text>
         <rect x="700" y="100" width="244" height="120" rx="3" fill="var(--vite)" fill-opacity="0.09" stroke="var(--vite)" stroke-opacity="0.6" stroke-dasharray="6 4"></rect>
         <text x="714" y="124" class="s-name">Theme im Store</text>
         <text x="714" y="142" class="s-tiny f-dim">„shopifyFrontend_MDM/main“</text>
@@ -627,11 +628,11 @@
     </div>
     <p class="lead">Auf dem Weg nach <code>main</code> prüft nur der Mensch. Der Theme Check läuft,
       wenn jemand ihn lokal startet; der Harness-Hook läuft in Claude-Sitzungen nach jedem Edit und
-      meldet nur Befunde der bearbeiteten Datei. Eine CI gibt es nicht. Auf <code>main</code> endet
+      meldet nur Befunde der bearbeiteten Datei. Der einzige Workflow prüft nichts. Auf <code>main</code> endet
       der Theme Check heute mit Fehlern.</p>
 
     <figure>
-      <svg viewBox="0 0 960 346" role="img" aria-label="Matrix aus drei Wegen gegen vier Prüfungen. Pull Requests: 17 von 35 mit Review, Theme Check nur lokal, Hook nur in Claude-Sitzungen, keine CI. Direkt-Push und Admin: keine Prüfung. Darunter das Ergebnis von shopify theme check auf main: 40 Fehler MatchingTranslations, 1 Fehler ImgWidthAndHeight, 23 Warnungen.">
+      <svg viewBox="0 0 960 346" role="img" aria-label="Matrix aus drei Wegen gegen vier Prüfungen. Pull Requests: 17 von 35 mit Review, Theme Check nur lokal, Hook nur in Claude-Sitzungen, keine Prüfung in der CI. Direkt-Push und Admin: keine Prüfung. Darunter das Ergebnis von shopify theme check auf main: 40 Fehler MatchingTranslations, 1 Fehler ImgWidthAndHeight, 23 Warnungen.">
         <text x="16" y="24" class="s-lbl f-dim">Weg</text>
         <text x="230" y="24" class="s-lbl f-dim">Review</text>
         <text x="410" y="24" class="s-lbl f-dim">Theme Check</text>
@@ -756,11 +757,19 @@
       <div class="check">
         <span class="check-no">04</span>
         <div>
-          <h3>Die README nennt keine CI, und es gibt keine</h3>
-          <p><code>README.md:472–473</code>: „There is no CI pipeline and no build step.“
-            <code>origin/main</code> enthält kein <code>.github/</code>.</p>
-          <p>Gute Nachricht: hier stimmen Doku und Bestand überein. Der Harness-Blattsatz
-            beschreibt eine CI für die Blattsätze selbst; sie prüft das Theme nicht.</p>
+          <h3>Der einzige Workflow überträgt, er prüft nicht</h3>
+          <p><code>README.md:472–473</code>: „There is no CI pipeline and no build step.“ Seit dem
+            15. Oktober 2026 enthält <code>origin/main</code> den Workflow
+            <code>.github/workflows/theme-sync.yml</code> (<code>de15b0a</code>). Er startet bei
+            jedem Push auf <code>main</code>, auch bei Bot-Commits, sobald die Repo-Variable
+            <code>THEME_SYNC_ENABLED</code> auf <code>true</code> steht (Z.&nbsp;20–22, 34; gesetzt
+            am 15. Oktober 2026). Er ruft <code>bin/theme-sync.sh align</code> aus dem Harness auf
+            und legt je einen Pull Request <code>sync/theme-mdm</code> in Borek und IMM an oder
+            aktualisiert ihn (Z.&nbsp;70–104).</p>
+          <p>Folge: Die README ist an dieser Stelle überholt. Geprüft wird das MDM-Theme weiterhin
+            nur von Hand. Jede Speicherung im Theme-Editor von MDM aktualisiert die
+            Sync-PRs in Borek und IMM. Der Harness-Blattsatz beschreibt außerdem eine CI für die
+            Blattsätze selbst; sie prüft das Theme ebenfalls nicht.</p>
         </div>
       </div>
     </div>
@@ -778,6 +787,8 @@
         <tr><td>Branch-Modell laut README</td><td class="m">README.md:62–68, 357–399, 461–517</td></tr>
         <tr><td>Theme Check</td><td class="m">shopify theme check --path &lt;snapshot&gt; --output json, CLI 4.9.3</td></tr>
         <tr><td>Hook meldet nur die bearbeitete Datei</td><td class="m">.claude/hooks/post-edit-theme-check.sh:3–4, 39–55</td></tr>
+        <tr><td>Einziger Workflow, ohne Prüfschritt</td><td class="m">.github/workflows/theme-sync.yml:20–34, 70–104</td></tr>
+        <tr><td>Workflow freigeschaltet, läuft bei jedem Push</td><td class="m">gh variable list · gh run list --workflow theme-sync.yml</td></tr>
       </tbody>
     </table>
   </section>

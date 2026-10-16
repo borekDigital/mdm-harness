@@ -23,9 +23,18 @@
         "git-hooks/**",
         "README.md",
         ".mcp.json",
-        "bin/bauplan-guard.py"
+        "bin/bauplan-guard.py",
+        "bin/**",
+        ".claude/agents/**",
+        ".claude/skills/**",
+        ".claude/hooks/**",
+        ".claude/rules/**",
+        ".claude/specs/**"
       ],
-      "open_questions": [],
+      "open_questions": [
+        "Pruefpunkt 02 haengt am Schluessel user_invocable. Commit 97c2186 auf dem Branch harness/claude-struktur-aktuell (am 16. Oktober 2026 nicht gemergt) entfernt ihn als wirkungslos — nach dem Merge Pruefpunkt 02 neu bewerten",
+        "Pruefpunkt 03: Der Drift-Melder prueft gegen harness-app/data.json; derselbe Commit 97c2186 aendert das — nach dem Merge nachziehen"
+      ],
       "closes": []
     },
     {
@@ -75,7 +84,8 @@
         ".claude/settings.json"
       ],
       "open_questions": [
-        "theme-port und jira-comment tragen kein user_invocable, werden in CLAUDE.md aber als /theme-port und /jira-comment geschrieben — dieselbe Entscheidung wie bei den vier aelteren Skills steht aus"
+        "theme-port und jira-comment tragen kein user_invocable, werden in CLAUDE.md aber als /theme-port und /jira-comment geschrieben — dieselbe Entscheidung wie bei den vier aelteren Skills steht aus",
+        "Anhang und Blaetter widersprechen sich: Pruefpunkt 01 nennt vier Slash-Befehle, Blatt 01 sechs; Pruefpunkt 02 beschreibt die Worktree-Luecke als offen, Blatt 02 als geschlossen (gefunden beim Veroeffentlichen am 16. Oktober 2026)"
       ],
       "closes": [
         "Etappe 4, Blatt 02 — Worktree-Luecke geschlossen: connector-conventions deckt seit dem 17. September 2026 connector-worktrees/*/ und connector/spec/** ab"
@@ -92,9 +102,12 @@
         "workspace.yaml",
         "bin/theme-sync.sh",
         "templates/repo-themes.md",
-        ".claude/specs/harness/theme-sync.md"
+        ".claude/specs/harness/theme-sync.md",
+        ".claude/specs/**",
+        ".claude/rules/**"
       ],
       "open_questions": [
+        "Blatt 04 zaehlt die Blattsaetze aus .claude/bauplan/*.manifest.json. Manifeste sind keine Quelle (is_ignored, bin/bauplan_lib.py:186-201, sonst Auffrischungsschleife) — ein neuer Blattsatz meldet diese Etappe nicht, beim naechsten Auffrischen von Hand pruefen",
         "Die Laufzeit-Kanten aus Blatt 03 liegen in den Kind-Repos und sind von keiner sources-Regel gedeckt — veraltet dort etwas, meldet es niemand",
         "datalayer ist von keiner Rule, Spec oder Blattsatz gedeckt",
         "Die App-Proxy-Route connector/config/routes.rb:35-37 hat keinen Aufrufer in den drei Themes — ungenutzt oder von einem anderen Client aufgerufen, ohne laufende Instanz nicht entscheidbar"
@@ -106,8 +119,8 @@
       "title": "Übertragung",
       "url": "https://claude.ai/artifact/2MPRTbCy6CogTjP6moB8iS",
       "favicon": "🧰",
-      "blaetter": 5,
-      "findings": 6,
+      "blaetter": 6,
+      "findings": 7,
       "sources": [
         "bin/theme-sync.sh",
         ".claude/specs/harness/theme-sync.md",
@@ -116,7 +129,10 @@
         ".github/workflows/**"
       ],
       "open_questions": [
-        "bin/bauplan-stale.py vergleicht last_seen_sha gegen git HEAD und sieht uncommittete Arbeit nicht — eine Etappe zu uncommitteten Aenderungen muss von Hand aufgefrischt werden"
+        "bin/bauplan-stale.py vergleicht last_seen_sha gegen git HEAD und sieht uncommittete Arbeit nicht — eine Etappe zu uncommitteten Aenderungen muss von Hand aufgefrischt werden",
+        "themes/mdm/.github/workflows/theme-sync.yml liegt im Theme-Repo und kann keine Quelle dieses Manifests sein (Wurzel '.', themes/ gitignored). Aenderungen am Workflow meldet nur theme-mdm Etappe 9",
+        "Pruefpunkt 07 (Vermutung aus Lauf 38866856457): align kopiert die Quelle aus dem Arbeitsbaum und prueft nur das Ziel auf einen sauberen Stand — lokal koennten uncommittete MDM-Aenderungen mitwandern; mit bin/test-theme-sync.sh noch nicht bestaetigt",
+        "Blatt 02 nennt 46 Dateien nur in einem Theme, die Fundstellen-Tabelle im Anhang 38 (gefunden beim Veroeffentlichen am 16. Oktober 2026)"
       ],
       "closes": [
         "Etappe 6, Pruefpunkt 01 — themes/mdm auf origin/main umgehaengt, archive/hyper-import sichert die alte Historie",

@@ -403,10 +403,10 @@
     </div>
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>sync.sh · setup.sh · workspace.yaml</dd></div>
-      <div class="tb-cell"><dt>Steuerdateien</dt><dd>12 Agenten · 8 Skills · 11 Hooks · 5 Rules</dd></div>
-      <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>466 setup · 325 sync</dd></div>
+      <div class="tb-cell"><dt>Steuerdateien</dt><dd>12 Agenten · 10 Skills · 11 Hooks · 5 Rules</dd></div>
+      <div class="tb-cell"><dt>Skript-Zeilen</dt><dd>466 setup · 253 sync</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -435,16 +435,16 @@
 
         <text x="32" y="66" class="s-name">.claude/</text>
         <text x="46" y="86" class="s-tiny f-dim">agents/ 12 Dateien, 1000 Zeilen</text>
-        <text x="46" y="102" class="s-tiny f-dim">skills/ 8 Verzeichnisse</text>
+        <text x="46" y="102" class="s-tiny f-dim">skills/ 10 Verzeichnisse</text>
         <text x="46" y="118" class="s-tiny f-dim">hooks/ 11 Skripte, 650 Zeilen</text>
-        <text x="46" y="134" class="s-tiny f-dim">rules/ 5 Dateien, 156 Zeilen</text>
-        <text x="46" y="150" class="s-tiny f-dim">specs/ 17 Dateien · bauplan/ Manifeste</text>
+        <text x="46" y="134" class="s-tiny f-dim">rules/ 5 Dateien, 192 Zeilen</text>
+        <text x="46" y="150" class="s-tiny f-dim">specs/ 35 Dateien · bauplan/ Manifeste</text>
         <text x="46" y="166" class="s-tiny f-dim">settings.json — Rechte und Hook-Verdrahtung</text>
 
         <text x="32" y="196" class="s-name">Skripte</text>
         <text x="46" y="216" class="s-tiny f-dim">setup.sh 466 Zeilen — klont Repos</text>
         <text x="46" y="232" class="s-tiny f-dim">sync.sh 253 Zeilen — erzeugt CLAUDE.md</text>
-        <text x="46" y="248" class="s-tiny f-dim">bin/ 12 Werkzeuge für die Blattsätze</text>
+        <text x="46" y="248" class="s-tiny f-dim">bin/ 13 Dateien: 11 für Blattsätze, 2 für theme-sync</text>
 
         <text x="32" y="278" class="s-name">Vorlagen und Doku</text>
         <text x="46" y="298" class="s-tiny f-dim">templates/ 7 Bausteine für CLAUDE.md</text>
@@ -507,7 +507,7 @@
                  aus workspace.yaml + .workspace.local.yaml</code></pre>
 
     <figure>
-      <svg viewBox="0 0 960 356" role="img" aria-label="Drei Eingaben speisen sync.sh: das versionierte Repo-Manifest workspace.yaml, der lokale Klon-Status und sieben Vorlagen-Bausteine. sync.sh erzeugt daraus CLAUDE.md, aktualisiert zusätzlich die Daten der Dashboard-App und schreibt die Zeitstempel im lokalen Status um.">
+      <svg viewBox="0 0 960 356" role="img" aria-label="Drei Eingaben speisen sync.sh: das versionierte Repo-Manifest workspace.yaml, der lokale Klon-Status und sieben Vorlagen-Bausteine. sync.sh erzeugt daraus CLAUDE.md, erzeugt zusätzlich die Blattsatz-Übersicht docs/bauplan/index.html und schreibt die Zeitstempel im lokalen Status um.">
         <defs>
           <marker id="h1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
@@ -726,7 +726,7 @@
              <code>/figma-to-liquid</code>, <code>/mdm-block</code>,
              <code>/mdm-template</code> und <code>/mdm-notes</code> als Slash-Befehle. Keine
              der vier <code>SKILL.md</code> trägt <code>user_invocable: true</code>; nur vier
-             der acht Skills tun das.</p>
+             der zehn Skills tun das.</p>
           <p><b>Konsequenz:</b> Der Aufruf liefert keinen Skill und keine Meldung, die
              das erklärt.</p>
           <p><b>Fix:</b> Entweder <code>user_invocable: true</code> ergänzen oder die vier
