@@ -24,6 +24,16 @@ on:
       - "bin/git-safety.py"
       - "bin/bauplan-guard.py"
       - "bin/test_befehl.py"
+      - "workspace.yaml"
+      - "docs/bauplan/**"
+      - "sync.sh"
+      - "git-hooks/**"
+      - "bin/bauplan-index.py"
+      - "bin/bauplan-nav.py"
+      - "bin/bauplan_lib.py"
+      - "bin/test_bauplan_index.py"
+      - "bin/test_bauplan_nav.py"
+      - "bin/test-sync-sauber.sh"
       - ".github/workflows/harness-check.yml"
   pull_request:
     paths:
@@ -40,6 +50,16 @@ on:
       - "bin/git-safety.py"
       - "bin/bauplan-guard.py"
       - "bin/test_befehl.py"
+      - "workspace.yaml"
+      - "docs/bauplan/**"
+      - "sync.sh"
+      - "git-hooks/**"
+      - "bin/bauplan-index.py"
+      - "bin/bauplan-nav.py"
+      - "bin/bauplan_lib.py"
+      - "bin/test_bauplan_index.py"
+      - "bin/test_bauplan_nav.py"
+      - "bin/test-sync-sauber.sh"
       - ".github/workflows/harness-check.yml"
   workflow_dispatch:
 
@@ -61,10 +81,25 @@ jobs:
           npm install -g @anthropic-ai/claude-code
 
       - name: Tests der Pruefskripte
-        run: python3 -m unittest bin/test_harness_check.py bin/test_harness_stand.py bin/test_befehl.py
+        run: python3 -m unittest bin/test_harness_check.py bin/test_harness_stand.py bin/test_befehl.py bin/test_bauplan_index.py bin/test_bauplan_nav.py
 
       - name: Tests der Waechter-Hooks
         run: bash bin/test-waechter-hooks.sh
+
+      - name: Tests sync.sh und post-merge
+        run: bash bin/test-sync-sauber.sh
+
+      - name: Bauplan-Uebersicht passt zum Stand
+        env:
+          CLAUDE_PROJECT_DIR: ${{ github.workspace }}
+        run: |
+          # Uebersicht und Fusszeilen sind generiert und versioniert. Aendert ein
+          # PR Manifest, workspace.yaml oder Blattseiten, muss er sie mitbringen —
+          # sync.sh erzeugt sie nach dem Pull nicht mehr (Spec bauplan-index-lokal-sauber).
+          rc=0
+          python3 bin/bauplan-index.py --check || rc=1
+          python3 bin/bauplan-nav.py --check || rc=1
+          exit $rc
 
       - name: Harness pruefen
         shell: bash

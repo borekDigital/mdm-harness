@@ -139,8 +139,11 @@ open docs/bauplan/index.html
 ```
 
 Erzeugt und gepflegt wird sie ueber den Skill `/repo-bauplan <repo>`; die
-Uebersicht selbst kommt aus `bin/bauplan-index.py` und wird von `sync.sh`
-mitgezogen. Fuer die Weitergabe an Externe ohne Claude-Zugang:
+Uebersicht selbst kommt aus `bin/bauplan-index.py` und enthaelt nur versionierten
+Stand. Sie wird im PR neu erzeugt, der Manifeste, `workspace.yaml` oder Blattseiten
+aendert; die CI prueft das (`bin/bauplan-index.py --check`). `sync.sh` prueft sie nur
+und meldet veraltete Etappen in der Konsole. Fuer die Weitergabe an Externe ohne
+Claude-Zugang:
 
 ```bash
 bin/bauplan-pdf.py <repo>
@@ -156,7 +159,7 @@ Drei Schichten verhindern, dass Repos oder Konfiguration versehentlich verloren 
 
 1. **Manifest-Guard** — `workspace.yaml` ist die Referenz. Kein Prozess darf Repos daraus entfernen.
 2. **Local-State-Guard** — `.workspace.local.yaml` dokumentiert explizit geklonte Repos. "Nicht vorhanden" = bewusst uebersprungen.
-3. **Git-Hook-Guard** — `post-merge` fuehrt `sync.sh` aus, sodass nach jedem `git pull` die CLAUDE.md aktuell bleibt.
+3. **Git-Hook-Guard** — `post-merge` fuehrt `sync.sh` aus, sodass nach jedem `git pull` die CLAUDE.md aktuell bleibt. Unter `docs/bauplan/` schreibt der Lauf nichts.
 
 ## Technologien
 

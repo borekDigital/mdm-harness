@@ -13,6 +13,7 @@ Nachsatz („— Hochfahren und Prozesse") bleibt erhalten; nur die Verlinkung
 kommt aus dem Manifest.
 
   bin/bauplan-nav.py --dry-run     zeigt, was sich aendern wuerde
+  bin/bauplan-nav.py --check       wie --dry-run, Exit 3, wenn sich etwas aendern wuerde
   bin/bauplan-nav.py               schreibt
   bin/bauplan-nav.py --repo harness
 
@@ -136,8 +137,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=None)
     ap.add_argument("--project", default=None)
-    ap.add_argument("--dry-run", action="store_true")
+    modus = ap.add_mutually_exclusive_group()
+    modus.add_argument("--dry-run", action="store_true")
+    modus.add_argument("--check", action="store_true",
+                       help="nicht schreiben; Exit 3, wenn ein Lauf etwas aendern wuerde")
     args = ap.parse_args()
+    # --check prueft wie --dry-run, meldet das Ergebnis aber im Exit-Code —
+    # sync.sh und die CI pruefen damit, ohne versionierte Blaetter anzufassen.
+    trocken = args.dry_run or args.check
     project = lib.project_root(args.project)
     lib.assert_project(project)
 
@@ -166,16 +173,20 @@ def main():
             else:
                 ziel = ("Etappe %s" % nachfolger["nr"]) if nachfolger else "Übersicht"
                 print("  %s %s -> %s" % (
-                    "wuerde setzen" if args.dry_run else "verlinkt     ", rel, ziel))
-                if not args.dry_run:
+                    "wuerde setzen" if trocken else "verlinkt     ", rel, ziel))
+                if not trocken:
                     with open(path, "w", encoding="utf-8") as fh:
                         fh.write(neu)
                 geaendert += 1
 
     print("%d Fusszeile(n) %s%s."
           % (geaendert,
-             "zu setzen" if args.dry_run else "verlinkt",
+             "zu setzen" if trocken else "verlinkt",
              ", %d Quelle(n) fehlen" % fehlend if fehlend else ""))
+    if args.check and geaendert:
+        print("Fusszeilen weichen vom Manifest ab. Neu verlinken mit bin/bauplan-nav.py"
+              " und mit dem PR committen, der das Manifest aendert.")
+        return 3
     return 0
 
 

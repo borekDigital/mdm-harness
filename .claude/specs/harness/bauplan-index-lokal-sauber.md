@@ -3,7 +3,7 @@
 Stand: 16. Oktober 2026
 Quelle: Vorfall vom 16. Oktober 2026 — `docs/bauplan/index.html` nach `git pull` auf `acf54f7` lokal geändert,
 versehentlich committet, `main` per Reset repariert
-Status: ENTWURF
+Status: IMPLEMENTIERT (16. Oktober 2026; freigegeben am selben Tag — Frage 1 und 2 wie empfohlen, Teil F als eigene Spec)
 
 ## Ziel
 
@@ -54,6 +54,7 @@ also verschiedene Fassungen in dieselbe versionierte Datei.
 | 13 | Der Bauplan-Guard blockiert `git stash`/`checkout`/`restore`, sobald sie lokal geänderten Bauplan-Bestand verwerfen würden. Da `index.html` praktisch immer geändert ist, trifft das jeden pfadlosen Stash im Haupt-Checkout | `bin/bauplan-guard.py:178-183`, `:227-231`, `:306-316` | ✅ belegt |
 | 14 | Ein Pull, der `index.html` mitbringt, bricht bei lokaler Änderung ab („local changes would be overwritten") | Konrads Beobachtung am 16. Oktober 2026; Git-Standardverhalten | ✅ belegt (beobachtet) |
 | 15 | Die Doku verspricht die Marker in der Übersicht und den Neubau durch `sync.sh` | `docs/bauplan/bedienung.html:466-469`, `:721`; `README.md:142-143`, `:159`; `.claude/skills/repo-bauplan/SKILL.md:330-332`; Legende `bin/bauplan-index.py:182` | ✅ belegt |
+| 16 | `sync.sh` ruft Generator und Navigation ohne `--project` auf. `bauplan_lib.project_root()` fällt dann auf `CLAUDE_PROJECT_DIR` oder `~/MDM` zurück. Ein `sync.sh` im Worktree (post-merge ohne Claude-Sitzung) schreibt also in den Haupt-Checkout | `sync.sh:126`, `:130`; `bin/bauplan_lib.py:19-21`; im Worktree ist `CLAUDE_PROJECT_DIR` in der Shell leer; `bin/test-sync-sauber.sh` Fall 4 war vor dem Fix rot | ✅ belegt (ausgeführt) |
 
 ## Was gehört wohin
 
@@ -107,61 +108,61 @@ PR mit Manifest-/workspace.yaml-Änderung ─► CI: --check ─► rot, wenn ni
 
 ### A — Generator deterministisch (`bin/bauplan-index.py`)
 
-- [ ] Liest weder `*.STALE.md` noch `*.staleness.jsonl`. `stale_etappen()` wird aus dem HTML-Pfad entfernt.
-- [ ] Kein Uhr-Datum. Die Option `--stand` entfällt. Das Kopffeld „Stand" zeigt das neueste `generated`
-      aller Manifeste im Format „16. Oktober 2026" (Frage 1).
-- [ ] Die Legende verliert den Eintrag „veraltet". Der Marker „fehlt" für eine fehlende HTML-Quelle bleibt —
+- [x] Liest weder `*.STALE.md` noch `*.staleness.jsonl`. `stale_etappen()` wird aus dem HTML-Pfad entfernt.
+- [x] Kein Uhr-Datum. Die Option `--stand` entfällt. Das Kopffeld „Stand" zeigt das neueste `generated`
+      aller Manifeste im Format „16. Oktober 2026" (Frage 1: entschieden).
+- [x] Die Legende verliert den Eintrag „veraltet". Der Marker „fehlt" für eine fehlende HTML-Quelle bleibt —
       er hängt am versionierten Baum.
-- [ ] Neue Option `--check`: schreibt nicht. Exit 0, wenn `index.html` byte-gleich mit dem Neubau ist,
+- [x] Neue Option `--check`: schreibt nicht. Exit 0, wenn `index.html` byte-gleich mit dem Neubau ist,
       Exit 3, wenn nicht (gleiche Konvention wie `bauplan-stale.py`). Die Meldung nennt den Befehl zum Neuerzeugen.
-- [ ] Neue Option `--veraltet`: gibt je Repo mit STALE.md eine Zeile auf stdout aus (Repo, Etappennummern,
+- [x] Neue Option `--veraltet`: gibt je Repo mit STALE.md eine Zeile auf stdout aus (Repo, Etappennummern,
       Refresh-Befehl). Schreibt nichts.
-- [ ] Zwei Läufe auf demselben Baum liefern byte-gleiche Dateien, unabhängig von Datum, STALE.md und
+- [x] Zwei Läufe auf demselben Baum liefern byte-gleiche Dateien, unabhängig von Datum, STALE.md und
       Arbeitsverzeichnis.
 
 ### B — Navigation prüfbar (`bin/bauplan-nav.py`)
 
-- [ ] Neue Option `--check`: Exit 3, wenn ein Lauf etwas ändern würde, sonst 0. Schreibt nicht.
+- [x] Neue Option `--check`: Exit 3, wenn ein Lauf etwas ändern würde, sonst 0. Schreibt nicht.
       `--dry-run` bleibt wie bisher.
 
 ### C — `sync.sh` und post-merge schreiben nichts unter `docs/bauplan/`
 
-- [ ] `update_index()` ruft `bauplan-index.py --check` und `bauplan-nav.py --check` statt der schreibenden
-      Aufrufe (Frage 2). Bei Exit 3: Warnung mit Befehl zum Neuerzeugen und dem Hinweis, das Ergebnis mit dem
+- [x] `sync.sh` übergibt allen `bin/bauplan-*`-Aufrufen `--project "$SCRIPT_DIR"` (Befund 16).
+- [x] `update_index()` ruft `bauplan-index.py --check` und `bauplan-nav.py --check` statt der schreibenden
+      Aufrufe (Frage 2: immer nur prüfen). Bei Exit 3: Warnung mit Befehl zum Neuerzeugen und dem Hinweis, das Ergebnis mit dem
       auslösenden PR zu committen. Andere Exit-Codes: Warnung „fehlgeschlagen" wie bisher.
-- [ ] `sync.sh` gibt die Zeilen aus `bauplan-index.py --veraltet` aus, auch mit `--quiet`, damit sie nach
+- [x] `sync.sh` gibt die Zeilen aus `bauplan-index.py --veraltet` aus, auch mit `--quiet`, damit sie nach
       einem Pull sichtbar sind.
-- [ ] Die Log-Zeile „docs/bauplan/index.html aktualisiert" (`sync.sh:227`) entfällt oder meldet das Prüfergebnis.
-- [ ] `git-hooks/post-merge` bleibt funktional gleich. Nur die Kommentare und die Abschlussmeldung
+- [x] Die Log-Zeile „docs/bauplan/index.html aktualisiert" (`sync.sh:227`) entfällt oder meldet das Prüfergebnis.
+- [x] `git-hooks/post-merge` bleibt funktional gleich. Nur die Kommentare und die Abschlussmeldung
       (`:4`, `:12`) werden korrigiert. Ändert sich die Datei, muss Konrad die installierte Kopie in
       `~/MDM/.git/hooks/` von Hand nachziehen (Befund 2).
 
 ### D — CI
 
-- [ ] `.github/workflows/bauplan-refresh.yml`, Schritt „Uebersicht neu erzeugen": `--stand` und die
+- [x] `.github/workflows/bauplan-refresh.yml`, Schritt „Uebersicht neu erzeugen": `--stand` und die
       Monatsübersetzung entfallen (`:219-222`). Muss im **selben** PR wie Teil A landen, sonst endet der
       CI-Lauf mit einem argparse-Fehler.
-- [ ] Drift-Prüfung bei Push und PR: `python3 bin/bauplan-index.py --check` und
+- [x] Drift-Prüfung bei Push und PR: `python3 bin/bauplan-index.py --check` und
       `python3 bin/bauplan-nav.py --check`. Auslöser: `workspace.yaml`, `.claude/bauplan/*.manifest.json`,
       `docs/bauplan/**`, `bin/bauplan-index.py`, `bin/bauplan-nav.py`, `bin/bauplan_lib.py`,
       `.claude/skills/repo-bauplan/assets/bauplan-head.html`. Ort: neuer Job in `harness-check.yml` oder
       eigener Workflow — entscheidet die Umsetzung, die Spec verlangt nur den Check.
-- [ ] Die neuen Tests laufen in `harness-check.yml` mit (`:64`).
+- [x] Die neuen Tests laufen in `harness-check.yml` mit (`:64`).
 
 ### E — Doku
 
-- [ ] `docs/bauplan/bedienung.html:466-469` und `:721`: Übersicht ohne Marker, `sync.sh` prüft statt schreibt,
+- [x] `docs/bauplan/bedienung.html:466-469` und `:721`: Übersicht ohne Marker, `sync.sh` prüft statt schreibt,
       veraltete Etappen stehen in der Konsole und in `.claude/bauplan/<repo>.STALE.md`.
-- [ ] `README.md:142-143`, `:159`: dito.
-- [ ] `.claude/skills/repo-bauplan/SKILL.md:330-332`: Nach jedem Lauf `bin/bauplan-index.py` (und
+- [x] `README.md:142-143`, `:159`: dito.
+- [x] `.claude/skills/repo-bauplan/SKILL.md:330-332`: Nach jedem Lauf `bin/bauplan-index.py` (und
       `bin/bauplan-nav.py`) ausführen und mitcommitten. `./sync.sh` erzeugt sie nicht mehr.
-- [ ] `bin/bauplan-index.py`, Werkzeug-Tabelle (`:199-205`): `--check` ergänzen.
+- [x] `bin/bauplan-index.py`, Werkzeug-Tabelle (`:199-205`): `--check` ergänzen.
 
-### F — `CLAUDE.md` (nur falls Frage 3 mit Ja beantwortet)
+### F — `CLAUDE.md`
 
-- [ ] Die versionierte `CLAUDE.md` enthält keinen lokalen Installationsstand mehr. Wohin der Hinweis
-      „nicht installiert" wandert (Konsole, gitignorierte Datei, die Claude lädt), wird vor der Umsetzung
-      per `claude-code-guide` gegen Claude Code 2.1 geprüft (Rule `doku-quellen`).
+Nicht Teil dieser Spec (Frage 3: eigene Spec). Bis dahin legt `bin/test-sync-sauber.sh` ein
+`.workspace.local.yaml` mit allen Repos an, damit Befund 12 den Test nicht verfälscht.
 
 ## Tests (TDD, vor dem Code)
 
@@ -180,19 +181,19 @@ PR mit Manifest-/workspace.yaml-Änderung ─► CI: --check ─► rot, wenn ni
 ## Akzeptanzkriterien
 
 - [ ] **AK1** In einem Checkout mit vorhandenen `*.STALE.md` ist nach `git pull` plus post-merge-Hook
-      `git status --porcelain` leer (`bin/test-sync-sauber.sh` grün; danach einmal real in `~/MDM`).
-- [ ] **AK2** Nach einem manuellen `./sync.sh` gilt dasselbe.
-- [ ] **AK3** `bin/bauplan-index.py` erzeugt auf demselben Commit lokal und in der CI byte-gleiche Dateien:
+      `git status --porcelain` leer (`bin/test-sync-sauber.sh` grün am 16. Oktober 2026; real in `~/MDM` offen bis nach dem Merge).
+- [x] **AK2** Nach einem manuellen `./sync.sh` gilt dasselbe.
+- [x] **AK3** `bin/bauplan-index.py` erzeugt auf demselben Commit lokal und in der CI byte-gleiche Dateien:
       Der CI-Check `--check` ist grün auf einem Commit, dessen Übersicht lokal erzeugt wurde.
-- [ ] **AK4** `grep -c 'f-alert">veraltet' docs/bauplan/index.html` ergibt 0. Veraltete Etappen erscheinen
+- [x] **AK4** `grep -c 'f-alert">veraltet' docs/bauplan/index.html` ergibt 0. Veraltete Etappen erscheinen
       in der Konsolenausgabe von `sync.sh`, auch mit `--quiet`.
-- [ ] **AK5** Ein PR, der `workspace.yaml` oder ein Manifest ändert, ohne die Übersicht neu zu erzeugen,
+- [x] **AK5** Ein PR, der `workspace.yaml` oder ein Manifest ändert, ohne die Übersicht neu zu erzeugen,
       wird von der CI rot gemeldet. Mit neu erzeugter Übersicht ist er grün.
-- [ ] **AK6** Der Bauplan-Guard ist unverändert: `git diff main -- bin/bauplan-guard.py .claude/hooks/bauplan-guard.sh`
+- [x] **AK6** Der Bauplan-Guard ist unverändert: `git diff main -- bin/bauplan-guard.py .claude/hooks/bauplan-guard.sh`
       ist leer, `bin/test-waechter-hooks.sh` ist grün.
 - [ ] **AK7** Der nächste geplante Lauf von `bauplan-refresh.yml` nach dem Merge endet ohne Fehler im
-      Schritt „Uebersicht neu erzeugen".
-- [ ] **AK8** Alle Tests in `harness-check.yml` sind grün. Die Doku-Stellen aus Teil E sind angepasst.
+      Schritt „Uebersicht neu erzeugen". Offen bis zum ersten Lauf nach dem Merge.
+- [x] **AK8** Alle Tests in `harness-check.yml` sind grün. Die Doku-Stellen aus Teil E sind angepasst.
 
 ## Constraints
 
@@ -220,14 +221,20 @@ PR mit Manifest-/workspace.yaml-Änderung ─► CI: --check ─► rot, wenn ni
 4. Nach dem Merge zeigt die Konsole für `harness` Etappe 1 weiter „veraltet", obwohl PR #23 sie aufgefrischt
    hat (Befund 8). Das ist ein Folgeproblem der STALE.md, kein Fehler dieser Spec (Frage 4).
 
-## Offene Fragen (Entscheidung Konrad)
+## Umsetzung (16. Oktober 2026)
 
-1. **Kopf-„Stand":** neuestes `generated` der Manifeste anzeigen (Empfehlung) oder das Feld ganz entfernen?
-2. **`sync.sh`:** immer nur prüfen (Empfehlung, Teil C) — oder bei manuellem Aufruf schreiben und nur im
-   Hook prüfen (`sync.sh --hook`)? Die zweite Variante behält den gewohnten Weg „`./sync.sh` frischt die
-   Übersicht auf" und lässt dort das versehentliche Committen weiter zu, jetzt aber ohne lokale Marker.
-3. **Teil F (`CLAUDE.md`, Befund 12)** in diese Spec aufnehmen oder als eigene Spec?
-4. **STALE.md wird nie geleert (Befund 8):** eigene Folge-Spec? Denkbar: `--veraltet` rechnet wie die CI
-   über `last_seen_sha` statt aus STALE.md.
-5. **Hook-Installation (Befund 2):** soll `setup.sh` den Hook installieren (z. B. `core.hooksPath git-hooks`),
-   damit Änderungen am Hook ohne Handkopie wirken? Eigene Spec.
+- AK1 per Test belegt, real in `~/MDM` erst nach dem Merge prüfbar. Der erste Pull bringt die neue
+  `sync.sh` mit; die installierte Hook-Kopie ruft nur `sync.sh` auf und muss nicht ersetzt werden.
+  Nur ihre Kommentare und die Abschlussmeldung sind dann älter als `git-hooks/post-merge`.
+- Harness-Etappe 1 belegt `sync.sh`, `git-hooks/**` und `bin/**` und beschreibt den alten Ablauf
+  (`docs/bauplan/harness/etappe-01.html:557`, `:749`). Sie wird damit veraltet und läuft über
+  `/repo-bauplan harness --refresh` oder die CI, nicht über diesen PR.
+
+## Entscheidungen (16. Oktober 2026)
+
+1. **Kopf-„Stand":** neuestes `generated` der Manifeste.
+2. **`sync.sh`:** prüft immer nur, schreibt nie unter `docs/bauplan/`. Geschrieben wird explizit per
+   `bin/bauplan-index.py` und `bin/bauplan-nav.py` (Skill, CI).
+3. **`CLAUDE.md` (Befund 12):** eigene Spec.
+4. **STALE.md wird nie geleert (Befund 8):** offen, nicht Teil dieser Umsetzung.
+5. **Hook-Installation per `setup.sh` (Befund 2):** offen, nicht Teil dieser Umsetzung.

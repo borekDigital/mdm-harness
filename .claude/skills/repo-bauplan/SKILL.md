@@ -138,7 +138,8 @@ Die Fusszeile wird **nicht von Hand verlinkt**. `bin/bauplan-nav.py` setzt aus d
 Manifest: den Sprung auf die naechste Etappe (lokale Datei plus `Artefakt`-Link, sofern
 eine URL eingetragen ist), beim letzten Blatt stattdessen den Ruecksprung zur Uebersicht,
 und die Gesamtzahl in `Etappe n von m`. Beim Schreiben genuegt die Fliesstext-Zeile — der
-Nachsatz bleibt erhalten, die Verlinkung kommt beim naechsten `./sync.sh` dazu:
+Nachsatz bleibt erhalten, die Verlinkung setzt der Aufruf von `bin/bauplan-nav.py` am
+Ende des Laufs:
 
     Als naechstes: der Service-Layer - Action, API, Transformer
 
@@ -318,8 +319,8 @@ Historie im `mdm-harness`-Repo ist der Rueckweg (`git checkout HEAD -- docs/baup
 
 | Befehl | Wirkung |
 |---|---|
-| `bin/bauplan-index.py` | `docs/bauplan/index.html` neu erzeugen (Uebersicht mit Inhaltsverzeichnis) |
-| `bin/bauplan-nav.py` | Fusszeilen-Navigation aus dem Manifest setzen (idempotent, `--dry-run` zeigt nur) |
+| `bin/bauplan-index.py` | `docs/bauplan/index.html` neu erzeugen (Uebersicht mit Inhaltsverzeichnis); `--check` prueft nur (Exit 3 bei Abweichung), `--veraltet` listet lokal veraltete Etappen |
+| `bin/bauplan-nav.py` | Fusszeilen-Navigation aus dem Manifest setzen (idempotent, `--dry-run` zeigt nur, `--check` mit Exit 3) |
 | `bin/bauplan-wording.py` | Blattseiten gegen die Wortregeln pruefen (Exit 3 bei Verstoessen) |
 | `bin/bauplan-pdf.py <repo>` | Ganzen Satz als ein PDF — fuer Externe ohne Claude-Zugang |
 | `bin/bauplan-pdf.py <repo> --einzeln` | Ein PDF je Etappe |
@@ -327,9 +328,11 @@ Historie im `mdm-harness`-Repo ist der Rueckweg (`git checkout HEAD -- docs/baup
 | `bin/bauplan-guard.py --verify` | Bestand gegen den letzten Commit pruefen |
 | `bin/bauplan-import.py` | Veroeffentlichte Seite als Quelle zurueckholen |
 
-Nach jedem Lauf `bin/bauplan-index.py` aufrufen — die Uebersicht ist generiert, nicht
-handgepflegt. `./sync.sh` ruft Index und Navigation gemeinsam auf; einzeln braucht man
-sie nur beim Arbeiten an einem Satz.
+Nach jedem Lauf `bin/bauplan-index.py` und `bin/bauplan-nav.py` aufrufen und das Ergebnis
+im selben PR committen — Uebersicht und Fusszeilen sind generiert, nicht handgepflegt.
+`./sync.sh` erzeugt sie nicht mehr, es prueft nur; die CI meldet einen PR rot, der sie
+vergisst. Die Uebersicht enthaelt nur versionierten Stand: keine „veraltet"-Marker, kein
+Tagesdatum (Spec `bauplan-index-lokal-sauber`).
 
 ## Repo-spezifische Zuschnitte
 

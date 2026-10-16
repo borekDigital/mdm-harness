@@ -464,9 +464,10 @@
       </svg>
       <figcaption><b>Der Einstieg ist die Übersicht.</b>
         <code>docs/bauplan/index.html</code> listet alle Repositorys mit ihren Etappen. Je
-        Etappe verweist sie auf die lokale Datei und auf die veröffentlichte Seite und
-        markiert veraltete Etappen. <code>sync.sh</code> erzeugt die Übersicht bei jedem
-        Lauf neu. Der Benutzer bearbeitet sie nicht.</figcaption>
+        Etappe verweist sie auf die lokale Datei und auf die veröffentlichte Seite. Sie
+        enthält nur versionierten Stand. Veraltete Etappen meldet <code>sync.sh</code> in
+        der Konsole. <code>sync.sh</code> prüft die Übersicht nach jedem Pull, erzeugt sie
+        aber nicht neu. Der Benutzer bearbeitet sie nicht.</figcaption>
     </figure>
   </section>
 
@@ -716,9 +717,9 @@
           <tr><td>Ein Empfänger ohne Claude-Zugang benötigt die Dokumentation.</td><td><code>bin/bauplan-pdf.py &lt;repo&gt;</code>. Das PDF nennt Claude an keiner Stelle.</td></tr>
           <tr><td>Ein Kollege mit Claude-Zugang soll die Seite kommentieren.</td><td>Adresse aus der Übersicht senden und die Seite dort freigeben</td></tr>
           <tr><td>Der Benutzer hat Code geändert und kennt die Auswirkung auf die Dokumentation nicht.</td><td><code>bin/bauplan-ci.py --report</code></td></tr>
-          <tr><td>Die Übersicht markiert eine Etappe als veraltet.</td><td><code>/repo-bauplan &lt;repo&gt; --refresh</code></td></tr>
+          <tr><td><code>sync.sh</code> meldet eine Etappe als veraltet.</td><td><code>/repo-bauplan &lt;repo&gt; --refresh</code></td></tr>
           <tr><td>Ein Repository hat keinen Blattsatz.</td><td><code>/repo-bauplan &lt;repo&gt;</code>. Die Laufzeit steigt mit der Zeilenzahl des Repositorys.</td></tr>
-          <tr><td>Die Übersicht zeigt einen veralteten Stand.</td><td><code>bin/bauplan-index.py</code> oder <code>./sync.sh</code></td></tr>
+          <tr><td><code>sync.sh</code> meldet, dass die Übersicht vom Stand abweicht.</td><td><code>bin/bauplan-index.py</code> und <code>bin/bauplan-nav.py</code>, Ergebnis mit dem PR committen, der die Manifeste ändert</td></tr>
           <tr><td>Ein Blatt fehlt im Arbeitsbaum.</td><td><code>git checkout HEAD -- docs/bauplan</code>. Der Guard nennt diesen Befehl in seiner Meldung.</td></tr>
           <tr><td>Der Design-Kopf hat sich geändert.</td><td><code>bin/bauplan-restyle.py</code>, danach die Seiten neu veröffentlichen</td></tr>
         </tbody>
