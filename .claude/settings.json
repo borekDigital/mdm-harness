@@ -22,14 +22,25 @@
       "mcp__shopify-dev-mcp__validate"
     ],
     "deny": [
-      "Edit(themes/*/config/settings_data.json)",
-      "Write(themes/*/config/settings_data.json)"
+      "Edit(themes/*/config/settings_data.json)"
     ]
   },
   "enabledMcpjsonServers": [
     "shopify-dev-mcp"
   ],
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/harness-stand.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",

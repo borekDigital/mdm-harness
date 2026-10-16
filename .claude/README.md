@@ -247,6 +247,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |
 | post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in dieser README dokumentiert sind |
+| harness-stand.sh | SessionStart (startup) | `bin/harness-stand.py hinweis`: meldet, wenn die installierte Claude-Code-Version neuer ist als die in `bin/harness-referenz.json` gepruefte; kein Netz, schweigt sonst |
 | harness-check.sh | Stop | `bin/harness-check.py --offline`: Frontmatter, Modelle, Hook-Events, Hook-Ziele, MCP-Werkzeuge und -Versionen, Skill-Verweise, Rule-Globs gegen `bin/harness-referenz.json`; schweigt wenn sauber |
 | bauplan-guard.sh | PreToolUse (Bash/Edit/Write) | Blockt Loeschen von `docs/bauplan/**`, Schrumpfen der Manifeste, Entfernen von Repos aus `workspace.yaml` |
 | bauplan-staleness.sh | PostToolUse (Edit/Write) | Ordnet die geaenderte Datei den Blattsatz-Etappen zu (Zuordnung in `bin/bauplan_lib.py`), schreibt ins Ledger |
@@ -262,6 +263,19 @@ Exit 0 = sauber, 3 = Befund, sonst Defekt. `--offline` ohne Schema-Validierung u
 „Harness pruefen" bei jeder Aenderung an der Harness. Tests: `python3 -m unittest bin/test_harness_check.py`.
 
 Neue Claude-Code-Felder oder -Events: Referenzdatei anpassen, nicht das Skript.
+
+### Harness aktuell halten
+
+```
+SessionStart ── harness-stand.sh ── installierte Version > gepruefte? ── Hinweis in der Session
+montags (CI) ── Changelog seit geprueft + Dev-MCP-Version + harness-check
+             └─ neu? ── claude -p (nur Read/Glob/Grep/WebFetch) ── .claude/harness-bericht.md
+                        + gepruefte Version angehoben ── PR harness/stand
+```
+
+Workflow `.github/workflows/harness-aktuell.yml`, Skript `bin/harness-stand.py`. Der Lauf meldet
+nur — Uebernahmen laufen ueber Spec und Freigabe. Testlauf: Workflow manuell mit `seit`
+(z. B. `2.1.290`) starten. Tests: `python3 -m unittest bin/test_harness_stand.py`.
 
 ## MCP-Server
 

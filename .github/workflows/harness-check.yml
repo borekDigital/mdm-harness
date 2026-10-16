@@ -17,6 +17,8 @@ on:
       - "bin/harness-check.py"
       - "bin/harness-referenz.json"
       - "bin/test_harness_check.py"
+      - "bin/harness-stand.py"
+      - "bin/test_harness_stand.py"
       - ".github/workflows/harness-check.yml"
   pull_request:
     paths:
@@ -26,6 +28,8 @@ on:
       - "bin/harness-check.py"
       - "bin/harness-referenz.json"
       - "bin/test_harness_check.py"
+      - "bin/harness-stand.py"
+      - "bin/test_harness_stand.py"
       - ".github/workflows/harness-check.yml"
   workflow_dispatch:
 
@@ -46,8 +50,8 @@ jobs:
           pip install --quiet jsonschema
           npm install -g @anthropic-ai/claude-code
 
-      - name: Tests des Pruefskripts
-        run: python3 -m unittest bin/test_harness_check.py
+      - name: Tests der Pruefskripte
+        run: python3 -m unittest bin/test_harness_check.py bin/test_harness_stand.py
 
       - name: Harness pruefen
         shell: bash

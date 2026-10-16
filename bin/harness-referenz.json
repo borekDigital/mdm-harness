@@ -6,7 +6,10 @@
     "skill_felder": "https://code.claude.com/docs/en/skills.md",
     "rule_felder": "https://code.claude.com/docs/en/memory.md",
     "hook_events": "https://code.claude.com/docs/en/hooks.md",
-    "settings_schema": "https://json.schemastore.org/claude-code-settings.json"
+    "settings_schema": "https://json.schemastore.org/claude-code-settings.json",
+    "pfadregeln": "https://code.claude.com/docs/en/permissions.md",
+    "changelog": "https://code.claude.com/docs/en/changelog.md",
+    "changelog_roh": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md"
   },
   "agent_pflichtfelder": ["name", "description"],
   "agent_felder": [
@@ -41,6 +44,7 @@
       "stichworte": ["Dev MCP", "shopify-dev-mcp"]
     }
   },
+  "werkzeuge_ohne_pfadregel": ["Write", "NotebookEdit", "Glob", "MultiEdit"],
   "agent_rollen": ["planner", "implementer", "reviewer", "writer", "extractor"],
   "externe_agenten": [],
   "externe_skills": [

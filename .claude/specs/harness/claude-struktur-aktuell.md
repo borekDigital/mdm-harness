@@ -2,7 +2,7 @@
 
 Stand: 16. Oktober 2026
 Quelle: Analyse der Harness-Konfiguration und Recherche in der Claude-Code-Doku, 16. Oktober 2026
-Status: FREIGEGEBEN (16. Oktober 2026) — B und C IMPLEMENTIERT (16. Oktober 2026); C-Workflow wird mit dem ersten Push validiert; D–E offen
+Status: FREIGEGEBEN (16. Oktober 2026) — B, C, D, E IMPLEMENTIERT (16. Oktober 2026); Workflows werden auf GitHub validiert (C mit dem PR, E nach dem Merge); A offen
 
 ## Ziel
 
@@ -28,6 +28,7 @@ automatisch auf und wird gemeldet. Was übernommen wird, entscheidet weiterhin K
 | 11 | Unbekannte Felder im Agenten-Frontmatter ignoriert Claude Code stillschweigend. Ein Tippfehler schaltet ein Feature ab, ohne Fehlermeldung | code.claude.com/docs/en/sub-agents | ✅ belegt (Doku) |
 | 12 | Vier Skills nutzen `user_invocable: true`. Claude Code kennt nur `user-invocable` (Bindestrich, Default `true`), der Schlüssel ist also wirkungslos | `skills/*/SKILL.md:4`; code.claude.com/docs/en/skills.md, Frontmatter-Referenz | ✅ belegt |
 | 13 | Es gibt keinen Mechanismus, der Updates von Claude Code oder Shopify Dev MCP gegen die Harness abgleicht | Bestand `bin/`, `.github/workflows/`, `hooks/` | ✅ belegt |
+| 14 | Die Deny-Regel `Write(themes/*/config/settings_data.json)` greift nie, weil Claude Code Pfadregeln nur für `Edit` und `Read` prüft. Den Schutz trugen allein `Edit(...)` und der Hook | `.claude/settings.json:26`; code.claude.com/docs/en/permissions.md; Warnung von Claude Code bei der Generalprobe von E | ✅ belegt (behoben, Prüfung H17) |
 
 ## Soll-Bild
 
@@ -93,23 +94,23 @@ Spec, Freigabe, Umsetzung ein.
 
 ### D — Versions-Wächter
 
-- [ ] Datei `.claude/harness-stand.json` mit den geprüften Versionen von Claude Code und
+- [x] Datei `.claude/harness-stand.json` mit den geprüften Versionen von Claude Code und
       Shopify Dev MCP und dem Datum der letzten Prüfung.
-- [ ] SessionStart-Hook: Ist die installierte Version von Claude Code neuer als die geprüfte, steht
+- [x] SessionStart-Hook: Ist die installierte Version von Claude Code neuer als die geprüfte, steht
       ein Hinweis im Kontext. Er nennt Versionsspanne und Changelog-URL. Kein Netzzugriff, Laufzeit unter 1 s.
 
 ### E — Wöchentlicher Abgleich in der CI
 
-- [ ] Workflow „Harness aktuell halten", gleicher Aufbau wie `bauplan-refresh.yml` (Zeitplan und `workflow_dispatch`).
-- [ ] Schritt 1: `harness-check.py` (Schicht 2).
-- [ ] Schritt 2: Changelog-Einträge von Claude Code seit der Version in `harness-stand.json` aus
+- [x] Workflow „Harness aktuell halten", gleicher Aufbau wie `bauplan-refresh.yml` (Zeitplan und `workflow_dispatch`).
+- [x] Schritt 1: `harness-check.py` (Schicht 2).
+- [x] Schritt 2: Changelog-Einträge von Claude Code seit der Version in `harness-stand.json` aus
       `CHANGELOG.md` (anthropics/claude-code) ziehen, dazu die Versionen von Shopify Dev MCP vergleichen.
-- [ ] Schritt 3: nur bei neuen Einträgen läuft `claude -p` mit Lese-Werkzeugen und `--max-budget-usd`.
+- [x] Schritt 3: nur bei neuen Einträgen läuft `claude -p` mit Lese-Werkzeugen und `--max-budget-usd`.
       Ergebnis ist ein Bericht: welche Neuerungen, Abkündigungen oder Änderungen die Harness betreffen,
       mit Fundstelle in der Harness, Evidenz-Label und Vorschlag.
-- [ ] Schritt 4: PR auf Branch `harness/stand` mit Bericht und hochgezählter `harness-stand.json`.
+- [x] Schritt 4: PR auf Branch `harness/stand` mit Bericht und hochgezählter `harness-stand.json`.
       Kein anderer Pfad im PR.
-- [ ] Ein roter Lauf zeigt seine Ursache im Log (Lehre aus `bauplan-ci-auffrischung.md`).
+- [x] Ein roter Lauf zeigt seine Ursache im Log (Lehre aus `bauplan-ci-auffrischung.md`).
 
 ## Akzeptanzkriterien
 
@@ -117,8 +118,8 @@ Spec, Freigabe, Umsetzung ein.
 - [x] `bin/harness-check.py` auf dem heutigen Stand meldet mindestens #3, #9 und #10 mit Exit 3.
       Nach Teil B endet er mit Exit 0.
 - [x] Ein absichtlich eingebautes falsches Agenten-Feld (`modle: opus`) wird mit Datei und Zeile gemeldet.
-- [ ] Wird `harness-stand.json` auf eine ältere Version gesetzt, zeigt eine neue Session den Hinweis.
-      Bei gleicher Version bleibt sie still.
+- [x] Wird `harness-stand.json` auf eine ältere Version gesetzt, zeigt eine neue Session den Hinweis.
+      Bei gleicher Version bleibt sie still. (Hook-Ausgabe belegt; wie die App `systemMessage` beim Start anzeigt: ❌ ungeprüft, siehe Umsetzung D)
 - [ ] Ein manueller CI-Lauf mit älterer geprüfter Version öffnet einen PR, der nur Bericht und
       `harness-stand.json` enthält. Jeder Befund im Bericht hat eine Fundstelle.
 - [ ] Ein CI-Lauf ohne neue Changelog-Einträge startet Claude nicht und endet grün.
@@ -182,3 +183,47 @@ Nachweise:
 - Heutiger Stand: offline und online (mit Schema und `plugin validate`) „Harness sauber", Exit 0.
 - `modle: opus`: als H02 mit `datei:4` gemeldet (Test `test_unbekanntes_agentenfeld`, `test_textausgabe_nennt_datei_und_zeile`).
 - Grenze: H11 erkennt Werkzeugnamen ohne `mcp__`-Präfix nur in Zeilen oder Abschnitten, die „Dev MCP" oder „shopify-dev-mcp" nennen.
+
+### D — 16. Oktober 2026
+
+**Abweichung von der Spec:** Statt einer eigenen `.claude/harness-stand.json` stehen geprüfte Version
+und Stand in `bin/harness-referenz.json` (`claude_code_version`, `stand`). Die Feldlisten dort
+beschreiben genau diesen Doku-Stand. Zwei Dateien könnten auseinanderlaufen. Die Version von Shopify Dev MCP
+stand dort schon (`mcp_server`). Überall, wo die Spec `harness-stand.json` nennt, ist die Referenzdatei gemeint.
+
+| Teil | Ort |
+|---|---|
+| Skript | `bin/harness-stand.py` mit `hinweis`, `changelog`, `neueste`, `prompt` und `anheben` |
+| Tests | `bin/test_harness_stand.py`, 13 Tests |
+| Hook | `.claude/hooks/harness-stand.sh`, SessionStart mit Matcher `startup`, synchron, Laufzeit 0,03 s |
+
+Nachweise:
+- Gleiche Version: keine Ausgabe. Kopie mit geprüfter Version 2.1.290: JSON mit `systemMessage` und
+  `additionalContext`, beide mit 2.1.301, 2.1.290 und Changelog-URL.
+- Versionen werden als Zahlen verglichen: 2.1.80 ist älter als 2.1.301.
+- ❌ Wie die Desktop-App `systemMessage` bei SessionStart darstellt, ist ungeprüft (die Doku legt es nicht fest).
+  `additionalContext` erreicht Claude in jedem Fall.
+
+### E — 16. Oktober 2026
+
+| Teil | Ort |
+|---|---|
+| Workflow | `.github/workflows/harness-aktuell.yml`, montags 04:41 UTC, `workflow_dispatch` mit Eingabe `seit` |
+| Bericht | `.claude/harness-bericht.md` (je Lauf überschrieben) |
+| PR | Branch `harness/stand`, nur Bericht und `bin/harness-referenz.json` |
+
+- `claude -p` liest den Auftrag über stdin und darf nur `Read Glob Grep WebFetch` nutzen, mit `--max-budget-usd 5`.
+  Bei Fehlern werden stdout und stderr ausgegeben.
+- Kein `--bare`, weil es nur `ANTHROPIC_API_KEY` liest und kein OAuth-Token (`claude --help`).
+- Generalprobe lokal mit `--seit 2.1.300`: Exit 0 und ein Bericht mit 7 Befunden, jeder mit Fundstelle und
+  Evidenz-Label. Ohne `seit` (nichts neu): `changelog` endet mit 0, Claude startet nicht.
+- Aus der Generalprobe übernommen: #14 (H17).
+- Abgelehnt: Der Bericht schlug vor, den Alias `best` in `modell_aliase` aufzunehmen. `best` ist ein
+  Alias für die Sitzung (model-config.md), steht aber nicht unter den erlaubten Werten für `model`
+  bei Subagenten (sub-agents.md:310). Die Referenz bleibt so. Das zeigt, warum der Lauf nur meldet.
+- ❌ Zeitplan und `workflow_dispatch` greifen erst, wenn der Workflow auf `main` liegt. Die zwei
+  CI-Akzeptanzkriterien werden deshalb nach dem Merge mit einem manuellen Lauf (`seit = 2.1.290`) validiert.
+
+Außerhalb des Repos gemeldet, nicht geändert: Claude Code warnt, dass
+`Bash(cd themes/* && shopify theme:*)` in der persönlichen `.claude/settings.local.json` nie greift
+(`*` vor `:*` wird nicht expandiert).

@@ -205,6 +205,13 @@ class HarnessCheckTest(unittest.TestCase):
         self.write(".claude/settings.json", json.dumps(data, indent=2))
         self.assert_befund("H07", ".claude/settings.json", text="$schema")
 
+    def test_pfadregel_fuer_write_greift_nie(self):
+        # permissions.md: Pfadregeln prueft Claude Code nur fuer Edit und Read.
+        self.write(".claude/settings.json", settings(permissions={
+            "allow": [], "deny": ["Edit(themes/*/config/settings_data.json)",
+                                  "Write(themes/*/config/settings_data.json)"]}))
+        self.assert_befund("H17", ".claude/settings.json", text="Write(themes/*/config/settings_data.json)")
+
     def test_unbekanntes_hook_event(self):
         data = json.loads(settings())
         data["hooks"]["OnStop"] = data["hooks"].pop("Stop")

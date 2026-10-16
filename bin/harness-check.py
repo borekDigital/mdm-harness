@@ -174,6 +174,13 @@ class Pruefung:
             self.melde("H07", rel, 1, "`$schema` fehlt — Tippfehler in Schluesseln bleiben unbemerkt")
         events = set(self.ref["hook_events"])
         zeilen = self.lies(rel)
+        ohne_pfad = tuple("%s(" % w for w in self.ref["werkzeuge_ohne_pfadregel"])
+        for liste in ("allow", "ask", "deny"):
+            for regel in (data.get("permissions") or {}).get(liste, []):
+                if regel.startswith(ohne_pfad) and not regel.endswith("()"):
+                    nr = next((i for i, z in enumerate(zeilen, 1) if regel in z), 1)
+                    self.melde("H17", rel, nr, "Regel `%s` (%s) wird nie geprueft — Pfadregeln nur fuer Edit und Read"
+                               % (regel, liste))
         for event, gruppen in (data.get("hooks") or {}).items():
             if event not in events:
                 nr = next((i for i, z in enumerate(zeilen, 1) if '"%s"' % event in z), 1)
