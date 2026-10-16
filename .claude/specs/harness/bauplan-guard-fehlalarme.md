@@ -2,7 +2,7 @@
 
 Stand: 16. Oktober 2026
 Quelle: drei blockierte Befehle in der Session vom 16. Oktober 2026; Folgespec zu `waechter-hooks-fail-closed.md`
-Status: ENTWURF
+Status: FREIGEGEBEN (16. Oktober 2026)
 
 ## Ziel
 
@@ -56,8 +56,8 @@ Stelle und das Wort `workspace.yaml` an einer anderen.
   üblichen Formen. Im Zweifel blockiert der Guard (fail-closed).
 - Das Memory-Fakt „Bauplan-Guard blockt Shell-Lesebefehle" wird nach der Umsetzung angepasst.
 
-## Offene Entscheidungen (Konrad)
+## Entscheidungen (Konrad, 16. Oktober 2026)
 
-1. Lesebefehle, die geschützte Pfade nennen, immer durchlassen: ja (Vorschlag)?
-2. Sollen `git stash push`, `git checkout --` und `git restore` auf geschützte Pfade blockiert werden? Vorschlag: ja,
-   denn sie verwerfen Bestand im Arbeitsbaum, genau wie `rm`.
+1. Lesebefehle, die geschützte Pfade nur nennen, laufen immer durch.
+2. `git stash push`, `git checkout --` und `git restore` auf geschützte Pfade werden blockiert.
+3. Der gleiche Fehlalarm in `git-safety` (#6) wird in dieser Spec mitgelöst.
