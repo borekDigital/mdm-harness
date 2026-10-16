@@ -5,6 +5,15 @@ Bestandsquelle ist workspace.yaml, nicht das Dateisystem. Ein Repo ohne
 Blattsatz erscheint als offener Posten — nicht als Luecke, die man
 wegraeumt. Genau diese Richtung verhindert, dass ein halb geklonter
 Workspace zur Kuerzung der Doku fuehrt.
+
+Die Uebersicht ist versioniert und haengt deshalb nur vom versionierten Stand
+ab: workspace.yaml, Manifeste, vorhandene Blattseiten. Lokaler Zustand
+(STALE-Berichte, Ledger, Uhr) bleibt draussen — sonst ist die Datei nach jedem
+Pull geaendert (Spec bauplan-index-lokal-sauber).
+
+  bin/bauplan-index.py             schreibt docs/bauplan/index.html
+  bin/bauplan-index.py --check     Exit 3, wenn die Datei vom Neubau abweicht
+  bin/bauplan-index.py --veraltet  veraltete Etappen aus den STALE-Berichten, nur Konsole
 """
 
 import argparse
@@ -17,6 +26,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bauplan_lib as lib  # noqa: E402
 
 HEAD_ASSET = ".claude/skills/repo-bauplan/assets/bauplan-head.html"
+INDEX_REL = "docs/bauplan/index.html"
+MONATE = ("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August",
+          "September", "Oktober", "November", "Dezember")
 
 
 def read_workspace(project):
@@ -46,7 +58,9 @@ def read_workspace(project):
 
 
 def stale_etappen(project, repo):
-    """Etappennummern aus <repo>.STALE.md — die Arbeitsliste des Staleness-Hooks."""
+    """Etappennummern aus <repo>.STALE.md — die Arbeitsliste des Staleness-Hooks.
+
+    Nur fuer --veraltet. Die Datei ist gitignored und gehoert nie in die Uebersicht."""
     path = os.path.join(lib.manifest_dir(project), repo + ".STALE.md")
     if not os.path.isfile(path):
         return set()
@@ -55,11 +69,22 @@ def stale_etappen(project, repo):
     return {int(n) for n in re.findall(r"^## Etappe (\d+)", head, re.M)}
 
 
+def stand(manifests):
+    """Neuestes `generated` aller Manifeste als „16. Oktober 2026". Kein Uhr-Datum:
+    CI und lokaler Lauf muessen aus demselben Commit dieselbe Datei erzeugen."""
+    daten = sorted(m.get("generated", "") for m in manifests.values()
+                   if re.match(r"^\d{4}-\d{2}-\d{2}$", str(m.get("generated", ""))))
+    if not daten:
+        return "—"
+    jahr, monat, tag = (int(t) for t in daten[-1].split("-"))
+    return "%d. %s %d" % (tag, MONATE[monat - 1], jahr)
+
+
 def esc(v):
     return html.escape(str(v if v is not None else ""), quote=True)
 
 
-def repo_section(project, key, meta, manifest, stale):
+def repo_section(project, key, meta, manifest):
     name = meta.get("name", key)
     tech = meta.get("tech", "")
     rows = []
@@ -80,16 +105,15 @@ def repo_section(project, key, meta, manifest, stale):
         sheet = lib.sheet_path(key, nr, project)
         local = os.path.relpath(sheet, lib.docs_dir(project)) if os.path.isfile(sheet) else None
         offen = len(e.get("open_questions", []) or [])
-        marker = ' <span class="f-alert">veraltet</span>' if nr in stale else ""
         links = []
         if local:
             links.append('<a href="%s">HTML</a>' % esc(local))
         if e.get("url"):
             links.append('<a href="%s">Artefakt</a>' % esc(e["url"]))
         rows.append(
-            "<tr><td class=\"m\">%02d</td><td>%s%s</td><td class=\"m\">%s</td>"
+            "<tr><td class=\"m\">%02d</td><td>%s</td><td class=\"m\">%s</td>"
             "<td class=\"m\">%s</td><td class=\"m\">%s</td><td class=\"m\">%s</td></tr>"
-            % (nr, esc(e.get("title", "")), marker, esc(e.get("blaetter", "")),
+            % (nr, esc(e.get("title", "")), esc(e.get("blaetter", "")),
                esc(e.get("findings", "")), offen or "—",
                " · ".join(links) or "<span class=\"f-alert\">fehlt</span>")
         )
@@ -100,7 +124,7 @@ def repo_section(project, key, meta, manifest, stale):
       <span class="plate-no">%s</span>
       <h2>%s</h2>
     </div>
-    <p class="lead">%s — %d Etappen, Stand %s.%s</p>
+    <p class="lead">%s — %d Etappen, Stand %s.</p>
     <div class="tw">
       <table>
         <caption>Inhaltsverzeichnis %s</caption>
@@ -112,20 +136,12 @@ def repo_section(project, key, meta, manifest, stale):
   </section>""" % (
         esc(key), esc(name), esc(tech), len(manifest.get("etappen", [])),
         esc(manifest.get("generated", "unbekannt")),
-        (" <b>%d Etappen veraltet</b> — auffrischen mit <code>/repo-bauplan %s --refresh</code>."
-         % (len(stale), key)) if stale else "",
         esc(key), "\n          ".join(rows),
     )
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--project", default=None)
-    ap.add_argument("--stand", default=None, help="Datum fuer die Meta-Zeile")
-    args = ap.parse_args()
-    project = lib.project_root(args.project)
-    lib.assert_project(project)
-
+def render(project):
+    """Die Uebersicht als Text — nur aus versioniertem Stand."""
     with open(os.path.join(project, HEAD_ASSET), encoding="utf-8") as fh:
         head = fh.read()
 
@@ -140,7 +156,7 @@ def main():
     )
 
     sections = "".join(
-        repo_section(project, key, meta, manifests.get(key), stale_etappen(project, key))
+        repo_section(project, key, meta, manifests.get(key))
         for key, meta in repos.items()
     )
     # Blattsaetze ohne Repo-Eintrag (z. B. die Harness selbst) hinten anhaengen.
@@ -148,7 +164,7 @@ def main():
     sections += "".join(
         repo_section(project, key,
                      {"name": m.get("name", key), "tech": m.get("tech", "")},
-                     m, stale_etappen(project, key))
+                     m)
         for key, m in manifests.items() if key not in repos
     )
 
@@ -179,7 +195,6 @@ def main():
   <div class="legend">
     <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
     <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
     <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
   </div>
 %s
@@ -199,6 +214,8 @@ def main():
           <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
           <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
           <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
+          <tr><td class="m">bin/bauplan-index.py --check</td><td>Prüfen, ob diese Übersicht zum Stand passt</td></tr>
+          <tr><td class="m">bin/bauplan-index.py --veraltet</td><td>Lokal veraltete Etappen in der Konsole</td></tr>
           <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
           <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
           <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>
@@ -216,14 +233,56 @@ def main():
 
 </div>
 """ % (head, mit_satz, len(repos), gesamt_etappen, quellen, gesamt_etappen,
-       args.stand or "—", sections)
+       stand(manifests), sections)
+    return body, len(repos), gesamt_etappen, quellen
 
+
+def veraltet(project):
+    """Je Repo mit STALE-Bericht eine Zeile. Schreibt nichts."""
+    for repo, _p, _m in lib.iter_manifests(project):
+        nrs = sorted(stale_etappen(project, repo))
+        if nrs:
+            print("%s: Etappe%s %s veraltet → /repo-bauplan %s --refresh"
+                  % (repo, "n" if len(nrs) > 1 else "", ", ".join(str(n) for n in nrs), repo))
+    return 0
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--project", default=None)
+    modus = ap.add_mutually_exclusive_group()
+    modus.add_argument("--check", action="store_true",
+                       help="nicht schreiben; Exit 3, wenn index.html vom Neubau abweicht")
+    modus.add_argument("--veraltet", action="store_true",
+                       help="veraltete Etappen aus den lokalen STALE-Berichten ausgeben")
+    args = ap.parse_args()
+    project = lib.project_root(args.project)
+    lib.assert_project(project)
+
+    if args.veraltet:
+        return veraltet(project)
+
+    body, n_repos, gesamt_etappen, quellen = render(project)
     out = os.path.join(lib.docs_dir(project), "index.html")
+
+    if args.check:
+        alt = None
+        if os.path.isfile(out):
+            with open(out, encoding="utf-8") as fh:
+                alt = fh.read()
+        if alt == body:
+            print("%s passt zum Stand." % INDEX_REL)
+            return 0
+        print("%s %s. Neu erzeugen mit bin/bauplan-index.py und mit dem PR committen,"
+              " der Manifest, workspace.yaml oder Blattseiten aendert."
+              % (INDEX_REL, "fehlt" if alt is None else "weicht vom Stand ab"))
+        return 3
+
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w", encoding="utf-8") as fh:
         fh.write(body)
     print("%s (%d Repos, %d Etappen, %d Quellen)"
-          % (os.path.relpath(out, project), len(repos), gesamt_etappen, quellen))
+          % (os.path.relpath(out, project), n_repos, gesamt_etappen, quellen))
     return 0
 
 

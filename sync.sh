@@ -114,20 +114,36 @@ generate_claude_md() {
   echo "$content"
 }
 
-# --- Bauplan-Uebersicht neu erzeugen ---
+# --- Bauplan-Uebersicht pruefen ---
 
-# Ersetzt das fruehere Patchen von harness-app/data.json. Die Uebersicht wird
-# aus den Manifesten in .claude/bauplan/ erzeugt, nicht aus einer handgepflegten
-# Datei — damit kann sie nicht mehr vom Bestand abweichen.
-update_index() {
+# Prueft nur, schreibt nie unter docs/bauplan/. Uebersicht und Fusszeilen sind
+# versioniert und werden im PR erzeugt, der ihre Eingaben aendert (Skill, CI).
+# Schriebe dieser Lauf sie neu, waeren sie nach jedem Pull lokal geaendert —
+# Spec bauplan-index-lokal-sauber. --project, weil bauplan_lib sonst auf
+# ~/MDM zurueckfaellt: ein Lauf im Worktree traefe dann den Haupt-Checkout.
+check_bauplan() {
+  local script name rc
+  for script in "$INDEX_SCRIPT" "$NAV_SCRIPT"; do
+    [[ -x "$script" ]] || continue
+    name="$(basename "$script")"
+    rc=0
+    "$script" --project "$SCRIPT_DIR" --check >/dev/null 2>&1 || rc=$?
+    case "$rc" in
+      0) ;;
+      3) warn "${name}: versionierter Stand weicht ab — \`bin/${name}\` ausfuehren und mit dem PR committen, der die Eingaben aendert" ;;
+      *) warn "${name} fehlgeschlagen (Exit ${rc})" ;;
+    esac
+  done
+}
+
+# Veraltete Etappen aus den lokalen STALE-Berichten. Nur Konsole, auch mit
+# --quiet: nach einem Pull ist das die einzige Stelle, an der sie auftauchen.
+report_veraltet() {
   [[ -x "$INDEX_SCRIPT" ]] || return 0
-  local today
-  today=$(date "+%-d. %B %Y" | sed 's/January/Januar/;s/February/Februar/;s/March/Maerz/;s/May/Mai/;s/June/Juni/;s/July/Juli/;s/October/Oktober/;s/December/Dezember/')
-  "$INDEX_SCRIPT" --stand "$today" >/dev/null 2>&1 || warn "bauplan-index.py fehlgeschlagen"
-  # Fusszeilen-Navigation aus demselben Manifest nachziehen. Idempotent —
-  # kommt eine Etappe dazu, zeigt das Blatt davor danach auf sie.
-  [[ -x "$NAV_SCRIPT" ]] || return 0
-  "$NAV_SCRIPT" >/dev/null 2>&1 || warn "bauplan-nav.py fehlgeschlagen"
+  local zeile
+  while IFS= read -r zeile; do
+    [[ -n "$zeile" ]] && echo "  Bauplan: $zeile"
+  done < <("$INDEX_SCRIPT" --project "$SCRIPT_DIR" --veraltet 2>/dev/null || true)
 }
 
 # --- Wording der Blattseiten melden ---
@@ -220,11 +236,11 @@ main() {
   generate_claude_md > "$OUTPUT"
   log "  → ${OUTPUT} geschrieben"
 
-  # Bauplan-Uebersicht aktualisieren
+  # Bauplan-Uebersicht pruefen (schreibt nicht)
   if [[ -x "$INDEX_SCRIPT" ]]; then
-    log "  Bauplan-Uebersicht aktualisieren..."
-    update_index
-    log "  → docs/bauplan/index.html aktualisiert"
+    log "  Bauplan-Uebersicht pruefen..."
+    check_bauplan
+    report_veraltet
   fi
 
   # Reihenfolge ist bindend: erst pruefen, dann stempeln. Umgekehrt liest

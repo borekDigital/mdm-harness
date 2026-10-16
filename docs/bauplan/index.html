@@ -408,14 +408,13 @@
       <div class="tb-cell"><dt>Etappen</dt><dd>31</dd></div>
       <div class="tb-cell"><dt>HTML-Quellen</dt><dd>31 von 31</dd></div>
       <div class="tb-cell"><dt>Design</dt><dd>bauplan-v1</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>15. Oktober 2026</dd></div>
     </dl>
   </div>
 
   <div class="legend">
     <span class="legend-item"><i class="swatch sw-web"></i>HTML <span>— Quelle im Repo</span></span>
     <span class="legend-item"><i class="swatch sw-worker"></i>Artefakt <span>— veröffentlichte Seite</span></span>
-    <span class="legend-item"><i class="swatch sw-alert"></i>veraltet <span>— Quelldatei hat sich geändert</span></span>
     <span class="legend-item"><i class="swatch sw-vite"></i>offener Posten <span>— Repo ohne Blattsatz</span></span>
   </div>
 
@@ -562,6 +561,8 @@
           <tr><td class="m">/repo-bauplan &lt;repo&gt;</td><td>Kompletten Blattsatz bauen</td></tr>
           <tr><td class="m">/repo-bauplan &lt;repo&gt; --refresh</td><td>Nur die veralteten Etappen neu bauen</td></tr>
           <tr><td class="m">bin/bauplan-index.py</td><td>Diese Übersicht neu erzeugen</td></tr>
+          <tr><td class="m">bin/bauplan-index.py --check</td><td>Prüfen, ob diese Übersicht zum Stand passt</td></tr>
+          <tr><td class="m">bin/bauplan-index.py --veraltet</td><td>Lokal veraltete Etappen in der Konsole</td></tr>
           <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt;</td><td>Ganzen Satz als ein PDF</td></tr>
           <tr><td class="m">bin/bauplan-pdf.py &lt;repo&gt; --einzeln</td><td>Ein PDF je Etappe</td></tr>
           <tr><td class="m">bin/bauplan-stale.py --repo &lt;repo&gt;</td><td>Veraltete Etappen ermitteln</td></tr>

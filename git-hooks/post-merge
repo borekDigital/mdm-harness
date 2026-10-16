@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Git post-merge Hook fuer das mdm-harness Repo.
 # Wird nach jedem `git pull` / `git merge` ausgefuehrt.
-# Regeneriert CLAUDE.md aus Templates + workspace.yaml.
+# Regeneriert CLAUDE.md aus Templates + workspace.yaml und prueft die
+# Bauplan-Uebersicht. Unter docs/bauplan/ schreibt der Lauf nichts — sonst
+# waere die versionierte Uebersicht nach jedem Pull lokal geaendert.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SYNC_SCRIPT="${REPO_ROOT}/sync.sh"
@@ -9,5 +11,5 @@ SYNC_SCRIPT="${REPO_ROOT}/sync.sh"
 if [[ -x "$SYNC_SCRIPT" ]]; then
   echo "post-merge: sync.sh ausfuehren..."
   "$SYNC_SCRIPT" --quiet
-  echo "post-merge: CLAUDE.md aktualisiert."
+  echo "post-merge: CLAUDE.md aktualisiert, Bauplan geprueft."
 fi
