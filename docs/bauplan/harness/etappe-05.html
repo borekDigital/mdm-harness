@@ -404,7 +404,7 @@
     <dl class="tb-meta">
       <div class="tb-cell"><dt>Gelesen</dt><dd>workspace.yaml · .claude/rules · .claude/bauplan</dd></div>
       <div class="tb-cell"><dt>Repos</dt><dd>8 Arbeits-Repos · 2 Plattformen</dd></div>
-      <div class="tb-cell"><dt>Abdeckung</dt><dd>7 Rules · 2 Blattsätze · 1 Spec-Satz</dd></div>
+      <div class="tb-cell"><dt>Abdeckung</dt><dd>7 Rules · 3 Blattsätze · 1 Spec-Satz</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
       <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
@@ -685,10 +685,10 @@
     <p class="lead">Die Harness deckt ihre Repos auf drei Arten ab: path-scoped Rules unter
       <code>.claude/rules/</code>, Specs unter <code>.claude/specs/</code>, Blattsätze unter
       <code>docs/bauplan/</code>. Rules decken sieben der acht Repos ab, Specs eines,
-      Blattsätze zwei. Ein Repo trägt in allen drei Spalten eine leere Zelle.</p>
+      Blattsätze drei. Ein Repo trägt in allen drei Spalten eine leere Zelle.</p>
 
     <figure>
-      <svg viewBox="0 0 960 384" role="img" aria-label="Matrix aus acht Repos gegen drei Arten der Abdeckung. Sieben Repos sind von Rules gedeckt, nur theme-mdm hat Specs, nur connector und emailservice haben einen Blattsatz. Datalayer hat in allen drei Spalten eine leere Zelle.">
+      <svg viewBox="0 0 960 384" role="img" aria-label="Matrix aus acht Repos gegen drei Arten der Abdeckung. Sieben Repos sind von Rules gedeckt, nur theme-mdm hat Specs, connector, emailservice und theme-mdm haben einen Blattsatz. Datalayer hat in allen drei Spalten eine leere Zelle.">
         <text x="96" y="40" class="s-lbl f-dim">Repo</text>
         <text x="418" y="40" class="s-lbl f-dim">Rules</text>
         <text x="596" y="40" class="s-lbl f-dim">Specs</text>
@@ -699,8 +699,9 @@
         <rect x="412" y="58" width="96" height="18" rx="2" fill="var(--web)" fill-opacity="0.3" stroke="var(--web)" stroke-opacity="0.6"></rect>
         <text x="518" y="72" class="s-tiny f-dim">3</text>
         <rect x="590" y="58" width="96" height="18" rx="2" fill="var(--web)" fill-opacity="0.3" stroke="var(--web)" stroke-opacity="0.6"></rect>
-        <text x="696" y="72" class="s-tiny f-dim">6</text>
-        <rect x="776" y="58" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
+        <text x="696" y="72" class="s-tiny f-dim">15</text>
+        <rect x="776" y="58" width="96" height="18" rx="2" fill="var(--worker)" fill-opacity="0.3" stroke="var(--worker)" stroke-opacity="0.6"></rect>
+        <text x="882" y="72" class="s-tiny f-dim">9 Etappen</text>
 
         <rect x="88" y="86" width="848" height="30" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.2"></rect>
         <text x="100" y="106" class="s-name">theme-borek</text>
@@ -753,8 +754,8 @@
         <rect x="776" y="296" width="96" height="18" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"></rect>
 
         <rect x="88" y="336" width="848" height="40" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="104" y="356" class="s-tiny">Gestrichelte Zelle: nicht vorhanden. Der Workspace fuehrt drei Blattsaetze; der dritte beschreibt die Harness selbst und steht nicht in dieser Liste.</text>
-        <text x="104" y="370" class="s-tiny f-dim">Sechs der acht Arbeits-Repos haben keinen Blattsatz. Die Zahl hinter einer gefuellten Zelle nennt die Anzahl der Dateien.</text>
+        <text x="104" y="356" class="s-tiny">Gestrichelte Zelle: nicht vorhanden. Der Workspace fuehrt vier Blattsaetze; der vierte beschreibt die Harness selbst und steht nicht in dieser Liste.</text>
+        <text x="104" y="370" class="s-tiny f-dim">Fuenf der acht Arbeits-Repos haben keinen Blattsatz. Die Zahl hinter einer gefuellten Zelle nennt die Anzahl der Dateien.</text>
       </svg>
       <figcaption><b>Relevant beim Bearbeiten von <code>datalayer/</code>: die Harness meldet
         dort nichts.</b> Keine <code>paths</code>-Liste unter <code>.claude/rules/</code>
@@ -823,7 +824,7 @@
       <tbody>
         <tr><td>Acht Repos, Gruppen und Plattformen</td><td class="m">workspace.yaml</td></tr>
         <tr><td>Rules-Abdeckung je Repo</td><td class="m">.claude/rules/*.md, Feld paths</td></tr>
-        <tr><td>Blattsätze: connector, emailservice, harness</td><td class="m">.claude/bauplan/*.manifest.json</td></tr>
+        <tr><td>Blattsätze: connector, emailservice, theme-mdm, harness</td><td class="m">.claude/bauplan/*.manifest.json</td></tr>
         <tr><td>Specs nur für theme-mdm</td><td class="m">.claude/specs/themes/mdm/</td></tr>
         <tr><td>Drei Wurzel-Commits, kein merge-base</td><td class="m">git merge-base je Paar — leer</td></tr>
         <tr><td>684 / 617 gemeinsame und identische Dateien (mdm/borek)</td><td class="m">bin/theme-sync.sh drift</td></tr>

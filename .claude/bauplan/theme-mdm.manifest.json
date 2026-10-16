@@ -137,7 +137,8 @@
         "README.md"
       ],
       "open_questions": [
-        "Sichtprüfung Quick View: welche Elemente der Produktseite fehlen über die Preisdarstellung hinaus"
+        "Sichtprüfung Quick View: welche Elemente der Produktseite fehlen über die Preisdarstellung hinaus",
+        "Blatt 04: Der Beschreibungstext der Figur (aria-label) nennt 15 mdm-Dateien ohne Aufrufer, Figur und Text nennen 17. Blatt 01 schreibt „1 Dateien“ (gefunden beim Veröffentlichen am 16. Oktober 2026)"
       ],
       "closes": []
     },
@@ -161,7 +162,7 @@
         "Lädt die Produktseite die selbst gehosteten TTF-Dateien? Netzwerkmitschnitt fehlt"
       ],
       "closes": [
-        "Etappe 2, Prüfpunkt 04 — der Tabellenstil im Layout überstimmt die Haarlinie aus brand-overrides.css:562"
+        "Etappe 2, Prüfpunkt 04 — der Tabellenstil im Layout überstimmt die Haarlinie aus brand-overrides.css:565"
       ]
     },
     {
@@ -223,10 +224,12 @@
         "README.md",
         ".theme-check.yml",
         "locales/*.json",
-        "blocks/**"
+        "blocks/**",
+        ".github/**"
       ],
       "open_questions": [
-        "Hat main eine Branch-Protection mit Review-Pflicht? Nur in den Repo-Einstellungen auf GitHub prüfbar"
+        "Hat main eine Branch-Protection mit Review-Pflicht? Nur in den Repo-Einstellungen auf GitHub prüfbar",
+        "Die Zählungen aus git log und gh pr list (PRs, Direkt-Pushes, Bot-Commits, Commits je Woche, Theme Check) hängen an keiner Datei und veralten ohne Meldung; Stand b3467e8 bzw. 15. Oktober 2026"
       ],
       "closes": []
     }
