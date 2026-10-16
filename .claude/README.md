@@ -241,7 +241,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 
 | Hook | Event | Wirkung |
 |---|---|---|
-| git-safety.sh | PreToolUse (Bash), fail-closed | Blockt (auch mit `git -C`/`-c` davor): force-push, push main, reset --hard, clean -f, theme publish/delete, push --live, --theme-editor-sync |
+| git-safety.sh | PreToolUse (Bash), fail-closed | Regeln in `bin/git-safety.py` auf zerlegten Befehlen (`bin/befehl.py`): force-push, push main/master/latori, reset --hard, clean -f, theme publish/delete, push --live, --theme-editor-sync — auch mit `git -C`/`-c` davor, in `bash -c` und `$(...)`; Text in Strings und Heredocs ist kein Befehl |
 | protect-merchant-files.sh | PreToolUse (Edit/Write), fail-closed | settings_data.json hart geblockt; FoxEcom-Kern + Namenskonvention → Rueckfrage |
 | post-edit-theme-check.sh | PostToolUse (Edit/Write) | Theme Check gefiltert auf editierte Datei; Theme-Verzeichnis aus dem Pfad hergeleitet (themes/<marke>/) |
 | post-edit-rubocop.sh | PostToolUse (Edit/Write) | RuboCop gefiltert auf editierte Datei (nur connector/*.rb) |
@@ -250,7 +250,7 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in dieser README dokumentiert sind |
 | harness-stand.sh | SessionStart (startup) | `bin/harness-stand.py hinweis`: meldet, wenn die installierte Claude-Code-Version neuer ist als die in `bin/harness-referenz.json` gepruefte; kein Netz, schweigt sonst |
 | harness-check.sh | Stop | `bin/harness-check.py --offline`: Frontmatter, Modelle, Hook-Events, Hook-Ziele, MCP-Werkzeuge und -Versionen, Skill-Verweise, Rule-Globs gegen `bin/harness-referenz.json`; schweigt wenn sauber |
-| bauplan-guard.sh | PreToolUse (Bash/Edit/Write), fail-closed | Blockt Loeschen von `docs/bauplan/**`, Schrumpfen der Manifeste, Entfernen von Repos aus `workspace.yaml` |
+| bauplan-guard.sh | PreToolUse (Bash/Edit/Write), fail-closed | Bash: `bin/bauplan-guard.py --check-bash` blockiert nur, wenn Bauplan-Bestand Ziel von rm/mv/truncate/cp/tee/git rm/find -delete/xargs rm oder einer Umleitung ist (auch als Glob oder Vorfahre wie `rm -rf docs`), und `git stash`/`checkout --`/`restore`, wenn sie lokale Aenderungen daran verwerfen. Nennen ist erlaubt. Edit/Write: Manifeste und Workspace-Datei duerfen nicht schrumpfen |
 | bauplan-staleness.sh | PostToolUse (Edit/Write) | Ordnet die geaenderte Datei den Blattsatz-Etappen zu (Zuordnung in `bin/bauplan_lib.py`), schreibt ins Ledger |
 | bauplan-report.sh | Stop | Verdichtet das Ledger zu `.claude/bauplan/<repo>.STALE.md` — Arbeitsliste fuer `--refresh` |
 | bauplan-verify.sh | Stop | Prueft den Bauplan-Bestand gegen `git HEAD`, schreibt `BESTAND-WARNUNG.md` bei Abweichung |
