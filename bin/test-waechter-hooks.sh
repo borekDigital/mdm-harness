@@ -88,6 +88,7 @@ erwartet "ohne python3 blockiert"            2 $G "$(bash_in 'ls')" PATH="$WORK/
 # Spec bauplan-guard-fehlalarme: Text ist kein Befehl
 erwartet "Commit-Message mit Force-Push-Text"  0 $G "$(bash_in 'git commit -m "git push --force ist verboten"')"
 erwartet "Heredoc mit Force-Push-Text"       0 $G "$(bash_in "$(printf "cat <<'EOF'\ngit push --force\nEOF")")"
+erwartet "PR-Text mit escapten Backticks"    0 $G "$(bash_in 'gh pr create --base main --body "Spec \`x.md\` ok"')"
 erwartet "bash -c mit Force-Push blockiert"  2 $G "$(bash_in 'bash -c "git push --force"')"
 erwartet "Pruefskript fehlt: blockiert"      2 $G "$(bash_in 'ls')" CLAUDE_PROJECT_DIR="$WORK/leer"
 

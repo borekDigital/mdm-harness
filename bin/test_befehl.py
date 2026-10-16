@@ -78,6 +78,17 @@ class ParserTest(unittest.TestCase):
     def test_umgebung_und_wrapper_entfernt(self):
         self.assertEqual(woerter("FOO=1 sudo env -i nice rm x"), [["rm", "x"]])
 
+    def test_escapte_backticks_sind_keine_ersetzung(self):
+        # Fund vom 16. Oktober 2026: gh pr create --body "Spec \`x.md\`" wurde als nicht zerlegbar blockiert.
+        cmd = 'gh pr create --body "Spec \\`x.md\\` ok"'
+        # Ein Befehl, keine Ersetzung. (shlex laesst den Backslash vor ` im Wort stehen; fuer die Regeln egal.)
+        w = woerter(cmd)
+        self.assertEqual(len(w), 1)
+        self.assertEqual(w[0][:4], ["gh", "pr", "create", "--body"])
+
+    def test_backticks_in_einfachen_anfuehrungszeichen_sind_text(self):
+        self.assertEqual(woerter("echo 'nutze `rm x` nie'"), [["echo", "nutze `rm x` nie"]])
+
     def test_offenes_anfuehrungszeichen(self):
         with self.assertRaises(ValueError):
             befehl.zerlege('rm "docs/bauplan')

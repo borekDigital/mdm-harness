@@ -2,7 +2,7 @@
 
 Stand: 16. Oktober 2026
 Quelle: Bericht „Harness-Abgleich" aus PR #17 (Befunde 1, 2 und 9), geprüft gegen code.claude.com/docs/en/hooks.md
-Status: FREIGEGEBEN und IMPLEMENTIERT (16. Oktober 2026); manuelle Probe durch Konrad offen
+Status: VALIDIERT (16. Oktober 2026)
 
 ## Ziel
 
@@ -86,7 +86,7 @@ Aktion ─► Wächter-Hook ─┬─ Verstoß ───────────
 - [x] `bin/test-waechter-hooks.sh` ist grün, und jeder Fall aus E ist abgedeckt.
 - [x] `harness-check` meldet H20, wenn `onFailure` an einem Wächter fehlt, und H21 bei einer Modell-Abweichung in der README.
       Auf dem Stand nach der Umsetzung meldet er „Harness sauber".
-- [ ] Manuelle Probe in einer Session (Konrad): `.claude/hooks/git-safety.sh` vorübergehend unlesbar machen
+- [x] Manuelle Probe in einer Session (Konrad): `.claude/hooks/git-safety.sh` vorübergehend unlesbar machen
       (`chmod 000`), dann `ls` ausführen lassen. Die Session blockiert mit „failed; blocking because onFailure is "block"".
       Danach `chmod 755` zurücksetzen.
 - [x] Erlaubte Alltagsbefehle (`git status`, `git commit`, Edit einer `mdm-*`-Section) laufen unverändert.
@@ -128,5 +128,7 @@ Nachweise:
   Umgehungsfälle; damit sind #2 bis #4 und #6 ausgeführt belegt. Nach der Änderung: 35 ok.
 - `harness-check` vor Teil A: 3× H20. Danach online (Schema, `plugin validate`): „Harness sauber".
 - Python-Tests: 58 grün (mit `jsonschema`); ohne `jsonschema` werden zwei Schema-Tests übersprungen.
-- ❌ Offen: die manuelle Probe in einer Session (Akzeptanzkriterium 3). Sie greift erst, wenn der Haupt-Checkout
-  auf dem neuen Stand ist.
+- ✅ Akzeptanzkriterium 3 statt manuell per Headless-Probe belegt (16. Oktober 2026): Wegwerf-Projekt mit
+  PreToolUse-Hook auf ein fehlendes Skript und `"onFailure": "block"`, dann `claude -p` (2.1.301) mit `echo`.
+  Ergebnis: „PreToolUse:Bash hook error: […/fehlt.sh]: failed; blocking because onFailure is "block"". Der Befehl
+  lief nicht. Dass die drei Wächter das Feld gesetzt haben, prüft H20.

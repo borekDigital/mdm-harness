@@ -55,8 +55,44 @@ def _heredocs(text):
     return "\n".join(raus), ersetzbar
 
 
-def _ersetzungen(text):
-    return re.findall(r"\$\(([^()]*)\)", text) + re.findall(r"`([^`]*)`", text)
+def _ersetzungen(text, quoting=True):
+    """Inhalte von $(...) und `...`, die die Shell ausfuehrt.
+
+    Nicht ausgefuehrt werden: alles in einfachen Anfuehrungszeichen, escapte Backticks (\\`)
+    und $((...)) (Arithmetik). In Heredoc-Inhalten gilt kein Quoting (quoting=False).
+    """
+    funde, i, n, einfach = [], 0, len(text), False
+    while i < n:
+        c = text[i]
+        if c == "\\" and not einfach:
+            i += 2
+            continue
+        if quoting and c == "'":
+            einfach = not einfach
+        elif einfach:
+            pass
+        elif c == "$" and text[i + 1:i + 2] == "(" and text[i + 2:i + 3] != "(":
+            tiefe, j = 1, i + 2
+            while j < n and tiefe:
+                tiefe += {"(": 1, ")": -1}.get(text[j], 0)
+                j += 1
+            funde.append(text[i + 2:j - 1])
+            i = j
+            continue
+        elif c == "`":
+            puffer, j = [], i + 1
+            while j < n and text[j] != "`":
+                if text[j] == "\\" and j + 1 < n:
+                    puffer.append(text[j + 1])
+                    j += 2
+                    continue
+                puffer.append(text[j])
+                j += 1
+            funde.append("".join(puffer))
+            i = j + 1
+            continue
+        i += 1
+    return funde
 
 
 def _token(text):
@@ -138,6 +174,6 @@ def zerlege(text, cwd=""):
         i += 1
     abschliessen()
 
-    for inhalt in _ersetzungen(befehlstext) + [e for h in heredoc_inhalte for e in _ersetzungen(h)]:
+    for inhalt in _ersetzungen(befehlstext) + [e for h in heredoc_inhalte for e in _ersetzungen(h, quoting=False)]:
         ergebnis.extend(zerlege(inhalt, cwd))
     return ergebnis
