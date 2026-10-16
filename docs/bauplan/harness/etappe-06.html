@@ -398,16 +398,18 @@
       <h1>Übertragung</h1>
       <p>Die drei Marken-Themes teilen keine Git-Historie. <code>bin/theme-sync.sh</code>
          bewegt eine Änderung deshalb zwischen Arbeitsbäumen statt über einen Merge. Das
-         Skript stellt vier Kommandos bereit, bricht an zehn Stellen ab, überspringt an zwei
-         Stellen ein Ziel und schreibt weder einen Commit noch einen Push. Der Drift-Bericht
-         vergleicht den Arbeitsbaum — nicht den Stand auf dem Remote.</p>
+         Skript stellt fünf Kommandos bereit; <code>port</code> bricht an zehn Stellen ab
+         und überspringt an drei Stellen ein Ziel. Das Skript schreibt weder einen Commit
+         noch einen Push — das übernimmt seit dem 15. Oktober 2026 ein Workflow im
+         MDM-Theme, der <code>align</code> aufruft. Der Drift-Bericht vergleicht den
+         Arbeitsbaum — nicht den Stand auf dem Remote.</p>
     </div>
     <dl class="tb-meta">
-      <div class="tb-cell"><dt>Gelesen</dt><dd>bin/theme-sync.sh · specs/harness/theme-sync.md · templates/repo-themes.md</dd></div>
-      <div class="tb-cell"><dt>Zeilen</dt><dd>496 · 4 Kommandos</dd></div>
+      <div class="tb-cell"><dt>Gelesen</dt><dd>bin/theme-sync.sh · specs/harness/theme-sync.md · specs/harness/theme-sync-ci.md · themes/mdm/.github/workflows/theme-sync.yml</dd></div>
+      <div class="tb-cell"><dt>Zeilen</dt><dd>902 · 5 Kommandos</dd></div>
       <div class="tb-cell"><dt>Gemessen</dt><dd>19 Dateien mit Drift · 89 markenspezifisch</dd></div>
-      <div class="tb-cell"><dt>Blätter</dt><dd>01–05</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>17. September 2026</dd></div>
+      <div class="tb-cell"><dt>Blätter</dt><dd>01–06</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -421,15 +423,15 @@
   <!-- ============ BLATT 01 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 01/05</span>
+      <span class="plate-no">Blatt 01/06</span>
       <h2>Bestand</h2>
     </div>
-    <p class="lead"><code>discover_themes</code> in <code>bin/theme-sync.sh:102–111</code>
+    <p class="lead"><code>discover_themes</code> in <code>bin/theme-sync.sh:147–156</code>
       leitet den Bestand nicht aus <code>workspace.yaml</code> ab, sondern aus zwei
       Dateiprüfungen je Verzeichnis unter <code>themes/</code>: ein Verzeichnis
-      <code>.git</code> (Zeile 107) und eine Datei <code>config/settings_schema.json</code>
-      (Zeile 108). Fällt eine der beiden aus, überspringt die Schleife das Verzeichnis ohne
-      Meldung. Der Kommentar in Zeile 99–101 hält fest, dass eine nicht geklonte Marke als
+      <code>.git</code> (Zeile 152) und eine Datei <code>config/settings_schema.json</code>
+      (Zeile 153). Fällt eine der beiden aus, überspringt die Schleife das Verzeichnis ohne
+      Meldung. Der Kommentar in Zeile 144–146 hält fest, dass eine nicht geklonte Marke als
       übersprungen gilt und nicht als abgeschafft.</p>
 
     <figure>
@@ -441,8 +443,8 @@
         </defs>
 
         <text x="40" y="34" class="s-lbl f-dim">Verzeichnis</text>
-        <text x="288" y="34" class="s-lbl f-dim">Prüfung 81</text>
-        <text x="512" y="34" class="s-lbl f-dim">Prüfung 82</text>
+        <text x="288" y="34" class="s-lbl f-dim">Prüfung 152</text>
+        <text x="512" y="34" class="s-lbl f-dim">Prüfung 153</text>
         <text x="782" y="34" class="s-lbl f-dim">Ergebnis</text>
 
         <line x1="40" y1="44" x2="920" y2="44" stroke="currentColor" stroke-opacity="0.2"></line>
@@ -484,29 +486,32 @@
           <line x1="228" y1="191" x2="276" y2="191" marker-end="url(#e6a1)"></line>
         </g>
 
-        <text x="40" y="238" class="s-note f-dim">Die Reihenfolge ist bindend: fehlt das Verzeichnis <tspan class="s-mono">.git</tspan>, prüft die Schleife Zeile 82 nicht mehr.</text>
+        <text x="40" y="238" class="s-note f-dim">Die Reihenfolge ist bindend: fehlt das Verzeichnis <tspan class="s-mono">.git</tspan>, prüft die Schleife Zeile 153 nicht mehr.</text>
         <text x="40" y="256" class="s-note f-dim">Gemessen am 17. September 2026: drei geklonte Marken, 691 bis 722 versionierte Dateien je Theme.</text>
       </svg>
       <figcaption>Relevant beim Aufsetzen einer vierten Marke: ein Klon ohne
         <code>config/settings_schema.json</code> erscheint weder in <code>list</code> noch in
         <code>drift</code> und löst keinen Fehler aus. <code>assert_theme</code>
-        (<code>bin/theme-sync.sh:115–127</code>) meldet den Fehlbestand erst, wenn
-        <code>port</code> die Marke als Quelle oder Ziel benennt.</figcaption>
+        (<code>bin/theme-sync.sh:160–172</code>) meldet den Fehlbestand erst, wenn
+        <code>port</code> oder <code>align</code> die Marke als Quelle oder Ziel
+        benennt.</figcaption>
     </figure>
   </section>
 
   <!-- ============ BLATT 02 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 02/05</span>
+      <span class="plate-no">Blatt 02/06</span>
       <h2>Drift</h2>
     </div>
-    <p class="lead"><code>cmd_drift</code> (<code>bin/theme-sync.sh:151–254</code>) bildet je
+    <p class="lead"><code>cmd_drift</code> (<code>bin/theme-sync.sh:196–311</code>) bildet je
       Theme zwei Listen: <code>git ls-files</code> liefert die versionierten Pfade (Zeile
-      165), <code>git hash-object --stdin-paths</code> liest dieselben Pfade von der Platte
-      und gibt je Zeile den Blob-Hash zurück (Zeile 168). <code>paste</code> führt beides
-      zusammen (Zeile 169). Ein awk-Programm (Zeile 180–248) gruppiert die Themes je Pfad
-      nach gleichem Hash und gibt nur Pfade mit mehr als einer Gruppe aus.</p>
+      210), <code>git hash-object --stdin-paths</code> liest dieselben Pfade von der Platte
+      und gibt je Zeile den Blob-Hash zurück (Zeile 213). <code>paste</code> führt beides
+      zusammen (Zeile 214). Für die vier geteilten Templates ersetzt Zeile 215–223 den Hash
+      durch einen Hash ohne Markenwert im <code>layout</code>-Schlüssel. Ein awk-Programm
+      (Zeile 235–304) gruppiert die Themes je Pfad nach gleichem Hash und gibt nur Pfade
+      mit mehr als einer Gruppe aus.</p>
 
     <figure>
       <svg viewBox="0 0 960 330" role="img" aria-label="Der Drift-Bericht bildet je Theme Pfad-Hash-Paare aus dem Arbeitsbaum und gruppiert sie im awk-Programm nach gleichem Blob-Hash. Pfade mit nur einer Gruppe gelten als gleich und werden nicht ausgegeben.">
@@ -580,10 +585,10 @@
   <!-- ============ BLATT 03 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 03/05</span>
+      <span class="plate-no">Blatt 03/06</span>
       <h2>Arbeitsbaum und Remote</h2>
     </div>
-    <p class="lead">Der Kommentar in <code>bin/theme-sync.sh:150</code> hält fest, dass
+    <p class="lead">Der Kommentar in <code>bin/theme-sync.sh:195</code> hält fest, dass
       <code>drift</code> den Arbeitsbaum vergleicht und nicht <code>HEAD</code>. Am
       16. September 2026 stand <code>themes/mdm</code> auf einem lokalen <code>main</code>
       mit dem Wurzel-Commit <code>a6fbe2c</code>, während <code>origin/main</code>
@@ -653,17 +658,19 @@
   <!-- ============ BLATT 04 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 04/05</span>
+      <span class="plate-no">Blatt 04/06</span>
       <h2>Übertragungsarten</h2>
     </div>
     <p class="lead"><code>cmd_port</code> kennt seit dem 16. September 2026 zwei Arten. Ohne
-      <code>--as-patch</code> kopiert Zeile 450 die ganze Datei aus der Quelle in das Ziel.
-      Mit <code>--as-patch</code> bildet Zeile 390 einen Patch aus
-      <code>git diff &lt;sha&gt;^ &lt;sha&gt;</code> über die nicht-markenspezifischen Pfade
-      und wendet ihn an. Die zweite Art setzt <code>--commit</code> voraus; der Abbruch
-      dafür steht im Kopf von <code>cmd_port</code>. Markenspezifische Pfade bleiben in
-      beiden Arten liegen — <code>--allow-brand</code> gibt alle frei,
-      <code>--allow-brand=&lt;pfad&gt;</code> nur die genannten.</p>
+      <code>--as-patch</code> kopiert Zeile 526 die ganze Datei aus der Quelle in das Ziel;
+      ein Template unter <code>templates/*.json</code> bekommt dabei vorher das Layout der
+      Zielmarke (Zeile 518–521). Mit <code>--as-patch</code> bildet Zeile 447 einen Patch
+      aus <code>git diff &lt;sha&gt;^ &lt;sha&gt;</code> über die nicht-markenspezifischen
+      Pfade und wendet ihn an; das Layout setzt diese Art nicht um. Die zweite Art setzt
+      <code>--commit</code> voraus; der Abbruch dafür steht im Kopf von
+      <code>cmd_port</code>. Markenspezifische Pfade bleiben in beiden Arten liegen —
+      <code>--allow-brand</code> gibt alle frei, <code>--allow-brand=&lt;pfad&gt;</code>
+      nur die genannten.</p>
 
     <figure>
       <svg viewBox="0 0 960 356" role="img" aria-label="Die Kopie ersetzt die Zieldatei vollständig und überschreibt abweichende Zielarbeit. Der Patch wendet nur die Hunks des Commits an und lässt den übrigen Inhalt der Zieldatei stehen.">
@@ -673,8 +680,8 @@
           </marker>
         </defs>
 
-        <text x="40" y="32" class="s-lbl f-dim">ohne --as-patch · Zeile 381</text>
-        <text x="510" y="32" class="s-lbl f-worker">mit --as-patch · Zeile 366</text>
+        <text x="40" y="32" class="s-lbl f-dim">ohne --as-patch · Zeile 526</text>
+        <text x="510" y="32" class="s-lbl f-worker">mit --as-patch · Zeile 506</text>
         <line x1="480" y1="16" x2="480" y2="340" stroke="currentColor" stroke-opacity="0.18"></line>
 
         <text x="40" y="58" class="s-tiny f-dim">Quelle</text>
@@ -707,7 +714,7 @@
         <rect x="518" y="78" width="104" height="34" rx="1" fill="var(--worker)" fill-opacity="0.3" stroke="none"></rect>
         <text x="528" y="100" class="s-tiny f-worker">nur Hunks</text>
         <text x="528" y="146" class="s-tiny f-dim">sha^ .. sha</text>
-        <text x="528" y="164" class="s-tiny f-dim">Zeile 321</text>
+        <text x="528" y="164" class="s-tiny f-dim">Zeile 447</text>
 
         <text x="740" y="58" class="s-tiny f-dim">Ziel vorher</text>
         <rect x="740" y="66" width="120" height="120" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35"></rect>
@@ -740,18 +747,20 @@
   <!-- ============ BLATT 05 ============ -->
   <section class="plate">
     <div class="plate-head">
-      <span class="plate-no">Blatt 05/05</span>
+      <span class="plate-no">Blatt 05/06</span>
       <h2>Abbruchpfade</h2>
     </div>
-    <p class="lead"><code>cmd_port</code> prüft an zwölf Stellen ab: zehnmal mit
-      <code>exit 1</code> vor der Ziel-Schleife, zweimal je Ziel innerhalb der Schleife. Die
-      Prüfung auf Anwendbarkeit läuft vor dem Anlegen des Branches, damit ein Ziel ohne
-      passenden Patch unberührt bleibt. Der Rückgabewert unterscheidet seit dem
-      16. September 2026 vier Fälle, damit ein Aufrufer den Abbruch vom teilweisen Lauf
-      trennen kann.</p>
+    <p class="lead"><code>cmd_port</code> prüft an dreizehn Stellen ab: zehnmal mit
+      <code>exit 1</code> vor der Ziel-Schleife, dreimal je Ziel innerhalb der Schleife. Die
+      dritte Prüfung je Ziel kam am 15. Oktober 2026 dazu: Kopiert <code>port</code> ein
+      Template, muss im Ziel <code>layout/&lt;ziel&gt;-theme.liquid</code> liegen
+      (<code>bin/theme-sync.sh:480</code>). Die Prüfung auf Anwendbarkeit läuft vor dem
+      Anlegen des Branches, damit ein Ziel ohne passenden Patch unberührt bleibt. Der
+      Rückgabewert unterscheidet seit dem 16. September 2026 vier Fälle, damit ein Aufrufer
+      den Abbruch vom teilweisen Lauf trennen kann.</p>
 
     <figure>
-      <svg viewBox="0 0 960 368" role="img" aria-label="Der port-Ablauf prüft nacheinander Argumente, Themes, Commit, Blockliste und Patch. Acht Abbruchstellen liegen vor der Ziel-Schleife, zwei Übersprungstellen innerhalb. Erst danach legt das Skript den Branch an und schreibt.">
+      <svg viewBox="0 0 960 404" role="img" aria-label="Der port-Ablauf prüft nacheinander Argumente, Themes, Commit, Blockliste und Patch. Zehn Abbruchstellen liegen vor der Ziel-Schleife, drei Übersprungstellen innerhalb: sauberer Arbeitsbaum, Layout der Zielmarke, Anwendbarkeit des Patches. Erst danach legt das Skript den Branch an und schreibt.">
         <defs>
           <marker id="e6a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"></path>
@@ -762,40 +771,44 @@
         <text x="620" y="32" class="s-lbl f-alert">Abbruch</text>
 
         <rect x="40" y="46" width="330" height="28" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="52" y="65" class="s-mono">Argumente und Themes · 300–332</text>
-        <text x="620" y="65" class="s-mono f-alert">4 × exit 1</text>
+        <text x="52" y="65" class="s-mono">Argumente und Themes · 356–386</text>
+        <text x="620" y="65" class="s-mono f-alert">3 × exit 1</text>
 
         <rect x="40" y="82" width="330" height="28" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="52" y="101" class="s-mono">--as-patch braucht --commit · 318</text>
+        <text x="52" y="101" class="s-mono">--as-patch braucht --commit · 374</text>
         <text x="620" y="101" class="s-mono f-alert">1 × exit 1</text>
 
         <rect x="40" y="118" width="330" height="28" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.5"></rect>
-        <text x="52" y="137" class="s-mono">Pfade aus dem Commit · 334–348</text>
+        <text x="52" y="137" class="s-mono">Pfade aus dem Commit · 391–404</text>
         <text x="620" y="137" class="s-mono f-alert">3 × exit 1</text>
 
         <rect x="40" y="154" width="330" height="28" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-width="1.5"></rect>
-        <text x="52" y="173" class="s-mono f-vite">Blockliste · 350–360</text>
-        <text x="620" y="173" class="s-mono f-vite">10 Muster werden ausgelassen</text>
+        <text x="52" y="173" class="s-mono f-vite">Blockliste · 406–437</text>
+        <text x="620" y="173" class="s-mono f-vite">11 Muster ausgelassen · 1 × exit 1</text>
 
         <rect x="40" y="190" width="330" height="28" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.5"></rect>
-        <text x="52" y="209" class="s-mono f-worker">Patch bilden · 382–398</text>
+        <text x="52" y="209" class="s-mono f-worker">Patch bilden · 439–455</text>
         <text x="620" y="209" class="s-mono f-alert">2 × exit 1</text>
 
         <line x1="40" y1="234" x2="920" y2="234" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 3"></line>
         <text x="40" y="252" class="s-lbl f-dim">je Ziel</text>
 
         <rect x="40" y="262" width="330" height="28" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.5"></rect>
-        <text x="52" y="281" class="s-mono">Arbeitsbaum muss sauber sein · 409</text>
+        <text x="52" y="281" class="s-mono">Arbeitsbaum muss sauber sein · 471</text>
         <text x="620" y="281" class="s-mono f-alert">Ziel übersprungen · zählt</text>
 
         <rect x="40" y="298" width="330" height="28" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.5"></rect>
-        <text x="52" y="317" class="s-mono">git apply --check · 418</text>
+        <text x="52" y="317" class="s-mono">Layout der Zielmarke da · 480</text>
         <text x="620" y="317" class="s-mono f-alert">Ziel übersprungen · zählt</text>
 
-        <rect x="40" y="334" width="330" height="28" rx="2" fill="var(--worker)" fill-opacity="0.14" stroke="var(--worker)" stroke-width="1.5"></rect>
-        <text x="52" y="353" class="s-mono f-worker">Branch anlegen, schreiben · 426–455</text>
-        <text x="620" y="353" class="s-mono f-dim">kein Commit, kein Push</text>
-        <rect x="40" y="374" width="880" height="0" fill="none"></rect>
+        <rect x="40" y="334" width="330" height="28" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.5"></rect>
+        <text x="52" y="353" class="s-mono">git apply --check · 489</text>
+        <text x="620" y="353" class="s-mono f-alert">Ziel übersprungen · zählt</text>
+
+        <rect x="40" y="370" width="330" height="28" rx="2" fill="var(--worker)" fill-opacity="0.14" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="52" y="389" class="s-mono f-worker">Branch anlegen, schreiben · 497–531</text>
+        <text x="620" y="389" class="s-mono f-dim">kein Commit, kein Push</text>
+        <rect x="40" y="410" width="880" height="0" fill="none"></rect>
 
         <g stroke="currentColor" stroke-width="1.2" fill="none" color="currentColor" stroke-opacity="0.45">
           <line x1="205" y1="78" x2="205" y2="78"></line>
@@ -808,23 +821,133 @@
           <line x1="205" y1="220" x2="205" y2="228" marker-end="url(#e6a5)"></line>
           <line x1="205" y1="292" x2="205" y2="296" marker-end="url(#e6a5)"></line>
           <line x1="205" y1="328" x2="205" y2="332" marker-end="url(#e6a5)"></line>
+          <line x1="205" y1="364" x2="205" y2="368" marker-end="url(#e6a5)"></line>
         </g>
 
         <g stroke="var(--alert)" stroke-width="1.2" fill="none" color="var(--alert)" stroke-opacity="0.55">
           <line x1="378" y1="60" x2="610" y2="60" marker-end="url(#e6a5)"></line>
           <line x1="378" y1="96" x2="610" y2="96" marker-end="url(#e6a5)"></line>
           <line x1="378" y1="132" x2="610" y2="132" marker-end="url(#e6a5)"></line>
+          <line x1="378" y1="168" x2="610" y2="168" marker-end="url(#e6a5)"></line>
           <line x1="378" y1="204" x2="610" y2="204" marker-end="url(#e6a5)"></line>
           <line x1="378" y1="276" x2="610" y2="276" marker-end="url(#e6a5)"></line>
           <line x1="378" y1="312" x2="610" y2="312" marker-end="url(#e6a5)"></line>
+          <line x1="378" y1="348" x2="610" y2="348" marker-end="url(#e6a5)"></line>
         </g>
       </svg>
-      <figcaption>Für den Ablauf in mehreren Zielen gilt: die beiden Prüfungen innerhalb
+      <figcaption>Für den Ablauf in mehreren Zielen gilt: die drei Prüfungen innerhalb
         der Schleife brechen nicht ab, sondern überspringen das betroffene Ziel und zählen
         es. Der Rückgabewert trennt die Fälle — <code>0</code> alle Ziele geschrieben,
         <code>1</code> Abbruch vor der Schleife, <code>2</code> teilweise, <code>3</code>
         kein Ziel geschrieben. Bei <code>2</code> stehen Änderungen in Arbeitsbäumen, bei
         <code>3</code> nicht.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ BLATT 06 ============ -->
+  <section class="plate">
+    <div class="plate-head">
+      <span class="plate-no">Blatt 06/06</span>
+      <h2>Abgleich</h2>
+    </div>
+    <p class="lead"><code>cmd_align</code> (<code>bin/theme-sync.sh:638–750</code>) überträgt
+      keine Auswahl, sondern den ganzen Stand: jede versionierte Datei der Quelle unter
+      <code>assets/ blocks/ config/ layout/ locales/ sections/ snippets/ templates/</code>
+      (Zeile 556, 669), ohne die markenspezifischen. Der Branch
+      <code>sync/theme-&lt;quelle&gt;</code> entsteht mit <code>checkout -B</code> jedes Mal
+      neu vom aktuellen Stand des Ziels (Zeile 694). Seit dem 15. Oktober 2026 ruft der
+      Workflow <code>themes/mdm/.github/workflows/theme-sync.yml</code> das Kommando je Push
+      auf MDM <code>main</code> auf und übernimmt Commit, Push und PR.</p>
+
+    <figure>
+      <svg viewBox="0 0 960 416" role="img" aria-label="Ein Push auf MDM main startet den Workflow, sofern die Variable THEME_SYNC_ENABLED gesetzt ist. Je Marke ruft er align auf. Ohne Unterschied schließt er einen offenen PR, mit Unterschied committet er, pusht den Branch sync/theme-mdm mit force und legt den PR an oder ändert ihn. Gemergt wird von Hand. Unten: align kopiert Theme-Dateien und geteilte Templates, setzt bei Templates das Layout der Zielmarke, lässt markenspezifische Dateien liegen und meldet überschriebene eigene Stände des Ziels.">
+        <defs>
+          <marker id="e6a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <text x="16" y="28" class="s-lbl f-dim">Auslöser</text>
+        <text x="300" y="28" class="s-lbl f-worker">Skript aus mdm-harness</text>
+        <text x="670" y="28" class="s-lbl f-dim">Workflow im MDM-Theme</text>
+
+        <rect x="16" y="44" width="200" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-width="1.5"></rect>
+        <text x="30" y="66" class="s-name">Push auf main</text>
+        <text x="30" y="84" class="s-tiny f-dim">theme-sync.yml:20–23</text>
+        <text x="30" y="98" class="s-tiny f-dim">nur bei THEME_SYNC_ENABLED</text>
+
+        <rect x="300" y="44" width="300" height="62" rx="2" fill="var(--worker)" fill-opacity="0.12" stroke="var(--worker)" stroke-width="1.5"></rect>
+        <text x="314" y="66" class="s-name f-worker">theme-sync.sh align</text>
+        <text x="314" y="84" class="s-tiny f-dim">Branch sync/theme-mdm ab Ziel-main · :694</text>
+        <text x="314" y="98" class="s-tiny f-dim">Bericht body.md über --report · yml:73</text>
+
+        <rect x="670" y="44" width="274" height="62" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="684" y="66" class="s-name">Commit, force-push</text>
+        <text x="684" y="84" class="s-tiny f-dim">github-actions[bot] · yml:93–98</text>
+        <text x="684" y="98" class="s-tiny f-dim">nur refs/heads/sync/theme-mdm</text>
+
+        <g stroke="currentColor" stroke-width="1.3" fill="none" color="currentColor" stroke-opacity="0.55">
+          <line x1="216" y1="75" x2="296" y2="75" marker-end="url(#e6a6)"></line>
+          <line x1="600" y1="75" x2="666" y2="75" marker-end="url(#e6a6)"></line>
+          <line x1="450" y1="106" x2="450" y2="144" marker-end="url(#e6a6)"></line>
+          <line x1="807" y1="106" x2="807" y2="144" marker-end="url(#e6a6)"></line>
+          <line x1="807" y1="198" x2="807" y2="228" marker-end="url(#e6a6)"></line>
+        </g>
+        <text x="226" y="68" class="s-tiny">je Marke</text>
+        <text x="226" y="90" class="s-tiny f-dim">yml:38–43</text>
+        <text x="604" y="90" class="s-tiny">Unterschied</text>
+        <text x="458" y="130" class="s-tiny">git status leer</text>
+        <text x="815" y="130" class="s-tiny">PR je Marke</text>
+        <text x="815" y="218" class="s-tiny">Warnungen prüfen</text>
+
+        <rect x="300" y="148" width="300" height="50" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.35"></rect>
+        <text x="314" y="168" class="s-tiny">kein Unterschied: offenen PR schließen</text>
+        <text x="314" y="186" class="s-tiny f-dim">yml:85–91</text>
+
+        <rect x="670" y="148" width="274" height="50" rx="2" fill="var(--web)" fill-opacity="0.1" stroke="var(--web)" stroke-opacity="0.55"></rect>
+        <text x="684" y="168" class="s-mono">gh pr create oder gh pr edit</text>
+        <text x="684" y="186" class="s-tiny f-dim">Titel und Text aus body.md · yml:100–104</text>
+
+        <rect x="670" y="232" width="274" height="50" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-width="1.5"></rect>
+        <text x="684" y="252" class="s-name f-alert">Merge von Hand</text>
+        <text x="684" y="270" class="s-tiny f-dim">Merge auf main ist ein Deploy · :877</text>
+
+        <text x="16" y="248" class="s-tiny f-dim">Lokal endet align im Arbeitsbaum des Ziels — wie port, ohne Commit (:49–53).</text>
+        <text x="16" y="264" class="s-tiny f-dim">Commit, Push und PR stehen nur im Workflow, nicht im Skript.</text>
+
+        <line x1="16" y1="300" x2="944" y2="300" stroke="currentColor" stroke-opacity="0.2"></line>
+        <text x="16" y="318" class="s-lbl f-dim">align je Datei der Quelle · bin/theme-sync.sh:699–726</text>
+
+        <rect x="16" y="328" width="220" height="56" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="30" y="348" class="s-name">Theme-Datei</text>
+        <text x="30" y="364" class="s-tiny">neu oder geändert: kopiert</text>
+        <text x="30" y="378" class="s-tiny f-dim">nur Ordner aus :556</text>
+
+        <rect x="252" y="328" width="220" height="56" rx="2" fill="var(--worker)" fill-opacity="0.1" stroke="var(--worker)" stroke-opacity="0.55"></rect>
+        <text x="266" y="348" class="s-name">geteiltes Template</text>
+        <text x="266" y="364" class="s-tiny">kopiert, layout → Zielmarke</text>
+        <text x="266" y="378" class="s-tiny f-dim">:92–97, :703–706</text>
+
+        <rect x="488" y="328" width="220" height="56" rx="2" fill="var(--vite)" fill-opacity="0.12" stroke="var(--vite)" stroke-opacity="0.6"></rect>
+        <text x="502" y="348" class="s-name f-vite">markenspezifisch</text>
+        <text x="502" y="364" class="s-tiny">bleibt liegen</text>
+        <text x="502" y="378" class="s-tiny f-dim">:74–86, :701</text>
+
+        <rect x="724" y="328" width="220" height="56" rx="2" fill="var(--alert)" fill-opacity="0.09" stroke="var(--alert)" stroke-opacity="0.6"></rect>
+        <text x="738" y="348" class="s-name f-alert">eigener Stand im Ziel</text>
+        <text x="738" y="364" class="s-tiny">überschrieben, mit ⚠ gemeldet</text>
+        <text x="738" y="378" class="s-tiny f-dim">:573–582, :713–715</text>
+
+        <text x="16" y="406" class="s-tiny f-dim">Dateien, die nur im Ziel liegen, löscht align nicht; der Bericht listet sie unter „Nur in &lt;Marke&gt; vorhanden“ (:857–871).</text>
+      </svg>
+      <figcaption>Relevant für jede Speicherung im Theme-Editor von Borek oder IMM: ein
+        geteiltes Template, das dort geändert wird, überschreibt der nächste Sync-PR mit dem
+        Stand aus MDM. <code>target_has_own_change</code> erkennt den Fall daran, dass der
+        Blob des Ziels in der Historie der Quelle nie vorkam, und der Bericht nennt Datei,
+        Zeitpunkt und Person aus dem Theme-Editor (<code>:586–596</code>). Gesperrt wird
+        nichts — die Entscheidung fällt beim Merge, und der Merge ist ein Deploy. Im
+        Probelauf vom 15. Oktober 2026 meldete der Bericht so vier geteilte Templates in
+        Borek und eines in IMM (<code>.claude/specs/harness/theme-sync-ci.md:269</code>).</figcaption>
     </figure>
   </section>
 
@@ -840,7 +963,7 @@
         <span class="check-no">01</span>
         <div>
           <h3>Der veraltete Checkout meldete eine Abweichung und verdeckte zwölf echte — behoben</h3>
-          <p><code>bin/theme-sync.sh:168</code> bildet den Hash über
+          <p><code>bin/theme-sync.sh:213</code> bildet den Hash über
             <code>git hash-object</code> aus der Platte. <code>themes/mdm</code> stand auf
             einem lokalen <code>main</code> mit dem Wurzel-Commit <code>a6fbe2c</code>,
             <code>origin/main</code> trägt <code>7dd3fa4f</code>;
@@ -859,11 +982,12 @@
           <p>Bis zum 16. September 2026 lieferten der Abbruch vor der Schleife und das
             übersprungene Ziel denselben Wert <code>1</code>. Ein Aufrufer konnte nicht
             entscheiden, ob ein Arbeitsbaum beschrieben wurde.</p>
-          <p><code>bin/theme-sync.sh:466–474</code> unterscheidet jetzt: <code>0</code> alle
+          <p><code>bin/theme-sync.sh:543–550</code> unterscheidet jetzt: <code>0</code> alle
             Ziele geschrieben, <code>1</code> Abbruch vor der Schleife, <code>2</code>
             teilweise, <code>3</code> kein Ziel geschrieben. Bei <code>2</code> stehen
             Änderungen in Arbeitsbäumen, bei <code>3</code> nicht. Alle vier Fälle sind
-            gemessen.</p>
+            gemessen. <code>align</code> liefert dieselben vier Werte
+            (<code>:743–749</code>).</p>
         </div>
       </div>
 
@@ -871,11 +995,20 @@
         <span class="check-no">03</span>
         <div>
           <h3>Die Blockliste lässt sich je Pfad aufheben — ergänzt</h3>
-          <p><code>BRAND_PATTERNS</code> (<code>:62–73</code>) führt zehn Muster,
-            <code>is_brand_path</code> (<code>:75–82</code>) prüft den Pfad über
-            <code>case</code>. <code>--allow-brand</code> hob den Schutz zuvor nur für den
-            ganzen Lauf auf.</p>
-          <p><code>is_allowed_brand_path</code> (<code>:88–96</code>) wertet jetzt
+          <p><code>BRAND_PATTERNS</code> (<code>:74–86</code>) führt seit dem 15. Oktober
+            2026 elf Muster — <code>config/markets.json</code> kam dazu.
+            <code>is_brand_path</code> (<code>:107–119</code>) prüft den Pfad über
+            <code>case</code> und nimmt die vier geteilten Templates vorher aus (Zeile 109).
+            <code>--allow-brand</code> hob den Schutz zuvor nur für den ganzen Lauf auf.</p>
+          <p>Bis zum 15. Oktober 2026 las <code>is_brand_path</code> die Muster mit
+            <code>for pattern in $BRAND_PATTERNS</code>. Unquotiert expandierte Bash
+            <code>templates/*</code> gegen das aktuelle Verzeichnis; aus dem Workspace-Root
+            aufgerufen, sperrte die Liste dort die Dateien unter <code>templates/</code> der
+            Harness statt der Theme-Templates. Seither liest die Funktion zeilenweise
+            (Kommentar <code>:110–112</code>, Beleg in
+            <code>.claude/specs/harness/theme-sync.md</code>, Abschnitt „Behobener
+            Fehler“).</p>
+          <p><code>is_allowed_brand_path</code> (<code>:133–141</code>) wertet jetzt
             <code>--allow-brand=&lt;pfad&gt;[,&lt;pfad&gt;]</code> aus. Ein
             Übersetzungsschlüssel, der für alle Marken gilt, wandert damit mit, ohne dass
             <code>locales/</code> als Ganzes freigegeben wird. Das bloße
@@ -887,11 +1020,11 @@
         <span class="check-no">04</span>
         <div>
           <h3>Der maschinell entscheidbare Teil der Richtigkeit ist jetzt abgedeckt</h3>
-          <p><code>:418</code> führt <code>git apply --check</code> aus und entscheidet über
+          <p><code>:489</code> führt <code>git apply --check</code> aus und entscheidet über
             den Kontext der Hunks. Der Inhalt bleibt ungeprüft: ein Patch mit Layout-Zahlen
             aus dem Figma einer Marke wird sauber angewandt und ist im Zielshop dennoch
             falsch.</p>
-          <p><code>cmd_settings</code> (<code>:261–295</code>) vergleicht einen Schlüssel aus
+          <p><code>cmd_settings</code> (<code>:318–352</code>) vergleicht einen Schlüssel aus
             <code>config/settings_data.json</code> über alle Themes. Gemessen am
             16. September 2026: <code>page_width</code> trägt in allen drei Marken
             <code>1700</code>, <code>type_header_font</code> dagegen
@@ -903,17 +1036,24 @@
       <div class="check">
         <span class="check-no">05</span>
         <div>
-          <h3>Ohne Push und ohne PR endet die Übertragung im lokalen Repo</h3>
-          <p><code>:28–44</code> und die Akzeptanzkriterien in
+          <h3><code>port</code> endet im lokalen Repo, <code>align</code> im PR</h3>
+          <p><code>:49–53</code> und die Akzeptanzkriterien in
             <code>.claude/specs/harness/theme-sync.md</code> halten fest, dass das Skript
             weder committet noch pusht. Im Harness existiert kein Aufruf von
-            <code>gh pr create</code>; der einzige GitHub-Workflow ist
-            <code>.github/workflows/bauplan-refresh.yml</code>.</p>
-          <p>Folge: Nach <code>port</code> liegt die Änderung als uncommittete Änderung auf
-            einem Branch <code>sync/&lt;quelle&gt;-&lt;datum&gt;</code> (<code>:401</code>).
-            Commit, Push und PR je Ziel-Theme sind Handarbeit. Das ist eine
-            Design-Entscheidung, kein Rückstand: eine inhaltlich unpassende Übertragung soll
-            keinen PR in einem fremden Shop auslösen.</p>
+            <code>gh pr create</code>; der einzige GitHub-Workflow des Harness ist
+            weiterhin <code>.github/workflows/bauplan-refresh.yml</code>.</p>
+          <p>Nach <code>port</code> liegt die Änderung als uncommittete Änderung auf einem
+            Branch <code>sync/&lt;quelle&gt;-&lt;datum&gt;</code> (<code>:458</code>). Commit,
+            Push und PR je Ziel-Theme sind Handarbeit. Für <code>align</code> übernimmt das
+            seit dem 15. Oktober 2026 der Workflow im MDM-Theme
+            (<code>themes/mdm/.github/workflows/theme-sync.yml:93–104</code>); er checkt
+            dafür <code>mdm-harness</code> aus und ruft das Skript von dort auf
+            (<code>:63–73</code>). Der Merge bleibt Handarbeit. Das ist eine
+            Design-Entscheidung: eine inhaltlich unpassende Übertragung soll nicht ohne
+            Prüfung in einem fremden Shop landen.</p>
+          <p>Folge: Eine Änderung an <code>bin/theme-sync.sh</code> auf
+            <code>mdm-harness/main</code> wirkt beim nächsten Push auf MDM <code>main</code>
+            ohne eigenen Release-Schritt auf die Sync-PRs in Borek und IMM.</p>
         </div>
       </div>
 
@@ -930,6 +1070,26 @@
             angestoßen werden.</p>
         </div>
       </div>
+
+      <div class="check">
+        <span class="check-no">07</span>
+        <div>
+          <h3><code>align</code> liest die Quelle von der Platte</h3>
+          <p>Der Kopfkommentar (<code>:30</code>) spricht vom „committeten Stand der
+            Quelle“. <code>cmd_align</code> nimmt die Pfadliste aus <code>git ls-files</code>
+            (<code>:669</code>), kopiert aber <code>${src_dir}/${p}</code> aus dem
+            Arbeitsbaum (<code>:702</code>, <code>:709</code>, <code>:719</code>). Eine
+            Prüfung auf einen sauberen Arbeitsbaum gibt es nur für das Ziel
+            (<code>:681</code>), nicht für die Quelle.</p>
+          <p>⚠️ Vermutung: Lokal aufgerufen überträgt <code>align</code> auch uncommittete
+            Änderungen der Quelle, während der Bericht den Stand als
+            <code>@ &lt;HEAD&gt;</code> ausweist (<code>:667</code>, <code>:768</code>). Zum
+            Beweis fehlt ein Lauf mit einer uncommitteten Änderung in der Quelle. Im Workflow
+            tritt der Fall nicht auf: <code>actions/checkout</code> liefert einen sauberen
+            Arbeitsbaum. Naheliegender Fix: <code>status --porcelain</code> auch für die
+            Quelle prüfen.</p>
+        </div>
+      </div>
     </div>
 
     <table>
@@ -937,21 +1097,29 @@
         <tr><th>Aussage</th><th class="m">Fundstelle</th></tr>
       </thead>
       <tbody>
-        <tr><td>Zwei Dateiprüfungen entscheiden über den Bestand</td><td class="m">bin/theme-sync.sh:107–108</td></tr>
-        <tr><td>Nicht geklonte Marke gilt als übersprungen</td><td class="m">bin/theme-sync.sh:99–101</td></tr>
-        <tr><td>Drift vergleicht den Arbeitsbaum, nicht HEAD</td><td class="m">bin/theme-sync.sh:150, 168</td></tr>
+        <tr><td>Zwei Dateiprüfungen entscheiden über den Bestand</td><td class="m">bin/theme-sync.sh:152–153</td></tr>
+        <tr><td>Nicht geklonte Marke gilt als übersprungen</td><td class="m">bin/theme-sync.sh:144–146</td></tr>
+        <tr><td>Drift vergleicht den Arbeitsbaum, nicht HEAD</td><td class="m">bin/theme-sync.sh:195, 213</td></tr>
+        <tr><td>Drift vergleicht geteilte Templates ohne layout-Schlüssel</td><td class="m">bin/theme-sync.sh:215–223</td></tr>
         <tr><td>19 Dateien mit Drift, 89 markenspezifisch, 38 nur in einem Theme</td><td class="m">bin/theme-sync.sh drift, 16. September 2026</td></tr>
-        <tr><td>Kopie ersetzt die Zieldatei</td><td class="m">bin/theme-sync.sh:450</td></tr>
-        <tr><td>Patch aus sha^ bis sha über gefilterte Pfade</td><td class="m">bin/theme-sync.sh:390</td></tr>
-        <tr><td>--as-patch ohne --commit bricht ab</td><td class="m">bin/theme-sync.sh:318–322</td></tr>
-        <tr><td>Trockenlauf vor dem Anlegen des Branches</td><td class="m">bin/theme-sync.sh:416–424</td></tr>
-        <tr><td>Vier Rückgabewerte: 0, 1, 2, 3</td><td class="m">bin/theme-sync.sh:466–474</td></tr>
-        <tr><td>Zehn Muster in der Blockliste</td><td class="m">bin/theme-sync.sh:62–73</td></tr>
-        <tr><td>Selektive Freigabe über --allow-brand=&lt;pfad&gt;</td><td class="m">bin/theme-sync.sh:88–96, 308–309</td></tr>
-        <tr><td>settings liest über den /* */-Kopf hinweg</td><td class="m">bin/theme-sync.sh:261–295</td></tr>
+        <tr><td>Kopie ersetzt die Zieldatei</td><td class="m">bin/theme-sync.sh:526</td></tr>
+        <tr><td>Kopiertes Template bekommt das Layout der Zielmarke</td><td class="m">bin/theme-sync.sh:124–127, 518–521</td></tr>
+        <tr><td>Patch aus sha^ bis sha über gefilterte Pfade</td><td class="m">bin/theme-sync.sh:447</td></tr>
+        <tr><td>--as-patch ohne --commit bricht ab</td><td class="m">bin/theme-sync.sh:374–378</td></tr>
+        <tr><td>Ziel ohne layout/&lt;ziel&gt;-theme.liquid wird übersprungen</td><td class="m">bin/theme-sync.sh:480–485, 686–691</td></tr>
+        <tr><td>Trockenlauf vor dem Anlegen des Branches</td><td class="m">bin/theme-sync.sh:487–495</td></tr>
+        <tr><td>Vier Rückgabewerte: 0, 1, 2, 3</td><td class="m">bin/theme-sync.sh:543–550, 743–749</td></tr>
+        <tr><td>Elf Muster in der Blockliste</td><td class="m">bin/theme-sync.sh:74–86</td></tr>
+        <tr><td>Vier geteilte Templates, von der Blockliste ausgenommen</td><td class="m">bin/theme-sync.sh:92–97, 109</td></tr>
+        <tr><td>Selektive Freigabe über --allow-brand=&lt;pfad&gt;</td><td class="m">bin/theme-sync.sh:133–141, 365–366</td></tr>
+        <tr><td>settings liest über den /* */-Kopf hinweg</td><td class="m">bin/theme-sync.sh:318–352</td></tr>
         <tr><td>page_width 1700 in allen drei, type_header_font abweichend</td><td class="m">bin/theme-sync.sh settings</td></tr>
-        <tr><td>Branch-Name sync/&lt;quelle&gt;-&lt;datum&gt;</td><td class="m">bin/theme-sync.sh:401</td></tr>
-        <tr><td>Kein Commit, kein Push, kein PR</td><td class="m">bin/theme-sync.sh:28–44, .claude/specs/harness/theme-sync.md</td></tr>
+        <tr><td>Branch-Name sync/&lt;quelle&gt;-&lt;datum&gt;</td><td class="m">bin/theme-sync.sh:458</td></tr>
+        <tr><td>align baut sync/theme-&lt;quelle&gt; mit checkout -B neu</td><td class="m">bin/theme-sync.sh:644, 694</td></tr>
+        <tr><td>align meldet eigene Stände des Ziels, sperrt nicht</td><td class="m">bin/theme-sync.sh:573–582, 713–715</td></tr>
+        <tr><td>Skript: kein Commit, kein Push, kein PR</td><td class="m">bin/theme-sync.sh:49–53, .claude/specs/harness/theme-sync.md</td></tr>
+        <tr><td>Workflow: Commit, force-push, PR anlegen, ändern oder schließen</td><td class="m">themes/mdm/.github/workflows/theme-sync.yml:85–104</td></tr>
+        <tr><td>Push-Lauf nur bei THEME_SYNC_ENABLED</td><td class="m">themes/mdm/.github/workflows/theme-sync.yml:34</td></tr>
         <tr><td>Lokales main in themes/mdm ohne merge-base — behoben</td><td class="m">git merge-base main origin/main, archive/hyper-import</td></tr>
       </tbody>
     </table>
