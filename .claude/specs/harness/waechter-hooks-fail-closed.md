@@ -2,7 +2,7 @@
 
 Stand: 16. Oktober 2026
 Quelle: Bericht „Harness-Abgleich" aus PR #17 (Befunde 1, 2 und 9), geprüft gegen code.claude.com/docs/en/hooks.md
-Status: ENTWURF
+Status: FREIGEGEBEN und IMPLEMENTIERT (16. Oktober 2026); manuelle Probe durch Konrad offen
 
 ## Ziel
 
@@ -44,34 +44,34 @@ Aktion ─► Wächter-Hook ─┬─ Verstoß ───────────
 
 ### A — Konfiguration
 
-- [ ] `"onFailure": "block"` an den drei Wächtern in `.claude/settings.json`. Hooks unter PostToolUse
+- [x] `"onFailure": "block"` an den drei Wächtern in `.claude/settings.json`. Hooks unter PostToolUse
       und Stop behalten den Standard `"continue"`: Ein Fehler beim Linter oder Bauplan-Bericht darf die Arbeit nicht stoppen.
 
 ### B — Skripte fail-closed
 
-- [ ] Ist die Hook-Eingabe nicht lesbar, endet jeder Wächter mit `exit 2`. Die Meldung auf stderr nennt
+- [x] Ist die Hook-Eingabe nicht lesbar, endet jeder Wächter mit `exit 2`. Die Meldung auf stderr nennt
       Wächter und Ursache, zum Beispiel „git-safety: Hook-Eingabe nicht lesbar — Aktion blockiert (fail-closed)".
-- [ ] Fehlt `python3`, endet jeder Wächter mit `exit 2` und einer Meldung, die das sagt.
-- [ ] `protect-merchant-files`: Kann `ask()` die Rückfrage nicht erzeugen, endet der Hook mit `exit 2` statt `exit 0`.
-- [ ] `bauplan-guard`: Fehlt `bin/bauplan-guard.py`, endet der Hook mit `exit 2`, ebenso bei leerem `tool_name`.
-- [ ] Ein leeres Feld gilt nur dann als harmlos, wenn das Werkzeug es wirklich leer liefern kann. Bash hat
+- [x] Fehlt `python3`, endet jeder Wächter mit `exit 2` und einer Meldung, die das sagt.
+- [x] `protect-merchant-files`: Kann `ask()` die Rückfrage nicht erzeugen, endet der Hook mit `exit 2` statt `exit 0`.
+- [x] `bauplan-guard`: Fehlt `bin/bauplan-guard.py`, endet der Hook mit `exit 2`, ebenso bei leerem `tool_name`.
+- [x] Ein leeres Feld gilt nur dann als harmlos, wenn das Werkzeug es wirklich leer liefern kann. Bash hat
       immer `command`, Edit und Write haben immer `file_path`. Sonst gilt es als Fehler.
 
 ### C — Umgehung in `git-safety`
 
-- [ ] Globale Git-Optionen vor dem Unterkommando (`-C <dir>`, `-c <k=v>`, `--git-dir=…`, `--work-tree=…`)
+- [x] Globale Git-Optionen vor dem Unterkommando (`-C <dir>`, `-c <k=v>`, `--git-dir=…`, `--work-tree=…`)
       verhindern die Erkennung von `push`, `reset --hard` und `clean -f` nicht mehr.
 
 ### D — Prüfung in `harness-check`
 
-- [ ] H20: Jeder in `bin/harness-referenz.json` als Wächter geführte Hook hat in den Settings `"onFailure": "block"`.
-- [ ] H21: Die Modell-Spalte der Agenten-Tabellen in `.claude/README.md` stimmt mit dem `model` im Frontmatter überein.
-- [ ] H15 (Schema): `onFailure` wird vom SchemaStore-Schema akzeptiert. Kennt das Schema das Feld noch
+- [x] H20: Jeder in `bin/harness-referenz.json` als Wächter geführte Hook hat in den Settings `"onFailure": "block"`.
+- [x] H21: Die Modell-Spalte der Agenten-Tabellen in `.claude/README.md` stimmt mit dem `model` im Frontmatter überein.
+- [x] H15 (Schema): `onFailure` wird vom SchemaStore-Schema akzeptiert. Kennt das Schema das Feld noch
       nicht, gilt das als Lücke im Schema, nicht als Befund. Die Ausnahme steht dann in der Referenz, mit Datum.
 
 ### E — Tests
 
-- [ ] `bin/test-waechter-hooks.sh` (Bash 3.2, wie `bin/test-theme-sync.sh`) ruft jeden Wächter mit
+- [x] `bin/test-waechter-hooks.sh` (Bash 3.2, wie `bin/test-theme-sync.sh`) ruft jeden Wächter mit
       vorbereiteten Eingaben auf. Abgedeckt sind:
       - ein Verstoß ergibt Exit 2
       - eine erlaubte Aktion ergibt Exit 0
@@ -79,17 +79,17 @@ Aktion ─► Wächter-Hook ─┬─ Verstoß ───────────
       - leeres stdin ergibt Exit 2
       - ein PATH ohne `python3` ergibt Exit 2
       - jede Umgehung aus C ergibt Exit 2
-- [ ] Die Tests laufen im Workflow „Harness pruefen" mit.
+- [x] Die Tests laufen im Workflow „Harness pruefen" mit.
 
 ## Akzeptanzkriterien
 
-- [ ] `bin/test-waechter-hooks.sh` ist grün, und jeder Fall aus E ist abgedeckt.
-- [ ] `harness-check` meldet H20, wenn `onFailure` an einem Wächter fehlt, und H21 bei einer Modell-Abweichung in der README.
+- [x] `bin/test-waechter-hooks.sh` ist grün, und jeder Fall aus E ist abgedeckt.
+- [x] `harness-check` meldet H20, wenn `onFailure` an einem Wächter fehlt, und H21 bei einer Modell-Abweichung in der README.
       Auf dem Stand nach der Umsetzung meldet er „Harness sauber".
 - [ ] Manuelle Probe in einer Session (Konrad): `.claude/hooks/git-safety.sh` vorübergehend unlesbar machen
       (`chmod 000`), dann `ls` ausführen lassen. Die Session blockiert mit „failed; blocking because onFailure is "block"".
       Danach `chmod 755` zurücksetzen.
-- [ ] Erlaubte Alltagsbefehle (`git status`, `git commit`, Edit einer `mdm-*`-Section) laufen unverändert.
+- [x] Erlaubte Alltagsbefehle (`git status`, `git commit`, Edit einer `mdm-*`-Section) laufen unverändert.
 
 ## Constraints
 
@@ -107,8 +107,26 @@ Aktion ─► Wächter-Hook ─┬─ Verstoß ───────────
   etwa ein Python-Skript mit dem Wort `workspace.yaml` und einem `>` im selben Befehl. Vorschlag: eigene Spec, die das Muster
   aus `bauplan-guard.sh:28-29` auf echte Schreibziele einengt.
 
-## Offene Entscheidungen (Konrad)
+## Entscheidungen (Konrad, 16. Oktober 2026)
 
-1. Fehlt `python3`: alles blockieren (Vorschlag, konsequent fail-closed) oder Ausnahme für reine Lesebefehle?
-2. Teil C (Umgehung per `git -C`) in dieser Spec (Vorschlag) oder separat?
-3. Fehlalarme des `bauplan-guard`: eigene Spec anlegen?
+1. Fehlt `python3`: alles blockieren.
+2. Die Umgehung per `git -C` (Teil C) gehört in diese Spec.
+3. Für die Fehlalarme des `bauplan-guard` gibt es eine eigene Spec: `bauplan-guard-fehlalarme.md`.
+
+## Umsetzung (16. Oktober 2026)
+
+| Teil | Änderung |
+|---|---|
+| A | `"onFailure": "block"` an den drei Wächtern in `.claude/settings.json` |
+| B | Jeder Wächter prüft zuerst `python3` und endet bei unlesbarer Eingabe mit `exit 2`, die Meldung nennt den Wächter und die Ursache. `protect-merchant-files`: Die Rückfrage wird erst erzeugt und dann ausgegeben; scheitert das, wird blockiert. `bauplan-guard`: fehlendes Prüfskript, fehlender `tool_name` und Edit/Write ohne `file_path` blockieren |
+| C | `git-safety` entfernt globale Git-Optionen (`-C`, `-c`, `--git-dir`, `--work-tree` u. a., auch mit Anführungszeichen) vor der Prüfung |
+| D | H20 (Wächter registriert und mit `onFailure: block`), H21 (README-Modell = Frontmatter). Schema-Lücke `onFailure` in `schema_luecken` der Referenz vermerkt. `harness-check` nimmt das Feld vor der Validierung aus und meldet, sobald SchemaStore es kennt |
+| E | `bin/test-waechter-hooks.sh`, 35 Fälle; läuft im Workflow „Harness pruefen" |
+
+Nachweise:
+- `bin/test-waechter-hooks.sh` vor der Änderung: 16 ok, 19 Fehler. Die 19 waren genau die Fail-open- und
+  Umgehungsfälle; damit sind #2 bis #4 und #6 ausgeführt belegt. Nach der Änderung: 35 ok.
+- `harness-check` vor Teil A: 3× H20. Danach online (Schema, `plugin validate`): „Harness sauber".
+- Python-Tests: 58 grün (mit `jsonschema`); ohne `jsonschema` werden zwei Schema-Tests übersprungen.
+- ❌ Offen: die manuelle Probe in einer Session (Akzeptanzkriterium 3). Sie greift erst, wenn der Haupt-Checkout
+  auf dem neuen Stand ist.

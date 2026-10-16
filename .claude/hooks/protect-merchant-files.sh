@@ -1,16 +1,20 @@
 #!/bin/bash
 # PreToolUse (Edit|Write) — deny/ask für geschützte Theme-Dateien.
+# Fail-closed: Kann der Waechter nicht pruefen, blockiert er (Spec waechter-hooks-fail-closed).
+blockiere() { echo "protect-merchant-files: $1 — Aktion blockiert (fail-closed)." >&2; exit 2; }
+command -v python3 >/dev/null 2>&1 || blockiere "python3 nicht gefunden"
+
 PAYLOAD=$(cat)
 FILE=$(printf '%s' "$PAYLOAD" | python3 -c "
 import sys, json
 try:
-    d = json.load(sys.stdin)
-    print(d.get('tool_input', {}).get('file_path', ''))
+    f = json.load(sys.stdin)['tool_input']['file_path']
 except Exception:
-    print('')
-" 2>/dev/null)
-
-[ -z "$FILE" ] && exit 0
+    sys.exit(3)
+if not isinstance(f, str) or not f:
+    sys.exit(3)
+print(f)
+" 2>/dev/null) || blockiere "Hook-Eingabe nicht lesbar"
 
 # settings_data.json: hart blockieren (Theme-Editor-Hoheit)
 case "$FILE" in
@@ -30,10 +34,14 @@ case "$FILE" in
 esac
 
 ask() {
-  python3 -c "
+  # Erst erzeugen, dann ausgeben: scheitert python3 hier, faellt die Rueckfrage
+  # nicht still weg, sondern die Aktion wird blockiert.
+  local antwort
+  antwort=$(python3 -c "
 import json, sys
 print(json.dumps({'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'permissionDecision': 'ask', 'permissionDecisionReason': sys.argv[1]}}))
-" "$1"
+" "$1" 2>/dev/null) && [ -n "$antwort" ] || blockiere "Rueckfrage nicht erzeugbar"
+  printf '%s\n' "$antwort"
   exit 0
 }
 

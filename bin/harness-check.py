@@ -36,9 +36,10 @@ class Defekt(Exception):
 
 class Pruefung:
 
-    def __init__(self, root, offline):
+    def __init__(self, root, offline, schema_datei=None):
         self.root = root
         self.offline = offline
+        self.schema_datei = schema_datei
         self.befunde = []
         self.uebersprungen = []
         self.ref = self.lade_json("bin/harness-referenz.json")
@@ -248,6 +249,43 @@ class Pruefung:
                             nr = next((i for i, z in enumerate(zeilen, 1) if skript in z), 1)
                             self.melde("H09", rel, nr, "Hook-Skript `%s` fehlt" % skript)
 
+    def waechter(self):
+        """Jeder vorhandene Waechter-Hook ist registriert und blockiert, wenn er scheitert (H20)."""
+        rel = ".claude/settings.json"
+        if not os.path.isfile(self.pfad(rel)):
+            return
+        data = self.lade_json(rel)
+        zeilen = self.lies(rel)
+        eintraege = [h for gruppen in (data.get("hooks") or {}).values() for g in gruppen or []
+                     for h in g.get("hooks", [])]
+        for skript in self.ref["waechter_hooks"]:
+            if not os.path.isfile(self.pfad(".claude/hooks/" + skript)):
+                continue
+            treffer = [h for h in eintraege if skript in h.get("command", "")]
+            if not treffer:
+                self.melde("H20", rel, 1, "Waechter `%s` existiert, ist aber nicht registriert" % skript)
+            for h in treffer:
+                if h.get("onFailure") != "block":
+                    nr = next((i for i, z in enumerate(zeilen, 1) if skript in z), 1)
+                    self.melde("H20", rel, nr, "Waechter `%s` ohne `\"onFailure\": \"block\"` (ist: %s) — "
+                               "scheitert er, laeuft die Aktion durch" % (skript, h.get("onFailure", "continue")))
+
+    def readme_modelle(self):
+        """Modell-Spalte der Agenten-Tabellen in .claude/README.md gegen das Frontmatter (H21)."""
+        rel = ".claude/README.md"
+        if not os.path.isfile(self.pfad(rel)):
+            return
+        modelle = {}
+        for agent in self.dateien(".claude/agents/*.md"):
+            felder = self.frontmatter(agent)
+            if "model" in felder:
+                modelle[os.path.basename(agent)[:-3]] = felder["model"][1]
+        for nr, zeile in enumerate(self.lies(rel), 1):
+            m = re.match(r"^\|\s*([a-z][a-z0-9-]*)\s*\|\s*([^|]+?)\s*\|", zeile)
+            if m and m.group(1) in modelle and m.group(2) != modelle[m.group(1)]:
+                self.melde("H21", rel, nr, "%s steht hier als `%s`, im Frontmatter als `%s`"
+                           % (m.group(1), m.group(2), modelle[m.group(1)]))
+
     def hook_skripte(self):
         for rel in self.dateien(".claude/hooks/*.sh"):
             for nr, zeile in enumerate(self.lies(rel), 1):
@@ -323,10 +361,14 @@ class Pruefung:
     # --- Online-Pruefungen ------------------------------------------------
 
     def online(self):
+        if self.schema_datei:
+            self.schema()  # lokales Schema braucht kein Netz
         if self.offline:
-            self.uebersprungen.append("Schema-Validierung und plugin validate (--offline)")
+            self.uebersprungen.append("plugin validate%s (--offline)"
+                                      % ("" if self.schema_datei else " und Schema-Validierung"))
             return
-        self.schema()
+        if not self.schema_datei:
+            self.schema()
         self.plugin_validate()
 
     def schema(self):
@@ -338,6 +380,10 @@ class Pruefung:
             return
         import urllib.request
         url = self.ref["quellen"]["settings_schema"]
+        if self.schema_datei:
+            with open(self.schema_datei, encoding="utf-8") as fh:
+                self.validiere(json.load(fh), jsonschema)
+            return
         try:
             with urllib.request.urlopen(url, timeout=15) as resp:
                 schema = json.load(resp)
@@ -350,8 +396,36 @@ class Pruefung:
                 self.uebersprungen.append("Schema-Validierung: %s nicht ladbar (%s)" % (url, e))
                 return
             schema = json.loads(res.stdout)
+        self.validiere(schema, jsonschema)
+
+    def validiere(self, schema, jsonschema):
+        """settings.json gegen das Schema — ohne Felder, die das Schema nachweislich noch nicht kennt.
+
+        SchemaStore hinkt Claude Code hinterher (z. B. `onFailure`, seit 2.1.295). Solche Felder stehen
+        mit Version und Datum in `schema_luecken` der Referenz und werden vor der Pruefung entfernt.
+        """
+        rel = ".claude/settings.json"
         data = self.lade_json(rel)
         validator = jsonschema.validators.validator_for(schema)(schema)
+        luecken = {l["feld"]: l for l in self.ref.get("schema_luecken", [])}
+
+        def ohne(wert):
+            if isinstance(wert, dict):
+                return {k: ohne(v) for k, v in wert.items() if k not in luecken}
+            if isinstance(wert, list):
+                return [ohne(v) for v in wert]
+            return wert
+
+        if luecken:
+            if not list(validator.iter_errors(data)):
+                for feld in luecken:
+                    self.uebersprungen.append("Schema-Luecke `%s` ist geschlossen — Eintrag aus "
+                                              "schema_luecken entfernen" % feld)
+            else:
+                for feld, l in luecken.items():
+                    self.uebersprungen.append("Schema kennt `%s` noch nicht (Claude Code %s, vermerkt %s) — "
+                                              "vor der Validierung ausgenommen" % (feld, l["seit"], l["vermerkt"]))
+            data = ohne(data)
         for fehler in validator.iter_errors(data):
             ort = "/".join(str(p) for p in fehler.path) or "(Wurzel)"
             self.melde("H15", rel, 1, "Schema: %s — %s" % (ort, fehler.message[:200]))
@@ -377,6 +451,8 @@ class Pruefung:
         self.rules()
         self.versionen()
         self.settings()
+        self.waechter()
+        self.readme_modelle()
         self.hook_skripte()
         self.mcp_json()
         self.verweise()
@@ -389,10 +465,11 @@ def main():
     ap.add_argument("--root", default=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     ap.add_argument("--offline", action="store_true", help="ohne Netz und ohne claude-CLI")
     ap.add_argument("--json", action="store_true", help="Ausgabe als JSON")
+    ap.add_argument("--schema", help="Settings-Schema aus lokaler Datei statt SchemaStore (Tests)")
     args = ap.parse_args()
 
     try:
-        p = Pruefung(os.path.abspath(args.root), args.offline)
+        p = Pruefung(os.path.abspath(args.root), args.offline, args.schema)
         p.lauf()
     except Defekt as e:
         print("harness-check: %s" % e, file=sys.stderr)

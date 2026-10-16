@@ -19,6 +19,7 @@ on:
       - "bin/test_harness_check.py"
       - "bin/harness-stand.py"
       - "bin/test_harness_stand.py"
+      - "bin/test-waechter-hooks.sh"
       - ".github/workflows/harness-check.yml"
   pull_request:
     paths:
@@ -30,6 +31,7 @@ on:
       - "bin/test_harness_check.py"
       - "bin/harness-stand.py"
       - "bin/test_harness_stand.py"
+      - "bin/test-waechter-hooks.sh"
       - ".github/workflows/harness-check.yml"
   workflow_dispatch:
 
@@ -52,6 +54,9 @@ jobs:
 
       - name: Tests der Pruefskripte
         run: python3 -m unittest bin/test_harness_check.py bin/test_harness_stand.py
+
+      - name: Tests der Waechter-Hooks
+        run: bash bin/test-waechter-hooks.sh
 
       - name: Harness pruefen
         shell: bash
