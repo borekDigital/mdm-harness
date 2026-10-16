@@ -407,7 +407,7 @@
       <div class="tb-cell"><dt>Felder</dt><dd>130 · 18 Gruppen</dd></div>
       <div class="tb-cell"><dt>Farbschemata</dt><dd>5 definiert · 5 referenziert, nicht definiert</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>15. Oktober 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -674,16 +674,18 @@
         <rect x="260" y="450" width="32.0" height="14" fill="var(--worker)" fill-opacity="0.25" stroke="var(--worker)" stroke-opacity="0.55"></rect>
         <text x="298.0" y="461" class="s-tiny">8</text>
         <rect x="620" y="320" width="324" height="64" rx="2" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.25"></rect>
-        <text x="632" y="340" class="s-tiny">brand-overrides.css:1171–1175 definiert drei</text>
+        <text x="632" y="340" class="s-tiny">brand-overrides.css:1174–1178 definiert drei</text>
         <text x="632" y="354" class="s-tiny">Tokens, die Schema-Variablen lesen:</text>
         <text x="632" y="368" class="s-tiny f-dim">--mdm-color-text · -border · -accent</text>
       </svg>
       <figcaption><b>Relevant für ein Theme für drei Marken:</b> ändert der Editor das Blau in
         <code>scheme-1</code>, bleiben 35 Stellen im CSS beim alten Wert. Die
         <code>.claude/rules/liquid-conventions.md:52–56</code> verbietet neue Literale; die 139
-        vorhandenen sind älter oder Ausnahmen. <code>brand-overrides.css</code> ist in allen drei
-        Themes identisch (Gesamtport vom 14. Oktober 2026) — Borek und IMM tragen damit dieselben
-        75 MDM-Literale.</figcaption>
+        vorhandenen sind älter oder Ausnahmen. <code>brand-overrides.css</code> gilt laut Dateikopf
+        für alle drei Shops und wird nur in MDM geändert (<code>brand-overrides.css:11–12</code>);
+        seit dem Gesamtport vom 14. Oktober 2026 tragen Borek und IMM dieselben 75 MDM-Literale.
+        ⚠️&nbsp;Offen: ob die Änderungen aus <code>58b9ee4</code> und <code>ba720d9</code> in Borek
+        und IMM gemergt sind — beide Repos sind in diesem Lauf nicht geklont.</figcaption>
     </figure>
   </section>
 
@@ -853,7 +855,7 @@
         <tr><td>Fünf Schemata in current</td><td class="m">config/settings_data.json:132</td></tr>
         <tr><td>Schema 1 erhält :root</td><td class="m">snippets/css-variables.liquid:178–181</td></tr>
         <tr><td>Warenkorb-Empfehlungen auf scheme-12</td><td class="m">sections/overlay-group.json:22</td></tr>
-        <tr><td>Drei Tokens lesen Schema-Variablen</td><td class="m">assets/brand-overrides.css:1171–1175</td></tr>
+        <tr><td>Drei Tokens lesen Schema-Variablen</td><td class="m">assets/brand-overrides.css:1174–1178</td></tr>
         <tr><td>139 Hex-Literale</td><td class="m">grep -oE '#[0-9a-f]{3,6}' assets/mdm-*.css brand-overrides.css</td></tr>
         <tr><td>Button-Radius fest auf 0</td><td class="m">snippets/css-variables.liquid:34–41, 335</td></tr>
         <tr><td>page_width als Freitext</td><td class="m">config/settings_schema.json:900–902 · a8b599f</td></tr>

@@ -406,7 +406,7 @@
       <div class="tb-cell"><dt>Repos</dt><dd>8 Arbeits-Repos · 2 Plattformen</dd></div>
       <div class="tb-cell"><dt>Abdeckung</dt><dd>7 Rules · 2 Blattsätze · 1 Spec-Satz</dd></div>
       <div class="tb-cell"><dt>Blätter</dt><dd>01–04</dd></div>
-      <div class="tb-cell"><dt>Stand</dt><dd>16. September 2026</dd></div>
+      <div class="tb-cell"><dt>Stand</dt><dd>16. Oktober 2026</dd></div>
     </dl>
   </div>
 
@@ -577,10 +577,16 @@
         nicht anwendbar.</b> Der Befehl verlangt ohne gemeinsamen Vorfahren
         <code>--allow-unrelated-histories</code> und führt zwei fremde Bäume zusammen.
         <code>bin/theme-sync.sh port</code> kopiert stattdessen einzelne Dateien auf einen
-        Branch im Ziel-Theme und lässt sechs markenspezifische Pfade aus:
+        Branch im Ziel-Theme und lässt sieben markenspezifische Pfade aus:
         <code>config/settings_data.json</code>, <code>config/settings_schema.json</code>,
-        <code>locales/</code>, <code>templates/</code>,
-        <code>sections/*-group.json</code>, <code>layout/</code>.
+        <code>config/markets.json</code>, <code>locales/</code>, <code>templates/</code>,
+        <code>sections/*-group.json</code>, <code>layout/</code>
+        (<code>bin/theme-sync.sh:74–86</code>). Ausgenommen sind seit dem 15. Oktober 2026
+        die vier PLP- und PDP-Templates <code>collection.json</code>,
+        <code>collection.mdm.json</code>, <code>product.json</code> und
+        <code>product.mdm.json</code> (<code>bin/theme-sync.sh:92–97</code>): Das Skript
+        überträgt sie und setzt dabei den <code>layout</code>-Schlüssel auf die Zielmarke
+        (<code>bin/theme-sync.sh:124–127</code>).
         Die Zahlen oben gelten je Arbeitsbaum, nicht je Remote: <code>drift</code> vergleicht
         die ausgecheckten Staende. Gemessen am 17. September 2026 mit mdm auf
         <code>chore/exclude-temp-dir</code>, borek und imm auf <code>main</code>.</figcaption>
