@@ -28,6 +28,7 @@ Stelle und das Wort `workspace.yaml` an einer anderen.
 | 2 | Ein Python-Skript, das nur die Spec ändert und `workspace.yaml` im Spec-Text erwähnt, wird blockiert | Session 16. Oktober 2026: Inline-Python mit `open(p, "w")`; ausgewichen über ein Skript im Scratchpad | ✅ belegt |
 | 3 | `git stash push -- docs` wird blockiert. Das ist in der Sache richtig, denn der Stash nimmt `docs/bauplan/index.html` aus dem Arbeitsbaum, ist aber kein `rm`/`mv`. Auslöser war das `2>&1` im selben Befehl | Session 16. Oktober 2026 | ✅ belegt (Auslöser) / ⚠️ ob ein Stash blockiert werden soll, entscheidet Konrad |
 | 4 | Ausweichen ist leicht und unauffällig: dasselbe Skript als Datei im Scratchpad läuft durch. Der Guard schützt also nur gegen die offensichtliche Form | Session 16. Oktober 2026, Teil A | ✅ belegt |
+| 6 | Gleiches Muster in `git-safety`: Ein `git commit` mit einer Commit-Message, die den Text „git push --force" enthält, wird als Force-Push blockiert. Ausweg war eine Message-Datei per `-F` | Session 16. Oktober 2026, Commit `2fe7ba9`; `.claude/hooks/git-safety.sh` (Muster `git push.*(--force\|-f)`) | ✅ belegt — Vorschlag: im Umfang dieser Spec mitlösen (Text in Strings und Heredocs ist kein Befehl) |
 | 5 | Der Workaround steht schon im Agent-Memory („Bauplan-Guard blockt Shell-Lesebefehle") — die Fehlalarme sind wiederkehrend | `memory/bauplan-guard-blockt-shell.md` | ✅ belegt |
 
 ## Anforderungen
