@@ -110,6 +110,12 @@
           },
           {
             "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/harness-check.sh\"",
+            "timeout": 15,
+            "async": true
+          },
+          {
+            "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bauplan-report.sh\"",
             "timeout": 15,
             "async": true

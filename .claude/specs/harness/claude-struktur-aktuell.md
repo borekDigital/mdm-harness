@@ -2,7 +2,7 @@
 
 Stand: 16. Oktober 2026
 Quelle: Analyse der Harness-Konfiguration und Recherche in der Claude-Code-Doku, 16. Oktober 2026
-Status: FREIGEGEBEN (16. Oktober 2026) — B IMPLEMENTIERT (16. Oktober 2026); C–E offen
+Status: FREIGEGEBEN (16. Oktober 2026) — B und C IMPLEMENTIERT (16. Oktober 2026); C-Workflow wird mit dem ersten Push validiert; D–E offen
 
 ## Ziel
 
@@ -81,14 +81,14 @@ Spec, Freigabe, Umsetzung ein.
 
 ### C — Struktur-Check `bin/harness-check.py`
 
-- [ ] Agenten: Pflichtfelder vorhanden, nur bekannte Frontmatter-Felder, `model` ist ein
+- [x] Agenten: Pflichtfelder vorhanden, nur bekannte Frontmatter-Felder, `model` ist ein
       gültiger Alias, eine Modell-ID oder `inherit`.
-- [ ] Verweise: Jedes Werkzeug, jeder Agent und jeder Skill, den eine Harness-Datei nennt, existiert.
-- [ ] Rules: Jeder `paths`-Glob trifft mindestens eine Datei. Das YAML lässt sich parsen.
-- [ ] Settings: Die Validierung gegen `$schema` läuft durch.
-- [ ] `claude plugin validate .claude --strict` ist eingebunden, soweit es den Bestand abdeckt.
-- [ ] Exit-Codes wie bei `bauplan-ci.py`: 0 = sauber, 3 = Befund, alles andere = Defekt.
-- [ ] Die Liste der erlaubten Felder steht in **einer** Datei, die Schicht 4 als Änderungsvorschlag
+- [x] Verweise: Jedes Werkzeug, jeder Agent und jeder Skill, den eine Harness-Datei nennt, existiert.
+- [x] Rules: Jeder `paths`-Glob trifft mindestens eine Datei. Das YAML lässt sich parsen.
+- [x] Settings: Die Validierung gegen `$schema` läuft durch.
+- [x] `claude plugin validate .claude --strict` ist eingebunden, soweit es den Bestand abdeckt.
+- [x] Exit-Codes wie bei `bauplan-ci.py`: 0 = sauber, 3 = Befund, alles andere = Defekt.
+- [x] Die Liste der erlaubten Felder steht in **einer** Datei, die Schicht 4 als Änderungsvorschlag
       meldet. Sie ist nicht im Code verstreut.
 
 ### D — Versions-Wächter
@@ -114,9 +114,9 @@ Spec, Freigabe, Umsetzung ein.
 ## Akzeptanzkriterien
 
 - [ ] grep nach Doku-Quelle in jedem Agenten: alle 12 Agenten nennen mindestens eine Quelle mit Werkzeug.
-- [ ] `bin/harness-check.py` auf dem heutigen Stand meldet mindestens #3, #9 und #10 mit Exit 3.
+- [x] `bin/harness-check.py` auf dem heutigen Stand meldet mindestens #3, #9 und #10 mit Exit 3.
       Nach Teil B endet er mit Exit 0.
-- [ ] Ein absichtlich eingebautes falsches Agenten-Feld (`modle: opus`) wird mit Datei und Zeile gemeldet.
+- [x] Ein absichtlich eingebautes falsches Agenten-Feld (`modle: opus`) wird mit Datei und Zeile gemeldet.
 - [ ] Wird `harness-stand.json` auf eine ältere Version gesetzt, zeigt eine neue Session den Hinweis.
       Bei gleicher Version bleibt sie still.
 - [ ] Ein manueller CI-Lauf mit älterer geprüfter Version öffnet einen PR, der nur Bericht und
@@ -151,3 +151,34 @@ Spec, Freigabe, Umsetzung ein.
 | #9 | Hook prüft nur noch gegen `.claude/README.md`; `mdm-harness-repo.md` mit Hinweis „teilweise überholt" | Positivlauf: still, Exit 0. Negativlauf mit erfundenem Agenten: Warnung, Exit 0 |
 | #10 | `$schema` in `.claude/settings.json` | Validierung gegen das SchemaStore-Schema: 0 Fehler |
 | #12 | `user_invocable: true` aus vier Skills entfernt (Default ist ohnehin `true`) | `claude plugin validate .claude --strict`: bestanden; alle vier Skills nach der Änderung weiter geladen |
+
+### C — 16. Oktober 2026
+
+| Teil | Ort |
+|---|---|
+| Prüfskript | `bin/harness-check.py` (nur Standardbibliothek; `jsonschema` und `claude` optional) |
+| Referenz | `bin/harness-referenz.json`: Feldlisten, Modelle, 33 Hook-Events, MCP-Werkzeuge und -Version, Agenten-Rollen, externe Skills; Quellen-URLs und Stand darin |
+| Tests | `bin/test_harness_check.py`, 25 Tests: je Befund-Code ein Fixture-Fall, dazu der echte Bestand |
+| Stop-Hook | `.claude/hooks/harness-check.sh` (offline, async, schweigt wenn sauber) |
+| CI | `.github/workflows/harness-check.yml` bei Push und PR auf Harness-Pfade |
+
+| Code | Prüfung |
+|---|---|
+| H00 | Frontmatter nicht lesbar |
+| H01–H03 | Agent: Pflichtfeld fehlt, unbekanntes Feld, ungültiges Modell |
+| H04 | Skill: unbekanntes Feld |
+| H05–H06 | Rule: unbekanntes Feld, Glob ohne Treffer (fehlendes Repo oder leeres Platzhalter-Verzeichnis: übersprungen) |
+| H07–H09 | Settings: `$schema` fehlt, unbekanntes Hook-Event, Hook-Skript fehlt |
+| H10 | Hook-Skript verweist auf eine Datei unter `${CLAUDE_PROJECT_DIR}`, die es nicht gibt |
+| H11 | MCP-Werkzeug unbekannt (voller Name `mcp__…` oder Name in einer Zeile oder einem Abschnitt zum Dev MCP) |
+| H12 | npx-MCP-Server ohne feste Version oder abweichend von der Referenz |
+| H13 | Verweis auf `/skill`, den es nicht gibt |
+| H14 | `claude plugin validate .claude --strict` schlägt fehl |
+| H15 | `settings.json` verletzt das SchemaStore-Schema |
+| H16 | Verweis auf einen Agenten (`*-planner`, `-implementer`, `-reviewer`, `-writer`, `-extractor`), den es nicht gibt |
+
+Nachweise:
+- Rückprobe auf den Stand vor Teil B (`HEAD~1` von `97c2186`): 9 Befunde, Exit 3. Darunter #3 (H11, zweimal), #4 (H12), #9 (H10), #10 (H07) und #12 (H04, viermal).
+- Heutiger Stand: offline und online (mit Schema und `plugin validate`) „Harness sauber", Exit 0.
+- `modle: opus`: als H02 mit `datei:4` gemeldet (Test `test_unbekanntes_agentenfeld`, `test_textausgabe_nennt_datei_und_zeile`).
+- Grenze: H11 erkennt Werkzeugnamen ohne `mcp__`-Präfix nur in Zeilen oder Abschnitten, die „Dev MCP" oder „shopify-dev-mcp" nennen.

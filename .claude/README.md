@@ -247,10 +247,21 @@ Alle mit `memory: project` — sie bauen Wissen ueber Patterns auf.
 | post-edit-phpstan.sh | PostToolUse (Edit/Write) | PHPStan/PHPCS gefiltert auf editierte Datei (nur middleware/*.php) |
 | stop-notify.sh | Stop | macOS-Notification |
 | post-implement-harness-sync.sh | Stop | Prueft ob neue Agenten/Skills/Hooks/Rules in dieser README dokumentiert sind |
+| harness-check.sh | Stop | `bin/harness-check.py --offline`: Frontmatter, Modelle, Hook-Events, Hook-Ziele, MCP-Werkzeuge und -Versionen, Skill-Verweise, Rule-Globs gegen `bin/harness-referenz.json`; schweigt wenn sauber |
 | bauplan-guard.sh | PreToolUse (Bash/Edit/Write) | Blockt Loeschen von `docs/bauplan/**`, Schrumpfen der Manifeste, Entfernen von Repos aus `workspace.yaml` |
 | bauplan-staleness.sh | PostToolUse (Edit/Write) | Ordnet die geaenderte Datei den Blattsatz-Etappen zu (Zuordnung in `bin/bauplan_lib.py`), schreibt ins Ledger |
 | bauplan-report.sh | Stop | Verdichtet das Ledger zu `.claude/bauplan/<repo>.STALE.md` — Arbeitsliste fuer `--refresh` |
 | bauplan-verify.sh | Stop | Prueft den Bauplan-Bestand gegen `git HEAD`, schreibt `BESTAND-WARNUNG.md` bei Abweichung |
+
+### Harness-Check
+
+`python3 bin/harness-check.py` prueft die Claude-Struktur gegen `bin/harness-referenz.json`
+(Feldlisten, Modelle, Hook-Events und MCP-Werkzeuge laut Claude-Code-Doku, Stand dort vermerkt).
+Exit 0 = sauber, 3 = Befund, sonst Defekt. `--offline` ohne Schema-Validierung und
+`claude plugin validate`, `--json` fuer die CI. Laeuft im Stop-Hook und im Workflow
+„Harness pruefen" bei jeder Aenderung an der Harness. Tests: `python3 -m unittest bin/test_harness_check.py`.
+
+Neue Claude-Code-Felder oder -Events: Referenzdatei anpassen, nicht das Skript.
 
 ## MCP-Server
 
