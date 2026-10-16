@@ -16,6 +16,12 @@ import sys
 import tempfile
 import unittest
 
+try:
+    import jsonschema  # noqa: F401 — nur fuer die Schema-Tests
+    HAT_JSONSCHEMA = True
+except ImportError:
+    HAT_JSONSCHEMA = False
+
 BIN = os.path.dirname(os.path.abspath(__file__))
 SCRIPT = os.path.join(BIN, "harness-check.py")
 REFERENZ = os.path.join(BIN, "harness-referenz.json")
@@ -303,6 +309,76 @@ class HarnessCheckTest(unittest.TestCase):
         self.write(".claude/hooks/stop-notify.sh",
                    HOOK + 'DATA_JSON="${CLAUDE_PROJECT_DIR}/harness-app/data.json"\n')
         self.assert_befund("H10", ".claude/hooks/stop-notify.sh", 4, "harness-app/data.json")
+
+    # --- Waechter und README ---------------------------------------------
+
+    def waechter(self, on_failure):
+        self.write(".claude/hooks/git-safety.sh", HOOK)
+        hook = {"type": "command", "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/git-safety.sh\""}
+        if on_failure:
+            hook["onFailure"] = on_failure
+        data = json.loads(settings())
+        data["hooks"]["PreToolUse"] = [{"matcher": "Bash", "hooks": [hook]}]
+        self.write(".claude/settings.json", json.dumps(data, indent=2))
+
+    def test_waechter_mit_on_failure_block(self):
+        self.waechter("block")
+        self.assertEqual(self.befunde(), (0, []))
+
+    def test_waechter_ohne_on_failure(self):
+        # Spec waechter-hooks-fail-closed: ohne das Feld laeuft die Aktion bei Hook-Fehlern durch.
+        self.waechter(None)
+        self.assert_befund("H20", ".claude/settings.json", text="git-safety.sh")
+
+    def test_waechter_mit_on_failure_continue(self):
+        self.waechter("continue")
+        self.assert_befund("H20", ".claude/settings.json", text="continue")
+
+    def test_waechter_skript_ohne_registrierung(self):
+        self.write(".claude/hooks/git-safety.sh", HOOK)
+        self.assert_befund("H20", ".claude/settings.json", text="nicht registriert")
+
+    def schema_datei(self):
+        # Kleines Schema wie SchemaStore im Oktober 2026: Hook-Eintraege ohne onFailure.
+        eintrag = {"type": "object", "additionalProperties": False,
+                   "properties": {"type": {}, "command": {}, "timeout": {}, "async": {}}}
+        schema = {"type": "object", "properties": {"hooks": {"type": "object", "additionalProperties": {
+            "type": "array", "items": {"type": "object", "properties": {
+                "matcher": {}, "hooks": {"type": "array", "items": eintrag}}}}}}}
+        pfad = os.path.join(self.root, "schema.json")
+        with open(pfad, "w", encoding="utf-8") as fh:
+            json.dump(schema, fh)
+        return pfad
+
+    @unittest.skipUnless(HAT_JSONSCHEMA, "jsonschema nicht installiert")
+    def test_schema_luecke_wird_ausgenommen(self):
+        self.waechter("block")
+        res = self.run_check("--schema", self.schema_datei())
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+        self.assertIn("onFailure", "".join(json.loads(res.stdout)["uebersprungen"]))
+
+    @unittest.skipUnless(HAT_JSONSCHEMA, "jsonschema nicht installiert")
+    def test_schema_ohne_vermerkte_luecke_meldet_h15(self):
+        self.waechter("block")
+        pfad = os.path.join(self.root, "bin/harness-referenz.json")
+        with open(pfad, encoding="utf-8") as fh:
+            ref = json.load(fh)
+        ref["schema_luecken"] = []
+        with open(pfad, "w", encoding="utf-8") as fh:
+            json.dump(ref, fh)
+        res = self.run_check("--schema", self.schema_datei())
+        self.assertEqual(res.returncode, 3, res.stdout + res.stderr)
+        self.assertEqual({b["code"] for b in json.loads(res.stdout)["befunde"]}, {"H15"})
+
+    def test_readme_modell_weicht_ab(self):
+        self.write(".claude/README.md", "| Agent | Modell | Rolle |\n|---|---|---|\n"
+                                        "| theme-reviewer | haiku | QA |\n")
+        self.assert_befund("H21", ".claude/README.md", 3, "haiku")
+
+    def test_readme_modell_stimmt(self):
+        self.write(".claude/README.md", "| Agent | Modell | Rolle |\n|---|---|---|\n"
+                                        "| theme-reviewer | sonnet | QA |\n")
+        self.assertEqual(self.befunde(), (0, []))
 
     # --- MCP --------------------------------------------------------------
 

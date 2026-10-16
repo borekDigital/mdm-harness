@@ -1,16 +1,27 @@
 #!/bin/bash
 # PreToolUse (Bash) — blocking
 # Blockiert destruktive Git-Kommandos und riskante Shopify-CLI-Aufrufe.
-CMD=$(python3 -c "
-import sys, json
-try:
-    d = json.load(sys.stdin)
-    print(d.get('tool_input', {}).get('command', ''))
-except Exception:
-    print('')
-" 2>/dev/null)
+# Fail-closed: Kann der Waechter nicht pruefen, blockiert er (Spec waechter-hooks-fail-closed).
+blockiere() { echo "git-safety: $1 — Aktion blockiert (fail-closed)." >&2; exit 2; }
+command -v python3 >/dev/null 2>&1 || blockiere "python3 nicht gefunden"
 
-[ -z "$CMD" ] && exit 0
+# Globale Git-Optionen vor dem Unterkommando entfernen, damit `git -C dir push --force`
+# genauso erkannt wird wie `git push --force`.
+CMD=$(python3 -c "
+import sys, json, re
+try:
+    cmd = json.load(sys.stdin)['tool_input']['command']
+except Exception:
+    sys.exit(3)
+if not isinstance(cmd, str) or not cmd.strip():
+    sys.exit(3)
+wert = r'(?:\"[^\"]*\"|\'[^\']*\'|\S+)'
+opt = (r'(?:\s+-[Cc]\s+' + wert +
+       r'|\s+--(?:git-dir|work-tree|namespace|exec-path|super-prefix|config-env)(?:=' + wert + r'|\s+' + wert + r')'
+       r'|\s+--(?:no-pager|paginate|bare|literal-pathspecs|glob-pathspecs|noglob-pathspecs|no-replace-objects|no-optional-locks)'
+       r'|\s+-[pP])')
+print(re.sub(r'\bgit(?:' + opt + r')+', 'git', cmd))
+" 2>/dev/null) || blockiere "Hook-Eingabe nicht lesbar"
 
 # --- Git-Schutz ---
 if echo "$CMD" | grep -qE "(^|[[:space:];&|])git([[:space:]]|$)"; then

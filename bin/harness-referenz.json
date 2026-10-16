@@ -47,6 +47,10 @@
     }
   },
   "werkzeuge_ohne_pfadregel": ["Write", "NotebookEdit", "Glob", "MultiEdit"],
+  "schema_luecken": [
+    {"feld": "onFailure", "seit": "2.1.295", "vermerkt": "16. Oktober 2026"}
+  ],
+  "waechter_hooks": ["git-safety.sh", "protect-merchant-files.sh", "bauplan-guard.sh"],
   "agent_rollen": ["planner", "implementer", "reviewer", "writer", "extractor"],
   "externe_agenten": [],
   "externe_skills": [
