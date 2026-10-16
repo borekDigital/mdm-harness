@@ -225,6 +225,10 @@ Nachweise:
 - ❌ Zeitplan und `workflow_dispatch` greifen erst, wenn der Workflow auf `main` liegt. Die zwei
   CI-Akzeptanzkriterien werden deshalb nach dem Merge mit einem manuellen Lauf (`seit = 2.1.290`) validiert.
 
+Erster echter Lauf (16. Oktober 2026, Run 38873502082, `seit = 2.1.290`): alle Schritte grün, PR #17 mit
+einem Bericht über 11 Befunde. Fehler gefunden: `anheben` schrieb die Referenz per `json.dump` neu (+130/−25 Zeilen für
+eine geänderte Zeile). Behoben durch Ersetzen im Text, Regressionstest `test_anheben_aendert_nur_version_und_stand`.
+
 Außerhalb des Repos gemeldet, nicht geändert: Claude Code warnt, dass
 `Bash(cd themes/* && shopify theme:*)` in der persönlichen `.claude/settings.local.json` nie greift
 (`*` vor `:*` wird nicht expandiert).

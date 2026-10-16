@@ -130,6 +130,25 @@ class HarnessStandTest(unittest.TestCase):
         self.assertEqual(ref["stand"], "23. Oktober 2026")
         self.assertEqual(ref["agent_felder"], ["name"])  # Rest unveraendert
 
+    def test_anheben_aendert_nur_version_und_stand(self):
+        # Lauf 38873502082: json.dump zerlegte jede Liste — +130/-25 Zeilen fuer zwei Werte.
+        text = (
+            '{\n'
+            '  "stand": "16. Oktober 2026",\n'
+            '  "claude_code_version": "2.1.301",\n'
+            '  "quellen": {"changelog": "https://code.claude.com/docs/en/changelog.md"},\n'
+            '  "agent_felder": ["name", "description",\n'
+            '    "tools"]\n'
+            '}\n')
+        with open(self.referenz, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        res = self.run_stand("anheben", "--version", "2.1.303", "--datum", "23. Oktober 2026")
+        self.assertEqual(res.returncode, 0, res.stderr)
+        with open(self.referenz, encoding="utf-8") as fh:
+            neu = fh.read()
+        self.assertEqual(neu, text.replace("16. Oktober 2026", "23. Oktober 2026")
+                                  .replace('"2.1.301"', '"2.1.303"'))
+
     def test_anheben_nie_rueckwaerts(self):
         res = self.run_stand("anheben", "--version", "2.1.80")
         self.assertNotEqual(res.returncode, 0)
