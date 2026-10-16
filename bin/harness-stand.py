@@ -153,11 +153,17 @@ def cmd_anheben(stand, args):
     if neu < stand.geprueft:
         raise Defekt("%s ist aelter als die gepruefte Version %s — nie rueckwaerts"
                      % (als_text(neu), als_text(stand.geprueft)))
-    stand.ref["claude_code_version"] = als_text(neu)
-    stand.ref["stand"] = args.datum or heute()
+    # Nur die zwei Werte im Text ersetzen. json.dump wuerde jede Liste zerlegen und
+    # jeden Bericht-PR mit Formatierungsrauschen fuellen (Lauf 38873502082: +130/-25).
+    with open(stand.pfad, encoding="utf-8") as fh:
+        text = fh.read()
+    for schluessel, wert in (("claude_code_version", als_text(neu)), ("stand", args.datum or heute())):
+        text, n = re.subn(r'("%s"\s*:\s*)"[^"]*"' % schluessel,
+                          lambda m: m.group(1) + json.dumps(wert, ensure_ascii=False), text, count=1)
+        if n != 1:
+            raise Defekt("Schluessel %s nicht in bin/harness-referenz.json" % schluessel)
     with open(stand.pfad, "w", encoding="utf-8") as fh:
-        json.dump(stand.ref, fh, ensure_ascii=False, indent=2)
-        fh.write("\n")
+        fh.write(text)
     return 0
 
 
