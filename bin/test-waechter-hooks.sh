@@ -89,6 +89,8 @@ erwartet "ohne python3 blockiert"            2 $G "$(bash_in 'ls')" PATH="$WORK/
 erwartet "Commit-Message mit Force-Push-Text"  0 $G "$(bash_in 'git commit -m "git push --force ist verboten"')"
 erwartet "Heredoc mit Force-Push-Text"       0 $G "$(bash_in "$(printf "cat <<'EOF'\ngit push --force\nEOF")")"
 erwartet "PR-Text mit escapten Backticks"    0 $G "$(bash_in 'gh pr create --base main --body "Spec \`x.md\` ok"')"
+erwartet "CI-Fall: \" in ' in \$(...) in \"\"" 0 $G "$(bash_in "echo \"Treffer: \$(grep -c 'git push\"x' log.txt)\"")"
+erwartet "CI-Fall: <<EOF im String"          0 $G "$(bash_in "$(printf 'git commit -m "Heredoc: <<EOF\nzweite Zeile"')")"
 erwartet "bash -c mit Force-Push blockiert"  2 $G "$(bash_in 'bash -c "git push --force"')"
 erwartet "Pruefskript fehlt: blockiert"      2 $G "$(bash_in 'ls')" CLAUDE_PROJECT_DIR="$WORK/leer"
 
@@ -126,6 +128,8 @@ erwartet "Pruefskript fehlt: blockiert"      2 $B "$(bash_in 'ls')" CLAUDE_PROJE
 erwartet "grep mit 2>/dev/null erlaubt"      0 $B "$(bash_in 'grep -n tech workspace.yaml 2>/dev/null')"
 erwartet "Session-Befehl #1 erlaubt"         0 $B "$(bash_in "git pull -q 2>/dev/null; grep -n 'tech: \"PHP' workspace.yaml")"
 erwartet "Heredoc nennt Bestand erlaubt"     0 $B "$(bash_in "$(printf "python3 - <<'PY'\nopen('x.txt', 'w').write('workspace.yaml')\nPY")")"
+erwartet "CI-Fall: Zitat in \$(...) lesen"   0 $B "$(bash_in "echo \"\$(grep -c 'a\"b' docs/bauplan/index.html)\"")"
+erwartet "CI-Fall: <<EOF im String lesen"    0 $B "$(bash_in "$(printf 'grep -n "<<EOF\nworkspace.yaml" docs/bauplan/index.html')")"
 erwartet "cat | head erlaubt"                0 $B "$(bash_in 'cat docs/bauplan/index.html | head')"
 erwartet "mv workspace.yaml blockiert"       2 $B "$(bash_in 'mv workspace.yaml w.bak')"
 erwartet "Umleitung auf Manifest blockiert"  2 $B "$(bash_in 'echo x > .claude/bauplan/theme-mdm.manifest.json')"

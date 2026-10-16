@@ -78,3 +78,24 @@ Nachweise:
 - Bestehende Suiten grün: `test_harness_check.py`, `test_harness_stand.py`, `test-theme-sync.sh` (50), `bauplan-guard.py --verify`.
 
 Grenze ⚠️: `sed -i` auf geschützte Dateien bleibt erlaubt (wie bisher). Variablen in Pfaden (`rm $X`) werden nicht aufgelöst.
+
+### Nachtrag (16. Oktober 2026): Fehlalarme aus dem CI-Lauf
+
+Beim Auffrischen der Blätter (PR #23, Etappe 3) blockierten beide Wächter je einen reinen Lesebefehl mit
+„Befehl nicht zerlegbar". Ursache war `shlex`, das die Quoting-Regeln von Bash nicht kennt:
+
+| # | Fall | Ursache |
+|---|---|---|
+| 1 | `echo "Treffer: $(grep -c 'a"b' datei)"` | In Bash öffnet `$(...)` auch innerhalb von `"..."` einen eigenen Quoting-Kontext. shlex beendete den String am `"` zwischen den Apostrophen |
+| 2 | `git commit -m "…<<EOF⏎…"` | Die Heredoc-Erkennung arbeitete zeilenweise auf dem Rohtext und verwarf auch `<<EOF` in einem String samt dem schließenden `"` |
+
+Behoben durch einen eigenen Lexer in `bin/befehl.py` statt `shlex`. Er setzt um: verschachtelte
+Quoting-Kontexte in `$(...)`, Heredocs nur außerhalb von Strings (Inhalt erst nach dem Zeilenende),
+`$'...'` mit Escapes, `#` nur am Wortanfang, `$((...))` als Arithmetik, nicht als Ersetzung.
+
+Nachweise:
+- 8 neue Parser-Tests und 4 neue Hook-Fälle. Die 4 Hook-Fälle mit dem alten Parser: alle rot; mit dem neuen: 52 ok.
+- Alle bisherigen Tests unverändert grün (`test_befehl.py` 31, `test_harness_check.py`, `test_harness_stand.py`,
+  `test-theme-sync.sh` 50, `bauplan-guard.py --verify`).
+- Robustheit: `sync.sh` (ganzes Skript) wird fehlerfrei zerlegt.
+- Live-Beleg: Das Öffnen dieses PRs scheiterte zuerst am noch aktiven alten Parser — an genau Fall 1.
